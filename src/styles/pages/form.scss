@@ -1,0 +1,253 @@
+// 输入框整体高度
+$input-height: 30px;
+// 输入框去除边框后的高度
+$input-wrapper-height: 28px;
+// 单选框宽高
+$radio-length: 20px;
+$primary-color: var(--primary-color);
+
+/* 表单 */
+.n-form-item {
+  grid-template-rows: minmax(22px, auto) 1fr;
+  align-items: baseline;
+  :deep(.n-form-item-label) {
+    min-width: 60px;
+    text-align: left;
+    min-height: 22px;
+    line-height: 17px;
+    padding: 0;
+    // color: #aaaaaa;
+    font-size: 12px;
+  }
+  :deep(.n-form-item-blank) {
+    width: 100%;
+    min-height: $input-height;
+    justify-content: space-between;
+  }
+  :deep(.n-form-item-feedback-wrapper) {
+    min-height: 10px;
+  }
+}
+.n-form--inline {
+  .n-form-item {
+    &:last-child {
+      width: 100%;
+    }
+  }
+}
+.wrap {
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+.subtitle {
+  height: 17px;
+  font-size: 12px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
+  // color: #ffffff;
+  color: var(--n-text-color);
+  line-height: 17px;
+  margin-bottom: 10px;
+  &.control {
+    display: flex;
+    justify-content: space-between;
+    .btns {
+      display: flex;
+      gap: 10px;
+      i {
+        font-size: 16px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+/* (数字)输入框 */
+.n-input,
+.n-input-number {
+  height: $input-height;
+  border-radius: 0;
+  :deep(.n-input-wrapper) {
+    height: $input-wrapper-height;
+    line-height: $input-wrapper-height;
+    font-size: 12px;
+    // background: #10151f;
+    // border: 1px solid #222831;
+  }
+  :deep(.n-input__input-el) {
+    height: $input-wrapper-height;
+    line-height: $input-wrapper-height;
+    font-family: PingFangSC-Regular, PingFang SC;
+  }
+}
+.n-input-number {
+  :deep(.n-input-wrapper) {
+    padding: 0 0 0 12px;
+  }
+}
+// 数字输入框的圆角
+:deep(.n-input) {
+  border-radius: 0;
+}
+
+/* 数字输入框增减按钮 */
+:deep(.n-input__suffix) {
+  height: 100%;
+  flex-direction: column-reverse;
+}
+:deep(.n-button__icon) {
+  height: 14px;
+}
+
+/* 下拉选择框 */
+:deep(.n-base-selection) {
+  min-height: 30px;
+  border-radius: 0;
+  .n-base-selection-label {
+    height: 30px;
+    // background: #10151f;
+    // border: 1px solid #222831;
+    font-size: 12px;
+  }
+  .n-base-suffix {
+    .n-base-suffix__arrow {
+      font-size: 12px;
+    }
+  }
+}
+
+/* 锁定图标、数字输入框增减图标 */
+.icon-bilisuoding {
+  font-size: 14px;
+  cursor: pointer;
+}
+.icon-zengjia,
+.icon-jianshao {
+  font-size: 12px;
+  color: #808792;
+  &:hover {
+    color: $primary-color;
+  }
+}
+
+/* 单选框 */
+.n-radio {
+  height: $radio-length;
+  line-height: $radio-length;
+  :deep(.n-radio__dot-wrapper) {
+    width: $radio-length;
+  }
+  :deep(.n-radio__dot) {
+    width: $radio-length;
+    height: $radio-length;
+    border-radius: 0;
+    &::before {
+      content: '\e619';
+      width: $radio-length;
+      height: $radio-length;
+      left: 0;
+      top: 1px;
+      text-align: center;
+      font-size: 12px;
+      font-family: 'iconfont';
+      color: $primary-color;
+      background: none;
+    }
+  }
+}
+:deep(.n-radio__label) {
+  font-size: 12px;
+}
+
+/* 颜色选择器 */
+.n-color-picker {
+  width: $input-wrapper-height;
+  height: $input-wrapper-height;
+}
+:deep(.n-color-picker-trigger) {
+  width: $input-wrapper-height;
+  border-radius: 0;
+  border: 1px solid #222831;
+  .n-color-picker-trigger__fill {
+    width: 16px;
+    height: 16px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  // 颜色选择器修改为圆形
+  .n-color-picker-checkboard {
+    background: transparent;
+    border-radius: 0;
+    &::after {
+      background-image: none;
+    }
+    & + div {
+      border-radius: 50%;
+    }
+  }
+}
+:deep(.n-color-picker-trigger__value) {
+  display: none;
+}
+
+/* 滑动选择器 */
+.n-slider {
+  :deep(.n-slider-handles) {
+    .n-slider-handle-wrapper {
+      .n-slider-handle {
+        width: 13px;
+        height: 13px;
+      }
+    }
+  }
+}
+
+/* 开关 */
+.n-switch {
+  max-width: 40px;
+  height: 20px;
+  :deep(.n-switch__rail) {
+    height: 18px;
+    min-width: 38px;
+    .n-switch__button {
+      width: 15px;
+      height: 15px;
+      background-color:var(--n-icon-color);
+    }
+  }
+  &.n-switch--active {
+    :deep(.n-switch__rail) {
+      // background: #212b40;
+    // @include fetch-bg-color('input-color');
+    // background: $primary-color;
+    border: 1px solid $primary-color;
+      .n-switch__button {
+        top: 1.5px;
+        left: 22px;
+        background: var(--n-button-color);
+      }
+    }
+  }
+}
+:deep(.n-switch__rail) {
+  // background: #10151f;
+  // border: 1px solid #222831;
+}
+
+/* 按钮 */
+.n-button {
+  width: 80px;
+  height: 30px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: PingFangSC-Semibold, PingFang SC;
+  font-weight: 600;
+}
+
+
+.n-tabs {
+  // --n-tab-text-color-active: #fff !important;
+  // --n-tab-text-color: #fff !important;
+}

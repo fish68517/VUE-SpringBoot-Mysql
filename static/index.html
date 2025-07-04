@@ -1,0 +1,59 @@
+<!--
+ * @Author: wangcong
+ * @Date: 2023-07-14 15:22:39
+ * @LastEditTime: 2025-01-06 14:09:40
+ * @LastEditors: wangcong
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+  <link rel="icon" href="./favicon.ico" />
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script> -->
+  <style>
+    #app {
+      /* background: #000; */
+      width: 100vw;
+      height: 100vh;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <!-- <script src="http://122.51.75.170:90/js/easyplayer-pro.js"></script> -->
+  <script type="text/javascript" src="./lib/webrtc/webrtc.min.js"></script>
+  <script src="./lib/gis3d/index.js"></script>
+  <!-- 南陵的大华播放器 -->
+  <script type="text/javascript" src="/wsplayer-gov/jquery-3.6.0.min.js"></script>
+  <script type="text/javascript" src="/wsplayer-gov/wsplayer.min.js"></script>
+  <!-- 重庆h265播放器 -->
+  <script type="text/javascript" src="./lib/h265player/example-dist.js"></script>
+  <script type="text/javascript" src="./lib/h265player/media.js"></script>
+  <script type="text/javascript" src="./js/easyplayer-pro.js"></script>
+  <script type="application/javascript" src="./lib/playerjs/EasyPlayer-pro.js"></script>
+  <script type="text/javascript" src="./lib/requirejs.min.js"></script>
+  <!-- <script type="text/javascript" src="./js/mapServiceWorkerRegister.js"></script> -->
+
+  <script>
+    console.log(123)
+  </script>
+</head>
+
+<body style="--primary-color: #3a89ff; --assistant-color: #9dc4fe">
+  <% for (var i in htmlWebpackPlugin.options.files&&htmlWebpackPlugin.options.files.js) { %>
+    <script src="<%= htmlWebpackPlugin.options.files.js[i] %>"></script>
+    <% } %>
+      <div id="app" class="app"></div>
+</body>
+
+</html>

@@ -1,0 +1,76 @@
+<mxfile host="65bd71144e">
+    <diagram id="J-hdZ4kVVRslDDwZ6p78" name="第 1 页">
+        <mxGraphModel dx="774" dy="489" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="134" y="229.5" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="插拔式组件&lt;br&gt;(每个版本单独管理)" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="150" y="240" width="90" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="" style="endArrow=none;dashed=1;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="11">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="444" y="487" as="sourcePoint"/>
+                        <mxPoint x="544" y="387" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="544" y="260"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9" value="组件库远程地址&lt;br&gt;(版本增量更新)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="494" y="229.5" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="组件管理（PC）&lt;br&gt;（版本绑定）" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="134" y="417" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="拖拽低代码平台" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="484" y="415" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="组件版本匹配" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="244" y="377" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="" style="endArrow=classic;html=1;exitX=0.427;exitY=1.017;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.392;entryY=-0.025;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="2" target="10">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="444" y="487" as="sourcePoint"/>
+                        <mxPoint x="494" y="437" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="14" value="" style="endArrow=classic;startArrow=classic;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="10" target="9">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="444" y="487" as="sourcePoint"/>
+                        <mxPoint x="494" y="437" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="15" value="" style="endArrow=classic;html=1;startArrow=none;exitX=0.953;exitY=0.978;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="2">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="234" y="300" as="sourcePoint"/>
+                        <mxPoint x="484" y="440" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="16" value="组件版本输出" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="237" y="304" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="备注：每个组件库包的更新迭代均存在远程静态服务上，如V2.0版本更新了折线图，只导出对应更新的组件" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="630" y="189.5" width="150" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="如柱形图当前最新版本V1.2，最新组件库并没有更新柱形图" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="10" y="154" width="110" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="部分组件更新" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="340" y="224.5" width="93" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="组件管理，匹配当前组件和组件库的版本，操作管理" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="470" width="100" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="每个页面使用的组件存在后台数据库，有新版本提示更新，可手动更新最新版本" style="text;strokeColor=none;align=center;fillColor=none;html=1;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="590" y="490" width="140" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="参考easyV版本概念，个人总结的一套组件管理机制匹配" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fontColor=#000000;darkOpacity=0.05;fillColor=#FFF9B2;strokeColor=none;fillStyle=solid;direction=west;gradientDirection=north;gradientColor=#FFF2A1;shadow=1;size=20;pointerEvents=1;" vertex="1" parent="1">
+                    <mxGeometry x="320" y="450" width="120" height="110" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

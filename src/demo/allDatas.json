@@ -1,0 +1,304 @@
+[
+  {
+    "key": "南京市",
+    "value": {
+      "dimensions": ["product", "data", "status", "label", "value"],
+      "source": [
+        {
+          "product": "南京1",
+          "data": 0,
+          "status": "1",
+          "label": "123",
+          "value": 15
+        },
+        {
+          "product": "南京2",
+          "data": 0,
+          "status": "1",
+          "label": "321"
+        },
+        {
+          "product": "南京3",
+          "data": 0,
+          "status": "2",
+          "label": "111"
+        },
+        {
+          "product": "南京4",
+          "data": 0,
+          "status": "1",
+          "label": "222"
+        },
+        {
+          "product": "南京5",
+          "data": 0,
+          "status": "3",
+          "label": "333"
+        },
+        {
+          "product": "南京6",
+          "data": 0,
+          "status": "2",
+          "label": "345"
+        }
+      ]
+    }
+  },
+  {
+    "key": "苏州市",
+    "value": {
+      "dimensions": ["product", "data", "value"],
+      "source": [
+        {
+          "product": "苏州1",
+          "data": 124,
+          "value": 51
+        },
+        {
+          "product": "苏州2",
+          "data": 205
+        },
+        {
+          "product": "苏州3",
+          "data": 299
+        },
+        {
+          "product": "苏州4",
+          "data": 190
+        },
+        {
+          "product": "苏州5",
+          "data": 70
+        },
+        {
+          "product": "苏州6",
+          "data": 95
+        }
+      ]
+    }
+  },
+  {
+    "key": "镇江市",
+    "value": {
+      "dimensions": ["product", "data"],
+      "source": [
+        {
+          "product": "镇江1",
+          "data": 100
+        },
+        {
+          "product": "镇江2",
+          "data": 45
+        },
+        {
+          "product": "镇江3",
+          "data": 150
+        },
+        {
+          "product": "镇江4",
+          "data": 80
+        },
+        {
+          "product": "镇江5",
+          "data": 76
+        },
+        {
+          "product": "镇江6",
+          "data": 156
+        }
+      ]
+    }
+  },
+  {
+    "key": "常州市",
+    "value": {
+      "dimensions": ["product", "data"],
+      "source": [
+        {
+          "product": "常州1",
+          "data": 98
+        },
+        {
+          "product": "常州2",
+          "data": 145
+        },
+        {
+          "product": "常州3",
+          "data": 190
+        },
+        {
+          "product": "常州4",
+          "data": 80
+        },
+        {
+          "product": "常州5",
+          "data": 43
+        },
+        {
+          "product": "常州6",
+          "data": 132
+        }
+      ]
+    }
+  },
+  {
+    "key": "无锡市",
+    "value": {
+      "dimensions": ["product", "data"],
+      "source": [
+        {
+          "product": "无锡1",
+          "data": 120
+        },
+        {
+          "product": "无锡2",
+          "data": 200
+        },
+        {
+          "product": "无锡3",
+          "data": 150
+        },
+        {
+          "product": "无锡4",
+          "data": 80
+        },
+        {
+          "product": "无锡5",
+          "data": 70
+        },
+        {
+          "product": "无锡6",
+          "data": 110
+        }
+      ]
+    }
+  },
+  {
+    "key": "南通市",
+    "value": {
+      "dimensions": ["product", "data"],
+      "source": [
+        {
+          "product": "南通1",
+          "data": 145
+        },
+        {
+          "product": "南通2",
+          "data": 134
+        },
+        {
+          "product": "南通3",
+          "data": 324
+        },
+        {
+          "product": "南通4",
+          "data": 456
+        },
+        {
+          "product": "南通5",
+          "data": 23
+        },
+        {
+          "product": "南通6",
+          "data": 77
+        }
+      ]
+    }
+  },
+  {
+    "key": "扬州市",
+    "value": {
+      "dimensions": ["product", "data"],
+      "source": [
+        {
+          "product": "扬州1",
+          "data": 80
+        },
+        {
+          "product": "扬州2",
+          "data": 200
+        },
+        {
+          "product": "扬州3",
+          "data": 23
+        },
+        {
+          "product": "扬州4",
+          "data": 84
+        },
+        {
+          "product": "扬州5",
+          "data": 44
+        },
+        {
+          "product": "扬州6",
+          "data": 165
+        }
+      ]
+    }
+  },
+  {
+    "key": "宿迁市",
+    "value": {
+      "dimensions": ["product", "data"],
+      "source": [
+        {
+          "product": "宿迁1",
+          "data": 66
+        },
+        {
+          "product": "宿迁2",
+          "data": 34
+        },
+        {
+          "product": "宿迁3",
+          "data": 120
+        },
+        {
+          "product": "宿迁4",
+          "data": 54
+        },
+        {
+          "product": "宿迁5",
+          "data": 70
+        },
+        {
+          "product": "宿迁6",
+          "data": 35
+        }
+      ]
+    }
+  },
+  {
+    "key": "江苏省",
+    "value": {
+      "dimensions": ["product", "data"],
+      "source": [
+        {
+          "product": "江苏1",
+          "data": 150
+        },
+        {
+          "product": "江苏2",
+          "data": 140
+        },
+        {
+          "product": "江苏3",
+          "data": 199
+        },
+        {
+          "product": "江苏4",
+          "data": 85
+        },
+        {
+          "product": "江苏5",
+          "data": 34
+        },
+        {
+          "product": "江苏6",
+          "data": 22
+        }
+      ]
+    }
+  }
+]

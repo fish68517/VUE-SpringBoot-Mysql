@@ -1,0 +1,34 @@
+{
+  "morandi": {
+    "color": ["#7a5f6b", "#937372", "#e7e0d5", "#c1c09c", "#a2aab3", "#d3a56e"],
+    "label": "莫兰迪",
+    "val": "morandi"
+  },
+  "fog": {
+    "color": ["#a3e3fd", "#91cff8", "#81bbf1", "#70a8eb", "#6094e6", "#4f7fdf"],
+    "label": "雾霾色",
+    "val": "fog"
+  },
+  "party": {
+    "color": ["#de2910", "#ffde00", "#f4c944", "#fdf0ea", "#ff6063", "#EF5B21"],
+    "label": "党建色",
+    "val": "party"
+    
+  },
+  "china": {
+    "color": ["#B3B9AD", "#3E6F51", "#174F7F", "#5E8389", "#D54E43", "#5D898A"],
+    "label": "中国风",
+    "val": "china"
+  },
+  "technology": {
+    "color": ["#04bcfa", "#0454cb", "#056ff1", "#47dea2", "#16b8d6", "#f1b736"],
+    "label": "科技色",
+    "val": "technology"
+  },
+  "country": {
+    "color": ["#EDF8E9", "#C8E9BF", "#A2D99B", "#74C476", "#31A354", "#026D2B"],
+    "label": "乡村色",
+    "val": "country"
+  }
+}
+

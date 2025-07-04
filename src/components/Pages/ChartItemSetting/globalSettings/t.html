@@ -1,0 +1,27 @@
+<!--
+ * @Author: wangcong
+ * @Date: 2023-09-14 11:09:08
+ * @LastEditTime: 2023-09-14 11:09:10
+ * @LastEditors: wangcong
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竖向排列的输入框</title>
+    <style>
+        .vertical-input {
+            writing-mode: vertical-rl; /* 将文本竖向排列，从右到左 */
+            text-orientation: upright; /* 设置文字方向为正向 */
+            white-space: nowrap; /* 防止文字换行 */
+            width: 2em; /* 设置输入框的宽度 */
+            height: 10em; /* 设置输入框的高度 */
+        }
+    </style>
+</head>
+<body>
+    <input type="text" class="vertical-input" placeholder="竖向排列的文字">
+</body>
+</html>

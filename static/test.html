@@ -1,0 +1,82 @@
+<!--
+ * @Author: kaix
+ * @Date: 2023-12-07 10:21:14
+ * @LastEditTime: 2024-07-08 10:33:01
+ * @LastEditors: wangcong
+ * @Description: 
+-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>iframe子页面</title>
+    </head>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+    <body>
+        <div style="background: #fff;height: 100%">
+            子页发送消息
+            <button id="sendMessageButton">点击发送name = a</button>
+            <button id="sendMessageButtonB">点击发送name = b</button>
+            <button id="sendMessageButtonC">点击发送name = c</button>
+            <div>发送的参数</div>
+            <div id="sendMessage"></div>
+            <div>收到的参数</div>
+            <div id="getMessage"></div>
+        </div>
+    </body>
+    <script>
+
+const sendMessageButton = document.getElementById('sendMessageButton');
+sendMessageButton.addEventListener('click', clickFn)
+const sendMessageButtonB = document.getElementById('sendMessageButtonB');
+sendMessageButtonB.addEventListener('click', clickFnB)
+const sendMessageButtonC = document.getElementById('sendMessageButtonC');
+sendMessageButtonC.addEventListener('click', clickFnC)
+function clickFn() {
+  const data = {
+    token: getUUID(),
+    name: 'a',
+    pid: 'ccc'
+  }
+  window.parent.postMessage(data, '*')
+  const dom = document.getElementById('sendMessage')
+  dom.innerHTML = JSON.stringify(data)
+}
+function clickFnB() {
+  const data = {
+    token: getUUID(),
+    name: 'b',
+    pid: 'ccc'
+  }
+  window.parent.postMessage(data, '*')
+  const dom = document.getElementById('sendMessage')
+  dom.innerHTML = JSON.stringify(data)
+}
+function clickFnC() {
+  const data = {
+    token: getUUID(),
+    name: 'c',
+    pid: 'ccc'
+  }
+  window.parent.postMessage(data, '*')
+  const dom = document.getElementById('sendMessage')
+  dom.innerHTML = JSON.stringify(data)
+}
+
+  window.addEventListener('message', function(event) {
+    const dom = document.getElementById('getMessage')
+    dom.innerHTML = JSON.stringify(event.data)
+  }, false)
+
+  const getUUID = (randomLength = 10) => {
+    return Number(Math.random().toString().substring(2, randomLength) + Date.now()).toString(36)
+  }
+
+</script>
+</html>
