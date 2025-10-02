@@ -12,7 +12,7 @@ public class GenerateCode {
 
     public static void main(String[] args) {
         // 1. 设置数据库连接
-        FastAutoGenerator.create("jdbc:mysql://localhost:3306/schedule_tts?serverTimezone=Asia/Shanghai",
+        FastAutoGenerator.create("jdbc:mysql://localhost:3306/time_management_db?serverTimezone=Asia/Shanghai",
                         "root", "root")
 
                 // 2. 全局配置
