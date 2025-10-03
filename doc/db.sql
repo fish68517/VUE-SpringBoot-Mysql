@@ -188,3 +188,113 @@ CREATE TABLE `notification_center` (
   PRIMARY KEY (`notification_id`),
   FOREIGN KEY (`campus_user_id`) REFERENCES `campus_user`(`campus_user_id`)
 ) COMMENT '通知中心表';
+
+
+
+-- 使用目标数据库
+USE `time_management_db`;
+
+-- 在插入新数据前，清空所有表中的旧数据（注意外键约束，按顺序清空）
+-- 注意：SET FOREIGN_KEY_CHECKS=0; 和 SET FOREIGN_KEY_CHECKS=1; 用于临时禁用和恢复外键检查，以便能按任意顺序清空表。
+SET FOREIGN_KEY_CHECKS=0;
+TRUNCATE TABLE `notification_center`;
+TRUNCATE TABLE `user_setting`;
+TRUNCATE TABLE `campus_friend`;
+TRUNCATE TABLE `learn_resource`;
+TRUNCATE TABLE `resource_category`;
+TRUNCATE TABLE `user_achieve_rel`;
+TRUNCATE TABLE `achievement`;
+TRUNCATE TABLE `habit_checkin`;
+TRUNCATE TABLE `habit_track`;
+TRUNCATE TABLE `focus_record`;
+TRUNCATE TABLE `task_focus`;
+TRUNCATE TABLE `campus_user`;
+SET FOREIGN_KEY_CHECKS=1;
+
+
+-- 1. 校园用户表 (campus_user)
+INSERT INTO `campus_user` (`campus_user_id`, `campus_nickname`, `campus_avatar_url`, `campus_school_id`, `campus_email_addr`, `campus_status_flag`, `campus_level_code`, `campus_badge_count`, `campus_user_type`) VALUES
+(1, '张伟', 'https://example.com/avatars/zhangwei.png', '20210001', 'zhangwei@university.edu.cn', 1, 5, 2, 'student'),
+(2, '李静', 'https://example.com/avatars/lijing.png', '20210002', 'lijing@university.edu.cn', 1, 3, 1, 'student'),
+(3, '王磊', 'https://example.com/avatars/wanglei.png', '20220001', 'wanglei@university.edu.cn', 0, 1, 0, 'student'),
+(4, 'Admin', 'https://example.com/avatars/admin.png', '00000000', 'admin@university.edu.cn', 1, 99, 0, 'admin');
+
+-- 2. 任务专注表 (task_focus)
+INSERT INTO `task_focus` (`campus_user_id`, `task_title_text`, `task_description_text`, `task_deadline_timestamp`, `task_status_enum`, `task_priority_code`, `task_category_code`) VALUES
+(1, '完成毕业论文第三章', '撰写关于市场分析的部分，约3000字。', '2025-10-15 23:59:59', 'in_progress', 2, '毕业设计'),
+(1, '学习Vue3新特性', '观看官方文档的组合式API部分，并做笔记。', '2025-10-05 22:00:00', 'pending', 1, '专业学习'),
+(2, '准备四级英语单词', '背诵List 10 - List 12的核心单词。', '2025-10-03 18:00:00', 'completed', 2, '英语学习'),
+(2, '小组项目UI设计', '使用Figma完成项目首页和个人中心的UI原型图。', '2025-10-08 20:00:00', 'pending', 1, '课程作业');
+
+-- 3. 专注记录表 (focus_record)
+-- 关联张伟的“完成毕业论文第三章”（task_focus_id=1）
+INSERT INTO `focus_record` (`campus_user_id`, `task_focus_id`, `focus_start_timestamp`, `focus_end_timestamp`, `focus_duration_seconds`, `focus_type_enum`, `focus_status_enum`, `focus_interruption_count`) VALUES
+(1, 1, '2025-10-03 09:00:00', '2025-10-03 09:25:00', 1500, 'pomodoro', 'completed', 0),
+(1, 1, '2025-10-03 09:30:00', '2025-10-03 09:55:00', 1500, 'pomodoro', 'completed', 1),
+-- 关联李静的“准备四级英语单词”（task_focus_id=3）
+(2, 3, '2025-10-02 10:00:00', '2025-10-02 10:30:00', 1800, 'custom', 'completed', 0);
+
+-- 4. 习惯追踪表 (habit_track)
+INSERT INTO `habit_track` (`campus_user_id`, `habit_name_text`, `habit_frequency_enum`, `habit_reminder_time`, `habit_streak_count`, `habit_total_count`, `habit_color_hex`) VALUES
+(1, '每天阅读半小时', 'daily', '21:30:00', 15, 102, '#409EFF'),
+(1, '每周健身3次', 'weekly', '18:00:00', 4, 30, '#67C23A'),
+(2, '坚持早起', 'daily', '06:30:00', 7, 50, '#E6A23C');
+
+-- 5. 习惯打卡表 (habit_checkin)
+-- 关联张伟的“每天阅读半小时”（habit_track_id=1）
+INSERT INTO `habit_checkin` (`habit_track_id`, `checkin_date`, `checkin_note_text`) VALUES
+(1, '2025-10-01', '读了《三体》第一章'),
+(1, '2025-10-02', '继续读《三体》'),
+-- 关联李静的“坚持早起”（habit_track_id=3）
+(3, '2025-09-26', '成功早起！'),
+(3, '2025-09-27', '又是元气满满的一天'),
+(3, '2025-09-28', '周末也没有赖床'),
+(3, '2025-09-29', '坚持就是胜利'),
+(3, '2025-09-30', 'Good morning'),
+(3, '2025-10-01', '国庆节快乐！'),
+(3, '2025-10-02', '连续7天达成！');
+
+-- 6. 成就徽章表 (achievement)
+INSERT INTO `achievement` (`achievement_id`, `achieve_name_text`, `achieve_description_text`, `achieve_icon_url`, `achieve_rule_text`, `achieve_type_enum`) VALUES
+(1, '早起鸟', '连续7天在早上7点前完成早起打卡', 'https://example.com/badges/early_bird.png', '连续7天早起', 'habit'),
+(2, '专注大师', '累计完成50个番茄钟（25分钟专注）', 'https://example.com/badges/focus_master.png', '完成50个番茄钟', 'focus'),
+(3, '任务达人', '成功完成10个高优先级的任务', 'https://example.com/badges/task_expert.png', '完成10个高优任务', 'task');
+
+-- 7. 用户成就关联表 (user_achieve_rel)
+-- 李静获得了“早起鸟”徽章
+INSERT INTO `user_achieve_rel` (`campus_user_id`, `achievement_id`, `achieve_condition_text`) VALUES
+(2, 1, '于2025-10-02达成连续7天早起'),
+-- 张伟获得了“专注大师”徽章
+(1, 2, '于2025-10-03累计完成50个番茄钟');
+
+-- 8. 资源分类表 (resource_category)
+INSERT INTO `resource_category` (`category_name_text`, `category_description_text`, `category_order_number`) VALUES
+('官方推荐', '学校官方推荐的核心学习资源', 1),
+('学科论坛', '各大学科领域的专业交流论坛', 2),
+('慕课平台', '国内外知名的在线课程学习网站', 3);
+
+-- 9. 学习资源表 (learn_resource)
+INSERT INTO `learn_resource` (`resource_category_id`, `resource_name_text`, `resource_url_text`, `resource_description_text`, `resource_recommend_level`) VALUES
+(1, '学校图书馆', 'https://lib.university.edu.cn', '我校图书馆官网，内含丰富的电子期刊和图书资源。', 5),
+(1, '教务系统', 'https://jwc.university.edu.cn', '查询成绩、课表和选课。', 5),
+(2, 'CSDN', 'https://www.csdn.net/', '专业的中文IT技术社区。', 4),
+(3, '中国大学MOOC', 'https://www.icourse163.org/', '汇集国内顶尖高校的在线课程。', 4);
+
+-- 10. 校园好友表 (campus_friend)
+-- 张伟和李静是好友
+INSERT INTO `campus_friend` (`campus_user_id`, `friend_user_id`, `friend_status_enum`) VALUES
+(1, 2, 'accepted'),
+(2, 1, 'accepted'),
+-- 王磊向张伟发起了好友请求
+(3, 1, 'pending');
+
+-- 11. 用户设置表 (user_setting)
+INSERT INTO `user_setting` (`campus_user_id`, `setting_theme_enum`, `setting_default_focus_mins`, `setting_default_break_mins`, `setting_privacy_level`, `setting_daily_reminder_time`) VALUES
+(1, 'dark', 30, 5, 1, '22:00:00'),
+(2, 'light', 25, 5, 0, '21:00:00');
+
+-- 12. 通知中心表 (notification_center)
+INSERT INTO `notification_center` (`campus_user_id`, `notification_type_enum`, `notification_title_text`, `notification_content_text`, `notification_action_url`) VALUES
+(1, 'task_reminder', '任务即将到期', '您的任务“学习Vue3新特性”将在今天晚上22:00截止。', '/task/2'),
+(1, 'friend_request', '新的好友请求', '用户“王磊”请求添加您为好友。', '/friends'),
+(2, 'system', '系统更新通知', '自律引导系统V1.1版本已发布，新增了年度数据报告功能。', '/settings/update-log');

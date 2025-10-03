@@ -4,23 +4,30 @@ import Layout from '../layout/index.vue'
 const routes = [
   {
     path: '/',
-    component: Layout, // 所有主要页面都使用这个布局
-    redirect: '/task', // 默认重定向到任务页面
+    component: Layout,
+    redirect: '/dashboard', // 将默认页面改为仪表盘
     children: [
+      // 新增仪表盘路由
+      {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: () => import('../views/DashboardPage.vue')
+      },
       {
         path: '/task',
         name: 'Task',
-        component: () => import('../views/TaskPage.vue') // 懒加载
+        component: () => import('../views/TaskPage.vue')
       },
       {
         path: '/habit',
         name: 'Habit',
         component: () => import('../views/HabitPage.vue')
       },
+      // 新增成就徽章路由
       {
-        path: '/stats',
-        name: 'Stats',
-        component: () => import('../views/StatsPage.vue')
+        path: '/achievement',
+        name: 'Achievement',
+        component: () => import('../views/AchievementPage.vue')
       }
       // 在这里继续添加其他页面的路由
     ]
