@@ -4,18 +4,19 @@ import android.content.Context;
 
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.maps.MapsInitializer;
+import com.archive.app.model.CampusUser;
 
 public class MyApplication extends android.app.Application{
 
 
-    public static User curUser;
+    public static CampusUser curUser;
 
     private static final String TAG = "MyApplication";
     private Context context;
 
 
 
-    public static void setUser(User user) {
+    public static void setUser(CampusUser user) {
 
         // save user to shared preferences or database or any other storage
         curUser = user;

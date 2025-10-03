@@ -56,26 +56,10 @@
 
         <service android:name="com.amap.api.location.APSService" />-->
 
-        <activity
-            android:name="com.archive.app.view.activity.WelcomActivity"
-            android:exported="true">
 
-        </activity>
 
-        <receiver android:name=".reminders.ReminderBroadcastReceiver"
-            android:exported="true"/>
- <!--       <receiver android:name=".reminders.BootCompletedReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>-->
 
-        <service
-            android:name=".reminders.ReminderService"
-            android:exported="false"
-            android:foregroundServiceType="shortService" />
+
 
 
         <activity android:name="com.archive.app.view.activity.RegisterActivity"
@@ -91,9 +75,7 @@
         </activity>
 
 
-        <activity android:name=".tts.TTSActivity"
-            android:exported="true">
-        </activity>
+
 
 
         <activity
@@ -105,9 +87,6 @@
             </intent-filter>-->
         </activity>
 
-
-        <activity android:name="com.archive.app.view.activity.UserInfoEditActivity" />
-        <activity android:name="com.archive.app.view.activity.AddEditScheduleActivity" />
 
 
     </application>

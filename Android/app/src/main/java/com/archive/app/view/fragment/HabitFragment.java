@@ -13,6 +13,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.archive.app.R;
+import com.archive.app.view.adapter.HabitAdapter;
 import com.archive.app.viewmodel.HabitViewModel;
 
 

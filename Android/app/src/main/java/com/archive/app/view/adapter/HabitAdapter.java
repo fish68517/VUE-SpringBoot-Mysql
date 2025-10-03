@@ -21,7 +21,7 @@ public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHol
     @NonNull
     @Override
     public HabitViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_habit, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_habit, parent, false);
         return new HabitViewHolder(view);
     }
 

@@ -13,11 +13,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
 
-    private static final String BASE_URL = "http://192.168.8.111:8081/";
+    private static final String BASE_URL = "http://192.168.0.103:8081/";
 
     private static Retrofit userRetrofit;
     private static Retrofit mainRetrofit;
-    private static UserApiService userApiService;
     private static ApiService mainApiService;
 
     private static OkHttpClient getClient() {
@@ -37,19 +36,6 @@ public class RetrofitClient {
                 .create();
     }
 
-    public static UserApiService getUserApiService() {
-        if (userApiService == null) {
-            if (userRetrofit == null) {
-                userRetrofit = new Retrofit.Builder()
-                        .baseUrl(BASE_URL)
-                        .client(getClient())
-                        .addConverterFactory(GsonConverterFactory.create(getGson()))
-                        .build();
-            }
-            userApiService = userRetrofit.create(UserApiService.class);
-        }
-        return userApiService;
-    }
 
     public static ApiService getMainApiService() {
         if (mainApiService == null) {

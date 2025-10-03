@@ -8,8 +8,9 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.archive.app.ApiService;
 import com.archive.app.RetrofitClient;
-import com.archive.app.db.UserDao;
 import com.archive.app.R;
+import com.archive.app.model.CampusUser;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -46,28 +47,12 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            User  user   = new User();
-            user.setUsername(username);
+            CampusUser user = new CampusUser();
+            user.setCampusEmailAddr(username);
             user.setPassword(password);
+            user.setCampusUserType(role);
 
-
-            UserDao userDao = new UserDao(this);
-            long id  = userDao.addUser(user);
-            if (id == -1) {
-                Toast.makeText(this, "注册失败，用户名可能已存在", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if(id != -1) {
-                Toast.makeText(this, "注册成功", Toast.LENGTH_SHORT).show();
-                finish();
-                return;
-            } else {
-                Toast.makeText(this, "注册失败，请检查网络连接", Toast.LENGTH_SHORT).show();
-            }
-
-
-
-            apiService.createUser(user).enqueue(new Callback<Boolean>() {
+            apiService.register(user).enqueue(new Callback<Boolean>() {
                 @Override
                 public void onResponse(Call<Boolean> call, Response<Boolean> response) {
 

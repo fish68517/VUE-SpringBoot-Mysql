@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -14,23 +15,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 
+import com.archive.app.ApiService;
 import com.archive.app.MyApplication;
-import com.archive.app.db.UserDao; // 引入 UserDao
+import com.archive.app.RetrofitClient;
+
 import com.archive.app.R; // 引入您的 R 文件
+import com.archive.app.model.CampusUser;
 import com.google.android.material.textfield.TextInputEditText;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
     // 1. 定义UI控件变量
     private Toolbar toolbar;
     private TextInputEditText etUsername;
+    private ApiService apiService = RetrofitClient.getMainApiService();
+
     private TextInputEditText etPassword;
     private CheckBox cbRememberPassword;
     private Button btnLogin;
     private Button btnToRegister;
 
     // 2. 定义数据操作对象
-    private UserDao userDao;
+
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -39,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         // 初始化 DAO 和 SharedPreferences
-        userDao = new UserDao(this);
+
         sharedPreferences = getSharedPreferences("login_prefs", MODE_PRIVATE);
 
         // 初始化视图控件
@@ -114,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // 2. 输入验证
         if (TextUtils.isEmpty(username)) {
-            Toast.makeText(this, "用户名不能为空", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "邮箱不能为空", Toast.LENGTH_SHORT).show();
             etUsername.requestFocus(); // 将光标定位到用户名输入框
             return;
         }
@@ -125,31 +135,38 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
-        // 3. 调用 UserDao 进行数据库查询
-        User userFromDb = userDao.getUserByUsername(username);
+        CampusUser user = new CampusUser();
+        user.setCampusEmailAddr(username);
+        user.setPassword(password);
+        apiService.login(user).enqueue(new Callback<CampusUser>() {
+            @Override
+            public void onResponse(Call<CampusUser> call, Response<CampusUser> response) {
+                if (response.isSuccessful()) {
+                    CampusUser userFromDb = response.body();
+                    // 情况二：密码正确，登录成功
+                    Toast.makeText(LoginActivity.this, "登录成功！", Toast.LENGTH_SHORT).show();
 
-        // 4. 判断登录结果
-        if (userFromDb == null) {
-            // 情况一：用户不存在
-            Toast.makeText(this, "该用户不存在，请先注册", Toast.LENGTH_SHORT).show();
-        } else if (userFromDb.getPassword().equals(password)) {
-            // 情况二：密码正确，登录成功
-            Toast.makeText(this, "登录成功！", Toast.LENGTH_SHORT).show();
+                    // 处理“记住密码”逻辑
+                    handleRememberPassword(username, password);
 
-            // 处理“记住密码”逻辑
-            handleRememberPassword(username, password);
+                    MyApplication.curUser = userFromDb; // 设置当前用户
 
-            MyApplication.curUser = userFromDb; // 设置当前用户
+                    // TODO: 跳转到应用主界面
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish(); // 销毁登录页，防止用户按返回键回到这里
+                }
+            }
 
-            // TODO: 跳转到应用主界面
-           Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish(); // 销毁登录页，防止用户按返回键回到这里
+            @Override
+            public void onFailure(Call<CampusUser> call, Throwable t) {
 
-        } else {
-            // 情况三：密码错误
-            Toast.makeText(this, "密码错误，请重试", Toast.LENGTH_SHORT).show();
-        }
+                Log.e("LoginActivity", "登录失败：" + t.getMessage());
+                Toast.makeText(LoginActivity.this, "登录失败！请检查用户名和密码", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     /**
