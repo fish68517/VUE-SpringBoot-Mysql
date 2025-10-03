@@ -1,49 +1,291 @@
 import axios from 'axios';
 
-// 从您的 SpringBoot BaseController 继承的类的 @RequestMapping 推断出基础 URL
-// 例如 CampusUserController 的 @RequestMapping 是 "/campusUser"
-// 您需要根据后端实际情况调整这里的 baseURL
+// apiClient 实例负责与后端的所有HTTP通信
 const apiClient = axios.create({
-    baseURL: 'http://localhost:8081', // SpringBoot 后端地址 (端口号以 application.properties 为准)
+    // 后端服务的基础URL，根据 application.properties 确定
+    baseURL: 'http://localhost:8081', // SpringBoot 后端地址
     headers: {
         'Content-Type': 'application/json'
     }
 });
 
 /**
- * 封装用户相关的 API 请求
+ * 封装所有后端 API 请求
+ * 每个对象（如 campusUserApi）对应后端一个 Controller
  */
-export default {
-    /**
-     * 用户登录
-     * @param {object} userData - 包含 email 和 password 的对象
-     */
-    login(userData) {
-        // 假设登录接口在后端的 /login 路径下
-        return apiClient.post('/login', userData);
+const api = {
+
+    //=========================== 1. 校园用户 (CampusUser) ===========================
+    campusUserApi: {
+        login(credentials) {
+            // 【注意】/login 是一个标准的RESTful登录路径。
+            // 您需要在后端的 CampusUserController.java 中添加一个 @PostMapping("/login") 方法来处理此请求。
+            return apiClient.post('/campusUser/login', credentials);
+        },
+        register(data) { // 注册
+            return apiClient.post('/campusUser', data);
+        },
+        getById(id) {
+            return apiClient.get(`/campusUser/${id}`);
+        },
+        list() {
+            return apiClient.get('/campusUser/list');
+        },
+        update(data) {
+            return apiClient.put('/campusUser', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/campusUser/${id}`);
+        }
     },
 
-    /**
-     * 用户注册
-     * @param {object} userData - 包含 campusEmailAddr, password, campusUserType 等的用户信息对象
-     */
-    register(userData) {
-        // 根据您的 BaseController，保存操作通常是直接 POST 到根路径
-        return apiClient.post('/', userData);
+    //=========================== 2. 任务专注 (TaskFocus) ===========================
+    taskFocusApi: {
+        create(data) {
+            return apiClient.post('/taskFocus', data);
+        },
+        getById(id) {
+            return apiClient.get(`/taskFocus/${id}`);
+        },
+        list() {
+            return apiClient.get('/taskFocus/list');
+        },
+        update(data) {
+            return apiClient.put('/taskFocus', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/taskFocus/${id}`);
+        }
     },
 
-    /**
-     * 根据 ID 获取用户信息
-     * @param {number} id - 用户ID
-     */
-    getUserById(id) {
-        return apiClient.get(`/${id}`);
+    //=========================== 3. 专注记录 (FocusRecord) ===========================
+    focusRecordApi: {
+        create(data) {
+            return apiClient.post('/focusRecord', data);
+        },
+        getById(id) {
+            return apiClient.get(`/focusRecord/${id}`);
+        },
+        list() {
+            return apiClient.get('/focusRecord/list');
+        },
+        update(data) {
+            return apiClient.put('/focusRecord', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/focusRecord/${id}`);
+        }
     },
 
-    /**
-     * 获取所有用户列表
-     */
-    getAllUsers() {
-        return apiClient.get('/list');
+    //=========================== 4. 习惯追踪 (HabitTrack) ===========================
+    habitTrackApi: {
+        create(data) {
+            return apiClient.post('/habitTrack', data);
+        },
+        getById(id) {
+            return apiClient.get(`/habitTrack/${id}`);
+        },
+        list() {
+            return apiClient.get('/habitTrack/list');
+        },
+        update(data) {
+            return apiClient.put('/habitTrack', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/habitTrack/${id}`);
+        }
+    },
+
+    //=========================== 5. 习惯打卡 (HabitCheckin) ===========================
+    habitCheckinApi: {
+        create(data) {
+            return apiClient.post('/habitCheckin', data);
+        },
+        getById(id) {
+            return apiClient.get(`/habitCheckin/${id}`);
+        },
+        list() {
+            return apiClient.get('/habitCheckin/list');
+        },
+        update(data) {
+            return apiClient.put('/habitCheckin', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/habitCheckin/${id}`);
+        }
+    },
+
+    //=========================== 6. 成就徽章 (Achievement) ===========================
+    achievementApi: {
+        create(data) {
+            return apiClient.post('/achievement', data);
+        },
+        getById(id) {
+            return apiClient.get(`/achievement/${id}`);
+        },
+        list() {
+            return apiClient.get('/achievement/list');
+        },
+        update(data) {
+            return apiClient.put('/achievement', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/achievement/${id}`);
+        }
+    },
+
+    //=========================== 7. 用户成就关联 (UserAchieveRel) ===========================
+    userAchieveRelApi: {
+        create(data) {
+            return apiClient.post('/userAchieveRel', data);
+        },
+        getById(id) {
+            return apiClient.get(`/userAchieveRel/${id}`);
+        },
+        list() {
+            return apiClient.get('/userAchieveRel/list');
+        },
+        update(data) {
+            return apiClient.put('/userAchieveRel', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/userAchieveRel/${id}`);
+        }
+    },
+
+    //=========================== 8. 学习资源 (LearnResource) ===========================
+    learnResourceApi: {
+        create(data) {
+            return apiClient.post('/learnResource', data);
+        },
+        getById(id) {
+            return apiClient.get(`/learnResource/${id}`);
+        },
+        list() {
+            return apiClient.get('/learnResource/list');
+        },
+        update(data) {
+            return apiClient.put('/learnResource', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/learnResource/${id}`);
+        }
+    },
+
+    //=========================== 9. 资源分类 (ResourceCategory) ===========================
+    resourceCategoryApi: {
+        create(data) {
+            return apiClient.post('/resourceCategory', data);
+        },
+        getById(id) {
+            return apiClient.get(`/resourceCategory/${id}`);
+        },
+        list() {
+            return apiClient.get('/resourceCategory/list');
+        },
+        update(data) {
+            return apiClient.put('/resourceCategory', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/resourceCategory/${id}`);
+        }
+    },
+
+    //=========================== 10. 校园好友 (CampusFriend) ===========================
+    campusFriendApi: {
+        create(data) {
+            return apiClient.post('/campusFriend', data);
+        },
+        getById(id) {
+            return apiClient.get(`/campusFriend/${id}`);
+        },
+        list() {
+            return apiClient.get('/campusFriend/list');
+        },
+        update(data) {
+            return apiClient.put('/campusFriend', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/campusFriend/${id}`);
+        }
+    },
+
+    //=========================== 11. 用户设置 (UserSetting) ===========================
+    userSettingApi: {
+        create(data) {
+            return apiClient.post('/userSetting', data);
+        },
+        getById(id) {
+            return apiClient.get(`/userSetting/${id}`);
+        },
+        list() {
+            return apiClient.get('/userSetting/list');
+        },
+        update(data) {
+            return apiClient.put('/userSetting', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/userSetting/${id}`);
+        }
+    },
+
+    //=========================== 12. 通知中心 (NotificationCenter) ===========================
+    notificationCenterApi: {
+        create(data) {
+            return apiClient.post('/notificationCenter', data);
+        },
+        getById(id) {
+            return apiClient.get(`/notificationCenter/${id}`);
+        },
+        list() {
+            return apiClient.get('/notificationCenter/list');
+        },
+        update(data) {
+            return apiClient.put('/notificationCenter', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/notificationCenter/${id}`);
+        }
+    },
+
+    // (以下两个是您项目中可能用于测试的 Controller，也一并提供)
+    //=========================== Schedules ===========================
+    schedulesApi: {
+        create(data) {
+            return apiClient.post('/schedules', data);
+        },
+        getById(id) {
+            return apiClient.get(`/schedules/${id}`);
+        },
+        list() {
+            return apiClient.get('/schedules/list');
+        },
+        update(data) {
+            return apiClient.put('/schedules', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/schedules/${id}`);
+        }
+    },
+    
+    //=========================== User (Test) ===========================
+    userApi: {
+        create(data) {
+            return apiClient.post('/user', data);
+        },
+        getById(id) {
+            return apiClient.get(`/user/${id}`);
+        },
+        list() {
+            return apiClient.get('/user/list');
+        },
+        update(data) {
+            return apiClient.put('/user', data);
+        },
+        delete(id) {
+            return apiClient.delete(`/user/${id}`);
+        }
     }
 };
+
+export default api;

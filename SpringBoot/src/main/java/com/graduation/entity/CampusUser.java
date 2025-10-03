@@ -34,6 +34,8 @@ public class CampusUser implements Serializable {
      */
     private String campusNickname;
 
+    private String password;
+
     /**
      * 头像 URL
      */

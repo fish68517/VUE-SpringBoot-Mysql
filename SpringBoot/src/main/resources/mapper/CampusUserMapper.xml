@@ -22,4 +22,14 @@
         campus_user_id, campus_nickname, campus_avatar_url, campus_school_id, campus_email_addr, campus_status_flag, campus_create_timestamp, campus_level_code, campus_badge_count, campus_last_login_ts, campus_user_type
     </sql>
 
+    <!-- 根据邮箱和密码登录 -->
+    <select id="login" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM campus_user
+        WHERE campus_email_addr = #{email}
+        AND password = #{password}
+        AND campus_status_flag = 1
+    </select>
+
 </mapper>

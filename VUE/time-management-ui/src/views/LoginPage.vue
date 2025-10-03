@@ -40,7 +40,7 @@
 import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router';
-import NetWorkApi from '../api/NetWorkApi'; // 确保路径正确
+import api from '../api/NetWorkApi'; // 确保路径正确
 
 const router = useRouter(); // 获取路由实例，用于跳转
 const formRef = ref(null); // 表单引用
@@ -76,14 +76,17 @@ const handleSubmit = () => {
         if (isLogin.value) {
           // --- 执行登录逻辑 ---
           console.log('正在登录:', formData);
-          const response = await NetWorkApi.login({ email: formData.campusEmailAddr, password: formData.password });
+          const response = await api.campusUserApi.login({ 
+            campusEmailAddr: formData.campusEmailAddr, 
+            password: formData.password 
+          });
           ElMessage.success('登录成功！');
           // 登录成功后，跳转到主页
           router.push('/'); 
         } else {
           // --- 执行注册逻辑 ---
           console.log('正在注册:', formData);
-          const response = await NetWorkApi.register(formData);
+          const response = await api.campusUserApi.register(formData);
           ElMessage.success('注册成功，请登录！');
           // 注册成功后，自动切换到登录界面
           isLogin.value = true;
@@ -105,7 +108,7 @@ const handleSubmit = () => {
   align-items: center;
   height: 100vh;
   /* 在这里设置背景图片 */
-  background-image: url('@/assets/login.png');
+  background-image: url('../assets/login.png');
   background-size: cover;
   background-position: center;
   position: relative;

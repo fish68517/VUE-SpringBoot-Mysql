@@ -13,4 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface CampusUserService extends IService<CampusUser> {
 
+
+    // 增加登陆接口
+    CampusUser login(String email, String password);
 }

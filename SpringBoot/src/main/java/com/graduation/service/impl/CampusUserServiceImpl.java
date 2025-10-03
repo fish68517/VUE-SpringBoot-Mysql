@@ -4,6 +4,7 @@ import com.graduation.entity.CampusUser;
 import com.graduation.mapper.CampusUserMapper;
 import com.graduation.service.CampusUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,4 +18,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class CampusUserServiceImpl extends ServiceImpl<CampusUserMapper, CampusUser> implements CampusUserService {
 
+    @Autowired
+    private CampusUserMapper campusUserMapper;
+    @Override
+    public CampusUser login(String email, String password) {
+        return campusUserMapper.login(email, password);
+    }
 }
