@@ -62,7 +62,7 @@ const fetchAchievements = async () => {
   loading.value = true;
   try {
     const res = await api.achievementApi.list();
-    achievements.value = res.data.data || [];
+    achievements.value = res.data || [];
   } catch (error) { ElMessage.error("加载失败"); } finally { loading.value = false; }
 };
 

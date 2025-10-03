@@ -71,8 +71,8 @@ const fetchData = async () => {
       api.learnResourceApi.list(),
       api.resourceCategoryApi.list(),
     ]);
-    resources.value = resRes.data.data || [];
-    categories.value = catRes.data.data || [];
+    resources.value = resRes.data || [];
+    categories.value = catRes.data || [];
   } catch (error) { ElMessage.error("加载失败"); } finally { loading.value = false; }
 };
 

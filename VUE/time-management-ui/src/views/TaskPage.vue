@@ -84,7 +84,7 @@ const fetchTasks = async () => {
   loading.value = true;
   try {
     const response = await api.taskFocusApi.list();
-    const allTasks = response.data.data || [];
+    const allTasks = response.data || [];
     userTasks.value = allTasks.filter(task => task.campusUserId === currentUserId);
   } catch (error) {
     ElMessage.error('任务列表加载失败');

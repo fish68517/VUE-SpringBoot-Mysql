@@ -31,7 +31,7 @@ const fetchHabits = async () => {
   loading.value = true;
   try {
     const response = await api.habitTrackApi.list();
-    const allHabits = response.data.data || [];
+    const allHabits = response.data || [];
     userHabits.value = allHabits.filter(habit => habit.campusUserId === currentUserId);
   } catch (error) {
     ElMessage.error('习惯列表加载失败');

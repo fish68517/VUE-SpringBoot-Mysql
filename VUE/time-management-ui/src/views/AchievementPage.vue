@@ -39,8 +39,8 @@ const fetchAchievements = async () => {
       api.userAchieveRelApi.list()
     ]);
 
-    const allAchievements = allAchRes.data.data || [];
-    const userAchRels = userAchRelRes.data.data || [];
+    const allAchievements = allAchRes.data || [];
+    const userAchRels = userAchRelRes.data || [];
     
     // 筛选出当前用户获得的成就ID列表
     const earnedIds = userAchRels

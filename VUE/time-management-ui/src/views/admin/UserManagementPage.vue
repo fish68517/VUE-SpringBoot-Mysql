@@ -57,7 +57,7 @@ const fetchUsers = async () => {
   loading.value = true;
   try {
     const res = await api.campusUserApi.list();
-    users.value = res.data.data || [];
+    users.value = res.data || [];
   } catch (error) {
     ElMessage.error("用户列表加载失败");
   } finally {
