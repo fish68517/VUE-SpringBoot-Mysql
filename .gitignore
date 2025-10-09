@@ -1,1 +1,65 @@
-node_modules
+# Android 项目忽略规则
+/Android/
+  *.apk
+  *.ap_
+  *.aab
+  *.dex
+  *.class
+  .idea/
+  .gradle/
+  build/
+  local.properties
+  captures/
+  *.log
+  *.iml
+  /gradlew
+  /gradlew.bat
+  /gradle/
+
+# Spring Boot 项目忽略规则
+/SpringBoot/
+  target/
+  *.log
+  .idea/
+  *.iml
+  /mvnw
+  /mvnw.cmd
+  /.mvn/
+  /build/
+  *.class
+  *.jar
+  *.war
+  *.nar
+  *.ear
+
+# Vue 项目忽略规则
+/VUE/
+  node_modules/
+  dist/
+  *.log
+  .env
+  .env.local
+  .env.*.local
+  *.cache
+  *.lock
+  /coverage/
+
+# 通用忽略规则
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+.DS_Store
+.vscode/
+*.idea/
+*.iml
+*.ipr
+*.iws
+Thumbs.db
+
+# 忽略 doc 目录中的临时文件（可选）
+/doc/
+  *.tmp
+  *.bak
+  *.log
