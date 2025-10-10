@@ -59,7 +59,3 @@
 Thumbs.db
 
 # 忽略 doc 目录中的临时文件（可选）
-/doc/
-  *.tmp
-  *.bak
-  *.log
