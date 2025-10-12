@@ -15,7 +15,7 @@ import com.graduation.common.BaseController;
  * @since 2025-10-12
  */
 @RestController
-@RequestMapping("/inboundOrders")
+@RequestMapping("/inbound-orders")
 public class InboundOrdersController extends BaseController<InboundOrdersService, InboundOrders> {
 
 }
