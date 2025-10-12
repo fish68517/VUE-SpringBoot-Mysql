@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.graduation.mapper.InventoryMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.graduation.entity.Inventory">
+        <id column="id" property="id" />
+        <result column="product_id" property="productId" />
+        <result column="batch_code" property="batchCode" />
+        <result column="inbound_order_id" property="inboundOrderId" />
+        <result column="quantity" property="quantity" />
+        <result column="received_at" property="receivedAt" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, product_id, batch_code, inbound_order_id, quantity, received_at, created_at, updated_at
+    </sql>
+
+</mapper>
