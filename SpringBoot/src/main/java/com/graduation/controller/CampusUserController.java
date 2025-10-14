@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.graduation.common.BaseController;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,4 +52,23 @@ public class CampusUserController extends BaseController<CampusUserService, Camp
         }
         return result;
     }
+
+    // 增加 GET
+    //	http://localhost:8081/campusUser/list
+    @RequestMapping("/list")
+    public Map<String, Object> getCampusUserList() {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            List<CampusUser> users = campusUserService.list();
+            result.put("code", 200);
+            result.put("message", "获取用户列表成功");
+            result.put("data", users);
+        } catch (Exception e) {
+            result.put("code", 500);
+            result.put("message", "用户列表加载失败");
+            result.put("data", null);
+        }
+        return result;
+    }
+
 }

@@ -82,7 +82,16 @@ const handleSubmit = () => {
           });
           ElMessage.success('登录成功！');
           // 登录成功后，跳转到主页
-          router.push('/'); 
+          // campusUserType: formData.campusUserType
+          // 打印 response 数据，确认包含用户类型
+          console.log('登录响应:', response);
+          console.log('用户类型:', response.data.campusUserType);
+          if(response.data.data.campusUserType === 'admin'){
+            router.push('/admin'); 
+          } else {
+            router.push('/'); 
+          }
+        
         } else {
           // --- 执行注册逻辑 ---
           console.log('正在注册:', formData);

@@ -1,12 +1,9 @@
 package com.graduation.service.impl;
 
 import com.graduation.entity.Achievement;
-import com.graduation.entity.User;
 import com.graduation.mapper.AchievementMapper;
-import com.graduation.mapper.UserMapper;
 import com.graduation.service.AchievementService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.graduation.service.UserService;
 import org.springframework.stereotype.Service;
 
 /**
