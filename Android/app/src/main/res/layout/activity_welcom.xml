@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
-        android:text="语音日程助手"
+        android:text="时间管理系统"
         android:textColor="@android:color/white"
         android:textSize="32sp"
         android:textStyle="bold"
