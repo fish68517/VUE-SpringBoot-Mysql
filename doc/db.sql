@@ -3,8 +3,7 @@
 
 -- =============================================
 -- 1. 部门表
-[cite_start]-- 用于管理组织架构 [cite: 25]。
-[cite_start]-- 对应 Web 端的 "部门管理" 功能 [cite: 35]。
+
 -- =============================================
 CREATE TABLE `departments` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -17,7 +16,7 @@ CREATE TABLE `departments` (
 -- =============================================
 -- 2. 角色表
 -- 定义用户角色及其权限。
-[cite_start]-- 系统预设了系统管理员、仓库管理员、操作员等角色 [cite: 12]。
+
 -- =============================================
 CREATE TABLE `roles` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -28,7 +27,7 @@ CREATE TABLE `roles` (
 -- =============================================
 -- 3. 用户表
 -- 存储用户账户信息。
-[cite_start]-- 支持用户登录、修改密码和用户管理功能 [cite: 23, 25]。
+
 -- =============================================
 CREATE TABLE `users` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -65,13 +64,12 @@ CREATE TABLE `products` (
 
 -- =============================================
 -- 5. 入库单表
-[cite_start]-- 管理入库任务，通常由Excel批量导入创建 [cite: 25]。
 -- 这是一个入库批次的头信息。
 -- =============================================
 CREATE TABLE `inbound_orders` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `order_number` VARCHAR(50) NOT NULL COMMENT '入库单的唯一编号',
-  [cite_start]`created_by_user_id` INT UNSIGNED NOT NULL COMMENT '创建该订单的用户 (仓库管理员) [cite: 15]',
+  `created_by_user_id` INT UNSIGNED NOT NULL COMMENT '创建该订单的用户 (仓库管理员) [cite: 15]',
   `status` ENUM('待处理', '处理中', '已完成') NOT NULL DEFAULT '待处理' COMMENT '入库单状态',
   `notes` TEXT COMMENT '额外备注',
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -84,7 +82,7 @@ CREATE TABLE `inbound_orders` (
 -- =============================================
 -- 6. 库存表
 -- 系统的核心表，代表了实际的库存。每条记录都是一个特定批次的产品。
-[cite_start]-- 二维码将唯一标识此表中的一条记录，用于所有扫码操作 [cite: 5]。
+
 -- =============================================
 CREATE TABLE `inventory` (
   `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -105,12 +103,12 @@ CREATE TABLE `inventory` (
 -- =============================================
 -- 7. 异动日志表
 -- 记录每一次库存变动（入库、出库、调整），用于审计和报表。
-[cite_start]-- App的扫码操作会填充此表，为数据统计提供依据 [cite: 25]。
+
 -- =============================================
 CREATE TABLE `transaction_logs` (
   `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   `inventory_id` INT UNSIGNED NOT NULL COMMENT '关联的库存批次ID',
-  [cite_start]`user_id` INT UNSIGNED NOT NULL COMMENT '执行此操作的用户 (操作员) [cite: 18]',
+  `user_id` INT UNSIGNED NOT NULL COMMENT '执行此操作的用户 (操作员) [cite: 18]',
   `type` ENUM('入库', '出库', '调整') NOT NULL COMMENT '异动类型',
   `quantity_change` INT NOT NULL COMMENT '库存变化数量 (+表示入库, -表示出库)',
   `quantity_after_transaction` INT NOT NULL COMMENT '本次异动后, 批次的库存数量',
