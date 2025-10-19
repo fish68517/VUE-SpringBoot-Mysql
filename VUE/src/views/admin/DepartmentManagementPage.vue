@@ -9,7 +9,7 @@
     <el-table :data="departments" v-loading="loading">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="部门名称" />
-      <el-table-column prop="created_at" label="创建时间" />
+      <el-table-column prop="createdAt" label="创建时间" />
       <el-table-column label="操作" width="150">
         <template #default="scope">
           <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
