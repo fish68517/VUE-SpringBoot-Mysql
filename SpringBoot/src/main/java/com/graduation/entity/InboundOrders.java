@@ -5,6 +5,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.*; // 如果你使用 Spring Boot 3.x
+// import javax.persistence.*; // 如果你使用 Spring Boot 2.x
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,11 +23,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("inbound_orders")
+@Entity
 public class InboundOrders implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 如果主键是自增的
     private Integer id;
 
     /**
