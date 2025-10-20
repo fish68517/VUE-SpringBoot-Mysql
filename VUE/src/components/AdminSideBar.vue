@@ -23,6 +23,23 @@
       <el-icon><OfficeBuilding /></el-icon>
       <span>部门管理</span>
     </el-menu-item>
+
+    <el-menu-item index="/admin/inbound-management">
+      <el-icon><UploadFilled /></el-icon>
+      <span>入库管理</span>
+    </el-menu-item>
+
+    <!-- ===== 新增出库管理菜单项 ===== -->
+    <el-menu-item index="/admin/outbound-management">
+      <el-icon><Download /></el-icon>
+      <span>出库管理</span>
+    </el-menu-item>
+    <!-- ============================= -->
+
+    <el-menu-item index="/admin/statistics">
+      <el-icon><TrendCharts /></el-icon>
+      <span>数据统计</span>
+    </el-menu-item>
     
   </el-menu>
 </template>

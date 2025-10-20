@@ -86,7 +86,7 @@ onMounted(fetchUsers);
 
 const toggleUserStatus = async (user) => {
   try {
-    const updatedUser = { ...user, is_active: !user.is_active };
+    const updatedUser = { ...user, isActive: !user.isActive };
     await api.usersApi.update(updatedUser);
     ElMessage.success("状态更新成功！");
     fetchUsers();

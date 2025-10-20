@@ -1,9 +1,10 @@
 import axios from 'axios';
 
 // apiClient 实例负责与后端的所有HTTP通信
+const BASE_URL = 'http://localhost:8080';
+
 const apiClient = axios.create({
-    // 后端服务的基础URL，请根据您的Spring Boot项目配置进行修改
-    baseURL: 'http://localhost:8080', // 默认的Spring Boot端口
+    baseURL: BASE_URL,
     headers: {
         'Content-Type': 'application/json'
     }
@@ -141,3 +142,4 @@ const api = {
 };
 
 export default api;
+export { BASE_URL };

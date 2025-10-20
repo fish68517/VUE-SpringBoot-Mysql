@@ -28,7 +28,8 @@ const routes = [
           path: '/inbound-orders', 
           name: 'InboundOrderManagement', 
           component: () => import('../views/InboundOrderManagementPage.vue') 
-        }
+        },
+  
     ]
   },
   
@@ -43,6 +44,13 @@ const routes = [
         name: 'AdminDashboard',
         component: () => import('../views/admin/AdminDashboard.vue')
       },
+      // ===== 新增数据统计路由 =====
+      {
+        path: 'statistics',
+        name: 'DataStatistics',
+        component: () => import('../views/admin/DataStatisticsPage.vue')
+      },
+      // ===========================
       {
         path: 'users',
         name: 'UserManagement',
@@ -53,6 +61,20 @@ const routes = [
         name: 'DepartmentManagement',
         component: () => import('../views/admin/DepartmentManagementPage.vue')
       },
+            // ===== 新增管理员的入库管理路由 =====
+      {
+        path: 'inbound-management', // 使用不同的路径区分普通用户的入库管理
+        name: 'AdminInboundManagement',
+        component: () => import('../views/admin/InboundManagementPage.vue') 
+      },
+      // ===================================
+      // ===== 新增出库管理路由 =====
+      {
+        path: 'outbound-management',
+        name: 'AdminOutboundManagement',
+        component: () => import('../views/admin/OutboundManagementPage.vue')
+      },
+      // ===========================
     ]
   },
 
