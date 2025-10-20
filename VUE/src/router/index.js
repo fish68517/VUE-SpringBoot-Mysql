@@ -75,6 +75,13 @@ const routes = [
         component: () => import('../views/admin/OutboundManagementPage.vue')
       },
       // ===========================
+  
+      {
+        path: 'admin-product-management',
+        name: 'AdminProductManagement',
+        component: () => import('../views/admin/AdminProductManagementPage.vue')
+      },
+      // ===========================
     ]
   },
 

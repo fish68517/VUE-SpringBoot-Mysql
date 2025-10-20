@@ -24,6 +24,11 @@
       <span>部门管理</span>
     </el-menu-item>
 
+    <el-menu-item index="/admin/admin-product-management">
+      <el-icon><OfficeBuilding /></el-icon>
+      <span>产品管理</span>
+    </el-menu-item>
+
     <el-menu-item index="/admin/inbound-management">
       <el-icon><UploadFilled /></el-icon>
       <span>入库管理</span>
