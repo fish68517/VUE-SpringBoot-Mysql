@@ -20,7 +20,7 @@
                 <el-icon><Upload /></el-icon> 从Excel导入
               </el-button>
             </el-upload>
-            <el-button @click="downloadTemplate" style="margin-left: 10px;">
+            <el-button @click="downloadTemplate" style="margin-left: 10px;" v-if="false">
                 <el-icon><Download /></el-icon> 下载
             </el-button>
           </div>
@@ -52,6 +52,16 @@
                >
                  <el-icon><Grid /></el-icon> 生成/打印二维码
               </el-button>
+              <el-button
+                  type="info"
+                  plain
+                  size="small"
+                  @click="downloadOrderDetails(props.row)"
+                  style="margin-top: 10px; margin-left: 10px;"
+                  :disabled="!props.row.inventoryItems || props.row.inventoryItems.length === 0"
+              >
+                  <el-icon><Document /></el-icon> 下载批次详情
+              </el-button>
             </div>
           </template>
         </el-table-column>
@@ -65,8 +75,17 @@
         </el-table-column>
         <el-table-column prop="notes" label="备注" show-overflow-tooltip />
         <el-table-column prop="createdAt" label="创建时间" />
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="220">
             <template #default="scope">
+                <el-button
+                    size="small"
+                    type="primary"
+                    link
+                    @click="downloadOrderDetails(scope.row)"
+                    :disabled="!scope.row.inventoryItems || scope.row.inventoryItems.length === 0">
+              
+                    <el-icon><Download /></el-icon> 下载详情
+                 </el-button>
                 <el-button size="small" type="danger" @click="handleDeleteOrder(scope.row.id)">删除</el-button>
             </template>
         </el-table-column>
@@ -129,7 +148,9 @@
 import { ref, onMounted, reactive, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import api from '../../api/NetWorkApi.js';
-import { Plus, Upload, Download, Delete, Printer, Grid } from '@element-plus/icons-vue';
+// ===== 修改：导入更多图标 =====
+import { Plus, Upload, Download, Delete, Printer, Grid, Document } from '@element-plus/icons-vue';
+// =============================
 import * as XLSX from 'xlsx'; // 导入xlsx库
 import QrcodeVue from 'qrcode.vue'; // 导入二维码库
 import { BASE_URL } from '../../api/NetWorkApi.js';
@@ -156,6 +177,10 @@ const createForm = reactive({
 
 // Excel上传URL (需要后端提供)
 const uploadUrl = computed(() => `${BASE_URL}/inbound-orders/import`);
+
+// Excel上传URL (需要后端提供)
+// ===== 修改：从 apiClient 实例获取 baseURL =====
+import apiClientInstance from '../../api/NetWorkApi.js'; // 导入 apiClient 实例
 
 // 获取产品列表，用于下拉选择和名称显示
 const fetchProducts = async () => {
@@ -187,7 +212,18 @@ const fetchData = async () => {
                 if (!acc[item.inboundOrderId]) {
                     acc[item.inboundOrderId] = [];
                 }
-                acc[item.inboundOrderId].push(item);
+                // ===== 修改：确保 inventoryItems 包含 productId =====
+                acc[item.inboundOrderId].push({
+                    id: item.id,
+                    batchCode: item.batchCode,
+                    productId: item.productId, // 确保 productId 存在
+                    quantity: item.quantity,
+                    receivedAt: item.receivedAt,
+                    createdAt: item.createdAt,
+                    updatedAt: item.updatedAt
+                });
+                // ===============================================
+                // acc[item.inboundOrderId].push(item);
             }
             return acc;
         }, {});
@@ -269,7 +305,12 @@ const handleManualCreate = async () => {
 
         // 2. 为每个明细创建库存记录 (生成唯一批次号)
         const inventoryPromises = createForm.items.map(item => {
-             const batchCode = `BAT-${createdOrderId}-${item.productId}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+            // const batchCode = `BAT-${createdOrderId}-${item.productId}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+            // ===== 修改：改进批次号生成，避免潜在的过长问题 =====
+             const timestampPart = Date.now().toString().slice(-6); // 取时间戳后6位
+             const randomPart = Math.random().toString(36).substring(2, 6); // 取4位随机字符
+             const batchCode = `BAT-${createdOrderId}-${item.productId}-${timestampPart}-${randomPart}`;
+             // ===============================================
              const inventoryData = {
                  productId: item.productId,
                  batchCode: batchCode,
@@ -337,12 +378,52 @@ const downloadTemplate = () => {
     
     // 创建工作簿和工作表
     const ws = XLSX.utils.json_to_sheet(templateData, { skipHeader: true }); // skipHeader: true 因为我们手动定义了第一行
+    // ===== 修改：设置列宽 =====
+    ws['!cols'] = [ { wch: 20 }, { wch: 15 } ]; // 第一列宽度20，第二列宽度15
+    // ========================
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, '入库模板');
 
     // 生成Excel文件并触发下载
     XLSX.writeFile(wb, 'inbound_template.xlsx');
 };
+
+
+// ===== 新增：下载入库单批次详情功能 =====
+const downloadOrderDetails = (order) => {
+    if (!order.inventoryItems || order.inventoryItems.length === 0) {
+        ElMessage.warning('该入库单没有关联的批次信息可供下载');
+        return;
+    }
+
+    // 准备要导出的数据
+    const exportData = order.inventoryItems.map(item => ({
+        '批次号 (二维码内容)': item.batchCode,
+        '产品SKU': getProductName(item.productId, 'sku'),
+        '产品名称': getProductName(item.productId, 'name'),
+        '计划数量': item.quantity,
+        // 可以根据需要添加更多字段，例如入库时间 (item.receivedAt) 等
+    }));
+
+    // 创建工作簿和工作表
+    const ws = XLSX.utils.json_to_sheet(exportData);
+
+    // 设置列宽 (根据需要调整)
+    ws['!cols'] = [
+        { wch: 30 }, // 批次号
+        { wch: 20 }, // SKU
+        { wch: 30 }, // 产品名称
+        { wch: 10 }  // 计划数量
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, `入库单-${order.orderNumber}`);
+
+    // 生成Excel文件并触发下载，文件名包含入库单号
+    XLSX.writeFile(wb, `入库单详情_${order.orderNumber}.xlsx`);
+    ElMessage.success(`入库单 ${order.orderNumber} 的批次详情已开始下载`);
+};
+// ======================================
 
 // --- 二维码相关 ---
 const openQrCodeDialog = (items) => {
