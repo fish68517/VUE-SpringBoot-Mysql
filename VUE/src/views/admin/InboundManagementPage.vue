@@ -87,6 +87,8 @@
                     <el-icon><Download /></el-icon> 下载详情
                  </el-button>
                 <el-button size="small" type="danger" @click="handleDeleteOrder(scope.row.id)">删除</el-button>
+                <el-button size="small" type="warning" @click="handleUpdateStatus(scope.row.id, '处理中')">处理中</el-button>
+                <el-button size="small" type="success" @click="handleUpdateStatus(scope.row.id, '已完成')">已完成</el-button>
             </template>
         </el-table-column>
       </el-table>
@@ -465,6 +467,16 @@ const printQrCodes = () => {
     }
 };
 
+// ---添加处理中，已完成的功能函数
+const handleUpdateStatus = async(id, status) => {
+    try {
+        await api.inboundOrdersApi.updateById(id, { status: status });
+        ElMessage.success(`入库单状态更新为${status}成功`);
+        fetchData();
+    } catch (error) {
+        ElMessage.error("状态更新失败: " + (error.response?.data?.message || error.message));
+    }
+};
 
 // --- 其他 ---
 const handleDeleteOrder = async (id) => {
@@ -501,6 +513,7 @@ const getStatusTagType = (status) => {
 
 // 需要 apiClient 实例来获取 baseURL
 import apiClient from '../../api/NetWorkApi.js';
+import { id } from 'element-plus/es/locales.mjs';
 
 </script>
 

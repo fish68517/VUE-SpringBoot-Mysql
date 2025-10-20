@@ -101,7 +101,17 @@ const api = {
         },
         delete(id) {
             return apiClient.delete(`/inbound-orders/${id}`);
-        }
+        },
+
+        /**
+         * 更新入库单信息 (部分更新)
+         * @param {number | string} id - 要更新的入库单ID
+         * @param {object} data - 包含要更新字段的对象, 例如 { status: '已完成' }
+         * @returns {Promise} - Axios Promise 对象
+         */
+        updateById(id, data) {
+            return apiClient.patch(`/inbound-orders/${id}`, data);
+        },
     },
 
     //=========================== 6. 库存 (Inventory) ===========================
