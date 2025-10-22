@@ -1,136 +1,91 @@
 package com.archive.app.view.activity;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
+import android.view.MenuItem;
+import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.archive.app.R;
-
-import com.archive.app.view.fragment.AchievementFragment;
-import com.archive.app.view.fragment.HabitFragment;
+import com.archive.app.view.fragment.InboundFragment;
+import com.archive.app.view.fragment.OutboundFragment;
 import com.archive.app.view.fragment.ProfileFragment;
-import com.archive.app.view.fragment.TaskFragment;
+import com.archive.app.view.fragment.QueryFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.hjq.permissions.OnPermission;
-import com.hjq.permissions.XXPermissions;
+import com.google.android.material.navigation.NavigationBarView;
 
 
-import java.util.List;
-
-/**
- * 主界面
+/*
+  Required dependencies in app/build.gradle.kts (or build.gradle):
+  implementation("com.google.android.material:material:1.11.0") // Or latest
+  implementation("androidx.navigation:navigation-fragment:2.7.7") // Optional for Nav Component
+  implementation("androidx.navigation:navigation-ui:2.7.7") // Optional for Nav Component
+  implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+  implementation("com.squareup.retrofit2:retrofit:2.9.0")
+  implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+  implementation("com.squareup.okhttp3:logging-interceptor:4.11.0") // Optional logging
  */
+
 public class MainActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
-    private FloatingActionButton fab;
-
-    private static final String TAG = "MainActivity";
-
-    private boolean isAuth = false;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("企业仓库管理");
         setSupportActionBar(toolbar);
 
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        fab = findViewById(R.id.fab);
 
-        fab.setOnClickListener(view -> {
-           // startActivity(new android.content.Intent(MainActivity.this, AddEditScheduleActivity.class));
-        });
-
-        // 默认加载日程Fragment
+        // Load the default fragment
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TaskFragment()).commit();
+            loadFragment(new InboundFragment());
         }
 
-        setupBottomNavigation();
-        // 讯飞语音相关的
-        getPermission();
-    }
 
-    private void getPermission(){
-        XXPermissions.with(this).permission("android.permission.WRITE_EXTERNAL_STORAGE"
-                , "android.permission.READ_EXTERNAL_STORAGE"
-                , "android.permission.INTERNET"
-                , "android.permission.MANAGE_EXTERNAL_STORAGE").request(new OnPermission() {
+
+        // Handle bottom navigation item selection
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
-            public void hasPermission(List<String> granted, boolean all) {
-                Log.d(TAG,"SDK获取系统权限成功:"+all);
-                for(int i=0;i<granted.size();i++){
-                    Log.d(TAG,"获取到的权限有："+granted.get(i));
-                }
-                if(all){
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment selectedFragment = null;
+                int itemId = item.getItemId();
 
+                if (itemId == R.id.navigation_inbound) {
+                    selectedFragment = new InboundFragment();
+                } else if (itemId == R.id.navigation_outbound) {
+                    selectedFragment = new OutboundFragment();
+                } else if (itemId == R.id.navigation_query) {
+                    selectedFragment = new QueryFragment();
+                } else if (itemId == R.id.navigation_profile) {
+                    selectedFragment = new ProfileFragment();
                 }
-            }
 
-            @Override
-            public void noPermission(List<String> denied, boolean quick) {
-                if(quick){
-                    Log.e(TAG,"onDenied:被永久拒绝授权，请手动授予权限");
-                    XXPermissions.startPermissionActivity(MainActivity.this,denied);
-                }else{
-                    Log.e(TAG,"onDenied:权限获取失败");
+                if (selectedFragment != null) {
+                    loadFragment(selectedFragment);
+                    return true;
                 }
+                return false;
             }
         });
     }
 
-
-
-    private void setupBottomNavigation() {
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_schedule) {
-                selectedFragment = new TaskFragment();
-            } else if (itemId == R.id.nav_voice) {
-                selectedFragment = new HabitFragment();
-            } else if (itemId == R.id.nav_settings) {
-                selectedFragment = new AchievementFragment();
-            } else {
-                selectedFragment = new ProfileFragment();
-            }
-
-            if (selectedFragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, selectedFragment)
-                        .commit();
-            }
-            return true;
-        });
+    // Method to replace fragments in the container
+    private void loadFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.fragment_container, fragment);
+        // transaction.addToBackStack(null); // Optional: Add transaction to back stack
+        transaction.commit();
     }
-
-    // 添加判断是否为模拟器的方法
-    // ... existing code ...
-    // 添加判断是否为模拟器的方法
-    private boolean isEmulator() {
-        Log.d(TAG, "设备信息：MODEL=" + android.os.Build.MODEL +
-                ", MANUFACTURER=" + android.os.Build.MANUFACTURER +
-                ", BRAND=" + android.os.Build.BRAND +
-                ", DEVICE=" + android.os.Build.DEVICE +
-                ", PRODUCT=" + android.os.Build.PRODUCT);
-
-        boolean isEmulator = android.os.Build.MODEL.contains("Emulator") ||
-                android.os.Build.MODEL.contains("OPPO") ||
-                android.os.Build.MANUFACTURER.contains("OPPO") ||
-                (android.os.Build.BRAND.startsWith("OPPO") && android.os.Build.DEVICE.startsWith("gracelte")) ||
-                android.os.Build.PRODUCT.equals("PCRT00");
-
-        Log.d(TAG, "是否为模拟器环境: " + isEmulator);
-        return isEmulator;
-    }
-
-
 }

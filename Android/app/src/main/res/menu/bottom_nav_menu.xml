@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_schedule"
+        android:id="@+id/navigation_inbound"
         android:icon="@drawable/ic_schedule"
-        android:title="任务管理"/>
+        android:title="@string/title_inbound"/>
 
     <item
-        android:id="@+id/nav_voice"
+        android:id="@+id/navigation_outbound"
         android:icon="@drawable/ic_voice"
-        android:title="习惯养成"/>
+        android:title="@string/title_outbound"/>
         
     <item
-        android:id="@+id/nav_settings"
+        android:id="@+id/navigation_query"
         android:icon="@drawable/ic_settings"
-        android:title="成绩徽章"/>
+        android:title="@string/title_query"/>
 
     <item
-        android:id="@+id/nav_help"
+        android:id="@+id/navigation_profile"
         android:icon="@drawable/ic_home"
-        android:title="我的"/>
+        android:title="@string/title_profile"/>
 </menu> 

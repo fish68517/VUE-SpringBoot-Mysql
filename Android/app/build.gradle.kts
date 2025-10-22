@@ -78,6 +78,9 @@ dependencies {
 
     implementation ("de.hdodenhof:circleimageview:3.1.0")
 
+    implementation("androidx.navigation:navigation-fragment:2.7.7") // Or latest for navigation component
+    implementation("androidx.navigation:navigation-ui:2.7.7") // Or latest
+
     /*   // 高德地图 SDK (基础地图)
    implementation ("com.amap.api:maps:9.9.0")// 替换为高德官网推荐的最新稳定版本
 
@@ -97,5 +100,17 @@ dependencies {
     // 如果您需要其他高德服务，例如搜索、导航等，请根据需要添加：
     // implementation 'com.amap.api:search:9.9.0' // 搜索 SDK
     // implementation 'com.amap.api:navi-sdk:9.9.0' // 导航 SDK
+
+    // ZXing for QR Code Scanning
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+
+    // Lifecycle components (ViewModel, LiveData) - Optional but recommended
+    implementation("androidx.lifecycle:lifecycle-viewmodel:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-livedata:2.6.2")
+
+
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
 }

@@ -1,77 +1,64 @@
 package com.archive.app.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
+import com.archive.app.MyApplication;
 import com.archive.app.R;
-import com.archive.app.viewmodel.ProfileViewModel;
+import com.archive.app.model.Users;
+import com.archive.app.view.activity.LoginActivity;
 
-// 如果您使用图片加载库，比如Glide或Picasso，在这里导入
-// import com.bumptech.glide.Glide;
 
 public class ProfileFragment extends Fragment {
 
-    private ProfileViewModel profileViewModel;
-    private ImageView avatarImageView;
-    private TextView nicknameTextView, emailTextView, schoolIdTextView;
-    private ProgressBar progressBar;
-    private View contentLayout;
+    private TextView tvWelcomeUser;
+    private Button btnLogout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        tvWelcomeUser = view.findViewById(R.id.tv_welcome_user);
+        btnLogout = view.findViewById(R.id.btn_logout);
+
+        displayUserInfo();
+
+        btnLogout.setOnClickListener(v -> logout());
+
+        return view;
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
-
-        // 初始化UI
-        avatarImageView = view.findViewById(R.id.image_view_avatar);
-        nicknameTextView = view.findViewById(R.id.text_view_nickname);
-        emailTextView = view.findViewById(R.id.text_view_email);
-        schoolIdTextView = view.findViewById(R.id.text_view_school_id);
-        progressBar = view.findViewById(R.id.progress_bar_profile);
-        contentLayout = view.findViewById(R.id.layout_content);
-
-        observeViewModel();
+    private void displayUserInfo() {
+        Users currentUser = MyApplication.getCurrentUser();
+        if (currentUser != null && currentUser.getFullName() != null) {
+            tvWelcomeUser.setText(getString(R.string.welcome_user, currentUser.getFullName()));
+        } else if (currentUser != null && currentUser.getUsername() != null) {
+            tvWelcomeUser.setText(getString(R.string.welcome_user, currentUser.getUsername())); // Fallback to username
+        }
+        else {
+            tvWelcomeUser.setText(R.string.unknown_user);
+        }
     }
 
-    private void observeViewModel() {
-        profileViewModel.getUserProfile().observe(getViewLifecycleOwner(), user -> {
-            if (user != null) {
-                nicknameTextView.setText(user.getCampusNickname());
-                emailTextView.setText("邮箱：" + user.getCampusEmailAddr());
-                schoolIdTextView.setText("学号：" + user.getCampusSchoolId());
-
-                // 使用Glide等库加载网络头像
-                // Glide.with(this).load(user.getCampusAvatarUrl()).into(avatarImageView);
-            }
-        });
-
-        profileViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            if (isLoading != null) {
-                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-                contentLayout.setVisibility(isLoading ? View.GONE : View.VISIBLE);
-            }
-        });
-
-        profileViewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
-            if (error != null && !error.isEmpty()) {
-                Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void logout() {
+        MyApplication.logout(); // Clear user data
+        // Navigate back to LoginActivity
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Clear back stack
+        startActivity(intent);
+        if (getActivity() != null) {
+            getActivity().finish(); // Finish MainActivity
+        }
     }
 }

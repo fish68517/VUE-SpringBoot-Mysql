@@ -44,5 +44,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "大学生时间管理系统"
+rootProject.name = "企业仓库管理系统"
 include(":app")

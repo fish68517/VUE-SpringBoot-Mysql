@@ -1,46 +1,75 @@
 package com.archive.app;
 
+import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.maps.MapsInitializer;
-import com.archive.app.model.CampusUser;
-
-public class MyApplication extends android.app.Application{
+import com.archive.app.model.Users;
 
 
-    public static CampusUser curUser;
+/**
+ * Application class to hold global state like current user.
+ */
+public class MyApplication extends Application {
 
-    private static final String TAG = "MyApplication";
-    private Context context;
-
-
-
-    public static void setUser(CampusUser user) {
-
-        // save user to shared preferences or database or any other storage
-        curUser = user;
-    }
+    private static Users currentUser;
+    private static SharedPreferences sharedPreferences;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        // Initialize your application here
-        context = getApplicationContext();
-        // 初始化高德地图SDK隐私合规：在调用任何SDK功能之前调用
-        // 务必确保用户已经同意了隐私政策，并且您已在用户同意后再进行SDK初始化
-        // 实际项目中，您可能需要在用户点击“同意”按钮后才调用这些方法
-       /* MapsInitializer.updatePrivacyShow(this, true, true);
-        MapsInitializer.updatePrivacyAgree(this, true);*/
-        AMapLocationClient.updatePrivacyShow(this, true, true);
-        AMapLocationClient.updatePrivacyAgree(this, true);
-
-        MapsInitializer.updatePrivacyShow(context,true,true);
-        MapsInitializer.updatePrivacyAgree(context,true);
-
-
+        sharedPreferences = getSharedPreferences("warehouse_prefs", Context.MODE_PRIVATE);
+        loadUserFromPrefs();
     }
 
+    public static Users getCurrentUser() {
+        return currentUser;
+    }
 
+    public static void setCurrentUser(Users user) {
+        currentUser = user;
+        saveUserToPrefs(user);
+    }
 
+    public static void logout() {
+        currentUser = null;
+        clearUserPrefs();
+    }
+
+    public static Integer getCurrentUserId() {
+        return currentUser != null ? currentUser.getId() : null;
+    }
+
+    private static void saveUserToPrefs(Users user) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (user != null) {
+            editor.putInt("user_id", user.getId());
+            editor.putString("user_username", user.getUsername());
+            editor.putString("user_fullname", user.getFullName());
+            // Add other relevant fields if needed (e.g., roleId)
+            editor.putInt("user_role_id", user.getRoleId());
+        } else {
+            editor.clear();
+        }
+        editor.apply();
+    }
+
+    private void loadUserFromPrefs() {
+        int userId = sharedPreferences.getInt("user_id", -1);
+        if (userId != -1) {
+            currentUser = new Users();
+            currentUser.setId(userId);
+            currentUser.setUsername(sharedPreferences.getString("user_username", null));
+            currentUser.setFullName(sharedPreferences.getString("user_fullname", null));
+            currentUser.setRoleId(sharedPreferences.getInt("user_role_id", -1)); // Load roleId
+        } else {
+            currentUser = null;
+        }
+    }
+
+    private static void clearUserPrefs() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
 }

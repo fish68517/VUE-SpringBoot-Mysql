@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">语音日程助手</string>
+
 
     <!-->您的APPID三元组，请从控制台https://console.xfyun.cn/services/iat 中查看三元组的值，填入此处。<-->
     <string name="appid"></string>
@@ -11,29 +11,60 @@
     <string name="RTASRAPIKEY"></string>
 
 
-    <string name="TTS_TEXT">科大讯飞成立于1999年，总部位于合肥，是中国人工智能领域领军企业，专注智能语音、自然语言处理及认知智能技术研发。其语音合成、语音识别等核心能力国际领先，产品覆盖教育、医疗、办公等领域，赋能全球开发者超600万，系亚太地区最具价值AI企业之一。</string>
-    <string name="title_activity_scrolling">ScrollingActivity</string>
-    <string-array name="voice_themes">
-        <item>讯飞小燕</item>
-        <item>讯飞小露</item>
-        <item>讯飞小萍</item>
-        <item>讯飞小婧</item>
-        <item>讯飞许小宝</item>
+
+        <string name="app_name">仓库管理App</string>
+        <string name="title_activity_main">仓库管理</string>
+
+        <!-- Bottom Navigation Titles -->
+        <string name="title_inbound">扫码入库</string>
+        <string name="title_outbound">扫码出库</string>
+        <string name="title_query">数据查询</string>
+        <string name="title_profile">我的</string>
+
+        <!-- Login Screen -->
+        <string name="username">用户名</string>
+        <string name="password">密码</string>
+        <string name="login">登 录</string>
+        <string name="login_failed">登录失败，请检查用户名和密码</string>
+        <string name="network_error">网络错误，请稍后重试</string>
+
+        <!-- Scan Screen -->
+        <string name="scan_prompt">将二维码放入框内</string>
+        <string name="confirm">确认</string>
+        <string name="cancel">取消</string>
+        <string name="confirm_inbound">确认入库</string>
+        <string name="confirm_outbound">确认出库</string>
+        <string name="scan_result_title">扫描结果</string>
+        <string name="product_name_label">产品名称:</string>
+        <string name="product_sku_label">SKU:</string>
+        <string name="batch_code_label">批次号:</string>
+        <string name="current_quantity_label">当前库存:</string>
+        <string name="inbound_success">入库成功</string>
+        <string name="inbound_failed">入库失败</string>
+        <string name="outbound_success">出库成功</string>
+        <string name="outbound_failed">出库失败</string>
+        <string name="invalid_batch_code">无效的批次号</string>
+        <string name="scan_cancelled">扫描已取消</string>
+        <string name="permission_denied">相机权限被拒绝</string>
+        <string name="low_stock_warning">库存不足，无法出库</string>
+
+        <!-- Query Screen -->
+        <string name="enter_batch_or_sku">输入批次号或SKU</string>
+        <string name="scan_code">扫码查询</string>
+        <string name="search">查询</string>
+        <string name="search_results">查询结果</string>
+        <string name="no_results_found">未找到相关信息</string>
+
+        <!-- Profile Screen -->
+        <string name="welcome_user">欢迎您, %s</string>
+        <string name="logout">退出登录</string>
+        <string name="unknown_user">未知用户</string>
+
+        <!-- General -->
+        <string name="error">错误</string>
+        <string name="loading">加载中...</string>
 
 
-    </string-array>
-    <string-array name="repeat_modes">
-        <item>不重复</item>
-        <item>每天</item>
-        <item>每周</item>
-        <item>每月</item>
-    </string-array>
 
-    <string-array name="reminder_types">
-        <item>不提醒</item>
-        <item>提前1分钟</item>
-        <item>提前15分钟</item>
-        <item>提前30分钟</item>
-    </string-array>
 
 </resources>
