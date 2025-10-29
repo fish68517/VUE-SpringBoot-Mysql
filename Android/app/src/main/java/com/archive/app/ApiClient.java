@@ -7,12 +7,13 @@ import com.google.gson.GsonBuilder;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiClient {
 
     // 使用您自己的服务器IP地址
-    private static final String BASE_URL = "http://192.168.8.111:8080/";
+    private static final String BASE_URL = "http://192.168.222.145:8080/";
 
     // volatile 关键字确保多线程环境下的可见性
     private static volatile ApiService apiService = null;
@@ -47,6 +48,8 @@ public class ApiClient {
                             .baseUrl(BASE_URL)
                             .client(okHttpClient) // 设置自定义的 OkHttpClient
                             .addConverterFactory(GsonConverterFactory.create(gson)) // 使用配置好的 Gson
+                            // 关键：添加 RxJava3 调用适配器工厂
+                            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                             .build();
 
                     // 5. 创建 ApiService 的实现，这是最关键的一步

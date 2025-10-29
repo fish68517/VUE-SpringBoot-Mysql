@@ -7,28 +7,28 @@ public class Inventory implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @SerializedName("id")
+
     private Integer id;
 
-    @SerializedName("productId")
+
     private Integer productId;
 
-    @SerializedName("batchCode")
+
     private String batchCode;
 
-    @SerializedName("inboundOrderId")
+
     private Integer inboundOrderId;
 
-    @SerializedName("quantity")
+
     private Integer quantity;
 
-    @SerializedName("receivedAt")
+
     private String receivedAt; // Actual inbound scan time
 
-    @SerializedName("createdAt")
+
     private String createdAt;
 
-    @SerializedName("updatedAt")
+
     private String updatedAt;
 
     // --- Getters and Setters ---
@@ -95,5 +95,19 @@ public class Inventory implements Serializable {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Inventory{" +
+                "id=" + id +
+                ", productId=" + productId +
+                ", batchCode='" + batchCode + '\'' +
+                ", inboundOrderId=" + inboundOrderId +
+                ", quantity=" + quantity +
+                ", receivedAt='" + receivedAt + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
+                '}';
     }
 }

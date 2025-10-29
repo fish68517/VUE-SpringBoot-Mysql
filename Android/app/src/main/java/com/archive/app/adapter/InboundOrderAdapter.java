@@ -1,6 +1,7 @@
 package com.archive.app.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,6 +70,7 @@ public class InboundOrderAdapter extends RecyclerView.Adapter<InboundOrderAdapte
         private final LinearLayout llDetailsContainer, llBatchList;
 
         private  Button btnDelete, btnSetProcessing, btnSetCompleted;
+        private  Button btn_check;
 
         private final ProgressBar progressBarDetails;
 
@@ -86,6 +88,7 @@ public class InboundOrderAdapter extends RecyclerView.Adapter<InboundOrderAdapte
             btnDelete = itemView.findViewById(R.id.btn_delete);
             btnSetProcessing = itemView.findViewById(R.id.btn_set_processing);
             btnSetCompleted = itemView.findViewById(R.id.btn_set_completed);
+            btn_check = itemView.findViewById(R.id.btn_check);
         }
 
         void bind(final InboundOrders order, final int position) {
@@ -98,6 +101,15 @@ public class InboundOrderAdapter extends RecyclerView.Adapter<InboundOrderAdapte
                 if (callback != null) {
                     callback.onDeleteClicked(order.getId());
                 }
+            });
+
+            btn_check.setOnClickListener(v -> {
+                Intent intent = new Intent();
+                intent.setClass(context, com.archive.app.view.activity.InboundOrderDetailActivity.class);
+                Log.d("InboundOrderDetailActivity", "Intent: " + order.getBatchDetails());
+                intent.putExtra("inboundOrder", order);
+                context.startActivity(intent);
+
             });
             btnSetProcessing.setOnClickListener(v -> {
                 if (callback != null) {

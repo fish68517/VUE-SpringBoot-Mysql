@@ -29,6 +29,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    // 添加这个 buildFeatures 代码块来启用 Data Binding
+    buildFeatures {
+        dataBinding = true
+    }
 }
 
 dependencies {
@@ -54,6 +59,13 @@ dependencies {
 
     implementation ("com.github.bumptech.glide:glide:4.12.0")
 
+
+    // RxJava 3
+    implementation("io.reactivex.rxjava3:rxandroid:3.0.0")
+    implementation("io.reactivex.rxjava3:rxjava:3.0.0")
+// Retrofit Call Adapter for RxJava 3
+// 这个库让 Retrofit 可以返回 RxJava 类型 (如 Single, Observable)
+    implementation("com.squareup.retrofit2:adapter-rxjava3:2.9.0")
 
 
 

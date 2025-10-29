@@ -39,4 +39,5 @@ public class BaseController<S extends IService<T>, T> {
     public boolean delete(@PathVariable("id") Long id) {
         return service.removeById(id);
     }
+
 }

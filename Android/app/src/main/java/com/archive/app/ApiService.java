@@ -15,6 +15,7 @@ import com.archive.app.model.Users;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.rxjava3.core.Single;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -108,8 +109,9 @@ public interface ApiService {
     @GET("inbound-orders/{id}")
     Call<InboundOrders> getInboundOrderById(@Path("id") int id);
 
+    //=========================== 5. 入库单 (Inbound Orders) ===========================
     @GET("inbound-orders/list")
-    Call<List<InboundOrders>> listInboundOrders();
+    Single<List<InboundOrders>> listInboundOrders(); // 返回值改为 Single
 
     @PUT("inbound-orders")
     Call<InboundOrders> updateInboundOrder(@Body InboundOrders inboundOrder);
@@ -123,7 +125,7 @@ public interface ApiService {
      * @param data 包含要更新字段的 Map, 例如 {"status": "已完成"}
      */
     @PATCH("inbound-orders/{id}")
-    Call<InboundOrders> updateInboundOrderStatus(@Path("id") int id, @Body Map<String, Object> data);
+    Call<Void> updateInboundOrderStatus(@Path("id") int id, @Body Map<String, Object> data);
 
 
     //=========================== 6. 库存 (Inventory) ===========================
@@ -149,6 +151,17 @@ public interface ApiService {
     @GET("inventory/sku/{sku}")
     Call<List<Inventory>> getInventoryByProductSku(@Path("sku") String sku);
 
+
+
+    //=========================== 6. 库存 (Inventory) ===========================
+    /**
+     * 根据您提供的接口名进行修改
+     * 根据入库单ID查询其下所有的库存批次
+     * @param inboundId 入库单的ID
+     * @return 属于该入库单的库存批次列表
+     */
+    @GET("inventory/inboundId/{inboundId}")
+    Single<List<Inventory>> getInventoryByInboundId(@Path("inboundId") int inboundId); // 返回值改为 Single
 
     //=========================== 7. 异动日志 (Transaction Logs) ===========================
     // 通常日志是只增不改不删的，但根据您的要求提供完整接口

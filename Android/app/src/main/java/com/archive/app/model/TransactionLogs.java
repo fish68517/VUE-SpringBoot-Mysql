@@ -7,28 +7,28 @@ public class TransactionLogs implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @SerializedName("id")
+
     private Long id; // Use Long for BIGINT
 
-    @SerializedName("inventoryId")
+
     private Integer inventoryId;
 
-    @SerializedName("userId")
+
     private Integer userId;
 
-    @SerializedName("type")
+
     private String type; // "入库", "出库", "调整"
 
-    @SerializedName("quantityChange")
+
     private Integer quantityChange;
 
-    @SerializedName("quantityAfterTransaction")
+
     private Integer quantityAfterTransaction;
 
-    @SerializedName("notes")
+
     private String notes;
 
-    @SerializedName("createdAt")
+
     private String createdAt;
 
     // --- Getters and Setters ---

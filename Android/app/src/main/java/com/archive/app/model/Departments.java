@@ -2,21 +2,23 @@ package com.archive.app.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * 对应数据库中的 departments 表
  */
-public class Departments {
+public class Departments implements Serializable {
 
-    @SerializedName("id")
+
     private int id;
 
-    @SerializedName("name")
+
     private String name;
 
-    @SerializedName("created_at")
+
     private String createdAt;
 
-    @SerializedName("updated_at")
+
     private String updatedAt;
 
     // --- Getters and Setters ---

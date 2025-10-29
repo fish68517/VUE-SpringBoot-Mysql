@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.graduation.common.BaseController;
 
+import java.util.Map;
+
 /**
  * <p>
  * 入库单 (任务) 表 前端控制器
@@ -54,4 +56,54 @@ public class InboundOrdersController extends BaseController<InboundOrdersService
         // 操作成功，返回一个 HTTP 200 OK 状态码，且响应体为空
         return ResponseEntity.ok().build();
     }
+
+
+   /* *//**
+     * 部分更新入库单信息 (PATCH)。
+     * 这个接口精确匹配您在 Android ApiService 中定义的：
+     * @PATCH("inbound-orders/{id}")
+     * Call<InboundOrders> updateInboundOrderStatus(@Path("id") int id, @Body Map<String, Object> data);
+     *
+     * @param id    要更新的入库单ID，从URL路径中获取
+     * @param updates 包含要更新字段的 Map，从请求体中获取。例如: {"status": "已完成"}
+     * @return 返回更新后的 InboundOrders 对象和 HTTP 状态码
+     *//*
+    @PatchMapping("/{id}")
+    public ResponseEntity<InboundOrders> updateInboundOrderStatus(@PathVariable("id") Integer id, @RequestBody Map<String, Object> updates) {
+
+        // 1. 从数据库中获取当前实体
+        InboundOrders existingOrder = service.getById(id);
+        if (existingOrder == null) {
+            // 如果找不到对应的订单，返回 404 Not Found
+            return ResponseEntity.notFound().build();
+        }
+
+        // 2. 遍历 Map，根据 key 更新相应的字段
+        // 这种方式非常安全，因为它只允许更新你明确指定的字段
+        updates.forEach((key, value) -> {
+            switch (key) {
+                case "status":
+                    // 确保值的类型正确
+                    if (value instanceof String) {
+                        existingOrder.setStatus((String) value);
+                    }
+                    break;
+                case "notes":
+                    if (value instanceof String) {
+                        existingOrder.setNotes((String) value);
+                    }
+                    break;
+                // 在这里可以添加其他允许被 PATCH 更新的字段
+                // default:
+                //     // 可以选择忽略未知字段或抛出异常
+                //     break;
+            }
+        });
+
+        // 3. 将更新后的实体保存回数据库
+        service.updateById(existingOrder);
+
+        // 4. 返回更新后的完整实体和 200 OK 状态码
+        return ResponseEntity.ok(existingOrder);
+    }*/
 }

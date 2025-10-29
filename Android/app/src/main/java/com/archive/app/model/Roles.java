@@ -7,10 +7,10 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Roles {
 
-    @SerializedName("id")
+
     private int id;
 
-    @SerializedName("role_name")
+
     private String roleName;
 
     // --- Getters and Setters ---

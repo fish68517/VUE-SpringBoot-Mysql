@@ -67,6 +67,14 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/btn_check"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="查看批次"
+                    android:textColor="#4A72C3"/>
+
+                <Button
                     android:id="@+id/btn_delete"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"

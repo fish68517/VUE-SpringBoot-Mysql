@@ -2,37 +2,38 @@ package com.archive.app.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 对应数据库中的 inbound_orders 表
  */
-public class InboundOrders {
+public class InboundOrders implements Serializable {
 
-    @SerializedName("id")
+
     private int id;
 
-    @SerializedName("order_number")
+
     private String orderNumber;
 
-    @SerializedName("created_by_user_id")
+
     private int createdByUserId;
 
-    @SerializedName("status")
+
     private String status;
 
-    @SerializedName("notes")
+
     private String notes;
 
-    @SerializedName("created_at")
+
     private String createdAt;
 
-    @SerializedName("updated_at")
+
     private String updatedAt;
 
     // transient 关键字告诉Gson在序列化时忽略此字段
     // 我们用它在客户端临时存储批次详情
-    private transient List<Inventory> batchDetails;
+    private List<Inventory> batchDetails;
 
     // 为新字段添加 Getter 和 Setter
     public List<Inventory> getBatchDetails() {

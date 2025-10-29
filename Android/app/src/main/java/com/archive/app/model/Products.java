@@ -7,22 +7,22 @@ public class Products implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @SerializedName("id")
+
     private Integer id;
 
-    @SerializedName("sku")
+
     private String sku;
 
-    @SerializedName("name")
+
     private String name;
 
-    @SerializedName("description")
+
     private String description;
 
-    @SerializedName("createdAt")
+
     private String createdAt;
 
-    @SerializedName("updatedAt")
+
     private String updatedAt;
 
     // --- Getters and Setters ---
