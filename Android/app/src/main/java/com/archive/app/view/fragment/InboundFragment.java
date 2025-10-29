@@ -105,15 +105,18 @@ public class InboundFragment extends Fragment implements AdapterCallback {
     }
 
 
+    // 处理返回结果的 Launcher
     private final ActivityResultLauncher<Intent> scanActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK) {
-                    Toast.makeText(getContext(), "入库操作已发送", Toast.LENGTH_SHORT).show();
-                    // 扫描成功后刷新列表
+                    // 扫描成功（入库或出库已完成）
+                    Toast.makeText(getContext(), "操作成功，正在刷新列表...", Toast.LENGTH_SHORT).show();
+                    // 刷新当前 Fragment 的列表
                     fetchInboundOrders();
                 } else {
-                    Toast.makeText(getContext(), R.string.scan_cancelled, Toast.LENGTH_SHORT).show();
+                    // 扫描被用户取消或失败
+                    Toast.makeText(getContext(), "操作已取消", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -128,7 +131,7 @@ public class InboundFragment extends Fragment implements AdapterCallback {
 
         setupRecyclerView();
 
-        btnScanInbound.setOnClickListener(v -> startScan());
+        btnScanInbound.setOnClickListener(v -> startScan("INBOUND"));
 
         swipeRefreshLayout.setOnRefreshListener(this::fetchInboundOrders);
 
@@ -232,9 +235,9 @@ public class InboundFragment extends Fragment implements AdapterCallback {
     }
 
 
-    private void startScan() {
+    private void startScan(String scanType) {
         Intent intent = new Intent(getActivity(), ScanActivity.class);
-        intent.putExtra(ScanActivity.EXTRA_SCAN_TYPE, "INBOUND");
+        intent.putExtra(ScanActivity.EXTRA_SCAN_TYPE, scanType);
         scanActivityResultLauncher.launch(intent);
     }
 }

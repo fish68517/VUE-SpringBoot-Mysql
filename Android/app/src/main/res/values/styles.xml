@@ -43,4 +43,7 @@
         <item name="android:textColor">@color/calculator_operator_text_color</item>
     </style>
 
+
+
+
 </resources> 

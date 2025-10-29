@@ -1,30 +1,30 @@
 package com.archive.app.view.activity;
 
-import android.app.Activity;
+import android.Manifest;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
-import com.archive.app.ApiService;
+
+import com.archive.app.ApiClient;
 import com.archive.app.MyApplication;
-import com.archive.app.R;
-import com.archive.app.RetrofitClient;
+import com.archive.app.databinding.ActivityScanBinding;
 import com.archive.app.dto.ScanRequest;
 import com.archive.app.dto.ScanResponse;
-import com.archive.app.model.Inventory;
-import com.archive.app.model.Products;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
-
-import com.journeyapps.barcodescanner.CaptureManager;
-import com.journeyapps.barcodescanner.DecoratedBarcodeView;
+import com.budiyev.android.codescanner.CodeScanner;
+import com.budiyev.android.codescanner.CodeScannerView;
+import com.budiyev.android.codescanner.DecodeCallback;
+import com.google.zxing.Result;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,270 +32,220 @@ import retrofit2.Response;
 
 public class ScanActivity extends AppCompatActivity {
 
-    public static final String EXTRA_SCAN_TYPE = "scan_type"; // "INBOUND", "OUTBOUND", "QUERY"
-    public static final String RESULT_BATCH_CODE = "batch_code";
+    public static final String EXTRA_SCAN_TYPE = "EXTRA_SCAN_TYPE"; // "INBOUND" or "OUTBOUND"
+    // (可选) 用于方案一模拟扫描的 key
+    public static final String EXTRA_SIMULATED_SCAN_RESULT = "EXTRA_SIMULATED_SCAN_RESULT";
 
-    private CaptureManager capture;
-    private DecoratedBarcodeView barcodeScannerView;
-    private ApiService apiService;
+    private ActivityScanBinding binding;
+    private CodeScanner mCodeScanner;
     private String scanType;
 
-    private static final String TAG = "ScanActivity";
+
+    // 1. 创建一个 ActivityResultLauncher 用于请求权限
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    // 权限被授予，现在可以安全地启动扫描器了
+                    Toast.makeText(this, "相机权限已授予", Toast.LENGTH_SHORT).show();
+                    setupScanner();
+                    mCodeScanner.startPreview(); // 别忘了在这里也启动预览
+                } else {
+                    // 权限被拒绝，告知用户并关闭页面
+                    Toast.makeText(this, "需要相机权限才能进行扫描", Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan);
+        binding = ActivityScanBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        barcodeScannerView = findViewById(R.id.zxing_barcode_scanner);
-        apiService = RetrofitClient.getApiService();
+
         scanType = getIntent().getStringExtra(EXTRA_SCAN_TYPE);
         if (scanType == null) {
-            scanType = "QUERY"; // Default if not specified
+            Toast.makeText(this, "扫描类型错误", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
-        capture = new CaptureManager(this, barcodeScannerView);
-        capture.initializeFromIntent(getIntent(), savedInstanceState);
-        // Do not call decode() here, let CaptureManager handle it
-        // capture.decode(); // REMOVE THIS LINE
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        capture.onResume();
-    }
+        // 2. 检查权限并启动扫描
+        checkCameraPermissionAndStartScanner();
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        capture.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        capture.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        capture.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return barcodeScannerView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults); // Add this line
-        capture.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-
-    // CaptureManager will call this method internally via Activity Result API
-    // Need to override onActivityResult IF CaptureManager doesn't handle it
-    // Or just let CaptureManager handle it. Let's assume CaptureManager handles it.
-    // However, the standard ZXing IntentIntegrator method requires onActivityResult.
-    // If using CaptureManager directly without IntentIntegrator, handle result differently.
-
-    // Let's revert to using IntentIntegrator for simpler result handling,
-    // which requires overriding onActivityResult.
-
-    // Remove CaptureManager related code and use IntentIntegrator in Fragments.
-    // THIS ACTIVITY BECOMES JUST A HOST FOR THE SCANNER VIEW (if using DecoratedBarcodeView directly)
-    // OR it might not be needed if using IntentIntegrator.launch().
-
-    // --- REVISED APPROACH: Using IntentIntegrator from Fragments ---
-    // ScanActivity is NOT NEEDED if using IntentIntegrator().initiateScan()
-    // The result will be delivered back to the calling Fragment's onActivityResult.
-
-    // --- ALTERNATIVE: If Keeping ScanActivity as Scanner Host ---
-    // If you keep this ScanActivity, you need a way to return the result.
-    // Let's assume CaptureManager sends the result back via onActivityResult
-    // (though modern practice prefers ActivityResultLauncher).
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        if (result != null) {
-            if (result.getContents() == null) {
-                Toast.makeText(this, R.string.scan_cancelled, Toast.LENGTH_LONG).show();
-                setResult(Activity.RESULT_CANCELED);
-                finish();
-            } else {
-                String batchCode = result.getContents();
-                Log.d(TAG, "Scanned Batch Code: " + batchCode);
-                handleScanResult(batchCode);
-            }
+        // 检查是否有模拟扫描结果传入（用于方案一）
+        if (getIntent().hasExtra(EXTRA_SIMULATED_SCAN_RESULT)) {
+            String simulatedResult = getIntent().getStringExtra(EXTRA_SIMULATED_SCAN_RESULT);
+            // 直接处理结果，不启动相机
+            handleScanResult(simulatedResult);
         } else {
-            super.onActivityResult(requestCode, resultCode, data);
+            // 正常启动相机扫描
+            setupScanner();
         }
     }
 
-    private void handleScanResult(String batchCode) {
-        // Immediately fetch inventory details from backend
-        fetchInventoryDetails(batchCode);
+    /**
+     * 检查相机权限，如果已授予则启动扫描器，否则发起请求
+     */
+    private void checkCameraPermissionAndStartScanner() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            // 权限已经存在，直接设置并启动扫描器
+            setupScanner();
+        } else {
+            // 权限不存在，发起请求
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
     }
 
-    private void fetchInventoryDetails(String batchCode) {
-        showLoadingDialog(true);
-        apiService.getInventoryByBatchCode(batchCode).enqueue(new Callback<ScanResponse>() {
+    private void setupScanner() {
+        if (mCodeScanner == null) {
+            CodeScannerView scannerView = binding.scannerView;
+            mCodeScanner = new CodeScanner(this, scannerView);
+            mCodeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
+                mCodeScanner.stopPreview();
+                handleScanResult(result.getText());
+            }));
+            scannerView.setOnClickListener(view -> mCodeScanner.startPreview());
+        }
+    }
+
+    /**
+     * 处理扫描到的二维码内容 (batchCode)
+     */
+    private void handleScanResult(String batchCode) {
+        // 1. 调用 API 获取批次详情，以确认物品信息
+        binding.progressBar.setVisibility(View.VISIBLE);
+        ApiClient.getApiService().getInventoryByBatchCode(batchCode).enqueue(new Callback<ScanResponse>() {
             @Override
             public void onResponse(Call<ScanResponse> call, Response<ScanResponse> response) {
-                showLoadingDialog(false);
-                if (response.isSuccessful() && response.body() != null && response.body().getInventory() != null && response.body().getProduct() != null) {
-                    ScanResponse scanData = response.body();
-                    showConfirmationDialog(scanData);
+                binding.progressBar.setVisibility(View.GONE);
+                if (response.isSuccessful() && response.body() != null) {
+                    // 2. 获取成功，弹出确认对话框
+                    showConfirmationDialog(response.body());
                 } else {
-                    Log.e(TAG, "Failed to fetch inventory details: " + response.code());
-                    Toast.makeText(ScanActivity.this, R.string.invalid_batch_code, Toast.LENGTH_SHORT).show();
-                    // Optionally restart scan or finish
-                    restartScan(); // Example: restart scan on invalid code
-                    // finishWithError();
+                    // 批次号无效或网络错误
+                    showErrorDialog("无效的批次号", "未在系统中找到该批次号，请确认二维码是否正确。");
                 }
             }
 
             @Override
             public void onFailure(Call<ScanResponse> call, Throwable t) {
-                showLoadingDialog(false);
-                Log.e(TAG, "Network error fetching details: ", t);
-                Toast.makeText(ScanActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show();
-                restartScan(); // Example: restart scan on network error
-                // finishWithError();
+                binding.progressBar.setVisibility(View.GONE);
+                showErrorDialog("网络错误", "无法连接到服务器，请检查网络连接。");
             }
         });
     }
 
-    private void showConfirmationDialog(ScanResponse scanData) {
-        Inventory inventory = scanData.getInventory();
-        Products product = scanData.getProduct();
-        String batchCode = inventory.getBatchCode();
-        Integer currentUserId = MyApplication.getCurrentUserId();
+    /**
+     * 显示一个包含物品信息的确认对话框
+     */
+    private void showConfirmationDialog(ScanResponse data) {
+        String title = "INBOUND".equals(scanType) ? "确认入库" : "确认出库";
+        String message = String.format(
+                "请确认物品信息：\n\n产品名称: %s\n批次号: %s\n当前库存: %d",
+                data.getProduct().getName(),
+                data.getInventory().getBatchCode(),
+                data.getInventory().getQuantity()
+        );
 
-        if (currentUserId == null) {
-            Toast.makeText(this, "用户未登录，无法操作", Toast.LENGTH_SHORT).show();
-            finishWithError();
-            return;
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.scan_result_title);
-
-        // Build message string
-        StringBuilder message = new StringBuilder();
-        message.append(getString(R.string.product_name_label)).append(" ").append(product.getName()).append("\n");
-        message.append(getString(R.string.product_sku_label)).append(" ").append(product.getSku()).append("\n");
-        message.append(getString(R.string.batch_code_label)).append(" ").append(batchCode).append("\n");
-        message.append(getString(R.string.current_quantity_label)).append(" ").append(inventory.getQuantity());
-
-        builder.setMessage(message.toString());
-
-        builder.setNegativeButton(R.string.cancel, (dialog, which) -> {
-            dialog.dismiss();
-            restartScan(); // Allow scanning again after cancel
-            // finishWithError(); // Or just finish
-        });
-
-        if ("INBOUND".equals(scanType)) {
-            builder.setPositiveButton(R.string.confirm_inbound, (dialog, which) -> {
-                performApiCall(apiService.scanInbound(new ScanRequest(batchCode, currentUserId)), R.string.inbound_success, R.string.inbound_failed);
-            });
-        } else if ("OUTBOUND".equals(scanType)) {
-            // Check stock before showing the confirm button
-            if (inventory.getQuantity() <= 0) {
-                builder.setMessage(message.toString() + "\n\n库存不足，无法出库！");
-                // No positive button if stock is zero
-                builder.setPositiveButton(null, null); // Hide positive button
-            } else {
-                builder.setPositiveButton(R.string.confirm_outbound, (dialog, which) -> {
-                    performApiCall(apiService.scanOutbound(new ScanRequest(batchCode, currentUserId)), R.string.outbound_success, R.string.outbound_failed);
-                });
-            }
-        } else { // QUERY type
-            builder.setPositiveButton(R.string.confirm, (dialog, which) -> {
-                finishWithSuccess(batchCode); // Just return the batch code for query
-            });
-        }
-
-        builder.setCancelable(false); // Prevent dismissing by tapping outside
-        builder.show();
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("确认", (dialog, which) -> {
+                    // 用户点击确认，根据扫描类型调用相应的接口
+                    if ("INBOUND".equals(scanType)) {
+                        performInbound(data.getInventory().getBatchCode());
+                    } else {
+                        performOutbound(data.getInventory().getBatchCode());
+                    }
+                })
+                .setNegativeButton("取消", (dialog, which) -> {
+                    // 用户取消，关闭当前 Activity
+                    finish();
+                })
+                .setCancelable(false) // 不允许通过点击外部来关闭
+                .show();
     }
 
-
-    private void performApiCall(Call<Void> apiCall, int successMsgResId, int errorMsgResId) {
-        showLoadingDialog(true);
-        apiCall.enqueue(new Callback<Void>() {
+    /**
+     * 调用入库接口
+     */
+    private void performInbound(String batchCode) {
+        binding.progressBar.setVisibility(View.VISIBLE);
+        ScanRequest request = new ScanRequest(batchCode, MyApplication.getCurrentUser().getId());
+        ApiClient.getApiService().scanInbound(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                showLoadingDialog(false);
                 if (response.isSuccessful()) {
-                    Toast.makeText(ScanActivity.this, successMsgResId, Toast.LENGTH_SHORT).show();
-                    finishWithSuccess(null); // Indicate success, maybe pass batch code back if needed
+                    Toast.makeText(ScanActivity.this, "入库成功", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK); // 设置成功结果
+                    finish();
                 } else {
-                    Log.e(TAG, "API call failed: " + response.code() + " - " + response.message());
-                    Toast.makeText(ScanActivity.this, errorMsgResId, Toast.LENGTH_SHORT).show();
-                    restartScan(); // Allow retry
+                    handleApiError("入库失败");
                 }
             }
-
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                showLoadingDialog(false);
-                Log.e(TAG, "Network error during operation: ", t);
-                Toast.makeText(ScanActivity.this, R.string.network_error, Toast.LENGTH_SHORT).show();
-                restartScan(); // Allow retry
+                handleApiError("入库失败，网络错误");
             }
         });
     }
 
-    private void finishWithSuccess(String batchCode) {
-        Intent resultIntent = new Intent();
-        if (batchCode != null) {
-            resultIntent.putExtra(RESULT_BATCH_CODE, batchCode);
-        }
-        setResult(Activity.RESULT_OK, resultIntent);
-        finish();
-    }
-
-    private void finishWithError() {
-        setResult(Activity.RESULT_CANCELED);
-        finish();
-    }
-
-    // Method to restart the scan (if using CaptureManager directly)
-    private void restartScan() {
-        // If using CaptureManager:
-        if (capture != null) {
-            // Reset state and start decoding again
-            barcodeScannerView.resume(); // Ensure view is resumed
-            // capture.decode(); // This might re-trigger if needed, or handle in CaptureManager callbacks
-            Toast.makeText(this, "请重新扫描", Toast.LENGTH_SHORT).show();
-        } else {
-            // If using IntentIntegrator launched from Fragment, finishing here allows Fragment to relaunch
-            finishWithError(); // Or just finish to return control
-        }
-    }
-
-
-    // Simple loading indicator management (replace with ProgressBar if needed)
-    private AlertDialog loadingDialog;
-    private void showLoadingDialog(boolean show) {
-        if (show) {
-            if (loadingDialog == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setView(R.layout.dialog_loading); // Create a simple layout with a ProgressBar
-                builder.setCancelable(false);
-                loadingDialog = builder.create();
+    /**
+     * 调用出库接口
+     */
+    private void performOutbound(String batchCode) {
+        binding.progressBar.setVisibility(View.VISIBLE);
+        ScanRequest request = new ScanRequest(batchCode, MyApplication.getCurrentUser().getId());
+        ApiClient.getApiService().scanOutbound(request).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(ScanActivity.this, "出库成功", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK); // 设置成功结果
+                    finish();
+                } else {
+                    handleApiError("出库失败");
+                }
             }
-            loadingDialog.show();
-        } else {
-            if (loadingDialog != null && loadingDialog.isShowing()) {
-                loadingDialog.dismiss();
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                handleApiError("出库失败，网络错误");
             }
+        });
+    }
+
+    private void showErrorDialog(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("确定", (dialog, which) -> finish())
+                .setCancelable(false)
+                .show();
+    }
+
+    private void handleApiError(String defaultMessage) {
+        binding.progressBar.setVisibility(View.GONE);
+        Toast.makeText(this, defaultMessage, Toast.LENGTH_LONG).show();
+        // 也可以选择不关闭，让用户重试
+        // mCodeScanner.startPreview();
+        finish(); // 当前逻辑是失败后直接关闭
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mCodeScanner != null && !getIntent().hasExtra(EXTRA_SIMULATED_SCAN_RESULT)) {
+            mCodeScanner.startPreview();
         }
+    }
+
+    @Override
+    protected void onPause() {
+        if (mCodeScanner != null) {
+            mCodeScanner.releaseResources();
+        }
+        super.onPause();
     }
 }

@@ -1,6 +1,7 @@
 package com.archive.app.view.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -32,7 +33,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class OutboundFragment extends Fragment {
+public class OutboundFragment extends Fragment implements OutboundLogAdapter.OnDeleteClickListener{
 
     private Button btnScanOutbound;
     private RecyclerView recyclerView;
@@ -74,7 +75,7 @@ public class OutboundFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        adapter = new OutboundLogAdapter();
+        adapter = new OutboundLogAdapter(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
     }
@@ -109,6 +110,58 @@ public class OutboundFragment extends Fragment {
             @Override
             public void onFailure(Call<List<TransactionLogs>> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(getContext(), "网络错误: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    /**
+     * 这是实现回调接口后必须重写的方法。
+     * 当用户在 Adapter 中点击删除按钮时，此方法将被调用。
+     * @param log 用户点击的那个日志对象
+     */
+    @Override
+    public void onDeleteClick(final TransactionLogs log) {
+        // 最佳实践：在执行删除操作前，给用户一个确认对话框
+        new AlertDialog.Builder(getContext())
+                .setTitle("确认删除")
+                .setMessage("您确定要删除这条出库记录吗？此操作不可恢复。")
+                .setPositiveButton("确定", (dialog, which) -> {
+                    // 用户点击了“确定”，执行删除的网络请求
+                    performDeleteRequest(log);
+                })
+                .setNegativeButton("取消", null) // 点击“取消”则什么也不做
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    /**
+     * 执行实际的删除网络请求
+     * @param log 要删除的日志对象
+     */
+    private void performDeleteRequest(TransactionLogs log) {
+        // 显示加载指示器，例如让 SwipeRefreshLayout 转起来
+        swipeRefreshLayout.setRefreshing(true);
+
+        ApiClient.getApiService().deleteTransactionLog(log.getId()).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                swipeRefreshLayout.setRefreshing(false);
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "删除成功", Toast.LENGTH_SHORT).show();
+                    // 删除成功后，立即刷新列表以反映变化
+                    fetchOutboundLogs();
+                } else {
+                    // 处理API返回的错误，例如权限不足等
+                    Toast.makeText(getContext(), "删除失败，服务器错误", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                // 处理网络连接失败等问题
                 Toast.makeText(getContext(), "网络错误: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

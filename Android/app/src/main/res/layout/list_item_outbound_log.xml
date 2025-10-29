@@ -56,5 +56,17 @@
             android:layout_marginTop="4dp"
             android:text="2025-10-12 11:00:00"
             android:textSize="12sp"/>
+
+        <!--增加删除按钮-->
+        <ImageButton
+            android:id="@+id/btn_delete_outbound_log"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_below="@id/tv_quantity_change"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="删除出库记录"
+            android:src="@drawable/ic_delete"/>
     </RelativeLayout>
 </com.google.android.material.card.MaterialCardView>

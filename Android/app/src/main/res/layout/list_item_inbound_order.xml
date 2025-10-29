@@ -56,46 +56,56 @@
                 android:text="2025-10-12 10:28:39"
                 android:textSize="12sp"/>
 
-            <!-- 新增的操作按钮区域 -->
-            <LinearLayout
-                android:id="@+id/ll_actions"
-                android:layout_width="wrap_content"
+            <!-- 新增: 使用 HorizontalScrollView 包裹按钮区域 -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_created_at"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                android:scrollbars="none">  <!-- 推荐：隐藏水平滚动条，界面更干净 -->
 
-                <Button
-                    android:id="@+id/btn_check"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                <!-- 你的按钮容器 LinearLayout 现在是 HorizontalScrollView 的子视图 -->
+                <!-- 关键：它的宽度必须是 wrap_content 才能让滚动生效 -->
+                <LinearLayout
+                    android:id="@+id/ll_actions"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="查看批次"
-                    android:textColor="#4A72C3"/>
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/btn_delete"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="删除"
-                    android:textColor="#D32F2F"/>
+                    <!-- 你的所有按钮都放在这里，无需任何改动 -->
+                    <Button
+                        android:id="@+id/btn_check"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="查看批次"
+                        android:textColor="#4A72C3"/>
 
-                <Button
-                    android:id="@+id/btn_set_processing"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="处理中"/>
+                    <Button
+                        android:id="@+id/btn_delete"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="删除"
+                        android:textColor="#D32F2F"/>
 
-                <Button
-                    android:id="@+id/btn_set_completed"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="已完成"/>
-            </LinearLayout>
+                    <Button
+                        android:id="@+id/btn_set_processing"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="处理中"/>
+
+                    <Button
+                        android:id="@+id/btn_set_completed"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="已完成"/>
+                </LinearLayout>
+
+            </HorizontalScrollView>
 
         </RelativeLayout>
 

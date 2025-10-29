@@ -30,6 +30,8 @@ import com.archive.app.model.Inventory;
 import com.archive.app.model.Products;
 import com.archive.app.view.activity.ScanActivity;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -49,7 +51,7 @@ public class QueryFragment extends Fragment {
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                    String batchCode = result.getData().getStringExtra(ScanActivity.RESULT_BATCH_CODE);
+                    String batchCode = result.getData().getStringExtra(ScanActivity.EXTRA_SCAN_TYPE);
                     if (batchCode != null) {
                         etQueryInput.setText(batchCode);
                         searchByBatchCode(batchCode); // Trigger search after scan
@@ -101,8 +103,8 @@ public class QueryFragment extends Fragment {
         } else {
             // Otherwise, assume it's an SKU - this endpoint needs to exist on backend
             // searchBySku(query);
-            Toast.makeText(getContext(), "仅支持通过批次号查询", Toast.LENGTH_SHORT).show(); // TEMP
-            searchByBatchCode(query); // For now, try batch code search anyway
+
+            searchBySku(query); // For now, try batch code search anyway
         }
     }
 
@@ -131,7 +133,6 @@ public class QueryFragment extends Fragment {
     }
 
     // --- Add searchBySku method if backend supports it ---
-    /*
     private void searchBySku(String sku) {
         showLoading(true);
         clearResults();
@@ -184,7 +185,6 @@ public class QueryFragment extends Fragment {
              }
         });
     }
-    */
 
 
     private void displayResults(ScanResponse data) {
