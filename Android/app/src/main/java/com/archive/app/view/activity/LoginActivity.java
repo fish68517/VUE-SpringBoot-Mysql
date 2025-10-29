@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -40,6 +41,13 @@ public class LoginActivity extends AppCompatActivity {
         etUsername = findViewById(R.id.et_login_username);
         etPassword = findViewById(R.id.et_login_password);
         btnLogin = findViewById(R.id.btn_login);
+        findViewById(R.id.btn_to_register).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
 
         apiService = RetrofitClient.getApiService();
 
@@ -65,15 +73,11 @@ public class LoginActivity extends AppCompatActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     Users loggedInUser = response.body();
                     // Check if the user role is '操作员' (Operator) - assuming roleId 3 is Operator
-                    if (loggedInUser.getRoleId() == 3) {
-                        MyApplication.setCurrentUser(loggedInUser); // Store user globally
-                        Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish(); // Prevent returning to Login screen
-                    } else {
-                        Toast.makeText(LoginActivity.this, "登录失败：非操作员禁止登录App", Toast.LENGTH_LONG).show();
-                    }
+                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    MyApplication.setCurrentUser(loggedInUser);
+                    startActivity(intent);
+                    finish(); // Prevent returning to Login screen
 
                 } else {
                     // Handle unsuccessful response (e.g., 401 Unauthorized)

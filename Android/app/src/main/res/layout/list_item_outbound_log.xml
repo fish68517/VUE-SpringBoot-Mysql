@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="2dp"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tv_outbound_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="出库记录"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"/>
+
+        <TextView
+            android:id="@+id/tv_quantity_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="-10"
+            android:textColor="#D32F2F"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_notes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_outbound_title"
+            android:layout_marginTop="4dp"
+            android:text="备注: SO-20251012-A05"/>
+
+        <TextView
+            android:id="@+id/tv_operator_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_notes"
+            android:layout_marginTop="4dp"
+            android:text="操作员ID: 4"/>
+
+        <TextView
+            android:id="@+id/tv_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_operator_id"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="4dp"
+            android:text="2025-10-12 11:00:00"
+            android:textSize="12sp"/>
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>
