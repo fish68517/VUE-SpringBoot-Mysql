@@ -9,6 +9,7 @@
                <el-icon><Plus /></el-icon> 手动创建入库单
             </el-button>
             <el-upload
+              v-if="false"
               :action="uploadUrl"
               :show-file-list="false"
               :on-success="handleUploadSuccess"
@@ -17,7 +18,7 @@
               style="display: inline-block; margin-left: 10px;"
             >
               <el-button type="success">
-                <el-icon><Upload /></el-icon> 从Excel导入
+                <el-icon><Upload /></el-icon> "1"
               </el-button>
             </el-upload>
             <el-button @click="downloadTemplate" style="margin-left: 10px;" v-if="false">
