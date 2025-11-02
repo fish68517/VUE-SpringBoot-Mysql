@@ -62,6 +62,8 @@ Thumbs.db
 # ==================================
 # 依赖包
 /VUE/node_modules/
+/VUE/time-management-ui/node_modules/
+
 
 # 编译输出目录
 /VUE/dist/
