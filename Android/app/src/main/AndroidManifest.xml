@@ -57,11 +57,6 @@
         <service android:name="com.amap.api.location.APSService" />-->
 
 
-
-
-
-
-
         <activity android:name="com.archive.app.view.activity.RegisterActivity"
             android:exported="true">
         </activity>
@@ -73,10 +68,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
-
-
 
         <activity
             android:name="com.archive.app.view.activity.MainActivity"
