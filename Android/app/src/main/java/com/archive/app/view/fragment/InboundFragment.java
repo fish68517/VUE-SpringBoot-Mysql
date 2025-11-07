@@ -45,12 +45,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.widget.EditText; // 引入 EditText
+import androidx.appcompat.app.AlertDialog; // 引入 AlertDialog
+
+
 public class InboundFragment extends Fragment implements AdapterCallback {
 
     private Button btnScanInbound;
     private RecyclerView recyclerView;
     private InboundOrderAdapter adapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    private Button btnManualInbound; // *** 新增：手动输入按钮的变量 ***
 
     // 用于管理 RxJava 的订阅，防止内存泄漏
     private final CompositeDisposable disposables = new CompositeDisposable();
@@ -129,14 +135,49 @@ public class InboundFragment extends Fragment implements AdapterCallback {
         recyclerView = view.findViewById(R.id.recycler_view_inbound);
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout_inbound);
 
+        btnManualInbound = view.findViewById(R.id.btn_manual_inbound); // *** 新增：找到新按钮 ***
+
         setupRecyclerView();
 
         btnScanInbound.setOnClickListener(v -> startScan("INBOUND"));
 
         swipeRefreshLayout.setOnRefreshListener(this::fetchInboundOrders);
+        btnManualInbound.setOnClickListener(v -> showManualInputDialog("INBOUND")); // *** 新增：为新按钮设置监听器 ***
 
         return view;
     }
+
+
+    /**
+     * *** 新增方法：显示手动输入批次号的对话框 ***
+     */
+    private void showManualInputDialog(String scanType) {
+        // 1. 加载自定义布局
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_manual_scan, null);
+        final EditText etInput = dialogView.findViewById(R.id.et_batch_code_input);
+
+        // (可选) 预填一个测试用的批次号，方便调试
+        etInput.setText("例如：BAT-20251011-001");
+
+        // 2. 创建并显示对话框
+        new AlertDialog.Builder(getContext())
+                .setView(dialogView)
+                .setPositiveButton("确认", (dialog, which) -> {
+                    String batchCode = etInput.getText().toString().trim();
+                    if (batchCode.isEmpty()) {
+                        Toast.makeText(getContext(), "输入内容不能为空", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // 3. **关键步骤**：将手动输入的字符串作为“模拟扫描结果”传递给 ScanActivity
+                        Intent intent = new Intent(getActivity(), ScanActivity.class);
+                        intent.putExtra(ScanActivity.EXTRA_SCAN_TYPE, scanType);
+                        intent.putExtra(ScanActivity.EXTRA_SIMULATED_SCAN_RESULT, batchCode); // 传递模拟结果
+                        scanActivityResultLauncher.launch(intent);
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .show();
+    }
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

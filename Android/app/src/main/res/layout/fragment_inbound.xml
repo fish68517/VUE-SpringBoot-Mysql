@@ -3,10 +3,22 @@
 android:layout_width="match_parent"
 android:layout_height="match_parent">
 
+
+    <!-- 手动输入按钮 -->
+    <Button
+        android:id="@+id/btn_manual_inbound"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="手动输入"
+        android:padding="16dp"/>
+
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     android:id="@+id/swipe_refresh_layout_inbound"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_below="@id/btn_manual_inbound"
     android:layout_above="@+id/btn_scan_inbound">
 
     <androidx.recyclerview.widget.RecyclerView

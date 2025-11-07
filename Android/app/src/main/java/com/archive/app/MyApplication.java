@@ -3,8 +3,16 @@ package com.archive.app;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
+import com.archive.app.model.Departments;
 import com.archive.app.model.Users;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -14,12 +22,29 @@ public class MyApplication extends Application {
 
     private static Users currentUser;
     private static SharedPreferences sharedPreferences;
+    public static List<Departments> departments;
 
     @Override
     public void onCreate() {
         super.onCreate();
         sharedPreferences = getSharedPreferences("warehouse_prefs", Context.MODE_PRIVATE);
         loadUserFromPrefs();
+        ApiClient.getApiService().listDepartments().enqueue(new Callback<List<Departments>>() {
+
+            @Override
+            public void onResponse(Call<List<Departments>> call, Response<List<Departments>> response) {
+                if (response.isSuccessful()){
+                    departments = response.body();
+                    Log.e("departments: ", response.body().toString());
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Departments>> call, Throwable t) {
+
+            }
+        });
     }
 
     public static Users getCurrentUser() {

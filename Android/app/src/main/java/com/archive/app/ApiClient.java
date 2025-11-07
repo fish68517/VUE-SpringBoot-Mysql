@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     // 使用您自己的服务器IP地址
-    private static final String BASE_URL = "http://192.168.222.145:8080/";
+    private static final String BASE_URL = "http://192.168.2.235:8080/";
 
     // volatile 关键字确保多线程环境下的可见性
     private static volatile ApiService apiService = null;
