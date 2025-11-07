@@ -50,8 +50,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="出库数量" prop="quantity">
+          <!-- 
+            - 初始状态: max 是 Infinity，组件正常渲染
+            - 选择后: max 是具体的库存数量，组件更新
+          -->
           <el-input-number v-model="form.quantity" :min="1" :max="selectedBatchMaxQuantity" controls-position="right" />
-          <span v-if="selectedBatchMaxQuantity" style="margin-left: 10px; color: #999;">
+              <!-- 
+            这里的 v-if 逻辑需要微调，因为 Infinity 也是一个真值。
+            我们应该只在选中了批次时才显示提示。
+          -->
+           <span v-if="form.inventoryId && selectedBatchMaxQuantity !== Infinity" style="margin-left: 10px; color: #999;">
               当前批次最大可出库: {{ selectedBatchMaxQuantity }}
           </span>
         </el-form-item>
@@ -100,9 +108,19 @@ const rules = reactive({
 });
 
 const selectedBatchMaxQuantity = computed(() => {
-    if (!form.inventoryId) return null;
+    // 1. 如果没有选择任何库存 (form.inventoryId 是 falsy 值)
+    if (!form.inventoryId) {
+        // 返回 Infinity，这样 max 属性就变成了一个非常大的数，
+        // min(1) > max(Infinity) 的条件永远不会成立，从而避免了报错。
+        return Infinity; 
+    }
+    
+    // 2. 根据 form.inventoryId 查找选中的库存项
     const selected = allInventory.value.find(item => item.id === form.inventoryId);
-    return selected ? selected.quantity : null;
+    
+    // 3. 如果找到了，返回其实际库存数量；如果由于某种原因没找到，
+    //    同样返回 Infinity 作为安全备用值。
+    return selected ? selected.quantity : Infinity;
 });
 
 // 获取所有需要的数据
@@ -127,17 +145,23 @@ const fetchData = async () => {
     const inventoryMap = new Map(allInventory.value.map(i => [i.id, i]));
     
     // 过滤并组合出库日志数据
-    outboundLogs.value = (logsRes.data || [])
-      .filter(log => log.type === '出库')
-      .map(log => {
-        const inventoryItem = inventoryMap.get(log.inventoryId);
-        return {
-          ...log,
-          inventory: inventoryItem,
-          product: inventoryItem ? inventoryItem.product : { name: '未知产品', sku: 'N/A' },
-          user: usersMap.get(log.userId) || { fullName: '未知用户' }
-        };
-      }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // 按时间倒序
+  outboundLogs.value = (logsRes.data || [])
+    // 1. 先对原始数据进行排序，这样最准确
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .filter(log => log.type === '出库')
+    .map(log => {
+      const inventoryItem = inventoryMap.get(log.inventoryId);
+
+      // 2. 在 map 中只做数据组合和格式化
+      return {
+        ...log,
+        // 将原始的 'T' 替换为空格
+        createdAt: log.createdAt ? log.createdAt.replace('T', ' ') : 'N/A',
+        inventory: inventoryItem,
+        product: inventoryItem ? inventoryItem.product : { name: '未知产品', sku: 'N/A' },
+        user: usersMap.get(log.userId) || { fullName: '未知用户' }
+      };
+    });
 
   } catch (error) {
     console.error("加载出库记录失败:", error);
@@ -151,6 +175,8 @@ onMounted(fetchData);
 
 // --- 手动出库相关 ---
 const openOutboundDialog = () => {
+
+    console.log("Opening outbound dialog");
     formRef.value?.resetFields();
     form.quantity = 1;
     inventoryOptions.value = []; // 清空之前的搜索结果
@@ -182,6 +208,8 @@ const handleBatchSelect = () => {
 
 // 提交手动出库
 const handleManualOutbound = () => {
+
+  console.log("Submitting manual outbound:", form);
   formRef.value.validate(async (valid) => {
     if (valid) {
       const selectedInventory = allInventory.value.find(item => item.id === form.inventoryId);

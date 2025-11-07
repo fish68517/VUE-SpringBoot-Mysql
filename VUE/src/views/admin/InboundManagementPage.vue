@@ -301,10 +301,14 @@ const handleManualCreate = async () => {
         const orderRes = await api.inboundOrdersApi.create(orderData);
         
         // 假设创建成功后后端返回了包含ID的订单对象
-        const createdOrderId = orderRes.data?.id; 
-        if (!createdOrderId) {
-             throw new Error("创建入库单失败，未返回ID");
+        // 后端返回的就是 true/false，不是对象,需要判断是否是true or false
+        if (!orderRes.data) {
+                throw new Error("创建入库单失败");              
         }
+        // const createdOrderId = orderRes.data?.id; 
+        // if (!createdOrderId) {
+        //      throw new Error("创建入库单失败，未返回ID");
+        // }
 
         // 2. 为每个明细创建库存记录 (生成唯一批次号)
         const inventoryPromises = createForm.items.map(item => {
@@ -331,7 +335,7 @@ const handleManualCreate = async () => {
         fetchData(); // 刷新列表
     } catch (error) {
         console.error("手动创建入库单失败:", error);
-        ElMessage.error("操作失败: " + (error.response?.data?.message || error.message));
+        ElMessage.error("操作失败: " + "批次号已经存在，请修改后重试");
     } finally {
         loading.value = false;
     }
@@ -514,7 +518,7 @@ const getStatusTagType = (status) => {
 
 // 需要 apiClient 实例来获取 baseURL
 import apiClient from '../../api/NetWorkApi.js';
-import { id } from 'element-plus/es/locales.mjs';
+import { id, th } from 'element-plus/es/locales.mjs';
 
 </script>
 
