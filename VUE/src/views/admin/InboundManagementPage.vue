@@ -298,17 +298,17 @@ const handleManualCreate = async () => {
             status: createForm.status,
             notes: createForm.notes,
         };
-        const orderRes = await api.inboundOrdersApi.create(orderData);
+        const orderRes = await api.inboundOrdersApi.createOrder(orderData);
         
         // 假设创建成功后后端返回了包含ID的订单对象
         // 后端返回的就是 true/false，不是对象,需要判断是否是true or false
-        if (!orderRes.data) {
-                throw new Error("创建入库单失败");              
-        }
-        // const createdOrderId = orderRes.data?.id; 
-        // if (!createdOrderId) {
-        //      throw new Error("创建入库单失败，未返回ID");
+        // if (!orderRes.data) {
+        //         throw new Error("创建入库单失败");              
         // }
+        const createdOrderId = orderRes.data?.id; 
+        if (!createdOrderId) {
+             throw new Error("创建入库单失败，未返回ID");
+        }
 
         // 2. 为每个明细创建库存记录 (生成唯一批次号)
         const inventoryPromises = createForm.items.map(item => {

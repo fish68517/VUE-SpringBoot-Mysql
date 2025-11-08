@@ -26,6 +26,17 @@ public class InboundOrdersController extends BaseController<InboundOrdersService
     @Autowired
     private InboundOrdersRepository inboundOrdersRepository;
 
+    @PostMapping("/create/order")
+    public ResponseEntity<InboundOrders> createInboundOrder(@RequestBody InboundOrders inboundOrder) {
+        inboundOrder.setCreatedAt(java.time.LocalDateTime.now());
+        inboundOrder.setUpdatedAt(java.time.LocalDateTime.now());
+        if (inboundOrder.getStatus() == null) {
+            inboundOrder.setStatus("待处理"); // 设置默认状态为 "待处理"
+        }
+        InboundOrders createdOrder = inboundOrdersRepository.save(inboundOrder);
+        return ResponseEntity.ok(createdOrder);
+    }
+
 
     /**
      * 更新入库单的状态

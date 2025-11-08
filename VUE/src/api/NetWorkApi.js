@@ -87,6 +87,10 @@ const api = {
 
     //=========================== 5. 入库单 (Inbound Orders) ===========================
     inboundOrdersApi: {
+        createOrder(data) {
+            return apiClient.post('/inbound-orders/create/order', data);
+        },
+
         create(data) {
             return apiClient.post('/inbound-orders', data);
         },
