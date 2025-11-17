@@ -1,0 +1,377 @@
+/* Responsive Design - Media Queries */
+
+/* Mobile Devices (< 768px) */
+@media (max-width: 767px) {
+  /* Typography adjustments */
+  html {
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: var(--font-size-xxl);
+  }
+  
+  h2 {
+    font-size: var(--font-size-xl);
+  }
+  
+  h3 {
+    font-size: var(--font-size-lg);
+  }
+  
+  /* Container adjustments */
+  .container {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .page-container {
+    padding: var(--spacing-md);
+  }
+  
+  /* Grid adjustments */
+  .grid-cols-2,
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  
+  /* Card adjustments */
+  .card {
+    padding: var(--spacing-md);
+  }
+  
+  /* Form adjustments */
+  .el-form-item {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  /* Button groups */
+  .el-button-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .el-button-group .el-button {
+    width: 100%;
+    margin-left: 0 !important;
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  /* Table responsive */
+  .el-table {
+    font-size: var(--font-size-sm);
+  }
+  
+  /* Dialog adjustments */
+  .el-dialog {
+    width: 95% !important;
+    margin: var(--spacing-md) auto !important;
+  }
+  
+  /* Pagination */
+  .el-pagination {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  /* Stats cards */
+  .stats-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+  
+  /* Action buttons in cards */
+  .card-actions {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .card-actions .el-button {
+    width: 100%;
+  }
+}
+
+/* Tablet Devices (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  /* Grid adjustments */
+  .grid-cols-3,
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Container adjustments */
+  .page-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+  
+  /* Stats cards */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Desktop Devices (> 1024px) */
+@media (min-width: 1024px) {
+  /* Stats cards */
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* Layout Component Responsive Styles */
+@media (max-width: 767px) {
+  /* Sidebar should be hidden by default on mobile */
+  .layout-sidebar {
+    position: fixed;
+    left: -100%;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+    z-index: var(--z-index-fixed);
+    transition: left var(--transition-base);
+    background: var(--color-bg-base);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .layout-sidebar.is-open {
+    left: 0;
+  }
+  
+  /* Main content should take full width */
+  .layout-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Header adjustments */
+  .layout-header {
+    padding: 0 var(--spacing-sm);
+  }
+  
+  .header-logo {
+    font-size: var(--font-size-lg);
+  }
+  
+  /* Hide some header elements on mobile */
+  .header-search {
+    display: none;
+  }
+  
+  /* Mobile menu toggle */
+  .mobile-menu-toggle {
+    display: block !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-toggle {
+    display: none !important;
+  }
+  
+  .layout-sidebar {
+    position: fixed;
+    left: 0;
+    top: var(--header-height);
+    height: calc(100vh - var(--header-height));
+  }
+  
+  .layout-main {
+    margin-left: var(--sidebar-width);
+    transition: margin-left var(--transition-base);
+  }
+  
+  .layout-sidebar.is-collapsed + .layout-main {
+    margin-left: var(--sidebar-collapsed-width);
+  }
+}
+
+/* Resource Card Responsive */
+@media (max-width: 767px) {
+  .resource-grid {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .resource-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .resource-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* Community Feed Responsive */
+@media (max-width: 767px) {
+  .post-card {
+    padding: var(--spacing-md);
+  }
+  
+  .post-images {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .comment-list {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Form Responsive */
+@media (max-width: 767px) {
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: var(--spacing-sm);
+  }
+  
+  .form-actions .el-button {
+    width: 100%;
+  }
+  
+  .el-form--inline .el-form-item {
+    display: block;
+    margin-right: 0;
+  }
+}
+
+/* Training Plan Responsive */
+@media (max-width: 767px) {
+  .exercise-list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .exercise-details {
+    width: 100%;
+    margin-top: var(--spacing-sm);
+  }
+}
+
+/* Analytics Dashboard Responsive */
+@media (max-width: 767px) {
+  .analytics-filters {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .analytics-filters .el-select,
+  .analytics-filters .el-date-picker {
+    width: 100%;
+  }
+  
+  .chart-container {
+    height: 250px !important;
+  }
+}
+
+/* Admin Tables Responsive */
+@media (max-width: 767px) {
+  /* Hide less important columns on mobile */
+  .el-table .mobile-hide {
+    display: none;
+  }
+  
+  /* Make action column sticky */
+  .el-table__fixed-right {
+    right: 0;
+  }
+}
+
+/* Profile Page Responsive */
+@media (max-width: 767px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .profile-avatar {
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .profile-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Check-in Calendar Responsive */
+@media (max-width: 767px) {
+  .el-calendar {
+    font-size: var(--font-size-xs);
+  }
+  
+  .el-calendar-table td {
+    padding: var(--spacing-xs);
+  }
+}
+
+/* Modal/Dialog Responsive */
+@media (max-width: 767px) {
+  .el-dialog__body {
+    padding: var(--spacing-md);
+  }
+  
+  .el-dialog__footer {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Search Results Responsive */
+@media (max-width: 767px) {
+  .search-filters {
+    flex-direction: column;
+  }
+  
+  .search-results-section {
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
+/* Coach Dashboard Responsive */
+@media (max-width: 767px) {
+  .dashboard-quick-actions {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+  
+  .student-list-card {
+    overflow-x: auto;
+  }
+}
+
+/* Utility Classes for Responsive */
+@media (max-width: 767px) {
+  .mobile-full-width {
+    width: 100% !important;
+  }
+  
+  .mobile-text-center {
+    text-align: center !important;
+  }
+  
+  .mobile-flex-col {
+    flex-direction: column !important;
+  }
+}
+
+/* Touch-friendly adjustments for mobile */
+@media (max-width: 767px) {
+  /* Larger touch targets */
+  .el-button {
+    min-height: 44px;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .el-input__inner {
+    min-height: 44px;
+  }
+  
+  /* Larger clickable areas */
+  .clickable-card {
+    padding: var(--spacing-md);
+  }
+  
+  /* Better spacing for touch */
+  .action-buttons {
+    gap: var(--spacing-md);
+  }
+}
