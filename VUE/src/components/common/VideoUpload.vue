@@ -75,9 +75,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
 import { VideoCamera, Delete, Loading, Close, Document } from '@element-plus/icons-vue';
 import { uploadVideo } from '../../api/upload';
+import { showSuccess, showError, showInfo } from '@/utils/feedback';
 
 const props = defineProps({
   modelValue: {
@@ -111,14 +111,14 @@ const beforeUpload = (file) => {
   
   if (!isValidType) {
     errorMessage.value = 'Only MP4 and AVI video formats are supported';
-    ElMessage.error(errorMessage.value);
+    showError(errorMessage.value);
     return false;
   }
   
   // Validate file size
   if (file.size > MAX_SIZE) {
     errorMessage.value = 'Video size must not exceed 100MB';
-    ElMessage.error(errorMessage.value);
+    showError(errorMessage.value);
     return false;
   }
   
@@ -176,7 +176,7 @@ const handleUpload = async ({ file }) => {
     emit('update:modelValue', response);
     emit('upload-success', response);
     
-    ElMessage.success('Video uploaded successfully');
+    showSuccess('Video uploaded successfully');
     
     // Reset progress after a delay
     setTimeout(() => {
@@ -195,7 +195,7 @@ const handleUpload = async ({ file }) => {
     uploadStatus.value = 'exception';
     errorMessage.value = error.message || 'Upload failed';
     emit('upload-error', error);
-    ElMessage.error('Video upload failed: ' + errorMessage.value);
+    showError('Video upload failed: ' + errorMessage.value);
     
     // Reset after error
     setTimeout(() => {
@@ -213,7 +213,7 @@ const handleCancel = () => {
   uploadProgress.value = 0;
   uploadStatus.value = '';
   fileInfo.value = null;
-  ElMessage.info('Upload cancelled');
+  showInfo('Upload cancelled');
 };
 
 const handleRemove = () => {

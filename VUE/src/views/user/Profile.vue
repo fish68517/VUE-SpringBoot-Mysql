@@ -94,7 +94,6 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
 import { getProfile, updateProfile, uploadAvatar } from '@/api/user';
 import { getCheckInStats } from '@/api/checkin';
 import { showSuccess, showError, showWarning, handleFormSubmit } from '@/utils/feedback';

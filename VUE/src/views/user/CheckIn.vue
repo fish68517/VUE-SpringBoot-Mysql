@@ -103,7 +103,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
 import { Calendar, SuccessFilled, Sunny, Trophy } from '@element-plus/icons-vue'
 import { performCheckIn, getCheckInHistory, getCheckInStats } from '@/api/checkin'
 import { useUserStore } from '@/store/modules/user'

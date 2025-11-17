@@ -17,8 +17,8 @@
 <script setup>
 import { ref, onErrorCaptured } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { getUserInfo } from '@/utils/auth'
+import { showError } from '@/utils/feedback'
 
 const router = useRouter()
 const hasError = ref(false)
@@ -38,10 +38,7 @@ onErrorCaptured((err, instance, info) => {
   }
   
   // Show error notification
-  ElMessage.error({
-    message: 'An error occurred while rendering the component',
-    duration: 3000
-  })
+  showError('An error occurred while rendering the component')
   
   // Prevent error from propagating further
   return false

@@ -164,7 +164,6 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Plus,
   Food,

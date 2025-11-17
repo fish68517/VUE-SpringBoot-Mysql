@@ -11,7 +11,7 @@
 import { ref, computed } from 'vue'
 import { Heart, HeartFilled } from '@element-plus/icons-vue'
 import { likeDynamic, unlikeDynamic } from '@/api/community'
-import { ElMessage } from 'element-plus'
+import { showError } from '@/utils/feedback'
 
 const props = defineProps({
   dynamicId: {
@@ -58,7 +58,7 @@ const handleLike = async () => {
     // Revert on error
     isLiked.value = previousLiked
     localCount.value = previousCount
-    ElMessage.error('Failed to update like status')
+    showError('Failed to update like status')
   }
 }
 </script>

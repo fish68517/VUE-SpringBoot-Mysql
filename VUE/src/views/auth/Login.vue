@@ -59,10 +59,10 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { login } from '@/api/auth'
 import { setToken, setUserInfo } from '@/utils/auth'
 import { commonRules } from '@/utils/validator'
+import { showError } from '@/utils/feedback'
 
 const router = useRouter()
 const loginFormRef = ref(null)
@@ -91,7 +91,7 @@ const handleLogin = async () => {
     // Validate form
     const valid = await loginFormRef.value.validate().catch(() => false)
     if (!valid) {
-      ElMessage.warning('请填写完整的登录信息')
+      showError('Please fill in all login information')
       return
     }
 
@@ -103,10 +103,7 @@ const handleLogin = async () => {
     setToken(response.token)
     setUserInfo(response.user)
 
-    ElMessage.success({
-      message: '登录成功',
-      duration: 2000
-    })
+    // Success message will be shown by the redirect
 
     // Redirect based on role
     const role = response.user.role
@@ -122,7 +119,7 @@ const handleLogin = async () => {
     console.error('Login error:', error)
     // Only show additional message if it's a validation error
     if (error.message && !error.response) {
-      ElMessage.error(error.message)
+      showError(error.message)
     }
   } finally {
     loading.value = false

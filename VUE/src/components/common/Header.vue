@@ -50,7 +50,6 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/modules/auth'
 import { useAppStore } from '@/store/modules/app'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { 
   Fold, 
   Bell, 
@@ -59,6 +58,7 @@ import {
   SwitchButton 
 } from '@element-plus/icons-vue'
 import SearchBar from './SearchBar.vue'
+import { showSuccess, showConfirm } from '@/utils/feedback'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -86,18 +86,18 @@ const handleCommand = async (command) => {
     router.push('/profile')
   } else if (command === 'logout') {
     try {
-      await ElMessageBox.confirm(
-        '确定要退出登录吗？',
-        '提示',
+      await showConfirm(
+        'Are you sure you want to logout?',
+        'Confirm Logout',
         {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+          confirmText: 'Logout',
+          cancelText: 'Cancel',
           type: 'warning'
         }
       )
       
       authStore.logout()
-      ElMessage.success('已退出登录')
+      showSuccess('Logged out successfully')
       router.push('/login')
     } catch {
       // User cancelled

@@ -1084,7 +1084,11 @@
   - _Requirements: All requirements - user experience_
 
 
-- [ ] 28.2 Add user feedback mechanisms
+- [x] 28.2 Add user feedback mechanisms
+
+
+
+
 
 
 

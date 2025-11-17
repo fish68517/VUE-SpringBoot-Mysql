@@ -48,9 +48,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
 import { Plus, ZoomIn, Delete, WarningFilled } from '@element-plus/icons-vue';
 import { uploadImage } from '../../api/upload';
+import { showSuccess, showError } from '@/utils/feedback';
 
 const props = defineProps({
   modelValue: {
@@ -79,14 +79,14 @@ const beforeUpload = (file) => {
   // Validate file type
   if (!ALLOWED_TYPES.includes(file.type)) {
     errorMessage.value = 'Only JPG, PNG and GIF formats are supported';
-    ElMessage.error(errorMessage.value);
+    showError(errorMessage.value);
     return false;
   }
   
   // Validate file size
   if (file.size > MAX_SIZE) {
     errorMessage.value = 'Image size must not exceed 5MB';
-    ElMessage.error(errorMessage.value);
+    showError(errorMessage.value);
     return false;
   }
   
@@ -136,7 +136,7 @@ const handleUpload = async ({ file }) => {
     emit('update:modelValue', response);
     emit('upload-success', response);
     
-    ElMessage.success('Image uploaded successfully');
+    showSuccess('Image uploaded successfully');
     
     // Reset progress after a delay
     setTimeout(() => {
@@ -147,7 +147,7 @@ const handleUpload = async ({ file }) => {
     uploadStatus.value = 'exception';
     errorMessage.value = error.message || 'Upload failed';
     emit('upload-error', error);
-    ElMessage.error('Image upload failed: ' + errorMessage.value);
+    showError('Image upload failed: ' + errorMessage.value);
     
     // Reset after error
     setTimeout(() => {

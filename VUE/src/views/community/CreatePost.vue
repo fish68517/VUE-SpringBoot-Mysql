@@ -64,7 +64,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { ArrowLeft, Plus } from '@element-plus/icons-vue'
 import { createDynamic } from '@/api/community'
 import { uploadImage } from '@/api/upload'

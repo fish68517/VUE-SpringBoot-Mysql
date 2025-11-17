@@ -75,9 +75,9 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { register } from '@/api/auth'
 import { validateUsername, validatePassword, validateConfirmPassword } from '@/utils/validator'
+import { showSuccess, showError } from '@/utils/feedback'
 
 const router = useRouter()
 const registerFormRef = ref(null)
@@ -125,7 +125,7 @@ const handleRegister = async () => {
     // Validate form
     const valid = await registerFormRef.value.validate().catch(() => false)
     if (!valid) {
-      ElMessage.warning('请填写完整的注册信息')
+      showError('Please fill in all registration information')
       return
     }
 
@@ -134,10 +134,7 @@ const handleRegister = async () => {
     const { confirmPassword, ...registerData } = registerForm
     await register(registerData)
 
-    ElMessage.success({
-      message: '注册成功，请登录',
-      duration: 2000
-    })
+    showSuccess('Registration successful! Please login')
     
     // Redirect to login page after successful registration
     setTimeout(() => {
@@ -148,7 +145,7 @@ const handleRegister = async () => {
     console.error('Register error:', error)
     // Only show additional message if it's a validation error
     if (error.message && !error.response) {
-      ElMessage.error(error.message)
+      showError(error.message)
     }
   } finally {
     loading.value = false

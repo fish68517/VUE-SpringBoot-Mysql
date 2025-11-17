@@ -170,9 +170,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { ElMessage } from 'element-plus';
 import { User, Avatar, Document, Warning } from '@element-plus/icons-vue';
 import { getStatistics, getUsers } from '@/api/admin';
+import { showError } from '@/utils/feedback';
 
 const router = useRouter();
 
@@ -199,7 +199,7 @@ const fetchStatistics = async () => {
     const data = await getStatistics();
     statistics.value = data;
   } catch (error) {
-    ElMessage.error('Failed to load statistics');
+    showError('Failed to load statistics');
   }
 };
 
@@ -208,7 +208,7 @@ const fetchRecentUsers = async () => {
     const data = await getUsers({ page: 0, size: 5 });
     recentUsers.value = data.content || data.slice(0, 5);
   } catch (error) {
-    ElMessage.error('Failed to load recent users');
+    showError('Failed to load recent users');
   }
 };
 

@@ -43,9 +43,9 @@
 <script setup>
 import { computed } from 'vue'
 import { useAuthStore } from '@/store/modules/auth'
-import { ElMessageBox, ElMessage } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 import { deleteComment } from '@/api/comment'
+import { showSuccess, showError, confirmDelete } from '@/utils/feedback'
 
 const props = defineProps({
   comments: {
@@ -83,22 +83,14 @@ const formatTime = (timestamp) => {
 
 const handleDelete = async (commentId) => {
   try {
-    await ElMessageBox.confirm(
-      'Are you sure you want to delete this comment?',
-      'Confirm Delete',
-      {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      }
-    )
+    await confirmDelete('this comment')
     
     await deleteComment(commentId)
-    ElMessage.success('Comment deleted successfully')
+    showSuccess('Comment deleted successfully')
     emit('refresh')
   } catch (error) {
-    if (error !== 'cancel') {
-      ElMessage.error('Failed to delete comment')
+    if (error !== 'cancel' && error !== 'close') {
+      showError('Failed to delete comment')
     }
   }
 }

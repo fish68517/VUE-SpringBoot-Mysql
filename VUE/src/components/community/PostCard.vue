@@ -85,9 +85,9 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/modules/auth'
-import { ElMessageBox, ElMessage } from 'element-plus'
 import { MoreFilled, Edit, Delete, ChatLineRound } from '@element-plus/icons-vue'
 import { deleteDynamic } from '@/api/community'
+import { showSuccess, showError, confirmDelete } from '@/utils/feedback'
 import LikeButton from './LikeButton.vue'
 
 const props = defineProps({
@@ -159,22 +159,14 @@ const handleCommand = async (command) => {
     emit('edit', props.post)
   } else if (command === 'delete') {
     try {
-      await ElMessageBox.confirm(
-        'Are you sure you want to delete this post?',
-        'Confirm Delete',
-        {
-          confirmButtonText: 'Delete',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }
-      )
+      await confirmDelete('this post')
       
       await deleteDynamic(props.post.id)
-      ElMessage.success('Post deleted successfully')
+      showSuccess('Post deleted successfully')
       emit('refresh')
     } catch (error) {
-      if (error !== 'cancel') {
-        ElMessage.error('Failed to delete post')
+      if (error !== 'cancel' && error !== 'close') {
+        showError('Failed to delete post')
       }
     }
   }

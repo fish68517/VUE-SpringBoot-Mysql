@@ -35,7 +35,7 @@
 <script setup>
 import { ref } from 'vue'
 import { Search } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { showWarning } from '@/utils/feedback'
 
 const emit = defineEmits(['search'])
 
@@ -44,7 +44,7 @@ const searchType = ref('all')
 
 const handleSearch = () => {
   if (!searchQuery.value.trim()) {
-    ElMessage.warning('请输入搜索内容')
+    showWarning('Please enter search content')
     return
   }
 

@@ -180,9 +180,9 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { ArrowLeft, Loading, Search, User } from '@element-plus/icons-vue'
 import { search } from '@/api/search'
+import { showError } from '@/utils/feedback'
 import ResourceCard from '@/components/resource/ResourceCard.vue'
 import PostCard from '@/components/community/PostCard.vue'
 
@@ -261,7 +261,7 @@ const performSearch = async () => {
   const type = route.query.type || 'all'
 
   if (!query) {
-    ElMessage.warning('请输入搜索内容')
+    showError('Please enter search content')
     router.back()
     return
   }
@@ -275,7 +275,7 @@ const performSearch = async () => {
     allResults.value = results || []
   } catch (error) {
     console.error('Search failed:', error)
-    ElMessage.error('搜索失败，请重试')
+    showError('Search failed, please try again')
     allResults.value = []
   } finally {
     loading.value = false
@@ -300,8 +300,8 @@ const goBack = () => {
 
 // View coach profile (placeholder - can be enhanced later)
 const viewCoachProfile = (coachId) => {
-  ElMessage.info(`查看教练 ID: ${coachId} 的详情`)
   // TODO: Navigate to coach profile page when implemented
+  router.push(`/coaches/${coachId}`)
 }
 
 // Watch for route query changes

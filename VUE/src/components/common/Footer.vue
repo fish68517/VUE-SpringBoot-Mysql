@@ -28,17 +28,17 @@
 
 <script setup>
 import { ChatDotRound, Share, Message } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { showInfo } from '@/utils/feedback'
 
 const handleLinkClick = (type) => {
   const messages = {
-    about: '关于我们页面开发中...',
-    contact: '联系我们页面开发中...',
-    terms: '服务条款页面开发中...',
-    privacy: '隐私政策页面开发中...'
+    about: 'About page under development...',
+    contact: 'Contact page under development...',
+    terms: 'Terms of service page under development...',
+    privacy: 'Privacy policy page under development...'
   }
   
-  ElMessage.info(messages[type] || '页面开发中...')
+  showInfo(messages[type] || 'Page under development...')
 }
 </script>
 

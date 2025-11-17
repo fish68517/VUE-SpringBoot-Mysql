@@ -249,7 +249,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
+import { showSuccess, showError } from '@/utils/feedback';
 import {
   Search,
   View,
@@ -312,7 +312,7 @@ const fetchPosts = async () => {
       pendingCount.value = total.value;
     }
   } catch (error) {
-    ElMessage.error('Failed to load posts');
+    showError('Failed to load posts');
     posts.value = [];
     total.value = 0;
   } finally {
@@ -395,7 +395,7 @@ const handleViewPost = (post) => {
 const handleApprove = async (post) => {
   try {
     await approveContent(post.id);
-    ElMessage.success('Post approved successfully');
+    showSuccess('Post approved successfully');
     
     // Add to moderation history
     moderationHistory.value.unshift({
@@ -408,7 +408,7 @@ const handleApprove = async (post) => {
     viewDialogVisible.value = false;
     fetchPosts();
   } catch (error) {
-    ElMessage.error('Failed to approve post');
+    showError('Failed to approve post');
   }
 };
 
@@ -425,7 +425,7 @@ const confirmReject = async () => {
   rejecting.value = true;
   try {
     await rejectContent(selectedPost.value.id, rejectForm.value.reason);
-    ElMessage.success('Post rejected successfully');
+    showSuccess('Post rejected successfully');
     
     // Add to moderation history
     moderationHistory.value.unshift({
@@ -439,7 +439,7 @@ const confirmReject = async () => {
     rejectDialogVisible.value = false;
     fetchPosts();
   } catch (error) {
-    ElMessage.error('Failed to reject post');
+    showError('Failed to reject post');
   } finally {
     rejecting.value = false;
   }

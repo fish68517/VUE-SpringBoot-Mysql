@@ -198,10 +198,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus, Edit, Delete, View, Upload } from '@element-plus/icons-vue';
 import { getResources, createResource, updateResource, deleteResource } from '@/api/resource';
 import { getToken } from '@/utils/auth';
+import { showSuccess, showError, confirmDelete } from '@/utils/feedback';
 
 const loading = ref(false);
 const saving = ref(false);
@@ -295,7 +295,7 @@ const fetchResources = async () => {
       total.value = 0;
     }
   } catch (error) {
-    ElMessage.error('Failed to load resources');
+    showError('Failed to load resources');
     resources.value = [];
     total.value = 0;
   } finally {
@@ -370,7 +370,7 @@ const beforeUpload = (file) => {
   const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
 
   if (file.size > maxSize) {
-    ElMessage.error(`File size cannot exceed ${isVideo ? '100MB' : '10MB'}`);
+    showError(`File size cannot exceed ${isVideo ? '100MB' : '10MB'}`);
     return false;
   }
 
@@ -380,14 +380,14 @@ const beforeUpload = (file) => {
 const handleUploadSuccess = (response) => {
   if (response.code === 200) {
     form.value.fileUrl = response.data;
-    ElMessage.success('File uploaded successfully');
+    showSuccess('File uploaded successfully');
   } else {
-    ElMessage.error(response.msg || 'Upload failed');
+    showError(response.msg || 'Upload failed');
   }
 };
 
 const handleUploadError = () => {
-  ElMessage.error('File upload failed');
+  showError('File upload failed');
 };
 
 const handleFileRemove = () => {
@@ -412,16 +412,16 @@ const handleSave = async () => {
 
       if (isEditing.value) {
         await updateResource(form.value.id, data);
-        ElMessage.success('Resource updated successfully');
+        showSuccess('Resource updated successfully');
       } else {
         await createResource(data);
-        ElMessage.success('Resource created successfully');
+        showSuccess('Resource created successfully');
       }
 
       dialogVisible.value = false;
       fetchResources();
     } catch (error) {
-      ElMessage.error(`Failed to ${isEditing.value ? 'update' : 'create'} resource`);
+      showError(`Failed to ${isEditing.value ? 'update' : 'create'} resource`);
     } finally {
       saving.value = false;
     }
@@ -445,27 +445,18 @@ const resetForm = () => {
 
 const handleDelete = async (resource) => {
   try {
-    await ElMessageBox.confirm(
-      `Are you sure you want to delete resource "${resource.title}"? This action cannot be undone.`,
-      'Confirm Deletion',
-      {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
-        type: 'warning',
-        confirmButtonClass: 'el-button--danger'
-      }
-    );
+    await confirmDelete(`resource "${resource.title}"`);
 
     await deleteResource(resource.id);
-    ElMessage.success('Resource deleted successfully');
+    showSuccess('Resource deleted successfully');
     
     if (resources.value.length === 1 && currentPage.value > 1) {
       currentPage.value--;
     }
     fetchResources();
   } catch (error) {
-    if (error !== 'cancel') {
-      ElMessage.error('Failed to delete resource');
+    if (error !== 'cancel' && error !== 'close') {
+      showError('Failed to delete resource');
     }
   }
 };
