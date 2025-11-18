@@ -155,4 +155,159 @@ public class ProductServiceImpl implements ProductService {
                 STATUS_ON_SALE, PageRequest.of(0, limit));
         return hotProducts.getContent();
     }
+    
+    @Override
+    public Product createProduct(Product product) {
+        // 设置商品状态为待审核
+        product.setStatus(2);
+        product.setSales(0);
+        return productRepository.save(product);
+    }
+    
+    @Override
+    public Product updateProduct(Long id, Product product) {
+        Product existingProduct = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("商品不存在"));
+        
+        // 验证商品是否属于该店铺
+        if (!existingProduct.getShopId().equals(product.getShopId())) {
+            throw new RuntimeException("无权限修改该商品");
+        }
+        
+        // 更新商品信息
+        existingProduct.setName(product.getName());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setPrice(product.getPrice());
+        existingProduct.setStock(product.getStock());
+        existingProduct.setImage(product.getImage());
+        existingProduct.setImages(product.getImages());
+        existingProduct.setCategoryId(product.getCategoryId());
+        
+        return productRepository.save(existingProduct);
+    }
+    
+    @Override
+    public void deleteProduct(Long id, Long shopId) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("商品不存在"));
+        
+        // 验证商品是否属于该店铺
+        if (!product.getShopId().equals(shopId)) {
+            throw new RuntimeException("无权限删除该商品");
+        }
+        
+        productRepository.delete(product);
+    }
+    
+    @Override
+    public void updateProductStatus(Long id, Long shopId, Integer status) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("商品不存在"));
+        
+        // 验证商品是否属于该店铺
+        if (!product.getShopId().equals(shopId)) {
+            throw new RuntimeException("无权限修改该商品状态");
+        }
+        
+        // 验证状态值（0-下架/1-上架）
+        if (status != 0 && status != 1) {
+            throw new RuntimeException("无效的商品状态");
+        }
+        
+        product.setStatus(status);
+        productRepository.save(product);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Product> getProductsByShop(Long shopId, Pageable pageable) {
+        return productRepository.findByShopId(shopId, pageable);
+    }
+    
+    @Override
+    public Product updateStock(Long id, Long shopId, Integer stock) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("商品不存在"));
+        
+        // 验证商品是否属于该店铺
+        if (!product.getShopId().equals(shopId)) {
+            throw new RuntimeException("无权限修改该商品库存");
+        }
+        
+        // 验证库存值
+        if (stock < 0) {
+            throw new RuntimeException("库存数量不能为负数");
+        }
+        
+        // 更新库存
+        product.setStock(stock);
+        
+        // 库存为零时自动标记为下架状态
+        if (stock == 0 && product.getStatus() == 1) {
+            product.setStatus(0);
+        }
+        
+        return productRepository.save(product);
+    }
+    
+    @Override
+    public void deductStock(Long productId, Integer quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("商品不存在"));
+        
+        // 验证库存是否充足
+        if (product.getStock() < quantity) {
+            throw new RuntimeException("商品 " + product.getName() + " 库存不足");
+        }
+        
+        // 扣减库存
+        product.setStock(product.getStock() - quantity);
+        
+        // 库存为零时自动标记为下架状态
+        if (product.getStock() == 0 && product.getStatus() == 1) {
+            product.setStatus(0);
+        }
+        
+        productRepository.save(product);
+    }
+    
+    @Override
+    public void restoreStock(Long productId, Integer quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("商品不存在"));
+        
+        // 恢复库存
+        product.setStock(product.getStock() + quantity);
+        
+        productRepository.save(product);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Product> getPendingAuditProducts(Pageable pageable) {
+        // 查询状态为待审核（status=2）的商品
+        return productRepository.findByStatus(2, pageable);
+    }
+    
+    @Override
+    public void auditProduct(Long id, Boolean approved, String reason) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("商品不存在"));
+        
+        // 验证商品是否处于待审核状态
+        if (product.getStatus() != 2) {
+            throw new RuntimeException("该商品不是待审核状态");
+        }
+        
+        if (approved) {
+            // 审核通过，设置状态为已审核（可上架）
+            product.setStatus(1);
+        } else {
+            // 审核拒绝，设置状态为已拒绝
+            product.setStatus(3);
+            // 可以在这里记录拒绝原因，如果需要的话可以添加一个字段
+        }
+        
+        productRepository.save(product);
+    }
 }

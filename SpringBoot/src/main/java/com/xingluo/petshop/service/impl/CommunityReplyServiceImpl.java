@@ -33,4 +33,14 @@ public class CommunityReplyServiceImpl implements CommunityReplyService {
     public List<CommunityReply> getPostReplies(Long postId) {
         return communityReplyRepository.findByPostIdOrderByCreateTimeAsc(postId);
     }
+    
+    @Override
+    @Transactional
+    public void deleteReply(Long replyId) {
+        CommunityReply reply = communityReplyRepository.findById(replyId)
+                .orElseThrow(() -> new RuntimeException("评论不存在"));
+        
+        // 管理员删除评论：物理删除
+        communityReplyRepository.delete(reply);
+    }
 }

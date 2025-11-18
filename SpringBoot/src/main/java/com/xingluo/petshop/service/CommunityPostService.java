@@ -32,4 +32,14 @@ public interface CommunityPostService {
      * 增加浏览数
      */
     void incrementViews(Long postId);
+    
+    /**
+     * 查询所有帖子列表（管理员，分页）
+     */
+    Page<CommunityPost> getAllPostList(Integer page, Integer size);
+    
+    /**
+     * 删除帖子（管理员）
+     */
+    void deletePostByAdmin(Long postId);
 }

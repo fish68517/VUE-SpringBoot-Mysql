@@ -56,4 +56,18 @@ public interface OrderService {
      * @return 更新后的订单
      */
     Order completeOrder(Long orderId);
+    
+    /**
+     * 查询店铺订单列表
+     * @param shopId 店铺ID
+     * @return 订单列表
+     */
+    List<Order> getShopOrders(Long shopId);
+    
+    /**
+     * 发货（更新订单状态和发货时间）
+     * @param orderId 订单ID
+     * @return 更新后的订单
+     */
+    Order shipOrder(Long orderId);
 }

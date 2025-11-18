@@ -4,6 +4,8 @@ import com.xingluo.petshop.entity.User;
 import com.xingluo.petshop.repository.UserRepository;
 import com.xingluo.petshop.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,5 +105,41 @@ public class UserServiceImpl implements UserService {
         }
         
         return userRepository.save(existingUser);
+    }
+    
+    /**
+     * 查询所有用户列表（分页）
+     */
+    @Override
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+    
+    /**
+     * 搜索用户
+     */
+    @Override
+    public Page<User> searchUsers(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return userRepository.findAll(pageable);
+        }
+        return userRepository.searchUsers(keyword, pageable);
+    }
+    
+    /**
+     * 启用/禁用用户
+     */
+    @Override
+    @Transactional
+    public void updateUserStatus(Long userId, Integer status) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("用户不存在"));
+        
+        if (status != 0 && status != 1) {
+            throw new RuntimeException("状态值无效");
+        }
+        
+        user.setStatus(status);
+        userRepository.save(user);
     }
 }

@@ -268,8 +268,14 @@
   - 实现 POST /api/community/like/{postId} 点赞/取消点赞接口
   - _需求: 9.1, 9.2, 9.3, 9.4, 10.1, 10.2, 10.3, 10.4_
 
-- [ ] 11. 实现店铺管理模块（店家端）
-- [ ] 11.1 创建店铺 Repository 和 Service
+- [x] 11. 实现店铺管理模块（店家端）
+
+
+
+
+- [x] 11.1 创建店铺 Repository 和 Service
+
+
   - 创建 ShopRepository 接口
   - 创建 ShopService 接口和 ShopServiceImpl 实现类
   - 实现创建店铺方法
@@ -278,7 +284,9 @@
   - 实现查询店铺商品列表方法
   - _需求: 11.1, 11.2, 11.3, 11.4_
 
-- [ ] 11.2 创建店铺 Controller
+- [x] 11.2 创建店铺 Controller
+
+
   - 创建 ShopController
   - 实现 POST /api/shop 创建店铺接口
   - 实现 GET /api/shop/{id} 获取店铺信息接口
@@ -286,8 +294,14 @@
   - 实现 GET /api/shop/{id}/products 获取店铺商品接口
   - _需求: 11.1, 11.2, 11.3, 11.4_
 
-- [ ] 12. 实现商品管理功能（店家端）
-- [ ] 12.1 扩展商品 Service 添加店家功能
+- [x] 12. 实现商品管理功能（店家端）
+
+
+
+
+- [x] 12.1 扩展商品 Service 添加店家功能
+
+
   - 在 ProductService 中添加创建商品方法
   - 添加更新商品方法
   - 添加删除商品方法
@@ -295,7 +309,9 @@
   - 添加查询店铺商品列表方法
   - _需求: 12.1, 12.2, 12.3, 12.4, 12.5_
 
-- [ ] 12.2 创建店家商品管理 Controller
+- [x] 12.2 创建店家商品管理 Controller
+
+
   - 创建 ShopProductController
   - 实现 POST /api/shop/product 创建商品接口
   - 实现 GET /api/shop/product/list 获取店铺商品列表接口
@@ -304,34 +320,57 @@
   - 实现 PUT /api/shop/product/{id}/status 上下架商品接口
   - _需求: 12.1, 12.2, 12.3, 12.4, 12.5_
 
-- [ ] 13. 实现库存管理功能（店家端）
-- [ ] 13.1 实现库存管理逻辑
+- [x] 13. 实现库存管理功能（店家端）
+
+
+
+
+
+- [x] 13.1 实现库存管理逻辑
+
+
   - 在 ProductService 中添加更新库存方法
   - 实现库存扣减方法（订单创建时调用）
   - 实现库存恢复方法（订单取消时调用）
   - 实现库存为零时自动标记缺货
   - _需求: 13.1, 13.2, 13.3_
 
-- [ ] 13.2 创建库存管理接口
+- [x] 13.2 创建库存管理接口
+
+
   - 在 ShopProductController 中添加库存管理接口
   - 实现 PUT /api/shop/product/{id}/stock 更新库存接口
   - _需求: 13.1_
 
-- [ ] 14. 实现订单处理功能（店家端）
-- [ ] 14.1 扩展订单 Service 添加店家功能
+- [x] 14. 实现订单处理功能（店家端）
+
+
+
+
+- [x] 14.1 扩展订单 Service 添加店家功能
+
+
   - 在 OrderService 中添加查询店铺订单列表方法
   - 添加发货方法（更新订单状态和发货时间）
   - _需求: 14.1, 14.2, 14.3_
 
-- [ ] 14.2 创建店家订单管理 Controller
+- [x] 14.2 创建店家订单管理 Controller
+
+
   - 创建 ShopOrderController
   - 实现 GET /api/shop/order/list 获取店铺订单列表接口
   - 实现 GET /api/shop/order/{id} 获取订单详情接口
   - 实现 PUT /api/shop/order/{id}/ship 发货接口
   - _需求: 14.1, 14.2, 14.3_
 
-- [ ] 15. 实现优惠券管理功能（店家端）
-- [ ] 15.1 创建优惠券 Repository 和 Service
+- [x] 15. 实现优惠券管理功能（店家端）
+
+
+
+
+- [x] 15.1 创建优惠券 Repository 和 Service
+
+
   - 创建 CouponRepository 和 UserCouponRepository 接口
   - 创建 CouponService 接口和 CouponServiceImpl 实现类
   - 实现创建优惠券方法
@@ -342,7 +381,9 @@
   - 实现使用优惠券方法（订单创建时调用）
   - _需求: 15.1, 15.2, 15.3, 15.4_
 
-- [ ] 15.2 创建优惠券 Controller
+- [x] 15.2 创建优惠券 Controller
+
+
   - 创建 CouponController
   - 实现 POST /api/coupon 创建优惠券接口（店家）
   - 实现 GET /api/coupon/list 获取店铺优惠券列表接口（店家）
@@ -351,53 +392,87 @@
   - 实现 GET /api/coupon/user 获取用户优惠券接口（用户）
   - _需求: 15.1, 15.2, 15.3, 15.4_
 
-- [ ] 16. 实现管理员用户管理功能
-- [ ] 16.1 扩展用户 Service 添加管理员功能
+- [x] 16. 实现管理员用户管理功能
+
+
+
+
+- [x] 16.1 扩展用户 Service 添加管理员功能
+
+
   - 在 UserService 中添加查询所有用户列表方法（分页）
   - 添加搜索用户方法
   - 添加启用/禁用用户方法
   - _需求: 16.1, 16.2, 16.3, 16.4_
 
-- [ ] 16.2 创建管理员用户管理 Controller
+- [x] 16.2 创建管理员用户管理 Controller
+
+
   - 创建 AdminUserController
   - 实现 GET /api/admin/user/list 获取用户列表接口
   - 实现 GET /api/admin/user/search 搜索用户接口
   - 实现 PUT /api/admin/user/{id}/status 启用/禁用用户接口
   - _需求: 16.1, 16.2, 16.3, 16.4_
 
-- [ ] 17. 实现管理员店铺管理功能
-- [ ] 17.1 扩展店铺 Service 添加管理员功能
+- [x] 17. 实现管理员店铺管理功能
+
+
+
+
+- [x] 17.1 扩展店铺 Service 添加管理员功能
+
+
   - 在 ShopService 中添加查询所有店铺列表方法（分页）
   - 添加审核店铺方法
   - 添加启用/禁用店铺方法
   - _需求: 17.1, 17.2, 17.3, 17.4_
 
-- [ ] 17.2 创建管理员店铺管理 Controller
+- [x] 17.2 创建管理员店铺管理 Controller
+
+
   - 创建 AdminShopController
   - 实现 GET /api/admin/shop/list 获取店铺列表接口
   - 实现 PUT /api/admin/shop/{id}/audit 审核店铺接口
   - 实现 PUT /api/admin/shop/{id}/status 启用/禁用店铺接口
   - _需求: 17.1, 17.2, 17.3, 17.4_
 
-- [ ] 18. 实现管理员商品审核功能
-- [ ] 18.1 扩展商品 Service 添加审核功能
+- [x] 18. 实现管理员商品审核功能
+
+
+
+
+
+- [x] 18.1 扩展商品 Service 添加审核功能
+
+
   - 在 ProductService 中添加查询待审核商品列表方法
   - 添加审核商品方法（通过/拒绝）
   - _需求: 18.1, 18.2, 18.3, 18.4_
 
-- [ ] 18.2 创建管理员商品审核 Controller
+- [x] 18.2 创建管理员商品审核 Controller
+
+
   - 创建 AdminProductController
   - 实现 GET /api/admin/product/list 获取待审核商品列表接口
   - 实现 PUT /api/admin/product/{id}/audit 审核商品接口
   - _需求: 18.2, 18.3, 18.4_
 
-- [ ] 19. 实现管理员社区内容审核功能
-- [ ] 19.1 扩展社区 Service 添加管理员功能
+- [x] 19. 实现管理员社区内容审核功能
+
+
+
+
+
+- [x] 19.1 扩展社区 Service 添加管理员功能
+
+
   - 在 CommunityPostService 中添加查询所有帖子列表方法（分页）
   - 在 CommunityReplyService 中添加删除评论方法
   - _需求: 19.1, 19.2, 19.3_
 
-- [ ] 19.2 创建管理员社区管理 Controller
+- [x] 19.2 创建管理员社区管理 Controller
+
+
   - 创建 AdminCommunityController
   - 实现 GET /api/admin/post/list 获取帖子列表接口
   - 实现 DELETE /api/admin/post/{id} 删除帖子接口
@@ -405,7 +480,26 @@
   - _需求: 19.1, 19.2, 19.3_
 
 - [ ] 20. 实现管理员数据统计看板功能
-- [ ] 20.1 创建统计 Service
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- [x] 20.1 创建统计 Service
+
+
   - 创建 StatisticsService 接口和实现类
   - 实现统计用户总数方法
   - 实现统计店铺总数方法

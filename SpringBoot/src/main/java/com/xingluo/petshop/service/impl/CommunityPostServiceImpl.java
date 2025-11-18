@@ -67,4 +67,21 @@ public class CommunityPostServiceImpl implements CommunityPostService {
     public void incrementViews(Long postId) {
         communityPostRepository.incrementViews(postId);
     }
+    
+    @Override
+    public Page<CommunityPost> getAllPostList(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return communityPostRepository.findAll(pageable);
+    }
+    
+    @Override
+    @Transactional
+    public void deletePostByAdmin(Long postId) {
+        CommunityPost post = communityPostRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("帖子不存在"));
+        
+        // 管理员删除：软删除，更新状态为已删除
+        post.setStatus(1);
+        communityPostRepository.save(post);
+    }
 }

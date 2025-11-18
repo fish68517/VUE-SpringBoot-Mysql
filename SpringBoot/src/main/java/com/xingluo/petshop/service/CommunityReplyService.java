@@ -18,4 +18,9 @@ public interface CommunityReplyService {
      * 查询帖子的所有评论
      */
     List<CommunityReply> getPostReplies(Long postId);
+    
+    /**
+     * 删除评论（管理员）
+     */
+    void deleteReply(Long replyId);
 }

@@ -10,6 +10,7 @@ import com.xingluo.petshop.repository.OrderItemRepository;
 import com.xingluo.petshop.repository.OrderRepository;
 import com.xingluo.petshop.repository.ProductRepository;
 import com.xingluo.petshop.service.OrderService;
+import com.xingluo.petshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
+    private final ProductService productService;
     
     private static final AtomicLong orderCounter = new AtomicLong(0);
     
@@ -108,9 +110,8 @@ public class OrderServiceImpl implements OrderService {
             
             orderItemRepository.save(orderItem);
             
-            // 扣减库存
-            product.setStock(product.getStock() - cart.getQuantity());
-            productRepository.save(product);
+            // 扣减库存（使用ProductService的方法）
+            productService.deductStock(product.getId(), cart.getQuantity());
         }
         
         // 清空购物车
@@ -156,13 +157,10 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(400, "订单状态不允许取消");
         }
         
-        // 恢复库存
+        // 恢复库存（使用ProductService的方法）
         List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
         for (OrderItem item : orderItems) {
-            Product product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new BusinessException(404, "商品不存在"));
-            product.setStock(product.getStock() + item.getQuantity());
-            productRepository.save(product);
+            productService.restoreStock(item.getProductId(), item.getQuantity());
         }
         
         order.setStatus(4); // 已取消
@@ -190,6 +188,27 @@ public class OrderServiceImpl implements OrderService {
             product.setSales(product.getSales() + item.getQuantity());
             productRepository.save(product);
         }
+        
+        return orderRepository.save(order);
+    }
+    
+    @Override
+    public List<Order> getShopOrders(Long shopId) {
+        return orderRepository.findByShopIdOrderByCreateTimeDesc(shopId);
+    }
+    
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Order shipOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new BusinessException(404, "订单不存在"));
+        
+        if (order.getStatus() != 1) {
+            throw new BusinessException(400, "订单状态不正确，无法发货");
+        }
+        
+        order.setStatus(2); // 已发货
+        order.setShipTime(LocalDateTime.now());
         
         return orderRepository.save(order);
     }

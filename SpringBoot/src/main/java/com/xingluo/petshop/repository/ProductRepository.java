@@ -61,4 +61,19 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      */
     @Query("SELECT p FROM Product p WHERE p.categoryId IN (SELECT p2.categoryId FROM Product p2 WHERE p2.id IN :productIds) AND p.id NOT IN :productIds AND p.status = :status ORDER BY p.sales DESC")
     List<Product> findSimilarProductsByIds(@Param("productIds") List<Long> productIds, @Param("status") Integer status, Pageable pageable);
+    
+    /**
+     * 根据店铺ID查询商品列表
+     * @param shopId 店铺ID
+     * @return 商品列表
+     */
+    List<Product> findByShopId(Long shopId);
+    
+    /**
+     * 根据店铺ID查询商品列表（分页）
+     * @param shopId 店铺ID
+     * @param pageable 分页参数
+     * @return 商品分页列表
+     */
+    Page<Product> findByShopId(Long shopId, Pageable pageable);
 }
