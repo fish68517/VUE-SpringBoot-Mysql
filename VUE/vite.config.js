@@ -22,7 +22,23 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    sourcemap: false,
-    chunkSizeWarningLimit: 1500
+    sourcemap: process.env.VITE_SOURCE_MAP === 'true',
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vue': ['vue', 'vue-router', 'pinia'],
+          'element-plus': ['element-plus'],
+          'echarts': ['echarts']
+        }
+      }
+    },
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
   }
 })

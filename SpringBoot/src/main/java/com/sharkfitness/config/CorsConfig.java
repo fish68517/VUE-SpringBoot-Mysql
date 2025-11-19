@@ -1,5 +1,6 @@
 package com.sharkfitness.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -12,6 +13,9 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 public class CorsConfig {
 
+    @Value("${cors.allowed-origins:http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173}")
+    private String allowedOrigins;
+
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
@@ -19,11 +23,16 @@ public class CorsConfig {
         // Allow credentials (cookies, authorization headers)
         config.setAllowCredentials(true);
         
-        // Allow frontend origins
-        config.addAllowedOriginPattern("http://localhost:*");  // Development
-        config.addAllowedOriginPattern("http://127.0.0.1:*");  // Development
-        // Add production origins as needed
-        // config.addAllowedOrigin("https://your-production-domain.com");
+        // Parse and add allowed origins from configuration
+        String[] origins = allowedOrigins.split(",");
+        for (String origin : origins) {
+            String trimmedOrigin = origin.trim();
+            if (trimmedOrigin.contains("*")) {
+                config.addAllowedOriginPattern(trimmedOrigin);
+            } else {
+                config.addAllowedOrigin(trimmedOrigin);
+            }
+        }
         
         // Allow all headers
         config.addAllowedHeader("*");

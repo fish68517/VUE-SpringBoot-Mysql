@@ -1151,8 +1151,16 @@
 
 ## Deployment and Documentation Tasks
 
-- [ ]* 32. Prepare for deployment
-- [ ]* 32.1 Configure production environment
+- [x] 32. Prepare for deployment
+
+
+
+
+
+
+- [x]* 32.1 Configure production environment
+
+
   - Update application.properties with production database connection
   - Set up file storage directory with proper permissions on server
   - Create production environment configuration files (.env.production)
@@ -1160,7 +1168,9 @@
   - Set up proper logging configuration
   - _Requirements: Deployment readiness_
 
-- [ ]* 32.2 Build and deploy application
+- [x]* 32.2 Build and deploy application
+
+
   - Build frontend production bundle using `npm run build`
   - Package backend as JAR file using `mvn clean package`
   - Deploy backend JAR to server
@@ -1169,8 +1179,16 @@
   - Test production deployment
   - _Requirements: Deployment readiness_
 
-- [ ]* 33. Create user documentation
-- [ ]* 33.1 Write user guides
+- [x] 33. Create user documentation
+
+
+
+
+
+
+- [x]* 33.1 Write user guides
+
+
   - Create README.md with project overview and setup instructions
   - Write user guide for regular users (registration, resources, community, tracking)
   - Create coach manual for training plan management and student analytics
