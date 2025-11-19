@@ -3,6 +3,8 @@ package com.xingluo.petshop.controller;
 import com.xingluo.petshop.common.ApiResponse;
 import com.xingluo.petshop.dto.CreateOrderDTO;
 import com.xingluo.petshop.entity.Order;
+import com.xingluo.petshop.entity.OrderItem;
+import com.xingluo.petshop.repository.OrderItemRepository;
 import com.xingluo.petshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 public class OrderController {
     
     private final OrderService orderService;
+    private final OrderItemRepository orderItemRepository;
     
     /**
      * 创建订单
@@ -91,5 +94,16 @@ public class OrderController {
     public ApiResponse<Order> completeOrder(@PathVariable Long id) {
         Order order = orderService.completeOrder(id);
         return ApiResponse.success(order);
+    }
+    
+    /**
+     * 获取订单商品明细
+     * @param orderId 订单ID
+     * @return 订单明细列表
+     */
+    @GetMapping("/{orderId}/items")
+    public ApiResponse<List<OrderItem>> getOrderItems(@PathVariable Long orderId) {
+        List<OrderItem> items = orderItemRepository.findByOrderId(orderId);
+        return ApiResponse.success(items);
     }
 }

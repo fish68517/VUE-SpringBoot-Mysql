@@ -116,6 +116,7 @@ public class CartController {
             cartVO.setProductPrice(product.getPrice());
             cartVO.setProductStock(product.getStock());
             cartVO.setProductStatus(product.getStatus());
+            cartVO.setShopId(product.getShopId());
             
             // 计算小计
             BigDecimal subtotal = product.getPrice().multiply(new BigDecimal(cart.getQuantity()));

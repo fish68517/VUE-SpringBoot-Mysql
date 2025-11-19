@@ -52,6 +52,11 @@ public class CartVO {
     private Integer productStatus;
     
     /**
+     * 店铺ID
+     */
+    private Long shopId;
+    
+    /**
      * 数量
      */
     private Integer quantity;
