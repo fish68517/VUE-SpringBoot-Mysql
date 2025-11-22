@@ -1,0 +1,98 @@
+# ┌───────────────────────┐
+# │   SpringBoot / Java   │
+# └───────────────────────┘
+/SpringBoot/target/
+/SpringBoot/.idea/
+/SpringBoot/*.iml
+/SpringBoot/out/
+/SpringBoot/.settings/
+/SpringBoot/.classpath
+/SpringBoot/.project
+/SpringBoot/build/
+/SpringBoot/logs/
+/SpringBoot/*.log
+
+# Maven
+/SpringBoot/.mvn/
+/SpringBoot/mvnw
+/SpringBoot/mvnw.cmd
+
+# Gradle（如果以后用）
+/SpringBoot/gradle/
+/SpringBoot/gradlew
+/SpringBoot/gradlew.bat
+/SpringBoot/.gradle/
+
+# ┌───────────────────────┐
+# │        Vue 3          │
+# └───────────────────────┘
+/VUE/node_modules/
+/VUE/dist/
+/VUE/.env.local
+/VUE/.env.*.local
+/VUE/.nuxt/
+/VUE/.output/
+/VUE/.vite/
+/VUE/.cache/
+/VUE/coverage/
+
+# Vue CLI / Vite 构建产物
+/VUE/build/
+/VUE/.temp/
+
+# 日志文件
+/VUE/npm-debug.log*
+/VUE/yarn-debug.log*
+/VUE/yarn-error.log*
+/VUE/pnpm-debug.log*
+
+# 编辑器缓存
+/.vscode/
+/.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ┌───────────────────────┐
+# │        公共忽略       │
+# └───────────────────────┘
+# IDEA 全局
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# 编译产物
+/target/
+/out/
+/build/
+/dist/
+
+# 日志
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.cache
+
+# 打包文件
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# 本地配置文件（不要提交自己的数据库密码！）
+/application-local.yml
+/application-local.properties
+/application-dev.yml
+/application-dev.properties
+/src/main/resources/application-local.*
+/VUE/.env.production.local
+/VUE/.env.development.local
