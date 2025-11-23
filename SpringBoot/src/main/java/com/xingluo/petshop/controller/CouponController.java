@@ -1,6 +1,7 @@
 package com.xingluo.petshop.controller;
 
-import com.xingluo.petshop.common.Result;
+
+import com.xingluo.petshop.common.ApiResponse;
 import com.xingluo.petshop.dto.CouponVO;
 import com.xingluo.petshop.dto.CreateCouponDTO;
 import com.xingluo.petshop.dto.UserCouponVO;
@@ -27,7 +28,7 @@ public class CouponController {
      * 创建优惠券（店家）
      */
     @PostMapping
-    public Result<CouponVO> createCoupon(@RequestBody CreateCouponDTO dto) {
+    public ApiResponse<CouponVO> createCoupon(@RequestBody CreateCouponDTO dto) {
         Coupon coupon = new Coupon();
         coupon.setShopId(dto.getShopId());
         coupon.setName(dto.getName());
@@ -38,51 +39,53 @@ public class CouponController {
         coupon.setEndTime(dto.getEndTime());
         
         Coupon created = couponService.createCoupon(coupon);
-        return Result.success(CouponVO.fromEntity(created));
+
+        return ApiResponse.ok(CouponVO.fromEntity(created));
     }
     
     /**
      * 获取店铺优惠券列表（店家）
      */
     @GetMapping("/list")
-    public Result<List<CouponVO>> getShopCoupons(@RequestParam Long shopId) {
+    public ApiResponse<List<CouponVO>> getShopCoupons(@RequestParam Long shopId) {
         List<Coupon> coupons = couponService.getShopCoupons(shopId);
         List<CouponVO> voList = coupons.stream()
                 .map(CouponVO::fromEntity)
                 .collect(Collectors.toList());
-        return Result.success(voList);
+        return ApiResponse.ok(voList);
     }
     
     /**
      * 获取店铺可用优惠券（用户）
      */
     @GetMapping("/shop/{shopId}")
-    public Result<List<CouponVO>> getAvailableCoupons(@PathVariable Long shopId) {
+    public ApiResponse<List<CouponVO>> getAvailableCoupons(@PathVariable Long shopId) {
         List<Coupon> coupons = couponService.getAvailableCoupons(shopId);
         List<CouponVO> voList = coupons.stream()
                 .map(CouponVO::fromEntity)
                 .collect(Collectors.toList());
-        return Result.success(voList);
+        return ApiResponse.ok(voList);
     }
     
     /**
      * 领取优惠券（用户）
      */
     @PostMapping("/{id}/receive")
-    public Result<UserCouponVO> receiveCoupon(@PathVariable Long id, @RequestParam Long userId) {
+    public ApiResponse<UserCouponVO> receiveCoupon(@PathVariable Long id, @RequestParam Long userId) {
         UserCoupon userCoupon = couponService.receiveCoupon(userId, id);
-        return Result.success(UserCouponVO.fromEntity(userCoupon));
+        //return Result.success(UserCouponVO.fromEntity(userCoupon));
+        return ApiResponse.ok(UserCouponVO.fromEntity(userCoupon));
     }
     
     /**
      * 获取用户优惠券（用户）
      */
     @GetMapping("/user")
-    public Result<List<UserCouponVO>> getUserCoupons(@RequestParam Long userId) {
+    public ApiResponse<List<UserCouponVO>> getUserCoupons(@RequestParam Long userId) {
         List<UserCoupon> userCoupons = couponService.getUserCoupons(userId);
         List<UserCouponVO> voList = userCoupons.stream()
                 .map(UserCouponVO::fromEntity)
                 .collect(Collectors.toList());
-        return Result.success(voList);
+        return ApiResponse.ok(voList);
     }
 }

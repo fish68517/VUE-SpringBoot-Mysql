@@ -73,7 +73,7 @@ public class AdminProductController {
         
         // 验证审核信息
         if (auditDTO.getApproved() == null) {
-            return ApiResponse.error("请指定审核结果");
+            return (ApiResponse<String>) ApiResponse.error("请指定审核结果");
         }
         
         // 审核商品

@@ -1,6 +1,7 @@
 package com.xingluo.petshop.controller;
 
-import com.xingluo.petshop.common.Result;
+
+import com.xingluo.petshop.common.ApiResponse;
 import com.xingluo.petshop.entity.Order;
 import com.xingluo.petshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,9 @@ public class ShopOrderController {
      * @return 订单列表
      */
     @GetMapping("/list")
-    public Result<List<Order>> getShopOrders(@RequestParam Long shopId) {
+    public ApiResponse<List<Order>> getShopOrders(@RequestParam Long shopId) {
         List<Order> orders = orderService.getShopOrders(shopId);
-        return Result.success(orders);
+        return ApiResponse.ok(orders);
     }
     
     /**
@@ -35,9 +36,9 @@ public class ShopOrderController {
      * @return 订单详情
      */
     @GetMapping("/{id}")
-    public Result<Order> getOrderDetail(@PathVariable Long id) {
+    public ApiResponse<Order> getOrderDetail(@PathVariable Long id) {
         Order order = orderService.getOrderDetail(id);
-        return Result.success(order);
+        return ApiResponse.ok(order);
     }
     
     /**
@@ -46,8 +47,8 @@ public class ShopOrderController {
      * @return 更新后的订单
      */
     @PutMapping("/{id}/ship")
-    public Result<Order> shipOrder(@PathVariable Long id) {
+    public ApiResponse<Order> shipOrder(@PathVariable Long id) {
         Order order = orderService.shipOrder(id);
-        return Result.success(order, "发货成功");
+        return ApiResponse.ok(order);
     }
 }

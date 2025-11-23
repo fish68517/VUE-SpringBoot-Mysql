@@ -38,7 +38,7 @@ public class OrderController {
                 dto.getReceiverAddress(),
                 dto.getRemark()
         );
-        return ApiResponse.success(order);
+        return ApiResponse.ok(order);
     }
     
     /**
@@ -49,7 +49,7 @@ public class OrderController {
     @GetMapping("/list")
     public ApiResponse<List<Order>> getOrderList(@RequestParam Long userId) {
         List<Order> orders = orderService.getUserOrders(userId);
-        return ApiResponse.success(orders);
+        return ApiResponse.ok(orders);
     }
     
     /**
@@ -60,7 +60,7 @@ public class OrderController {
     @GetMapping("/{id}")
     public ApiResponse<Order> getOrderDetail(@PathVariable Long id) {
         Order order = orderService.getOrderDetail(id);
-        return ApiResponse.success(order);
+        return ApiResponse.ok(order);
     }
     
     /**
@@ -71,7 +71,7 @@ public class OrderController {
     @PutMapping("/{id}/pay")
     public ApiResponse<Order> payOrder(@PathVariable Long id) {
         Order order = orderService.payOrder(id);
-        return ApiResponse.success(order);
+        return ApiResponse.ok(order);
     }
     
     /**
@@ -82,7 +82,7 @@ public class OrderController {
     @PutMapping("/{id}/cancel")
     public ApiResponse<Order> cancelOrder(@PathVariable Long id) {
         Order order = orderService.cancelOrder(id);
-        return ApiResponse.success(order);
+        return ApiResponse.ok(order);
     }
     
     /**
@@ -93,7 +93,7 @@ public class OrderController {
     @PutMapping("/{id}/complete")
     public ApiResponse<Order> completeOrder(@PathVariable Long id) {
         Order order = orderService.completeOrder(id);
-        return ApiResponse.success(order);
+        return ApiResponse.ok(order);
     }
     
     /**
@@ -104,6 +104,6 @@ public class OrderController {
     @GetMapping("/{orderId}/items")
     public ApiResponse<List<OrderItem>> getOrderItems(@PathVariable Long orderId) {
         List<OrderItem> items = orderItemRepository.findByOrderId(orderId);
-        return ApiResponse.success(items);
+        return ApiResponse.ok(items);
     }
 }
