@@ -45,11 +45,21 @@ function handleLogin() {
       loading.value = true;
       try {
         const res = await login(form.value);
-        userStore.setUserInfo(res.data);
+        // 打印res
+        console.log("登录后实际返回：" + JSON.stringify(res));
+        userStore.setUserInfo(res);
         userStore.setToken(res.token);
         ElMessage.success("登录成功");
-        router.push("/");
+        if (res.role === "USER") {
+          router.push("/user");
+        } else if (res.role === "SHOP") {
+          router.push("/shop");
+        } else if (res.role === "ADMIN") {
+          router.push("/admin");
+        }
+        
       } catch (error) {
+        console.log("登录失败：" + error);
         ElMessage.error(error.response?.data?.message || "登录失败");
       } finally {
         loading.value = false;

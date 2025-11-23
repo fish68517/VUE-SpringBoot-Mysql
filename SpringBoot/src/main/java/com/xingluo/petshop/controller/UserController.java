@@ -1,5 +1,6 @@
 package com.xingluo.petshop.controller;
 
+import com.xingluo.petshop.JwtUtils;
 import com.xingluo.petshop.common.ApiResponse;
 import com.xingluo.petshop.dto.LoginDTO;
 import com.xingluo.petshop.dto.RegisterDTO;
@@ -52,10 +53,15 @@ public class UserController {
     public ApiResponse<UserVO> login(@RequestBody LoginDTO loginDTO) {
         // 调用服务层登录
         User user = userService.login(loginDTO.getUsername(), loginDTO.getPassword());
-        
-        // 转换为VO返回（不包含密码）
-        UserVO userVO = convertToVO(user);
-        return ApiResponse.ok(userVO);
+        // 需要添加 token
+
+        UserVO vo = convertToVO(user);
+
+        vo.setPassword(user.getPassword());
+        // 获取token
+        String token =JwtUtils.generateToken( user.getId());
+        vo.setToken(token);
+        return ApiResponse.ok(vo);
     }
 
     /**
