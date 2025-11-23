@@ -9,6 +9,16 @@ import java.util.List;
  * 优惠券服务接口
  */
 public interface CouponService {
+
+    /**
+     * 根据ID获取优惠券
+     */
+    Coupon getCouponById(Long id);
+
+    /**
+     * 更新优惠券
+     */
+    Coupon updateCoupon(Long id, Coupon coupon);
     
     /**
      * 创建优惠券
@@ -39,4 +49,6 @@ public interface CouponService {
      * 使用优惠券（订单创建时调用）
      */
     void useCoupon(Long userId, Long couponId, Long orderId);
+
+    void deleteCoupon(Long id);
 }

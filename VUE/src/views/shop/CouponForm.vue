@@ -166,10 +166,13 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { createCoupon } from "@/api/coupon";
+import { createCoupon, getCouponDetail, updateCoupon } from "@/api/coupon"; // 引入新API
+import { useUserStore } from "@/store/userStore";
 
 const route = useRoute();
 const router = useRouter();
+const userStore = useUserStore();
+
 const isEdit = ref(!!route.params.id);
 const submitting = ref(false);
 const formData = ref({
@@ -184,25 +187,66 @@ const formData = ref({
 });
 
 const getStatusText = (status) => {
-  const statusMap = {
-    0: "禁用",
-    1: "启用"
-  };
-  return statusMap[status] || "未知";
+  const map = { 0: "禁用", 1: "启用" };
+  return map[status] || "未知";
 };
 
 const getStatusClass = (status) => {
-  const classMap = {
-    0: "status-disabled",
-    1: "status-active"
-  };
-  return classMap[status] || "";
+  const map = { 0: "status-disabled", 1: "status-active" };
+  return map[status] || "";
 };
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "-";
+  return new Date(dateStr).toLocaleDateString("zh-CN");
+};
+
+// 辅助函数：将 API 返回的时间字符串格式化为 datetime-local 所需的格式 (yyyy-MM-ddThh:mm)
+const formatToInput = (dateStr) => {
+  if (!dateStr) return "";
   const date = new Date(dateStr);
-  return date.toLocaleDateString("zh-CN");
+  const pad = (n) => (n < 10 ? "0" + n : n);
+  return (
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate()) +
+    "T" +
+    pad(date.getHours()) +
+    ":" +
+    pad(date.getMinutes())
+  );
+};
+
+const loadData = async () => {
+  if (!isEdit.value) {
+    // 创建模式：设置默认时间
+    const now = new Date();
+    const start = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const end = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    formData.value.startTime = formatToInput(start);
+    formData.value.endTime = formatToInput(end);
+    return;
+  }
+
+  // 编辑模式：加载数据
+  try {
+    const data = await getCouponDetail(route.params.id);
+    formData.value = {
+      name: data.name,
+      discountAmount: data.discountAmount,
+      minAmount: data.minAmount,
+      totalCount: data.totalCount,
+      usedCount: data.usedCount,
+      startTime: formatToInput(data.startTime), // 格式化时间
+      endTime: formatToInput(data.endTime),     // 格式化时间
+      status: data.status
+    };
+  } catch (error) {
+    console.error("加载优惠券详情失败:", error);
+    ElMessage.error("加载优惠券详情失败");
+  }
 };
 
 const handleSubmit = async () => {
@@ -219,6 +263,7 @@ const handleSubmit = async () => {
   submitting.value = true;
   try {
     const data = {
+      shopId: userStore.userInfo.shopId,
       name: formData.value.name,
       discountAmount: formData.value.discountAmount,
       minAmount: formData.value.minAmount || 0,
@@ -229,15 +274,19 @@ const handleSubmit = async () => {
     };
 
     if (isEdit.value) {
-      // TODO: 调用更新API
+      // 编辑更新
+      await updateCoupon(route.params.id, data);
       ElMessage.success("优惠券更新成功");
     } else {
+      // 创建
+      data.shopId = userStore.userInfo.shopId; // 只有创建时需要传 shopId
       await createCoupon(data);
       ElMessage.success("优惠券创建成功");
     }
 
     router.push("/shop/coupons");
   } catch (error) {
+    console.error("保存失败:", error);
     ElMessage.error(error.message || "保存失败");
   } finally {
     submitting.value = false;
@@ -245,13 +294,7 @@ const handleSubmit = async () => {
 };
 
 onMounted(() => {
-  // 设置默认的开始和结束时间
-  const now = new Date();
-  const startTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 明天
-  const endTime = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30天后
-
-  formData.value.startTime = startTime.toISOString().slice(0, 16);
-  formData.value.endTime = endTime.toISOString().slice(0, 16);
+  loadData();
 });
 </script>
 

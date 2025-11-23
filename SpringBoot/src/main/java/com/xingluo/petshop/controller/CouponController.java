@@ -4,6 +4,7 @@ package com.xingluo.petshop.controller;
 import com.xingluo.petshop.common.ApiResponse;
 import com.xingluo.petshop.dto.CouponVO;
 import com.xingluo.petshop.dto.CreateCouponDTO;
+import com.xingluo.petshop.dto.UpdateCouponDTO;
 import com.xingluo.petshop.dto.UserCouponVO;
 import com.xingluo.petshop.entity.Coupon;
 import com.xingluo.petshop.entity.UserCoupon;
@@ -23,6 +24,33 @@ import java.util.stream.Collectors;
 public class CouponController {
     
     private final CouponService couponService;
+
+    /**
+     * 获取单个优惠券详情（店家编辑用）
+     */
+    @GetMapping("/{id}")
+    public ApiResponse<CouponVO> getCouponById(@PathVariable Long id) {
+        Coupon coupon = couponService.getCouponById(id);
+        return ApiResponse.ok(CouponVO.fromEntity(coupon));
+    }
+
+    /**
+     * 更新优惠券
+     */
+    @PutMapping("/{id}")
+    public ApiResponse<CouponVO> updateCoupon(@PathVariable Long id, @RequestBody UpdateCouponDTO dto) {
+        Coupon coupon = new Coupon();
+        coupon.setName(dto.getName());
+        coupon.setDiscountAmount(dto.getDiscountAmount());
+        coupon.setMinAmount(dto.getMinAmount());
+        coupon.setTotalCount(dto.getTotalCount());
+        coupon.setStartTime(dto.getStartTime());
+        coupon.setEndTime(dto.getEndTime());
+        coupon.setStatus(dto.getStatus());
+
+        Coupon updated = couponService.updateCoupon(id, coupon);
+        return ApiResponse.ok(CouponVO.fromEntity(updated));
+    }
     
     /**
      * 创建优惠券（店家）
@@ -87,5 +115,12 @@ public class CouponController {
                 .map(UserCouponVO::fromEntity)
                 .collect(Collectors.toList());
         return ApiResponse.ok(voList);
+    }
+
+    // 删除优惠券
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteCoupon(@PathVariable Long id) {
+        couponService.deleteCoupon(id);
+        return ApiResponse.ok(null);
     }
 }

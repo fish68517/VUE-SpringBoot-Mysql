@@ -74,12 +74,15 @@
 import { ref, onMounted, watch, computed } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getShopCouponList } from "@/api/coupon";
+import { deleteCoupon } from "@/api/coupon";
 
 const loading = ref(false);
 const coupons = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+import { useUserStore } from "@/store/userStore";
+const userStore = useUserStore();
 
 const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 
@@ -108,12 +111,15 @@ const loadCoupons = async () => {
   loading.value = true;
   try {
     const params = {
-      page: currentPage.value,
+      page: currentPage.value -1,
       pageSize: pageSize.value
     };
 
+    // 增加shopId
+    // 添加shopId
+    params.shopId = userStore.userInfo?.shopId;
     const data = await getShopCouponList(params);
-    coupons.value = data?.content || [];
+    coupons.value = data || [];
     total.value = data?.total || 0;
   } catch (error) {
     ElMessage.error("加载优惠券列表失败");
@@ -130,10 +136,14 @@ const handleDelete = async (couponId) => {
       type: "warning"
     });
     // TODO: 调用删除API
+    await deleteCoupon(couponId);
+
     ElMessage.success("优惠券已删除");
     loadCoupons();
   } catch (error) {
     if (error !== "cancel") {
+      // log
+      console.log("删除失败  ",error);
       ElMessage.error("删除失败");
     }
   }

@@ -22,6 +22,34 @@ public class CouponServiceImpl implements CouponService {
     
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
+
+    @Override
+    public Coupon getCouponById(Long id) {
+        return couponRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(404, "优惠券不存在"));
+    }
+
+    @Override
+    @Transactional
+    public Coupon updateCoupon(Long id, Coupon coupon) {
+        Coupon existing = getCouponById(id);
+
+        // 更新字段
+        existing.setName(coupon.getName());
+        existing.setDiscountAmount(coupon.getDiscountAmount());
+        existing.setMinAmount(coupon.getMinAmount());
+        existing.setTotalCount(coupon.getTotalCount());
+        existing.setStartTime(coupon.getStartTime());
+        existing.setEndTime(coupon.getEndTime());
+        existing.setStatus(coupon.getStatus());
+
+        // 简单校验时间
+        if (existing.getEndTime().isBefore(existing.getStartTime())) {
+            throw new BusinessException(400, "结束时间不能早于开始时间");
+        }
+
+        return couponRepository.save(existing);
+    }
     
     @Override
     @Transactional
@@ -119,5 +147,10 @@ public class CouponServiceImpl implements CouponService {
         // 更新优惠券使用数量
         coupon.setUsedCount(coupon.getUsedCount() + 1);
         couponRepository.save(coupon);
+    }
+
+    @Override
+    public void deleteCoupon(Long id) {
+        couponRepository.deleteById( id );
     }
 }

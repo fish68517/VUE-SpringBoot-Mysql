@@ -89,6 +89,7 @@
 import { ref, onMounted, watch, computed } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getShopOrderList, shipOrder } from "@/api/shop";
+import { useUserStore } from "@/store/userStore";
 
 const loading = ref(false);
 const orders = ref([]);
@@ -97,6 +98,7 @@ const statusFilter = ref("");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+const userStore = useUserStore();
 
 const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 
@@ -137,8 +139,8 @@ const loadOrders = async () => {
   loading.value = true;
   try {
     const params = {
-      page: currentPage.value,
-      pageSize: pageSize.value
+      page: currentPage.value -1,
+      size: pageSize.value
     };
     if (searchQuery.value) {
       params.search = searchQuery.value;
@@ -147,8 +149,10 @@ const loadOrders = async () => {
       params.status = statusFilter.value;
     }
 
+    // 添加shopId
+    params.shopId = userStore.userInfo?.shopId;
     const data = await getShopOrderList(params);
-    orders.value = data?.content || [];
+    orders.value = data || [];
     total.value = data?.total || 0;
   } catch (error) {
     ElMessage.error("加载订单列表失败");

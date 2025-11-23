@@ -25,3 +25,18 @@ export function createCoupon(data) {
 export function getShopCouponList(params) {
   return request.get("/coupon/list", { params });
 }
+
+// 获取优惠券详情
+export function getCouponDetail(id) {
+  return request.get(`/coupon/${id}`);
+}
+
+// 更新优惠券
+export function updateCoupon(id, data) {
+  return request.put(`/coupon/${id}`, data);
+}
+
+// 删除优惠券
+export function deleteCoupon(couponId) {
+  return request.delete(`/coupon/${couponId}`);
+}

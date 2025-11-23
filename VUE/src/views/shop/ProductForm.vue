@@ -151,6 +151,9 @@ import { ElMessage } from "element-plus";
 import { createProduct, updateProduct, getShopProductList } from "@/api/shop";
 import { getCategories } from "@/api/product";
 
+import { useUserStore } from "@/store/userStore";
+const userStore = useUserStore();
+
 const route = useRoute();
 const router = useRouter();
 const isEdit = ref(!!route.params.id);
@@ -206,7 +209,7 @@ const decreaseStock = () => {
 };
 
 const handleSubmit = async () => {
-  if (!formData.value.name || !formData.value.categoryId || !formData.value.price || !formData.value.image) {
+  if (!formData.value.name || !formData.value.categoryId || !formData.value.price ) {
     ElMessage.error("请填写必填项");
     return;
   }
@@ -214,6 +217,7 @@ const handleSubmit = async () => {
   submitting.value = true;
   try {
     const data = {
+      shopId: userStore.userInfo.shopId, // 从用户信息中获取店铺ID
       name: formData.value.name,
       categoryId: formData.value.categoryId,
       price: formData.value.price,

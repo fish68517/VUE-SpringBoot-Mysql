@@ -87,6 +87,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import { useUserStore } from "@/store/userStore";
 import { getShopProductList, updateProductStatus, deleteProduct } from "@/api/shop";
 
 const loading = ref(false);
@@ -96,6 +97,7 @@ const statusFilter = ref("");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
+const userStore = useUserStore();
 
 const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 
@@ -121,8 +123,8 @@ const loadProducts = async () => {
   loading.value = true;
   try {
     const params = {
-      page: currentPage.value,
-      pageSize: pageSize.value
+      page: currentPage.value -1,
+      size: pageSize.value
     };
     if (searchQuery.value) {
       params.search = searchQuery.value;
@@ -131,10 +133,13 @@ const loadProducts = async () => {
       params.status = statusFilter.value;
     }
 
+    // 需要增加shopId
+    params.shopId = userStore.userInfo?.shopId;
     const data = await getShopProductList(params);
     products.value = data?.content || [];
     total.value = data?.total || 0;
   } catch (error) {
+    console.log("[ProductList] Failed to load products:",error);
     ElMessage.error("加载商品列表失败");
   } finally {
     loading.value = false;

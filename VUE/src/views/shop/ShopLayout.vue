@@ -50,6 +50,8 @@ const route = useRoute();
 const userStore = useUserStore();
 
 onMounted(() => {
+  // 打印用户信息
+  console.log('[ShopLayout] Mounting. UserInfo:', userStore.userInfo);
   console.log('[ShopLayout] Mounted. ShopID:', userStore.userInfo?.shopId);
 });
 
