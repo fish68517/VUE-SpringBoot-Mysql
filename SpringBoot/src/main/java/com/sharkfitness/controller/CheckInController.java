@@ -7,8 +7,9 @@ import com.sharkfitness.vo.CheckInStatsVO;
 import com.sharkfitness.vo.CheckInVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**

@@ -293,24 +293,24 @@ const handleEdit = (record) => {
   dialogVisible.value = true
 }
 
-const handleDelete = async (record) => {
-  try {
-    await handleDelete(
-      async () => {
-        await deleteDietRecord(record.id)
-        await fetchRecords()
-        await fetchDailySummary()
-      },
-      'this diet record',
-      {
-        successMessage: 'Diet record deleted successfully',
-        errorMessage: 'Failed to delete diet record'
-      }
-    )
-  } catch (error) {
-    // Error already handled
-  }
-}
+// const handleDelete = async (record) => {
+//   try {
+//     await handleDelete(
+//       async () => {
+//         await deleteDietRecord(record.id)
+//         await fetchRecords()
+//         await fetchDailySummary()
+//       },
+//       'this diet record',
+//       {
+//         successMessage: 'Diet record deleted successfully',
+//         errorMessage: 'Failed to delete diet record'
+//       }
+//     )
+//   } catch (error) {
+//     // Error already handled
+//   }
+// }
 
 const handleSubmit = async () => {
   if (!formRef.value) return

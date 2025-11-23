@@ -1,8 +1,9 @@
 package com.sharkfitness.dto;
 
+import jakarta.validation.constraints.Size;
 import lombok.Data;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * DTO for creating or updating fitness resources

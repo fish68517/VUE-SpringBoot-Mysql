@@ -368,18 +368,18 @@ const submitContent = async () => {
   })
 }
 
-const confirmDelete = async (content) => {
-  try {
-    await confirmDelete(`"${content.title}"`)
-    await deleteResource(content.id)
-    showSuccess('Content deleted successfully')
-    fetchContent()
-  } catch (error) {
-    if (error !== 'cancel' && error !== 'close') {
-      showError('Failed to delete content')
-    }
-  }
-}
+// const confirmDelete = async (content) => {
+//   try {
+//     await confirmDelete(`"${content.title}"`)
+//     await deleteResource(content.id)
+//     showSuccess('Content deleted successfully')
+//     fetchContent()
+//   } catch (error) {
+//     if (error !== 'cancel' && error !== 'close') {
+//       showError('Failed to delete content')
+//     }
+//   }
+// }
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A'

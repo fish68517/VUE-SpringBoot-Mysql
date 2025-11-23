@@ -10,12 +10,12 @@ import com.sharkfitness.vo.ApiResponse;
 import com.sharkfitness.vo.DynamicVO;
 import com.sharkfitness.vo.UserStatisticsVO;
 import com.sharkfitness.vo.UserVO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 

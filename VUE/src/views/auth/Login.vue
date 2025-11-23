@@ -98,15 +98,15 @@ const handleLogin = async () => {
     loading.value = true
 
     const response = await login(loginForm)
-    
+    console.log('实际收到的 response:', response) // <--- 查看控制台这里的输出
     // Store token and user info
     setToken(response.token)
-    setUserInfo(response.user)
+    setUserInfo(response)
 
     // Success message will be shown by the redirect
 
     // Redirect based on role
-    const role = response.user.role
+    const role = response.role
     if (role === 'admin') {
       router.push('/admin/dashboard')
     } else if (role === 'coach') {

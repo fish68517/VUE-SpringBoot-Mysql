@@ -1,7 +1,7 @@
 package com.sharkfitness.entity;
 
 import lombok.Data;
-import javax.persistence.*;
+ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
