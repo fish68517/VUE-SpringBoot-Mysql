@@ -7,9 +7,9 @@
       </div>
       
       <nav class="nav-menu">
-        <router-link to="/" class="nav-item">
+        <router-link to="/user/productList" class="nav-item" :class="{ active: isActive('/user/productList') }">
           <span class="icon">🏠</span>
-          <span>返回商城首页</span>
+          <span>商城首页</span>
         </router-link>
         
         <div class="nav-divider">个人管理</div>
