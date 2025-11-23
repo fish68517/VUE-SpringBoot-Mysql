@@ -1,6 +1,7 @@
 package com.xingluo.petshop.repository;
 
 import com.xingluo.petshop.entity.CommunityPost;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -40,4 +41,10 @@ public interface CommunityPostRepository extends JpaRepository<CommunityPost, Lo
     @Modifying
     @Query("UPDATE CommunityPost p SET p.likes = p.likes - 1 WHERE p.id = :postId")
     void decrementLikes(@Param("postId") Long postId);
+
+    // 删除帖子
+    @Modifying
+    @Query("UPDATE CommunityPost p SET p.status = 1 WHERE p.id = :postId")
+    void deletePost(@Param("postId") Long postId);
+
 }

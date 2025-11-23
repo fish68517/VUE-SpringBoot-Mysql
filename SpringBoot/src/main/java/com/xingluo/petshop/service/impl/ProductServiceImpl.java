@@ -281,14 +281,18 @@ public class ProductServiceImpl implements ProductService {
         
         productRepository.save(product);
     }
-    
+
     @Override
     @Transactional(readOnly = true)
     public Page<Product> getPendingAuditProducts(Pageable pageable) {
-        // 查询状态为待审核（status=2）的商品
-        return productRepository.findByStatus(2, pageable);
+       /* if (status != null) {
+            return productRepository.findByStatus(status, pageable);
+        } else {
+            return productRepository.findAll(pageable);
+        }*/
+        return productRepository.findAll(pageable);
     }
-    
+
     @Override
     public void auditProduct(Long id, Boolean approved, String reason) {
         Product product = productRepository.findById(id)

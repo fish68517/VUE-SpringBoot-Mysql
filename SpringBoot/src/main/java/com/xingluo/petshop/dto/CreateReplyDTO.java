@@ -11,4 +11,6 @@ public class CreateReplyDTO {
     private Long postId;
     
     private String content;
+
+    private Long userId;
 }

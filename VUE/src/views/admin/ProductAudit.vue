@@ -61,13 +61,9 @@
             >
               通过
             </el-button>
-            <el-button
-              type="danger"
-              size="small"
-              @click="handleRejectProduct(row)"
-            >
-              拒绝
-            </el-button>
+            <!-- // 如果 row的 status = 2 就不需要拒绝按钮 -->
+             <el-button v-if="row.status !== 1" type="danger" size="small" @click="handleRejectDialog(row)">拒绝</el-button>
+  
             <el-button
               type="info"
               size="small"
@@ -173,13 +169,13 @@ const fetchProductList = async () => {
   loading.value = true;
   try {
     const params = {
-      page: currentPage.value,
-      pageSize: pageSize.value
+      page: currentPage.value -1,
+      size: pageSize.value
     };
     
     const response = await adminApi.getProductAuditList(params);
-    productList.value = response.data || [];
-    total.value = response.total || 0;
+    productList.value = response.content || [];
+    total.value = response.totalElements || 0;
   } catch (error) {
     ElMessage.error("获取待审核商品列表失败");
   } finally {

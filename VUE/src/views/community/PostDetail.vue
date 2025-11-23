@@ -2,7 +2,7 @@
   <div class="post-detail-page">
     <div class="container">
       <!-- 返回按钮 -->
-      <router-link to="/community" class="btn-back">← 返回列表</router-link>
+      <router-link to="/user/community" class="btn-back">← 返回列表</router-link>
 
       <!-- 加载状态 -->
       <div v-if="loading" class="loading">加载中...</div>
@@ -10,7 +10,7 @@
       <!-- 帖子不存在 -->
       <div v-else-if="!post" class="not-found">
         <p>帖子不存在或已被删除</p>
-        <router-link to="/community" class="btn-back-home">返回社区</router-link>
+        <router-link to="/uers/community" class="btn-back-home">返回社区</router-link>
       </div>
 
       <!-- 帖子详情 -->
@@ -153,6 +153,16 @@ const loadPostDetail = async () => {
   loading.value = true;
   try {
     post.value = await getPostDetail(postId.value);
+
+    if (typeof post.value.images === 'string') {
+        try {
+          post.value.images = JSON.parse(post.value.images);
+        } catch (e) {
+          console.error('解析图片失败', e);
+          post.value.images = [];
+        }
+    }
+  
     await loadReplies();
   } catch (error) {
     console.error("加载帖子详情失败:", error);
@@ -177,9 +187,11 @@ const submitComment = async () => {
   }
 
   try {
+    // 需要给 createReply 增加 UserId
     await createReply({
       postId: postId.value,
-      content: newComment.value
+      content: newComment.value,
+      userId: userStore.userInfo.id
     });
     ElMessage.success("评论发布成功");
     newComment.value = "";
@@ -215,7 +227,7 @@ const deletePostAction = async () => {
 
     await deletePost(postId.value);
     ElMessage.success("帖子已删除");
-    router.push("/community");
+    router.push("/user/community");
   } catch (error) {
     if (error !== "cancel") {
       console.error("删除帖子失败:", error);

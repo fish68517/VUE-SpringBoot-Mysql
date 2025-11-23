@@ -270,7 +270,7 @@ const completeOrderAction = async () => {
 };
 
 const goBack = () => {
-  router.push("/orders");
+  router.push("/user/orders");
 };
 
 onMounted(() => {

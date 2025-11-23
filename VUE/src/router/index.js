@@ -4,11 +4,7 @@ import { useUserStore } from "@/store/userStore";
 // Public Pages
 import Login from "@/views/Login.vue";
 import Register from "@/views/Register.vue";
-import Home from "@/views/Home.vue";
-import ProductList from "@/views/user/ProductList.vue";
-import ProductDetail from "@/views/user/ProductDetail.vue";
-import PostList from "@/views/community/PostList.vue";
-import PostDetail from "@/views/community/PostDetail.vue";
+import Home from "@/views/Home.vue"; // 官网首页（未登录可见）
 
 // Layouts
 import UserLayout from "@/views/user/UserLayout.vue";
@@ -23,6 +19,10 @@ import OrderDetail from "@/views/user/OrderDetail.vue";
 import OrderConfirm from "@/views/user/OrderConfirm.vue";
 import PetList from "@/views/user/PetList.vue";
 import ReviewForm from "@/views/user/ReviewForm.vue";
+import ProductList from "@/views/user/ProductList.vue";   // 复用现有的商品列表
+import ProductDetail from "@/views/user/ProductDetail.vue"; // 复用现有的商品详情
+import PostList from "@/views/community/PostList.vue";
+import PostDetail from "@/views/community/PostDetail.vue";
 import PostForm from "@/views/community/PostForm.vue";
 
 // Shop Components
@@ -43,40 +43,44 @@ import AdminProductAudit from "@/views/admin/ProductAudit.vue";
 import AdminPostManage from "@/views/admin/PostManage.vue";
 
 const routes = [
-  // --- Public Routes (No Sidebar, Full Width) ---
-  { path: "/", component: Login, meta: { requiresAuth: false, title: '登录' } },
+  // --- Public Routes ---
+  { path: "/", component: Home, meta: { title: '首页' } },
   { path: "/login", component: Login, meta: { requiresAuth: false, title: '登录' } },
   { path: "/register", component: Register, meta: { requiresAuth: false, title: '注册' } },
-  { path: "/products", component: ProductList, meta: { title: '商品列表' } },
-  { path: "/product/:id", component: ProductDetail, meta: { title: '商品详情' } },
-  // 社区列表和详情公开可见，但为了体验，也可以放在UserLayout下，
-  // 这里暂时保持公开，但在UserLayout导航中有链接
-  { path: "/community", component: PostList, meta: { title: '宠物社区' } },
-  { path: "/community/post/:id", component: PostDetail, meta: { title: '帖子详情' } },
-
-  // --- User Routes (Requires UserLayout Sidebar) ---
+  
+  // --- User Routes (All inside UserLayout) ---
   {
     path: "/user",
     component: UserLayout,
-    meta: { requiresAuth: true, role: 'user' },
+    meta: { requiresAuth: true, role: 'USER' }, // 这里的 role 要匹配后端返回的 "USER"
     children: [
-      { path: "", redirect: "/user/profile" }, // Default to profile
-      { path: "profile", component: Profile, meta: { title: '个人中心' } },
+      { path: "", redirect: "/user/home" }, // 登录后默认去商城首页
+      
+      // 商城功能
+      { path: "home", component: ProductList, meta: { title: '商城首页' } },
+      { path: "product/:id", component: ProductDetail, meta: { title: '商品详情' } },
+      
+      // 个人管理
+      { path: "profile", component: Profile, meta: { title: '个人信息' } },
+      { path: "pets", component: PetList, meta: { title: '我的宠物' } },
       { path: "cart", component: Cart, meta: { title: '购物车' } },
       { path: "order-confirm", component: OrderConfirm, meta: { title: '确认订单' } },
       { path: "orders", component: OrderList, meta: { title: '我的订单' } },
       { path: "orders/:id", component: OrderDetail, meta: { title: '订单详情' } },
-      { path: "pets", component: PetList, meta: { title: '我的宠物' } },
       { path: "review/form/:productId", component: ReviewForm, meta: { title: '写评价' } },
+
+      // 社区功能 (放入 UserLayout 保持体验一致)
+      { path: "community", component: PostList, meta: { title: '宠物社区' } },
+      { path: "community/post/:id", component: PostDetail, meta: { title: '帖子详情' } },
       { path: "community/create", component: PostForm, meta: { title: '发布帖子' } }
     ]
   },
 
-  // --- Shop Routes (Existing Layout) ---
+  // --- Shop Routes ---
   {
     path: "/shop",
     component: ShopLayout,
-    meta: { requiresAuth: true, role: 'shop' },
+    meta: { requiresAuth: true, role: 'SHOP' },
     children: [
       { path: "", redirect: "/shop/dashboard" },
       { path: "dashboard", component: ShopDashboard, meta: { title: '店铺概览' } },
@@ -92,11 +96,11 @@ const routes = [
     ]
   },
 
-  // --- Admin Routes (Existing Layout) ---
+  // --- Admin Routes ---
   {
     path: "/admin",
     component: AdminLayout,
-    meta: { requiresAuth: true, role: 'admin' },
+    meta: { requiresAuth: true, role: 'ADMIN' },
     children: [
       { path: "", redirect: "/admin/dashboard" },
       { path: "dashboard", component: AdminDashboard, meta: { title: '数据看板' } },
@@ -113,12 +117,10 @@ const router = createRouter({
   routes
 });
 
-// 路由守卫：检查认证状态与添加日志
+// 路由守卫
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
   
-  // 日志
-  console.log(`[Router] Navigating from ${from.path} to ${to.path}`);
   if (to.meta.title) {
     document.title = `${to.meta.title} - 星落宠物商城`;
   }
@@ -126,17 +128,13 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
   if (requiresAuth && !userStore.isLogin) {
-    console.warn('[Router] Access denied. User not logged in.');
-    next({
-      path: "/login",
-      query: { redirect: to.fullPath }
-    });
+    next({ path: "/login", query: { redirect: to.fullPath } });
   } else if ((to.path === "/login" || to.path === "/register") && userStore.isLogin) {
-    // 已登录用户重定向到对应的首页
-    const role = userStore.userInfo?.role; // 假设userInfo里有role字段，如果没有需要根据逻辑调整
-    if (to.path.includes('shop')) next('/shop/dashboard');
-    else if (to.path.includes('admin')) next('/admin/dashboard');
-    else next('/user/profile');
+    // 已登录用户访问登录页，重定向到对应首页
+    const role = userStore.userInfo?.role;
+    if (role === 'SHOP') next('/shop');
+    else if (role === 'ADMIN') next('/admin');
+    else next('/user/home');
   } else {
     next();
   }

@@ -1,10 +1,12 @@
 package com.xingluo.petshop.controller;
 
 import com.xingluo.petshop.common.ApiResponse;
+import com.xingluo.petshop.dto.ProductVO;
 import com.xingluo.petshop.entity.Product;
 import com.xingluo.petshop.service.BrowseHistoryService;
 import com.xingluo.petshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,93 +20,102 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/product")
 @RequiredArgsConstructor
 public class ProductController {
-    
+
     private final ProductService productService;
     private final BrowseHistoryService browseHistoryService;
-    
+
+    /**
+     * 辅助方法：将 Entity 转换为 VO
+     * 避免直接返回 Entity 导致的序列化错误
+     */
+    private ProductVO convertToVO(Product product) {
+        ProductVO vo = new ProductVO();
+        BeanUtils.copyProperties(product, vo);
+        if (product.getShop() != null) {
+            vo.setShopName(product.getShop().getName());
+        }
+        if (product.getCategory() != null) {
+            vo.setCategoryName(product.getCategory().getName());
+        }
+        return vo;
+    }
+
     /**
      * 获取商品列表（分页）
-     * @param page 页码（从0开始）
-     * @param size 每页大小
-     * @param sortBy 排序字段（默认：createTime）
-     * @param sortDir 排序方向（asc/desc，默认：desc）
-     * @return 商品分页列表
      */
     @GetMapping("/list")
-    public ApiResponse<Page<Product>> getProductList(
+    public ApiResponse<Page<ProductVO>> getProductList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createTime") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir) {
-        
-        Sort sort = sortDir.equalsIgnoreCase("asc") 
-                ? Sort.by(sortBy).ascending() 
+
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        
+
         Page<Product> products = productService.getProductList(pageable);
-        return ApiResponse.ok(products);
+
+        // 核心修改：将 Product 转换为 ProductVO
+        Page<ProductVO> productVOs = products.map(this::convertToVO);
+
+        return ApiResponse.ok(productVOs);
     }
-    
+
     /**
      * 获取商品详情
-     * @param id 商品ID
-     * @param userId 用户ID（可选，用于记录浏览历史）
-     * @return 商品详情
      */
     @GetMapping("/{id}")
-    public ApiResponse<Product> getProductById(
+    public ApiResponse<ProductVO> getProductById(
             @PathVariable Long id,
             @RequestParam(required = false) Long userId) {
-        
+
         Product product = productService.getProductById(id);
-        
-        // 如果提供了用户ID，记录浏览历史
+
+        // 记录浏览历史
         if (userId != null) {
             try {
                 browseHistoryService.recordBrowseHistory(userId, id);
             } catch (Exception e) {
-                // 浏览历史记录失败不影响商品详情查询
-                // 可以记录日志，但不抛出异常
+                // 忽略记录失败
             }
         }
-        
-        return ApiResponse.ok(product);
+
+        return ApiResponse.ok(convertToVO(product));
     }
-    
+
     /**
      * 搜索商品
-     * @param keyword 搜索关键词
-     * @param page 页码（从0开始）
-     * @param size 每页大小
-     * @return 商品分页列表
      */
     @GetMapping("/search")
-    public ApiResponse<Page<Product>> searchProducts(
+    public ApiResponse<Page<ProductVO>> searchProducts(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
         Page<Product> products = productService.searchProducts(keyword, pageable);
-        return ApiResponse.ok(products);
+
+        // 转换为 VO
+        Page<ProductVO> productVOs = products.map(this::convertToVO);
+        return ApiResponse.ok(productVOs);
     }
-    
+
     /**
      * 按分类查询商品
-     * @param id 分类ID
-     * @param page 页码（从0开始）
-     * @param size 每页大小
-     * @return 商品分页列表
      */
     @GetMapping("/category/{id}")
-    public ApiResponse<Page<Product>> getProductsByCategory(
+    public ApiResponse<Page<ProductVO>> getProductsByCategory(
             @PathVariable Long id,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createTime").descending());
         Page<Product> products = productService.getProductsByCategory(id, pageable);
-        return ApiResponse.ok(products);
+
+        // 转换为 VO
+        Page<ProductVO> productVOs = products.map(this::convertToVO);
+        return ApiResponse.ok(productVOs);
     }
 }

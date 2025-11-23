@@ -23,6 +23,7 @@ import { ElMessage } from "element-plus";
 import { login } from "@/api/user";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/userStore";
+import { getShopByUserId } from "@/api/shop"; // 1. 引入新定义的 API
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -53,7 +54,32 @@ function handleLogin() {
         if (res.role === "USER") {
           router.push("/user");
         } else if (res.role === "SHOP") {
-          router.push("/shop");
+
+            try {
+              // ★★★ 核心修改：商家登录后，额外请求店铺信息 ★★★
+              const shopRes = await getShopByUserId(res.id);
+              console.log("获取店铺信息成功:", shopRes);
+              
+              // 将 shopId, shopName 等关键信息合并到用户信息中
+              const fullUserInfo = { 
+                ...res, 
+                shopId: shopRes.id, 
+                shopName: shopRes.name,
+                shopStatus: shopRes.status 
+              };
+              userStore.setUserInfo(fullUserInfo);
+              
+              ElMessage.success("商家登录成功");
+              router.push("/shop");
+              
+            } catch (shopError) {
+              // 假如用户角色是 SHOP 但还没有创建店铺（极少情况，或者是新注册商家）
+              console.error("获取店铺信息失败:", shopError);
+              // 依然存入基础信息，跳转去创建店铺或显示错误
+              userStore.setUserInfo(res);
+              // router.push("/shop/create"); // 可以在这里引导去创建店铺
+              ElMessage.warning("未找到您的店铺信息，请联系管理员");
+            }
         } else if (res.role === "ADMIN") {
           router.push("/admin");
         }

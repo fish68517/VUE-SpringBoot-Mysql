@@ -11,16 +11,20 @@ public class JwtUtils {
     // 密钥，随便写，越复杂越安全
     private static final String SECRET = "XingLuoPetShopSecretKey123456";
     // 过期时间，这里设为 24 小时 (毫秒)
-    private static final long EXPIRATION = 24 * 60 * 60 * 1000;
+    private static final long EXPIRATION = 24 * 60 * 60 * 1000*10;
+
+    private static Long userId;
 
 
     /**
      * Generate a unique token for a user
-     * @param userId User ID
+     * @param id User ID
      * @return Token string in format: UUID_userId
      */
-    public static String generateToken(Long userId) {
-        return SECRET + "_" + userId;
+    public static String generateToken(Long id) {
+        // 全局保存userId
+        userId = id;
+        return SECRET + "_" + id;
     }
 
     /**
@@ -72,5 +76,11 @@ public class JwtUtils {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Long getUserId() {
+
+        return userId;
+
     }
 }

@@ -100,10 +100,11 @@ const loadProducts = async () => {
   try {
     let data;
     const params = {
-      page: currentPage.value,
-      pageSize: pageSize.value
+      // 1. Spring Boot 页码从 0 开始，所以这里要减 1
+      page: currentPage.value - 1, 
+      // 2. 后端 Controller 接收的参数名是 'size'，不是 'pageSize'
+      size: pageSize.value 
     };
-
     // 根据排序条件添加参数
     if (sortBy.value === "price_asc") {
       params.sortBy = "price";
@@ -128,6 +129,8 @@ const loadProducts = async () => {
     } else {
       data = await getProductList(params);
     }
+
+    console.log("响应数据:", data);
 
     // 处理响应数据
     if (data && typeof data === "object") {

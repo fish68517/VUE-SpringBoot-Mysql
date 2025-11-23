@@ -117,8 +117,9 @@ const fetchShopList = async () => {
   loading.value = true;
   try {
     const params = {
-      page: currentPage.value,
-      pageSize: pageSize.value
+      page: currentPage.value -1,
+      size: pageSize.value
+      
     };
     
     if (statusFilter.value !== null && statusFilter.value !== undefined) {
@@ -126,8 +127,8 @@ const fetchShopList = async () => {
     }
     
     const response = await adminApi.getShopList(params);
-    shopList.value = response.data || [];
-    total.value = response.total || 0;
+    shopList.value = response.content || [];
+    total.value = response.totalElements || 0;
   } catch (error) {
     ElMessage.error("获取店铺列表失败");
   } finally {

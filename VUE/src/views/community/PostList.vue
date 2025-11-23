@@ -3,7 +3,7 @@
     <div class="container">
       <div class="header-section">
         <h1 class="page-title">宠物社区</h1>
-        <router-link to="/community/create" class="btn-create-post">
+        <router-link to="/user/community/create" class="btn-create-post">
           发布帖子
         </router-link>
       </div>
@@ -14,7 +14,7 @@
       <!-- 空状态 -->
       <div v-else-if="posts.length === 0" class="empty-state">
         <p>暂无帖子</p>
-        <router-link to="/community/create" class="btn-create-post-empty">
+        <router-link to="/user/community/create" class="btn-create-post-empty">
           发布第一个帖子
         </router-link>
       </div>
@@ -111,15 +111,45 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
 
+
 const loadPosts = async () => {
   loading.value = true;
   try {
-    const response = await getPostList({
-      page: currentPage.value,
-      pageSize: pageSize.value
+    // ★★★ 修改点开始 ★★★
+    const params = {
+      // 1. 前端页码(1开始) -> 后端页码(0开始)
+      page: currentPage.value - 1,
+      // 2. 参数名修正: 后端 CommunityController 接收的是 'size' 而不是 'pageSize'
+      size: pageSize.value 
+    };
+    // ★★★ 修改点结束 ★★★
+
+    const response = await getPostList(params);
+
+    console.log("获取帖子列表成功:", response);
+
+      // 这里进行转换
+    posts.value = response.content.map(post => {
+      // 如果 images 是字符串，尝试解析它
+      if (typeof post.images === 'string') {
+        try {
+          post.images = JSON.parse(post.images);
+        } catch (e) {
+          console.error('解析图片失败', e);
+          post.images = [];
+        }
+      }
+      return post;
     });
+    
+    // 这里的 response 直接就是后端返回的 data 对象 (包含 content, totalElements 等)
+    // 根据你的后端 CommunityController 代码:
+    // result.put("content", ...);
+    // result.put("totalElements", ...);
+    
     posts.value = response.content || [];
     total.value = response.totalElements || 0;
+    
   } catch (error) {
     console.error("加载帖子失败:", error);
     ElMessage.error("加载帖子失败");
@@ -134,7 +164,7 @@ const handlePageChange = (page) => {
 };
 
 const goToDetail = (postId) => {
-  router.push(`/community/post/${postId}`);
+  router.push(`/user/community/post/${postId}`);
 };
 
 const isOwnPost = (userId) => {

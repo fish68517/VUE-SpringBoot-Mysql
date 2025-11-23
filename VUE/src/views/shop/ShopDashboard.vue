@@ -128,15 +128,18 @@ const loadShopData = async () => {
   loading.value = true;
   try {
     // 获取店铺信息
-    const shopData = await getShopInfo(userStore.userInfo?.shopId);
+    const shopId = userStore.userInfo?.shopId;
+    console.log("获取店铺信息成功:", shopId);
+    const shopData = await getShopInfo(shopId);
+    console.log("获取店铺信息成功:", shopData);
     shopInfo.value = shopData || {};
 
     // 获取商品列表统计
-    const productsData = await getShopProductList({ page: 1, pageSize: 1 });
+    const productsData = await getShopProductList({ shopId:shopId, page: 1, size: 1 });
     shopStats.value.productCount = productsData?.total || 0;
 
     // 获取订单列表统计
-    const ordersData = await getShopOrderList({ page: 1, pageSize: 1 });
+    const ordersData = await getShopOrderList({ shopId:shopId,page: 1, size: 1 });
     shopStats.value.orderCount = ordersData?.total || 0;
 
     // 计算总销售额（简化版，实际应从后端获取）

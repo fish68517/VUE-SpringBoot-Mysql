@@ -6,6 +6,11 @@ export function createShop(data) {
   return request.post("/shop", data);
 }
 
+// 根据用户ID获取店铺信息
+export function getShopByUserId(userId) {
+  return request.get(`/shop/user/${userId}`);
+}
+
 // 获取店铺信息
 export function getShopInfo(shopId) {
   return request.get(`/shop/${shopId}`);

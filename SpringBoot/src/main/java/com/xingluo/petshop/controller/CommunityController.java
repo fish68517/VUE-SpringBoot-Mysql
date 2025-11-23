@@ -1,13 +1,16 @@
 package com.xingluo.petshop.controller;
 
+import com.xingluo.petshop.JwtUtils;
 import com.xingluo.petshop.common.ApiResponse;
 import com.xingluo.petshop.dto.*;
 import com.xingluo.petshop.entity.CommunityPost;
 import com.xingluo.petshop.entity.CommunityReply;
+import com.xingluo.petshop.repository.CommunityPostRepository;
 import com.xingluo.petshop.service.CommunityPostService;
 import com.xingluo.petshop.service.CommunityReplyService;
 import com.xingluo.petshop.service.PostLikeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,18 +30,23 @@ public class CommunityController {
     private final CommunityPostService communityPostService;
     private final CommunityReplyService communityReplyService;
     private final PostLikeService postLikeService;
+
+    @Autowired
+    private CommunityPostRepository communityPostRepository;
     
     /**
      * 发布帖子
+     * 给 userId 注解非必须参数
      */
     @PostMapping("/post")
     public ApiResponse<CommunityPost> createPost(
-            @RequestHeader("userId") Long userId,
+
             @RequestBody CreatePostDTO dto) {
+        Long userId = dto.getUserId();
         CommunityPost post = communityPostService.createPost(
                 userId, 
                 dto.getTitle(), 
-                dto.getContent(), 
+                dto.getContent(),
                 dto.getImages()
         );
         return ApiResponse.ok(post);
@@ -92,9 +100,8 @@ public class CommunityController {
      */
     @DeleteMapping("/post/{id}")
     public ApiResponse<Void> deletePost(
-            @PathVariable Long id,
-            @RequestHeader("userId") Long userId) {
-        communityPostService.deletePost(id, userId);
+            @PathVariable Long id) {
+        communityPostRepository.deleteById(id);
         return ApiResponse.ok(null);
     }
     
@@ -103,8 +110,12 @@ public class CommunityController {
      */
     @PostMapping("/reply")
     public ApiResponse<CommunityReply> createReply(
-            @RequestHeader("userId") Long userId,
             @RequestBody CreateReplyDTO dto) {
+        Long userId = dto.getUserId();
+        if (userId == null) {
+            userId = dto.getUserId();
+        }
+        System.out.println("userId: " + userId);
         CommunityReply reply = communityReplyService.createReply(
                 dto.getPostId(),
                 userId,
@@ -130,8 +141,8 @@ public class CommunityController {
      */
     @PostMapping("/like/{postId}")
     public ApiResponse<Map<String, Object>> toggleLike(
-            @PathVariable Long postId,
-            @RequestHeader("userId") Long userId) {
+            @PathVariable Long postId) {
+        Long userId = JwtUtils.getUserId();
         boolean isLiked = postLikeService.toggleLike(postId, userId);
         
         Map<String, Object> result = new HashMap<>();

@@ -1,19 +1,22 @@
 package com.xingluo.petshop.controller;
 
 import com.xingluo.petshop.common.ApiResponse;
+import com.xingluo.petshop.dto.PostVO; // 1. 引入 PostVO
 import com.xingluo.petshop.entity.CommunityPost;
 import com.xingluo.petshop.service.CommunityPostService;
 import com.xingluo.petshop.service.CommunityReplyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils; // 1. 引入 BeanUtils
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 管理员社区管理控制器
- * 提供社区内容审核功能，包括帖子和评论的管理
  */
 @RestController
 @RequestMapping("/api/admin")
@@ -25,35 +28,50 @@ public class AdminCommunityController {
 
     /**
      * 获取帖子列表（分页）
-     * GET /api/admin/post/list
-     * @param page 页码（从0开始）
-     * @param size 每页大小
-     * @return 帖子分页列表
      */
     @GetMapping("/post/list")
     public ApiResponse<Map<String, Object>> getPostList(
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
-        
-        // 查询所有帖子列表（包括已删除的）
+
+        // 查询所有帖子列表
         Page<CommunityPost> postPage = communityPostService.getAllPostList(page, size);
-        
-        // 构建返回结果
+
+        // 2. 核心修改：将 Entity 转换为 VO
+        List<PostVO> postVOList = postPage.getContent().stream()
+                .map(this::convertToPostVO)
+                .collect(Collectors.toList());
+
         Map<String, Object> result = new HashMap<>();
-        result.put("content", postPage.getContent());
+        result.put("content", postVOList); // 返回 VO 列表
         result.put("totalElements", postPage.getTotalElements());
         result.put("totalPages", postPage.getTotalPages());
         result.put("currentPage", postPage.getNumber());
         result.put("pageSize", postPage.getSize());
-        
+
         return ApiResponse.ok(result);
     }
 
     /**
+     * 辅助方法：实体转 VO
+     */
+    private PostVO convertToPostVO(CommunityPost post) {
+        PostVO vo = new PostVO();
+        BeanUtils.copyProperties(post, vo);
+
+        // 手动设置用户信息，避免懒加载错误
+        if (post.getUser() != null) {
+            vo.setUsername(post.getUser().getUsername());
+            vo.setUserAvatar(post.getUser().getAvatar());
+        } else {
+            vo.setUsername("未知用户");
+        }
+
+        return vo;
+    }
+
+    /**
      * 删除帖子（管理员）
-     * DELETE /api/admin/post/{id}
-     * @param id 帖子ID
-     * @return 操作结果
      */
     @DeleteMapping("/post/{id}")
     public ApiResponse<String> deletePost(@PathVariable Long id) {
@@ -63,9 +81,6 @@ public class AdminCommunityController {
 
     /**
      * 删除评论（管理员）
-     * DELETE /api/admin/reply/{id}
-     * @param id 评论ID
-     * @return 操作结果
      */
     @DeleteMapping("/reply/{id}")
     public ApiResponse<String> deleteReply(@PathVariable Long id) {

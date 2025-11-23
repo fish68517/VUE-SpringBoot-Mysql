@@ -137,8 +137,21 @@ const fetchStatistics = async () => {
 const fetchCategoryStatistics = async () => {
   try {
     const data = await adminApi.getDashboardCategory();
-    renderCategoryChart(data);
+    // console.log("获取分类统计成功：" + JSON.stringify(data));
+    
+    // ★★★ 核心修复：将对象转换为数组 ★★★
+    // 后端返回：{ "分类名": { productCount: 1, salesAmount: 100 }, ... }
+    // 转换目标：[ { categoryName: "分类名", productCount: 1, salesAmount: 100 }, ... ]
+    const chartData = Object.keys(data).map(key => ({
+      categoryName: key,
+      productCount: data[key].productCount,
+      salesAmount: data[key].salesAmount
+    }));
+
+    // 将转换后的数组传给渲染函数
+    renderCategoryChart(chartData);
   } catch (error) {
+    console.error("渲染图表出错:", error); // 建议打印具体错误，方便调试
     ElMessage.error("获取分类统计失败");
   }
 };

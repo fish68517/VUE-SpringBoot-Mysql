@@ -247,8 +247,12 @@ const checkout = () => {
 
   // 将选中的商品信息传递到订单确认页
   const selectedCartItems = cartStore.getSelectedItems(selectedItems.value);
+  // 打印选中的商品信息
+  console.log("需要结算的商品：" +JSON.stringify(selectedCartItems));
+  console.log("准备结算，商品ID:", selectedItems.value);
+  // ★★★ 核心修改：路径改为 /user/order-confirm ★★★
   router.push({
-    path: "/order-confirm",
+    path: "/user/order-confirm", 
     query: {
       cartIds: selectedItems.value.join(",")
     }

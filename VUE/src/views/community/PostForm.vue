@@ -1,13 +1,12 @@
 <template>
   <div class="post-form-page">
     <div class="container">
-      <router-link to="/community" class="btn-back">← 返回社区</router-link>
+      <button @click="goBack" class="btn-back">← 返回社区</button>
 
       <div class="form-card">
         <h1 class="form-title">发布帖子</h1>
 
         <form @submit.prevent="submitForm" class="post-form">
-          <!-- 标题输入 -->
           <div class="form-group">
             <label for="title" class="form-label">标题</label>
             <input
@@ -22,7 +21,6 @@
             <p class="char-count">{{ form.title.length }}/100</p>
           </div>
 
-          <!-- 内容输入 -->
           <div class="form-group">
             <label for="content" class="form-label">内容</label>
             <textarea
@@ -35,7 +33,6 @@
             ></textarea>
           </div>
 
-          <!-- 图片上传 -->
           <div class="form-group">
             <label class="form-label">图片（可选）</label>
             <div class="image-upload">
@@ -57,7 +54,6 @@
               <p class="upload-hint">支持多张图片，单张不超过5MB</p>
             </div>
 
-            <!-- 图片预览 -->
             <div v-if="form.images.length > 0" class="image-preview">
               <div
                 v-for="(image, index) in form.images"
@@ -76,7 +72,6 @@
             </div>
           </div>
 
-          <!-- 提交按钮 -->
           <div class="form-actions">
             <button
               type="submit"
@@ -85,7 +80,7 @@
             >
               {{ submitting ? "发布中..." : "发布帖子" }}
             </button>
-            <router-link to="/community" class="btn-cancel">取消</router-link>
+            <button type="button" @click="goBack" class="btn-cancel">取消</button>
           </div>
         </form>
       </div>
@@ -99,6 +94,7 @@ import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store/userStore";
 import { createPost } from "@/api/community";
+import request from "@/utils/request"; // 引入 request 用于上传图片
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -109,8 +105,12 @@ const submitting = ref(false);
 const form = reactive({
   title: "",
   content: "",
-  images: []
+  images: [] // 这里存放的是包含 file 对象和 preview URL 的对象
 });
+
+const goBack = () => {
+  router.push("/user/community");
+};
 
 const handleImageSelect = (event) => {
   const files = Array.from(event.target.files || []);
@@ -131,7 +131,6 @@ const handleImageSelect = (event) => {
     };
     reader.readAsDataURL(file);
   }
-
   // 重置文件输入
   event.target.value = "";
 };
@@ -140,17 +139,36 @@ const removeImage = (index) => {
   form.images.splice(index, 1);
 };
 
+// 单个文件上传函数
+const uploadSingleImage = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  
+  try {
+    // 调用后端新增的上传接口
+    const res = await request.post("/upload/image", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    // 假设后端直接返回图片URL字符串，或者 res.data 是 URL
+    // 根据你的 ApiResponse 结构，request.js 拦截器通常返回 res.data
+    return res; 
+  } catch (error) {
+    console.error("图片上传失败", error);
+    throw new Error("图片上传失败");
+  }
+};
+
 const submitForm = async () => {
   if (!form.title.trim()) {
     ElMessage.warning("请输入标题");
     return;
   }
-
   if (!form.content.trim()) {
     ElMessage.warning("请输入内容");
     return;
   }
-
   if (!userStore.isLogin) {
     ElMessage.warning("请先登录");
     router.push("/login");
@@ -160,22 +178,35 @@ const submitForm = async () => {
   submitting.value = true;
 
   try {
-    // 构建FormData用于上传文件
-    const formData = new FormData();
-    formData.append("title", form.title);
-    formData.append("content", form.content);
+    // 1. 先上传所有图片，获取 URL 列表
+    const imageUrls = [];
+    if (form.images.length > 0) {
+      // 使用 Promise.all 并发上传
+      const uploadPromises = form.images.map(img => uploadSingleImage(img.file));
+      const results = await Promise.all(uploadPromises);
+      // results 应该是 ["http://...", "http://..."]
+      imageUrls.push(...results);
+    }
 
-    // 添加图片文件
-    form.images.forEach((image, index) => {
-      formData.append(`images`, image.file);
-    });
+    // 2. 构造 CreatePostDTO 数据
+    // 后端 CreatePostDTO 定义: images 是 String 类型 (JSON 字符串)
+    const postData = {
+      title: form.title,
+      content: form.content,
+      images: JSON.stringify(imageUrls) // 将数组转为 JSON 字符串
+  
+    };
 
-    await createPost(formData);
+    // 增加 userId
+    postData.userId = userStore.userInfo.id;
+    // 3. 调用发布接口 (发送 JSON)
+    await createPost(postData);
+    
     ElMessage.success("帖子发布成功");
-    router.push("/community");
+    router.push("/user/community");
   } catch (error) {
     console.error("发布帖子失败:", error);
-    ElMessage.error("发布帖子失败");
+    ElMessage.error("发布帖子失败，请重试");
   } finally {
     submitting.value = false;
   }
@@ -183,6 +214,7 @@ const submitForm = async () => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .post-form-page {
   min-height: 100vh;
   background: #f5f5f5;
@@ -201,6 +233,10 @@ const submitForm = async () => {
   color: #667eea;
   text-decoration: none;
   font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
   transition: all 0.3s ease;
 }
 
@@ -249,6 +285,8 @@ const submitForm = async () => {
   font-size: 14px;
   font-family: inherit;
   transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-input:focus,
@@ -387,10 +425,6 @@ const submitForm = async () => {
   background: white;
   color: #666;
   border: 1px solid #ddd;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .btn-cancel:hover {

@@ -17,9 +17,10 @@
 
 <script setup>
 import { defineProps } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router"; // 1. 引入 useRoute
 
-defineProps({
+// 2. 必须赋值给 props 变量，否则下面的 goToDetail 无法获取 props.product
+const props = defineProps({
   product: {
     type: Object,
     required: true
@@ -27,9 +28,18 @@ defineProps({
 });
 
 const router = useRouter();
+const route = useRoute(); // 3. 获取当前路由对象
 
 const goToDetail = () => {
-  router.push(`/product/${props.product.id}`);
+  // 如果当前在 /user 下（登录后），跳转到 /user/product/:id
+  if (route.path && route.path.startsWith('/user')) {
+    router.push(`/user/product/${props.product.id}`);
+  } else {
+    // 否则（未登录或在首页），统一尝试跳转到 /user/product/:id
+    // 因为我们在路由配置里只定义了带有侧边栏的详情页
+    // 路由守卫会自动拦截未登录用户去登录
+    router.push(`/user/product/${props.product.id}`);
+  }
 };
 </script>
 

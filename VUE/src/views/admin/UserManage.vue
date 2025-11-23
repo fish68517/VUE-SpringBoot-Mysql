@@ -93,18 +93,22 @@ const total = ref(0);
 const fetchUserList = async () => {
   loading.value = true;
   try {
+
+     // ★★★ 修改点开始 ★★★
     const params = {
-      page: currentPage.value,
-      pageSize: pageSize.value
+      // 1. 前端页码(1开始) -> 后端页码(0开始)
+      page: currentPage.value - 1,
+      size: pageSize.value 
     };
+    // ★★★ 修改点结束 ★★★
     
     if (searchKeyword.value) {
       params.keyword = searchKeyword.value;
     }
     
     const response = await adminApi.getUserList(params);
-    userList.value = response.data || [];
-    total.value = response.total || 0;
+    userList.value = response.content || [];
+    total.value = response.totalElements || 0;
   } catch (error) {
     ElMessage.error("获取用户列表失败");
   } finally {

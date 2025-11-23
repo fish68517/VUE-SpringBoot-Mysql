@@ -154,7 +154,11 @@ const isFormValid = computed(() => {
   return form.value.receiverName && form.value.receiverPhone && form.value.receiverAddress;
 });
 
+// src/views/user/OrderConfirm.vue
+
 const loadData = async () => {
+  // 打印日志
+  console.log("OrderConfirm.vue:", route.query);
   if (!userStore.isLogin) {
     router.push("/login");
     return;
@@ -162,7 +166,7 @@ const loadData = async () => {
 
   loading.value = true;
   try {
-    // 获取选中的购物车商品
+    // 1. 获取 URL 参数中的 cartIds
     const cartIds = route.query.cartIds ? route.query.cartIds.split(",").map(Number) : [];
     if (cartIds.length === 0) {
       ElMessage.warning("没有选中的商品");
@@ -170,21 +174,28 @@ const loadData = async () => {
       return;
     }
 
-    // 从购物车中获取选中的商品
+    // 2. ★★★ 关键修改：如果 store 中没数据，先重新拉取一次购物车列表 ★★★
+    if (cartStore.cartItems.length === 0) {
+      await cartStore.fetchCart(userStore.userInfo.id);
+    }
+
+    // 3. 现在再从 store 中筛选选中的商品
     selectedItems.value = cartStore.getSelectedItems(cartIds);
 
     if (selectedItems.value.length === 0) {
-      ElMessage.warning("购物车中没有该商品");
+      ElMessage.warning("购物车中找不到对应的商品，可能已被删除");
       router.push("/cart");
       return;
     }
 
-    // 获取店铺ID（所有商品来自同一店铺）
+    // 4. 获取店铺ID（假设所有商品来自同一店铺）
+    // 注意：需确保 selectedItems 非空后再取 shopId
     const shopId = selectedItems.value[0].shopId;
 
-    // 获取可用优惠券
+    // 5. 获取可用优惠券
     const coupons = await getAvailableCoupons(shopId);
     availableCoupons.value = coupons || [];
+    
   } catch (error) {
     console.error("加载数据失败:", error);
     ElMessage.error("加载数据失败");

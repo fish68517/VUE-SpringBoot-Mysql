@@ -22,7 +22,7 @@
         <el-table-column prop="title" label="帖子标题" width="200" show-overflow-tooltip />
         <el-table-column label="作者" width="120">
           <template #default="{ row }">
-            {{ row.user?.username || "-" }}
+            {{ row.username || "-" }}
           </template>
         </el-table-column>
         <el-table-column prop="views" label="浏览数" width="100" />
@@ -74,7 +74,7 @@
         </div>
         <div class="detail-item">
           <span class="label">作者：</span>
-          <span>{{ selectedPost.user?.username }}</span>
+          <span>{{ selectedPost.username }}</span>
         </div>
         <div class="detail-item">
           <span class="label">发布时间：</span>
@@ -136,13 +136,13 @@ const fetchPostList = async () => {
   loading.value = true;
   try {
     const params = {
-      page: currentPage.value,
+      page: currentPage.value -1,
       pageSize: pageSize.value
     };
     
     const response = await adminApi.getPostList(params);
-    postList.value = response.data || [];
-    total.value = response.total || 0;
+    postList.value = response.content || [];
+    total.value = response.totalElements || 0;
   } catch (error) {
     ElMessage.error("获取帖子列表失败");
   } finally {

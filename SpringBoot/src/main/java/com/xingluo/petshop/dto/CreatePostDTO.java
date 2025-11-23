@@ -13,4 +13,5 @@ public class CreatePostDTO {
     private String content;
     
     private String images;
+    private Long userId;
 }

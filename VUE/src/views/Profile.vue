@@ -127,24 +127,23 @@ const rules = {
 };
 
 onMounted(async () => {
-  await loadUserProfile();
+  await initFormFromStore();
 });
 
-async function loadUserProfile() {
-  try {
-    const res = await getUserProfile();
-    form.value = {
-      username: res.username || "",
-      nickname: res.nickname || "",
-      email: res.email || "",
-      phone: res.phone || "",
-      address: res.address || "",
-      avatar: res.avatar || ""
-    };
-    originalForm.value = JSON.parse(JSON.stringify(form.value));
-  } catch (error) {
-    ElMessage.error("加载用户信息失败");
-  }
+function initFormFromStore() {
+  const userInfo = userStore.userInfo || {};
+  
+  form.value = {
+    username: userInfo.username || "",
+    nickname: userInfo.nickname || "",
+    email: userInfo.email || "",
+    phone: userInfo.phone || "",
+    address: userInfo.address || "",
+    avatar: userInfo.avatar || ""
+  };
+  
+  // 备份原始数据用于重置
+  originalForm.value = JSON.parse(JSON.stringify(form.value));
 }
 
 function handleUpdate() {
@@ -171,8 +170,14 @@ function handleReset() {
 }
 
 function handleAvatarSuccess(response) {
-  form.value.avatar = response.data;
-  userStore.setUserInfo(form.value);
+  // 假设后端返回的数据结构是 response.data 包含头像URL
+  const newAvatarUrl = response.data; 
+  form.value.avatar = newAvatarUrl;
+  
+  // 更新 store
+  const updatedUser = { ...userStore.userInfo, avatar: newAvatarUrl };
+  userStore.setUserInfo(updatedUser);
+  
   ElMessage.success("头像上传成功");
 }
 

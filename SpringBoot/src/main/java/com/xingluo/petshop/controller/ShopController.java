@@ -23,6 +23,17 @@ import java.util.List;
 public class ShopController {
     
     private final ShopService shopService;
+
+
+    /**
+     * 根据用户ID获取店铺信息（用于商家登录后获取自己的店铺）
+     * GET /api/shop/user/{userId}
+     */
+    @GetMapping("/user/{userId}")
+    public ApiResponse<ShopVO> getShopByUserId(@PathVariable Long userId) {
+        Shop shop = shopService.getShopByUserId(userId);
+        return ApiResponse.ok(convertToVO(shop));
+    }
     
     /**
      * 创建店铺

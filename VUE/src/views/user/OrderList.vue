@@ -162,7 +162,7 @@ const getStatusClass = (status) => {
 };
 
 const goToDetail = (orderId) => {
-  router.push(`/order/${orderId}`);
+  router.push(`/user/orders/${orderId}`);
 };
 
 const cancelOrderAction = async (orderId) => {
