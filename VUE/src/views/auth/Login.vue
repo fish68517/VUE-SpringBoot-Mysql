@@ -129,11 +129,23 @@ const handleLogin = async () => {
 
 <style scoped>
 .login-container {
+  /* 核心修改开始：强制铺满屏幕 */
+  position: fixed; /* 使用固定定位，无视父级元素的 padding/margin */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* 核心修改结束 */
+
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  
+  /* 背景渐变 */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  /* 防止背景图过大出现滚动条 */
+  overflow: hidden; 
 }
 
 .login-card {

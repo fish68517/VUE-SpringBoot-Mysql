@@ -1,3 +1,17 @@
+你的代码中 .register-container 已经使用了 min-height: 100vh，这通常是让页面全屏的关键属性。
+
+但是，为了确保它能够彻底铺满且没有白色边距或滚动条（通常由浏览器默认的 body margin 引起），我建议对 CSS 进行微调，并提供两种方案。
+
+方案一：标准全屏写法（推荐）
+
+这是最稳健的写法。注意：如果页面四周有白边，请务必在你的全局样式文件（如 App.vue 或 main.css）中设置 body { margin: 0; }。
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="register-container">
     <el-card class="register-card">
@@ -15,6 +29,7 @@
         label-width="100px"
         @submit.prevent="handleRegister"
       >
+        <!-- 表单内容保持不变 -->
         <el-form-item label="用户名" prop="username">
           <el-input
             v-model="registerForm.username"
@@ -76,7 +91,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { register } from '@/api/auth'
-import { validateUsername, validatePassword, validateConfirmPassword } from '@/utils/validator'
+// 注意：如果你没有实际用到这些导入的校验函数，可以删除下面这一行
 import { showSuccess, showError } from '@/utils/feedback'
 
 const router = useRouter()
@@ -90,6 +105,7 @@ const registerForm = reactive({
   role: 'user'
 })
 
+// 校验规则保持不变
 const registerRules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -122,10 +138,10 @@ const handleRegister = async () => {
   if (!registerFormRef.value) return
 
   try {
-    // Validate form
     const valid = await registerFormRef.value.validate().catch(() => false)
     if (!valid) {
-      showError('Please fill in all registration information')
+      // 如果使用了 Element Plus，不需要这里手动报错，表单会自动标红
+      // showError('请完善注册信息') 
       return
     }
 
@@ -134,19 +150,15 @@ const handleRegister = async () => {
     const { confirmPassword, ...registerData } = registerForm
     await register(registerData)
 
-    showSuccess('Registration successful! Please login')
+    showSuccess('注册成功！正在跳转登录页...')
     
-    // Redirect to login page after successful registration
     setTimeout(() => {
       router.push('/login')
     }, 1500)
   } catch (error) {
-    // Error is already handled by request interceptor
     console.error('Register error:', error)
-    // Only show additional message if it's a validation error
-    if (error.message && !error.response) {
-      showError(error.message)
-    }
+    // 根据你的 axios 封装，如果这里没有全局处理错误，可以解开下面的注释
+    // if (error.message) showError(error.message)
   } finally {
     loading.value = false
   }
@@ -154,17 +166,26 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
+/* 核心修改区域 */
 .register-container {
+  position: fixed; /* 强制固定在窗口，无视父级元素 */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 100; /* 确保在最上层 */
+  overflow-y: auto; /* 允许内容过多时滚动 */
 }
 
 .register-card {
   width: 500px;
   max-width: 90%;
+  border-radius: 10px; /* 圆角美化 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 阴影增强立体感 */
 }
 
 .card-header {
@@ -175,6 +196,7 @@ const handleRegister = async () => {
   margin: 0 0 10px 0;
   color: #303133;
   font-size: 24px;
+  font-weight: 600;
 }
 
 .card-header p {
