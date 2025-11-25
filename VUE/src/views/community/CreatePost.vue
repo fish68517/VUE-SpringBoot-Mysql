@@ -1,27 +1,37 @@
+没问题！我已经将 “发布动态” (Create Post) 页面进行了完整的汉化，包括表单标签、占位符、上传提示以及操作按钮的反馈信息。
+
+请复制以下代码覆盖你原来的文件：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="create-post">
     <div class="page-header">
-      <h2>Create Post</h2>
-      <el-button :icon="ArrowLeft" @click="goBack">Back</el-button>
+      <h2>发布动态</h2>
+      <el-button :icon="ArrowLeft" @click="goBack">返回</el-button>
     </div>
 
     <el-card class="create-form">
       <el-form :model="form" label-position="top">
-        <el-form-item label="Content">
+        <el-form-item label="动态内容">
           <el-input
             v-model="form.content"
             type="textarea"
             :rows="8"
-            placeholder="Share your fitness journey, tips, or achievements..."
+            placeholder="分享您的健身心得、技巧或成就..."
             maxlength="1000"
             show-word-limit
           />
           <div class="character-count">
-            {{ form.content.length }} / 1000 characters
+            {{ form.content.length }} / 1000 字
           </div>
         </el-form-item>
 
-        <el-form-item label="Images (Optional)">
+        <el-form-item label="配图 (可选)">
           <el-upload
             v-model:file-list="fileList"
             :action="uploadAction"
@@ -37,7 +47,7 @@
             <el-icon><plus /></el-icon>
             <template #tip>
               <div class="upload-tip">
-                Upload up to 9 images (JPG, PNG, GIF, max 5MB each)
+                最多支持 9 张图片（JPG/PNG/GIF 格式，每张不超过 5MB）
               </div>
             </template>
           </el-upload>
@@ -45,14 +55,14 @@
 
         <el-form-item>
           <div class="form-actions">
-            <el-button @click="handleCancel">Cancel</el-button>
+            <el-button @click="handleCancel">取消</el-button>
             <el-button
               type="primary"
               :loading="submitting"
               :disabled="!form.content.trim()"
               @click="handleSubmit"
             >
-              Publish Post
+              发布
             </el-button>
           </div>
         </el-form-item>
@@ -66,7 +76,8 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ArrowLeft, Plus } from '@element-plus/icons-vue'
 import { createDynamic } from '@/api/community'
-import { uploadImage } from '@/api/upload'
+// 注意：如果你的项目中没有 uploadImage 这个 API，可以忽略这个导入，或者确保路径正确
+import { uploadImage } from '@/api/upload' 
 import { showSuccess, showError, showWarning, confirmDiscard } from '@/utils/feedback'
 
 const router = useRouter()
@@ -80,7 +91,8 @@ const fileList = ref([])
 const submitting = ref(false)
 
 const uploadAction = computed(() => {
-  // This is just for display, actual upload is handled by before-upload
+  // 这里的 URL 仅用于显示，实际上传逻辑可能由 before-upload 或自定义 request 处理
+  // 请确保这里指向你后端的真实上传接口
   return import.meta.env.VITE_API_BASE_URL + '/api/upload/image'
 })
 
@@ -89,11 +101,11 @@ const beforeUpload = (file) => {
   const isLt5M = file.size / 1024 / 1024 < 5
 
   if (!isImage) {
-    showError('Only JPG, PNG, and GIF images are allowed')
+    showError('仅支持 JPG, PNG 和 GIF 格式的图片')
     return false
   }
   if (!isLt5M) {
-    showError('Image size must be less than 5MB')
+    showError('图片大小不能超过 5MB')
     return false
   }
 
@@ -101,12 +113,12 @@ const beforeUpload = (file) => {
 }
 
 const handleUploadSuccess = (response, file) => {
-  // The response should contain the file URL
+  // 根据后端返回的数据结构获取 URL
   if (response && response.url) {
     form.value.imageUrls.push(response.url)
     file.url = response.url
   } else if (typeof response === 'string') {
-    // If response is directly the URL string
+    // 如果直接返回字符串 URL
     form.value.imageUrls.push(response)
     file.url = response
   }
@@ -122,13 +134,13 @@ const handleRemove = (file) => {
 }
 
 const handleUploadError = (error) => {
-  showError('Failed to upload image')
-  console.error('Upload error:', error)
+  showError('图片上传失败')
+  console.error('上传错误:', error)
 }
 
 const handleSubmit = async () => {
   if (!form.value.content.trim()) {
-    showWarning('Please enter post content')
+    showWarning('请输入动态内容')
     return
   }
 
@@ -139,23 +151,24 @@ const handleSubmit = async () => {
       imageUrls: form.value.imageUrls.join(',')
     })
     
-    showSuccess('Post published successfully!')
+    showSuccess('动态发布成功！')
     router.push('/community')
   } catch (error) {
-    // Error already handled by request interceptor
-    console.error('Failed to publish post:', error)
+    // 错误通常已被拦截器处理
+    console.error('发布动态失败:', error)
   } finally {
     submitting.value = false
   }
 }
 
 const handleCancel = async () => {
+  // 如果有内容或已上传图片，提示用户是否放弃
   if (form.value.content.trim() || form.value.imageUrls.length > 0) {
     try {
-      await confirmDiscard()
+      await confirmDiscard() // 这里假设 confirmDiscard 内部提示语也是中文，或者它是通用的确认框
       goBack()
     } catch (error) {
-      // User cancelled, do nothing
+      // 用户取消了放弃操作，什么都不做
     }
   } else {
     goBack()
@@ -212,6 +225,7 @@ const goBack = () => {
   margin-top: 24px;
 }
 
+/* 样式穿透，适配 Element Plus 上传组件 */
 :deep(.el-upload-list--picture-card) {
   display: flex;
   flex-wrap: wrap;

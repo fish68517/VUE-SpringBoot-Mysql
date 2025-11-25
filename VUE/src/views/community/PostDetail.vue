@@ -1,12 +1,31 @@
+好的，这是汉化后的 “动态详情” (Post Detail) 页面代码。
+
+主要改动：
+
+界面文本：全部按钮、菜单项、占位符均已改为中文。
+
+时间格式：formatTime 函数已调整为中文显示逻辑（刚刚、分钟前、小时前等）。
+
+反馈提示：所有成功/失败/确认提示都已翻译。
+
+请复制以下代码覆盖：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="post-detail">
+    <!-- 返回按钮 -->
     <div class="back-button">
-      <el-button :icon="ArrowLeft" @click="goBack">Back to Feed</el-button>
+      <el-button :icon="ArrowLeft" @click="goBack">返回动态列表</el-button>
     </div>
 
     <div v-loading="loading" class="detail-content">
       <el-card v-if="!loading && post" class="post-card">
-        <!-- Post Header -->
+        <!-- 动态头部 (Post Header) -->
         <div class="post-header">
           <div class="user-info">
             <el-avatar :size="48" :src="post.user?.avatar || '/default-avatar.png'">
@@ -14,6 +33,7 @@
             </el-avatar>
             <div class="user-details">
               <span class="username">{{ post.user?.username }}</span>
+              <!-- 时间显示已本地化 -->
               <span class="timestamp">{{ formatTime(post.createdAt) }}</span>
             </div>
           </div>
@@ -24,11 +44,11 @@
                 <el-dropdown-menu>
                   <el-dropdown-item command="edit">
                     <el-icon><edit /></el-icon>
-                    Edit
+                    编辑
                   </el-dropdown-item>
                   <el-dropdown-item command="delete">
                     <el-icon><delete /></el-icon>
-                    Delete
+                    删除
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -36,12 +56,12 @@
           </div>
         </div>
 
-        <!-- Post Content -->
+        <!-- 动态内容 (Post Content) -->
         <div class="post-content">
           <p>{{ post.content }}</p>
         </div>
 
-        <!-- Post Images -->
+        <!-- 动态图片 (Post Images) -->
         <div v-if="post.imageUrls && imageList.length > 0" class="post-images">
           <el-image
             v-for="(image, index) in imageList"
@@ -54,7 +74,7 @@
           />
         </div>
 
-        <!-- Post Footer -->
+        <!-- 底部操作栏 (Post Footer) -->
         <div class="post-footer">
           <like-button
             :dynamic-id="post.id"
@@ -70,11 +90,11 @@
         </div>
       </el-card>
 
-      <!-- Comments Section -->
+      <!-- 评论区域 (Comments Section) -->
       <el-card v-if="!loading && post" class="comments-card">
         <comment-list :comments="comments" @refresh="loadComments" />
 
-        <!-- Comment Input -->
+        <!-- 评论输入框 -->
         <div class="comment-input-section">
           <el-avatar :size="36" :src="currentUser?.avatar || '/default-avatar.png'">
             {{ currentUser?.username?.charAt(0).toUpperCase() }}
@@ -83,7 +103,7 @@
             v-model="commentContent"
             type="textarea"
             :rows="3"
-            placeholder="Write a comment..."
+            placeholder="写下你的评论..."
             maxlength="500"
             show-word-limit
             class="comment-input"
@@ -96,35 +116,35 @@
             :disabled="!commentContent.trim()"
             @click="handleSubmitComment"
           >
-            Submit Comment
+            发表评论
           </el-button>
         </div>
       </el-card>
     </div>
 
-    <!-- Edit Post Dialog -->
+    <!-- 编辑动态弹窗 (Edit Post Dialog) -->
     <el-dialog
       v-model="editDialogVisible"
-      title="Edit Post"
+      title="编辑动态"
       width="600px"
       @close="handleDialogClose"
     >
       <el-form :model="editForm" label-position="top">
-        <el-form-item label="Content">
+        <el-form-item label="内容">
           <el-input
             v-model="editForm.content"
             type="textarea"
             :rows="6"
-            placeholder="Share your fitness journey..."
+            placeholder="分享您的健身心得..."
             maxlength="1000"
             show-word-limit
           />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="editDialogVisible = false">Cancel</el-button>
+        <el-button @click="editDialogVisible = false">取消</el-button>
         <el-button type="primary" :loading="updating" @click="handleUpdatePost">
-          Update
+          更新
         </el-button>
       </template>
     </el-dialog>
@@ -187,7 +207,7 @@ const loadPost = async () => {
     const postId = route.params.id
     post.value = await getDynamicById(postId)
   } catch (error) {
-    showError('Failed to load post')
+    showError('加载动态详情失败')
     router.push('/community')
   } finally {
     loading.value = false
@@ -199,10 +219,11 @@ const loadComments = async () => {
     const postId = route.params.id
     comments.value = await getComments(postId)
   } catch (error) {
-    showError('Failed to load comments')
+    showError('加载评论失败')
   }
 }
 
+// 汉化后的时间格式函数
 const formatTime = (timestamp) => {
   if (!timestamp) return ''
   
@@ -214,10 +235,10 @@ const formatTime = (timestamp) => {
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
   
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes}m ago`
-  if (hours < 24) return `${hours}h ago`
-  if (days < 7) return `${days}d ago`
+  if (minutes < 1) return '刚刚'
+  if (minutes < 60) return `${minutes}分钟前`
+  if (hours < 24) return `${hours}小时前`
+  if (days < 7) return `${days}天前`
   
   return date.toLocaleDateString()
 }
@@ -235,14 +256,16 @@ const handleCommand = async (command) => {
     editDialogVisible.value = true
   } else if (command === 'delete') {
     try {
-      await confirmDelete('this post')
+      // 这里的 confirmDelete 假设是通用的确认框，文案在调用处可定制，
+      // 如果 utils/feedback 中的 confirmDelete 固定了英文，需要去改那个文件
+      await confirmDelete('这条动态') 
       
       await deleteDynamic(post.value.id)
-      showSuccess('Post deleted successfully')
+      showSuccess('动态删除成功')
       router.push('/community')
     } catch (error) {
       if (error !== 'cancel' && error !== 'close') {
-        showError('Failed to delete post')
+        showError('删除动态失败')
       }
     }
   }
@@ -250,7 +273,7 @@ const handleCommand = async (command) => {
 
 const handleUpdatePost = async () => {
   if (!editForm.value.content.trim()) {
-    showWarning('Please enter post content')
+    showWarning('请输入动态内容')
     return
   }
 
@@ -261,11 +284,11 @@ const handleUpdatePost = async () => {
       imageUrls: editForm.value.imageUrls
     })
     
-    showSuccess('Post updated successfully')
+    showSuccess('动态更新成功')
     editDialogVisible.value = false
     loadPost()
   } catch (error) {
-    showError('Failed to update post')
+    showError('更新动态失败')
   } finally {
     updating.value = false
   }
@@ -280,7 +303,7 @@ const handleDialogClose = () => {
 
 const handleSubmitComment = async () => {
   if (!commentContent.value.trim()) {
-    showWarning('Please enter comment content')
+    showWarning('请输入评论内容')
     return
   }
 
@@ -291,14 +314,14 @@ const handleSubmitComment = async () => {
       dynamicId: post.value.id
     })
     
-    showSuccess('Comment added successfully')
+    showSuccess('评论发表成功')
     commentContent.value = ''
     
     // Reload comments and update comment count
     await loadComments()
     post.value.commentCount = comments.value.length
   } catch (error) {
-    showError('Failed to add comment')
+    showError('发表评论失败')
   } finally {
     submitting.value = false
   }
@@ -314,6 +337,7 @@ const handleLikeCountUpdate = (count) => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .post-detail {
   max-width: 800px;
   margin: 0 auto;

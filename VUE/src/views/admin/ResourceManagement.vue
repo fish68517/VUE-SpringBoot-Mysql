@@ -1,16 +1,17 @@
+
 <template>
   <div class="resource-management">
-    <h1>Resource Management</h1>
+    <h1>资源管理</h1>
 
-    <!-- Action Bar -->
+    <!-- 操作栏 (Action Bar) -->
     <el-card class="action-card">
       <el-button type="primary" @click="handleCreate">
         <el-icon><Plus /></el-icon>
-        Create Resource
+        创建资源
       </el-button>
     </el-card>
 
-    <!-- Resources Table -->
+    <!-- 资源列表表格 (Resources Table) -->
     <el-card class="table-card">
       <el-table
         v-loading="loading"
@@ -18,37 +19,37 @@
         style="width: 100%"
         stripe
       >
-        <el-table-column prop="title" label="Title" min-width="200" />
+        <el-table-column prop="title" label="标题" min-width="200" />
 
-        <el-table-column label="Type" width="120">
+        <el-table-column label="类型" width="120">
           <template #default="{ row }">
             <el-tag :type="getTypeTagType(row.contentType)">
-              {{ row.contentType }}
+              {{ formatContentType(row.contentType) }}
             </el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column label="Creator" width="150">
+        <el-table-column label="创建者" width="150">
           <template #default="{ row }">
             <span v-if="row.creatorName">{{ row.creatorName }}</span>
-            <span v-else class="text-muted">System</span>
+            <span v-else class="text-muted">系统</span>
           </template>
         </el-table-column>
 
-        <el-table-column label="View Count" width="120" align="center">
+        <el-table-column label="浏览量" width="120" align="center">
           <template #default="{ row }">
             <el-icon><View /></el-icon>
             {{ row.viewCount || 0 }}
           </template>
         </el-table-column>
 
-        <el-table-column label="Created Date" width="180">
+        <el-table-column label="创建时间" width="180">
           <template #default="{ row }">
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
 
-        <el-table-column label="Actions" width="180" fixed="right">
+        <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button
               type="primary"
@@ -57,7 +58,7 @@
               link
             >
               <el-icon><Edit /></el-icon>
-              Edit
+              编辑
             </el-button>
             <el-button
               type="danger"
@@ -66,18 +67,18 @@
               link
             >
               <el-icon><Delete /></el-icon>
-              Delete
+              删除
             </el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- Empty State -->
+      <!-- 空状态 (Empty State) -->
       <div v-if="!loading && resources.length === 0" class="empty-state">
-        <el-empty description="No resources found" />
+        <el-empty description="暂无资源" />
       </div>
 
-      <!-- Pagination -->
+      <!-- 分页 (Pagination) -->
       <div class="pagination-container">
         <el-pagination
           v-model:current-page="currentPage"
@@ -91,10 +92,10 @@
       </div>
     </el-card>
 
-    <!-- Create/Edit Resource Dialog -->
+    <!-- 创建/编辑资源弹窗 (Create/Edit Resource Dialog) -->
     <el-dialog
       v-model="dialogVisible"
-      :title="isEditing ? 'Edit Resource' : 'Create Resource'"
+      :title="isEditing ? '编辑资源' : '创建资源'"
       width="600px"
       @close="resetForm"
     >
@@ -104,43 +105,43 @@
         :rules="formRules"
         label-width="120px"
       >
-        <el-form-item label="Title" prop="title">
+        <el-form-item label="标题" prop="title">
           <el-input
             v-model="form.title"
-            placeholder="Enter resource title"
+            placeholder="请输入资源标题"
             maxlength="200"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Description" prop="description">
+        <el-form-item label="描述" prop="description">
           <el-input
             v-model="form.description"
             type="textarea"
             :rows="3"
-            placeholder="Enter resource description"
+            placeholder="请输入资源描述"
             maxlength="1000"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Content Type" prop="contentType">
+        <el-form-item label="内容类型" prop="contentType">
           <el-select
             v-model="form.contentType"
-            placeholder="Select content type"
+            placeholder="请选择内容类型"
             style="width: 100%"
             @change="handleContentTypeChange"
           >
-            <el-option label="Video" value="video" />
-            <el-option label="Article" value="article" />
-            <el-option label="Document" value="document" />
+            <el-option label="视频" value="video" />
+            <el-option label="文章" value="article" />
+            <el-option label="文档" value="document" />
           </el-select>
         </el-form-item>
 
-        <!-- File Upload for Video/Document -->
+        <!-- 视频/文档文件上传 (File Upload for Video/Document) -->
         <el-form-item
           v-if="form.contentType === 'video' || form.contentType === 'document'"
-          label="File"
+          label="文件"
           prop="fileUrl"
         >
           <el-upload
@@ -156,40 +157,40 @@
           >
             <el-button type="primary">
               <el-icon><Upload /></el-icon>
-              Upload {{ form.contentType }}
+              上传 {{ formatContentType(form.contentType) }}
             </el-button>
             <template #tip>
               <div class="el-upload__tip">
                 <span v-if="form.contentType === 'video'">
-                  MP4, AVI files, max 100MB
+                  MP4, AVI 格式，最大 100MB
                 </span>
                 <span v-else>
-                  PDF, DOC, DOCX files, max 10MB
+                  PDF, DOC, DOCX 格式，最大 10MB
                 </span>
               </div>
             </template>
           </el-upload>
         </el-form-item>
 
-        <!-- Text Editor for Article -->
+        <!-- 文章内容编辑器 (Text Editor for Article) -->
         <el-form-item
           v-if="form.contentType === 'article'"
-          label="Content"
+          label="内容"
           prop="content"
         >
           <el-input
             v-model="form.content"
             type="textarea"
             :rows="10"
-            placeholder="Enter article content"
+            placeholder="请输入文章内容"
           />
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" @click="handleSave" :loading="saving">
-          Save
+          保存
         </el-button>
       </template>
     </el-dialog>
@@ -226,20 +227,20 @@ const form = ref({
 
 const formRules = {
   title: [
-    { required: true, message: 'Please enter title', trigger: 'blur' },
-    { max: 200, message: 'Title cannot exceed 200 characters', trigger: 'blur' }
+    { required: true, message: '请输入标题', trigger: 'blur' },
+    { max: 200, message: '标题不能超过 200 个字符', trigger: 'blur' }
   ],
   description: [
-    { max: 1000, message: 'Description cannot exceed 1000 characters', trigger: 'blur' }
+    { max: 1000, message: '描述不能超过 1000 个字符', trigger: 'blur' }
   ],
   contentType: [
-    { required: true, message: 'Please select content type', trigger: 'change' }
+    { required: true, message: '请选择内容类型', trigger: 'change' }
   ],
   fileUrl: [
     {
       validator: (rule, value, callback) => {
         if ((form.value.contentType === 'video' || form.value.contentType === 'document') && !value) {
-          callback(new Error('Please upload a file'));
+          callback(new Error('请上传文件'));
         } else {
           callback();
         }
@@ -251,7 +252,7 @@ const formRules = {
     {
       validator: (rule, value, callback) => {
         if (form.value.contentType === 'article' && !value) {
-          callback(new Error('Please enter article content'));
+          callback(new Error('请输入文章内容'));
         } else {
           callback();
         }
@@ -295,7 +296,7 @@ const fetchResources = async () => {
       total.value = 0;
     }
   } catch (error) {
-    showError('Failed to load resources');
+    showError('加载资源失败');
     resources.value = [];
     total.value = 0;
   } finally {
@@ -323,10 +324,19 @@ const getTypeTagType = (type) => {
   return types[type] || 'info';
 };
 
+const formatContentType = (type) => {
+  const map = {
+    video: '视频',
+    article: '文章',
+    document: '文档'
+  };
+  return map[type] || type;
+};
+
 const formatDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
@@ -370,7 +380,7 @@ const beforeUpload = (file) => {
   const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
 
   if (file.size > maxSize) {
-    showError(`File size cannot exceed ${isVideo ? '100MB' : '10MB'}`);
+    showError(`文件大小不能超过 ${isVideo ? '100MB' : '10MB'}`);
     return false;
   }
 
@@ -380,14 +390,14 @@ const beforeUpload = (file) => {
 const handleUploadSuccess = (response) => {
   if (response.code === 200) {
     form.value.fileUrl = response.data;
-    showSuccess('File uploaded successfully');
+    showSuccess('文件上传成功');
   } else {
-    showError(response.msg || 'Upload failed');
+    showError(response.msg || '上传失败');
   }
 };
 
 const handleUploadError = () => {
-  showError('File upload failed');
+  showError('文件上传失败');
 };
 
 const handleFileRemove = () => {
@@ -412,16 +422,16 @@ const handleSave = async () => {
 
       if (isEditing.value) {
         await updateResource(form.value.id, data);
-        showSuccess('Resource updated successfully');
+        showSuccess('资源更新成功');
       } else {
         await createResource(data);
-        showSuccess('Resource created successfully');
+        showSuccess('资源创建成功');
       }
 
       dialogVisible.value = false;
       fetchResources();
     } catch (error) {
-      showError(`Failed to ${isEditing.value ? 'update' : 'create'} resource`);
+      showError(`${isEditing.value ? '更新' : '创建'}资源失败`);
     } finally {
       saving.value = false;
     }
@@ -445,10 +455,11 @@ const resetForm = () => {
 
 const handleDelete = async (resource) => {
   try {
-    await confirmDelete(`resource "${resource.title}"`);
+    // 这里传入中文提示，utils/feedback 内部会显示
+    await confirmDelete(`资源 "${resource.title}"`);
 
     await deleteResource(resource.id);
-    showSuccess('Resource deleted successfully');
+    showSuccess('资源删除成功');
     
     if (resources.value.length === 1 && currentPage.value > 1) {
       currentPage.value--;
@@ -456,7 +467,7 @@ const handleDelete = async (resource) => {
     fetchResources();
   } catch (error) {
     if (error !== 'cancel' && error !== 'close') {
-      showError('Failed to delete resource');
+      showError('删除资源失败');
     }
   }
 };
@@ -467,6 +478,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .resource-management {
   padding: 20px;
 }

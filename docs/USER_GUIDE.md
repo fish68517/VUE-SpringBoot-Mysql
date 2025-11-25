@@ -176,7 +176,7 @@ If you don't have any training plans:
 ### Liking Posts
 
 1. Find a post you like
-2. Click the **heart icon** to like it
+2. Click the **Star icon** to like it
 3. The like count increases
 4. Click again to unlike
 

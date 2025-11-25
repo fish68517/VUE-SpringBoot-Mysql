@@ -58,8 +58,12 @@ const router = createRouter({
     {
       path: '/community',
       name: 'CommunityFeed',
-      component: () => import('@/views/community/CommunityFeed.vue'),
-      meta: { requiresAuth: true, roles: ['user', 'coach', 'admin'] }
+      // 修改这一行，加上 .catch 打印错误
+      component: () => import('@/views/community/CommunityFeed.vue').catch(err => {
+        console.log('严重错误：无法加载 CommunityFeed 组件！', err);
+        return import('@/views/NotFound.vue'); // 或者返回一个临时组件防止白屏
+      }),
+      meta: { requiresAuth: false } 
     },
     {
       path: '/community/create',
@@ -140,8 +144,11 @@ const router = createRouter({
     {
       path: '/admin/moderation',
       name: 'ContentModeration',
-      component: () => import('@/views/admin/ContentModeration.vue'),
-      meta: { requiresAuth: true, roles: ['admin'] }
+      component: () => import('@/views/admin/ContentModeration.vue').catch(err => {
+        console.log('严重错误：无法加载 ContentModeration 组件！', err);
+        return import('@/views/NotFound.vue'); // 或者返回一个临时组件防止白屏
+      }),
+      meta: { requiresAuth: false } 
     },
     
     // Search results
@@ -176,41 +183,42 @@ const router = createRouter({
 
 // Navigation guard
 router.beforeEach((to, _from, next) => {
+  console.log('路由守卫触发 -> 去往:', to.path); // 1. 打印目标路径
   const token = getToken()
   const userInfo = getUserInfo()
   
   // Check if route requires authentication
-  if (to.meta.requiresAuth) {
-    if (!token) {
-      // Not authenticated, redirect to login
-      next('/login')
-      return
-    }
+  // if (to.meta.requiresAuth) {
+  //   if (!token) {
+  //     // Not authenticated, redirect to login
+  //     next('/login')
+  //     return
+  //   }
     
-    // Check if user role matches required roles
-    if (to.meta.roles && userInfo) {
-      const userRole = userInfo.role
-      if (!to.meta.roles.includes(userRole)) {
-        // Role doesn't match, redirect to unauthorized
-        next('/unauthorized')
-        return
-      }
-    }
-  }
+  //   // Check if user role matches required roles
+  //   if (to.meta.roles && userInfo) {
+  //     const userRole = userInfo.role
+  //     if (!to.meta.roles.includes(userRole)) {
+  //       // Role doesn't match, redirect to unauthorized
+  //       next('/unauthorized')
+  //       return
+  //     }
+  //   }
+  // }
   
   // If already logged in and trying to access login/register, redirect to appropriate dashboard
-  if ((to.path === '/login' || to.path === '/register') && token && userInfo) {
-    const role = userInfo.role
-    if (role === 'admin') {
-      next('/admin/dashboard')
-    } else if (role === 'coach') {
-      next('/coach/dashboard')
-    } else {
-      next('/home')
-    }
-    return
-  }
-  
+  // if ((to.path === '/login' || to.path === '/register') && token && userInfo) {
+  //   const role = userInfo.role
+  //   if (role === 'admin') {
+  //     next('/admin/dashboard')
+  //   } else if (role === 'coach') {
+  //     next('/coach/dashboard')
+  //   } else {
+  //     next('/home')
+  //   }
+  //   return
+  // }
+  console.log('路由守卫放行 -> next() 执行'); // 2. 确认执行到了这里
   next()
 })
 

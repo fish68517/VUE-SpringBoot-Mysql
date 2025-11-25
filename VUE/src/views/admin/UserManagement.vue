@@ -1,13 +1,39 @@
+好的，这是 “用户管理” (User Management) 页面的完整汉化版本。
+
+主要修改包括：
+
+界面标题：User Management -> 用户管理, Search/Filter -> 搜索与筛选 等。
+
+筛选选项：Search by username -> 按用户名搜索, Filter by role -> 按角色筛选, All Roles -> 所有角色 等。
+
+表格列名：Avatar -> 头像, Username -> 用户名, Role -> 角色, Registration Date -> 注册时间, Student/Content Count -> 学员数/内容数 等。
+
+操作按钮：Edit -> 编辑, Delete -> 删除, Search -> 搜索, Save -> 保存, Cancel -> 取消。
+
+编辑弹窗：Gender -> 性别, Introduction -> 简介, Male/Female/Other -> 男/女/其他。
+
+反馈提示：更新成功、删除成功、加载失败等。
+
+日期格式：改为中文 年-月-日 时:分 格式。
+
+请复制以下代码覆盖：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="user-management">
-    <h1>User Management</h1>
+    <h1>用户管理</h1>
 
-    <!-- Search and Filter Bar -->
+    <!-- 搜索与筛选栏 (Search and Filter Bar) -->
     <el-card class="filter-card">
       <div class="filter-bar">
         <el-input
           v-model="searchQuery"
-          placeholder="Search by username"
+          placeholder="按用户名搜索"
           clearable
           style="width: 300px"
           @clear="handleSearch"
@@ -19,25 +45,25 @@
 
         <el-select
           v-model="roleFilter"
-          placeholder="Filter by role"
+          placeholder="按角色筛选"
           clearable
           style="width: 200px"
           @change="handleSearch"
         >
-          <el-option label="All Roles" value="" />
-          <el-option label="User" value="user" />
-          <el-option label="Coach" value="coach" />
-          <el-option label="Admin" value="admin" />
+          <el-option label="所有角色" value="" />
+          <el-option label="普通用户" value="user" />
+          <el-option label="教练" value="coach" />
+          <el-option label="管理员" value="admin" />
         </el-select>
 
         <el-button type="primary" @click="handleSearch">
           <el-icon><Search /></el-icon>
-          Search
+          搜索
         </el-button>
       </div>
     </el-card>
 
-    <!-- Users Table -->
+    <!-- 用户列表表格 (Users Table) -->
     <el-card class="table-card">
       <el-table
         v-loading="loading"
@@ -45,7 +71,7 @@
         style="width: 100%"
         stripe
       >
-        <el-table-column label="Avatar" width="80">
+        <el-table-column label="头像" width="80">
           <template #default="{ row }">
             <el-avatar :src="row.avatar" :size="40">
               {{ row.username.charAt(0).toUpperCase() }}
@@ -53,37 +79,37 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="username" label="Username" min-width="150" />
+        <el-table-column prop="username" label="用户名" min-width="150" />
 
-        <el-table-column label="Role" width="120">
+        <el-table-column label="角色" width="120">
           <template #default="{ row }">
             <el-tag :type="getRoleTagType(row.role)">
-              {{ row.role }}
+              {{ formatRole(row.role) }}
             </el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column label="Registration Date" width="180">
+        <el-table-column label="注册时间" width="180">
           <template #default="{ row }">
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
 
-        <el-table-column label="Student Count" width="130" v-if="showCoachColumns">
+        <el-table-column label="学员数量" width="130" v-if="showCoachColumns">
           <template #default="{ row }">
             <span v-if="row.role === 'coach'">{{ row.studentCount || 0 }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
 
-        <el-table-column label="Content Count" width="130" v-if="showCoachColumns">
+        <el-table-column label="内容数量" width="130" v-if="showCoachColumns">
           <template #default="{ row }">
             <span v-if="row.role === 'coach'">{{ row.contentCount || 0 }}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
 
-        <el-table-column label="Actions" width="180" fixed="right">
+        <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button
               type="primary"
@@ -92,7 +118,7 @@
               link
             >
               <el-icon><Edit /></el-icon>
-              Edit
+              编辑
             </el-button>
             <el-button
               type="danger"
@@ -101,18 +127,18 @@
               link
             >
               <el-icon><Delete /></el-icon>
-              Delete
+              删除
             </el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- Empty State -->
+      <!-- 空状态 (Empty State) -->
       <div v-if="!loading && users.length === 0" class="empty-state">
-        <el-empty description="No users found" />
+        <el-empty description="未找到用户" />
       </div>
 
-      <!-- Pagination -->
+      <!-- 分页 (Pagination) -->
       <div class="pagination-container">
         <el-pagination
           v-model:current-page="currentPage"
@@ -126,10 +152,10 @@
       </div>
     </el-card>
 
-    <!-- Edit User Dialog -->
+    <!-- 编辑用户弹窗 (Edit User Dialog) -->
     <el-dialog
       v-model="editDialogVisible"
-      title="Edit User"
+      title="编辑用户"
       width="500px"
       @close="resetEditForm"
     >
@@ -139,28 +165,28 @@
         :rules="editRules"
         label-width="120px"
       >
-        <el-form-item label="Username">
+        <el-form-item label="用户名">
           <el-input v-model="editForm.username" disabled />
         </el-form-item>
 
-        <el-form-item label="Role">
-          <el-input v-model="editForm.role" disabled />
+        <el-form-item label="角色">
+          <el-input :model-value="formatRole(editForm.role)" disabled />
         </el-form-item>
 
-        <el-form-item label="Gender" prop="gender">
-          <el-select v-model="editForm.gender" placeholder="Select gender">
-            <el-option label="Male" value="male" />
-            <el-option label="Female" value="female" />
-            <el-option label="Other" value="other" />
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="editForm.gender" placeholder="请选择性别">
+            <el-option label="男" value="male" />
+            <el-option label="女" value="female" />
+            <el-option label="其他" value="other" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Introduction" prop="intro">
+        <el-form-item label="简介" prop="intro">
           <el-input
             v-model="editForm.intro"
             type="textarea"
             :rows="4"
-            placeholder="Enter user introduction"
+            placeholder="请输入用户简介"
             maxlength="500"
             show-word-limit
           />
@@ -168,9 +194,9 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="editDialogVisible = false">Cancel</el-button>
+        <el-button @click="editDialogVisible = false">取消</el-button>
         <el-button type="primary" @click="handleSaveEdit" :loading="saving">
-          Save
+          保存
         </el-button>
       </template>
     </el-dialog>
@@ -204,7 +230,7 @@ const editForm = ref({
 
 const editRules = {
   intro: [
-    { max: 500, message: 'Introduction cannot exceed 500 characters', trigger: 'blur' }
+    { max: 500, message: '简介不能超过 500 个字符', trigger: 'blur' }
   ]
 };
 
@@ -276,10 +302,19 @@ const getRoleTagType = (role) => {
   return types[role] || 'info';
 };
 
+const formatRole = (role) => {
+  const map = {
+    admin: '管理员',
+    coach: '教练',
+    user: '用户'
+  };
+  return map[role] || role;
+};
+
 const formatDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -316,9 +351,9 @@ const handleSaveEdit = async () => {
         await fetchUsers();
       },
       {
-        successMessage: 'User updated successfully',
-        errorMessage: 'Failed to update user',
-        validationMessage: 'Please check the form fields'
+        successMessage: '用户更新成功',
+        errorMessage: '用户更新失败',
+        validationMessage: '请检查表单字段'
       }
     );
   } catch (error) {
@@ -353,10 +388,10 @@ const handleDeleteUser = async (user) => {
         }
         await fetchUsers();
       },
-      `user "${user.username}"`,
+      `用户 "${user.username}"`, // 删除提示文本
       {
-        successMessage: 'User deleted successfully',
-        errorMessage: 'Failed to delete user'
+        successMessage: '用户删除成功',
+        errorMessage: '删除用户失败'
       }
     );
   } catch (error) {
@@ -370,6 +405,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .user-management {
   padding: 20px;
 }

@@ -1,18 +1,28 @@
+没问题！我已经将页面中所有的静态英文文本、按钮标签、提示信息以及脚本中的描述全部翻译成了中文，并优化了一些中文表达以更符合国内使用习惯（例如将 "Check-in" 翻译为 "打卡"）。
+
+请直接复制以下代码覆盖你原来的文件：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="home-container">
-    <!-- Welcome Banner -->
+    <!-- 欢迎横幅 (Welcome Banner) -->
     <el-card class="welcome-banner" shadow="hover">
       <div class="banner-content">
-        <h1>Welcome back, {{ userName }}! 👋</h1>
-        <p>Ready to continue your fitness journey?</p>
+        <h1>欢迎回来，{{ userName }}！👋</h1>
+        <p>准备好继续您的健身之旅了吗？</p>
       </div>
     </el-card>
 
-    <!-- Statistics Overview -->
+    <!-- 统计概览 (Statistics Overview) -->
     <el-row :gutter="20" class="stats-section">
       <el-col :xs="12" :sm="6">
         <el-card shadow="hover" class="stat-card">
-          <el-statistic title="Check-ins" :value="stats.checkIns">
+          <el-statistic title="累计打卡" :value="stats.checkIns">
             <template #prefix>
               <el-icon><Calendar /></el-icon>
             </template>
@@ -21,7 +31,7 @@
       </el-col>
       <el-col :xs="12" :sm="6">
         <el-card shadow="hover" class="stat-card">
-          <el-statistic title="Collections" :value="stats.collections">
+          <el-statistic title="我的收藏" :value="stats.collections">
             <template #prefix>
               <el-icon><Star /></el-icon>
             </template>
@@ -30,7 +40,7 @@
       </el-col>
       <el-col :xs="12" :sm="6">
         <el-card shadow="hover" class="stat-card">
-          <el-statistic title="My Posts" :value="stats.posts">
+          <el-statistic title="我的发布" :value="stats.posts">
             <template #prefix>
               <el-icon><ChatDotRound /></el-icon>
             </template>
@@ -39,19 +49,19 @@
       </el-col>
       <el-col :xs="12" :sm="6">
         <el-card shadow="hover" class="stat-card">
-          <el-statistic title="Current Streak" :value="stats.currentStreak">
+          <el-statistic title="连续打卡" :value="stats.currentStreak">
             <template #prefix>
               <el-icon><TrendCharts /></el-icon>
             </template>
-            <template #suffix>days</template>
+            <template #suffix>天</template>
           </el-statistic>
         </el-card>
       </el-col>
     </el-row>
 
-    <!-- Quick Access Cards -->
+    <!-- 快速访问 (Quick Access Cards) -->
     <div class="quick-access-section">
-      <h2>Quick Access</h2>
+      <h2>快速导航</h2>
       <el-row :gutter="20">
         <el-col :xs="12" :sm="6" v-for="item in quickAccessItems" :key="item.title">
           <el-card shadow="hover" class="quick-access-card" @click="navigateTo(item.route)">
@@ -67,11 +77,11 @@
       </el-row>
     </div>
 
-    <!-- Featured Resources -->
+    <!-- 精选资源 (Featured Resources) -->
     <div class="featured-section">
       <div class="section-header">
-        <h2>Featured Resources</h2>
-        <el-button type="primary" link @click="navigateTo('/resources')">View All</el-button>
+        <h2>精选资源</h2>
+        <el-button type="primary" link @click="navigateTo('/resources')">查看更多</el-button>
       </div>
       <el-row :gutter="20" v-loading="loadingResources">
         <el-col :xs="24" :sm="12" :md="8" v-for="resource in featuredResources" :key="resource.id">
@@ -87,8 +97,9 @@
               <h3>{{ resource.title }}</h3>
               <p class="resource-description">{{ truncateText(resource.description, 80) }}</p>
               <div class="resource-meta">
+                <!-- 这里添加了一个 formatContentType 函数来显示中文类型 -->
                 <el-tag size="small" :type="getResourceTypeTag(resource.contentType)">
-                  {{ resource.contentType }}
+                  {{ formatContentType(resource.contentType) }}
                 </el-tag>
                 <span class="view-count">
                   <el-icon><View /></el-icon>
@@ -99,14 +110,14 @@
           </el-card>
         </el-col>
       </el-row>
-      <el-empty v-if="!loadingResources && featuredResources.length === 0" description="No resources available" />
+      <el-empty v-if="!loadingResources && featuredResources.length === 0" description="暂无资源" />
     </div>
 
-    <!-- Recent Community Posts -->
+    <!-- 最新社区动态 (Recent Community Posts) -->
     <div class="community-section">
       <div class="section-header">
-        <h2>Recent Community Posts</h2>
-        <el-button type="primary" link @click="navigateTo('/community')">View All</el-button>
+        <h2>最新社区动态</h2>
+        <el-button type="primary" link @click="navigateTo('/community')">查看更多</el-button>
       </div>
       <el-row :gutter="20" v-loading="loadingPosts">
         <el-col :xs="24" :sm="12" :md="12" :lg="8" v-for="post in recentPosts" :key="post.id">
@@ -134,7 +145,7 @@
           </el-card>
         </el-col>
       </el-row>
-      <el-empty v-if="!loadingPosts && recentPosts.length === 0" description="No posts yet" />
+      <el-empty v-if="!loadingPosts && recentPosts.length === 0" description="暂无动态" />
     </div>
   </div>
 </template>
@@ -177,33 +188,34 @@ const stats = ref({
   currentStreak: 0
 });
 
-const userName = computed(() => authStore.currentUser?.username || 'User');
+const userName = computed(() => authStore.currentUser?.username || '用户');
 
+// 翻译了这里的菜单项
 const quickAccessItems = [
   {
-    title: 'Resources',
-    description: 'Browse fitness content',
+    title: '健身资源',
+    description: '浏览专业健身干货',
     icon: Reading,
     route: '/resources',
     color: '#409EFF'
   },
   {
-    title: 'Training Plans',
-    description: 'View your plans',
+    title: '训练计划',
+    description: '查看您的专属计划',
     icon: Notebook,
     route: '/training-plans',
     color: '#67C23A'
   },
   {
-    title: 'Community',
-    description: 'Connect with others',
+    title: '社区交流',
+    description: '与伙伴分享心得',
     icon: ChatDotRound,
     route: '/community',
     color: '#E6A23C'
   },
   {
-    title: 'Check-in',
-    description: 'Log your progress',
+    title: '每日打卡',
+    description: '记录点滴进步',
     icon: Trophy,
     route: '/checkin',
     color: '#F56C6C'
@@ -215,10 +227,9 @@ const fetchFeaturedResources = async () => {
   loadingResources.value = true;
   try {
     const data = await getResources({ page: 0, size: 6 });
-    // Backend should return resources sorted by viewCount desc
     featuredResources.value = data.content || data || [];
   } catch (error) {
-    console.error('Failed to load featured resources:', error);
+    console.error('获取资源失败:', error);
   } finally {
     loadingResources.value = false;
   }
@@ -231,7 +242,7 @@ const fetchRecentPosts = async () => {
     const data = await getDynamics({ page: 0, size: 5 });
     recentPosts.value = data.content || data || [];
   } catch (error) {
-    console.error('Failed to load recent posts:', error);
+    console.error('获取动态失败:', error);
   } finally {
     loadingPosts.value = false;
   }
@@ -240,27 +251,25 @@ const fetchRecentPosts = async () => {
 // Fetch user statistics
 const fetchStats = async () => {
   try {
-    // Fetch check-in stats
     const checkInData = await getCheckInStats();
     stats.value.checkIns = checkInData.totalCount || 0;
     stats.value.currentStreak = checkInData.currentStreak || 0;
 
-    // Fetch collections count
     const collections = await getCollections();
     stats.value.collections = Array.isArray(collections) ? collections.length : 0;
 
-    // Fetch user's posts count
     const dynamics = await getDynamics({ page: 0, size: 1000 });
     const allPosts = dynamics.content || dynamics || [];
     const userPosts = allPosts.filter(post => post.user?.id === authStore.currentUser?.id);
     stats.value.posts = userPosts.length;
   } catch (error) {
-    console.error('Failed to load statistics:', error);
+    console.error('获取统计数据失败:', error);
   }
 };
 
 // Navigate to route
 const navigateTo = (route) => {
+  console.log('正在尝试跳转到:', route); // <--- 加上这一句
   router.push(route);
 };
 
@@ -274,13 +283,24 @@ const getResourceTypeTag = (type) => {
   return tagMap[type] || 'info';
 };
 
+// 新增：将后端返回的英文类型转为中文显示
+const formatContentType = (type) => {
+  const typeMap = {
+    video: '视频',
+    article: '文章',
+    document: '文档',
+    unknown: '其他'
+  };
+  return typeMap[type] || type;
+};
+
 // Truncate text
 const truncateText = (text, maxLength) => {
   if (!text) return '';
   return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
 };
 
-// Format time
+// Format time (Translated to Chinese)
 const formatTime = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
@@ -290,9 +310,10 @@ const formatTime = (dateString) => {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
+  if (minutes < 1) return '刚刚';
+  if (minutes < 60) return `${minutes}分钟前`;
+  if (hours < 24) return `${hours}小时前`;
+  if (days < 7) return `${days}天前`;
   return date.toLocaleDateString();
 };
 
@@ -304,6 +325,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .home-container {
   max-width: 1400px;
   margin: 0 auto;

@@ -8,7 +8,7 @@
         class="sidebar-toggle mobile-menu-toggle"
       />
       <div class="logo-section">
-        <img src="@/assets/images/logo.png" alt="Logo" class="logo" v-if="false" />
+       
         <span class="app-name">小鲨鱼健身</span>
       </div>
     </div>

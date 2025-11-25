@@ -1,44 +1,45 @@
+
 <template>
   <div class="content-moderation">
-    <h1>Content Moderation</h1>
+    <h1>内容审核</h1>
 
-    <!-- Filter Bar -->
+    <!-- 筛选栏 (Filter Bar) -->
     <el-card class="filter-card">
       <div class="filter-bar">
         <el-date-picker
           v-model="dateRange"
           type="daterange"
-          range-separator="To"
-          start-placeholder="Start date"
-          end-placeholder="End date"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
           style="width: 300px"
           @change="handleFilterChange"
         />
         <el-button type="primary" @click="handleFilterChange">
           <el-icon><Search /></el-icon>
-          Filter
+          筛选
         </el-button>
       </div>
     </el-card>
 
-    <!-- Status Tabs -->
+    <!-- 状态标签页 (Status Tabs) -->
     <el-card class="tabs-card">
       <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-        <el-tab-pane label="Pending" name="pending">
+        <el-tab-pane label="待审核" name="pending">
           <el-badge :value="pendingCount" :max="99" class="tab-badge" />
         </el-tab-pane>
-        <el-tab-pane label="Approved" name="approved" />
-        <el-tab-pane label="Rejected" name="rejected" />
+        <el-tab-pane label="已通过" name="approved" />
+        <el-tab-pane label="已拒绝" name="rejected" />
       </el-tabs>
 
-      <!-- Posts Table -->
+      <!-- 动态列表表格 (Posts Table) -->
       <el-table
         v-loading="loading"
         :data="posts"
         style="width: 100%"
         stripe
       >
-        <el-table-column label="Author" width="150">
+        <el-table-column label="作者" width="150">
           <template #default="{ row }">
             <div class="author-cell">
               <el-avatar :src="row.userAvatar" :size="32">
@@ -49,33 +50,33 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Content" min-width="300">
+        <el-table-column label="内容" min-width="300">
           <template #default="{ row }">
             <div class="content-preview">
               {{ truncateContent(row.content) }}
             </div>
             <div v-if="row.imageUrls" class="image-count">
               <el-icon><Picture /></el-icon>
-              {{ getImageCount(row.imageUrls) }} image(s)
+              {{ getImageCount(row.imageUrls) }} 张图片
             </div>
           </template>
         </el-table-column>
 
-        <el-table-column label="Created Date" width="180">
+        <el-table-column label="创建时间" width="180">
           <template #default="{ row }">
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
 
-        <el-table-column label="Status" width="120">
+        <el-table-column label="状态" width="120">
           <template #default="{ row }">
             <el-tag :type="getStatusTagType(row.status)">
-              {{ row.status }}
+              {{ formatStatus(row.status) }}
             </el-tag>
           </template>
         </el-table-column>
 
-        <el-table-column label="Actions" width="250" fixed="right">
+        <el-table-column label="操作" width="250" fixed="right">
           <template #default="{ row }">
             <el-button
               type="info"
@@ -84,7 +85,7 @@
               link
             >
               <el-icon><View /></el-icon>
-              View
+              查看
             </el-button>
             <el-button
               v-if="row.status === 'pending'"
@@ -94,7 +95,7 @@
               link
             >
               <el-icon><Check /></el-icon>
-              Approve
+              通过
             </el-button>
             <el-button
               v-if="row.status === 'pending'"
@@ -104,18 +105,18 @@
               link
             >
               <el-icon><Close /></el-icon>
-              Reject
+              拒绝
             </el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- Empty State -->
+      <!-- 空状态 (Empty State) -->
       <div v-if="!loading && posts.length === 0" class="empty-state">
-        <el-empty :description="`No ${activeTab} posts found`" />
+        <el-empty :description="`暂无${formatStatus(activeTab)}内容`" />
       </div>
 
-      <!-- Pagination -->
+      <!-- 分页 (Pagination) -->
       <div class="pagination-container">
         <el-pagination
           v-model:current-page="currentPage"
@@ -129,11 +130,11 @@
       </div>
     </el-card>
 
-    <!-- Moderation History -->
+    <!-- 审核历史 (Moderation History) -->
     <el-card class="history-card">
       <template #header>
         <div class="card-header">
-          <span>Recent Moderation Actions</span>
+          <span>最近审核记录</span>
         </div>
       </template>
       <el-timeline>
@@ -144,23 +145,23 @@
           placement="top"
         >
           <el-tag :type="action.action === 'approved' ? 'success' : 'danger'" size="small">
-            {{ action.action }}
+            {{ action.action === 'approved' ? '已通过' : '已拒绝' }}
           </el-tag>
           <span class="history-content">
-            Post by <strong>{{ action.username }}</strong>
-            <span v-if="action.reason"> - Reason: {{ action.reason }}</span>
+            用户 <strong>{{ action.username }}</strong> 发布的内容
+            <span v-if="action.reason"> - 原因: {{ action.reason }}</span>
           </span>
         </el-timeline-item>
       </el-timeline>
       <div v-if="moderationHistory.length === 0" class="empty-state">
-        <el-empty description="No moderation history" :image-size="80" />
+        <el-empty description="暂无审核历史" :image-size="80" />
       </div>
     </el-card>
 
-    <!-- View Post Dialog -->
+    <!-- 查看动态详情弹窗 (View Post Dialog) -->
     <el-dialog
       v-model="viewDialogVisible"
-      title="Post Details"
+      title="动态详情"
       width="600px"
     >
       <div v-if="selectedPost" class="post-detail">
@@ -192,55 +193,55 @@
         <div class="post-stats">
           <span>
             <el-icon><Like /></el-icon>
-            {{ selectedPost.likeCount || 0 }} likes
+             {{ selectedPost.likeCount || 0 }} 点赞
           </span>
           <span>
             <el-icon><ChatDotRound /></el-icon>
-            {{ selectedPost.commentCount || 0 }} comments
+            {{ selectedPost.commentCount || 0 }} 评论
           </span>
         </div>
       </div>
 
       <template #footer>
-        <el-button @click="viewDialogVisible = false">Close</el-button>
+        <el-button @click="viewDialogVisible = false">关闭</el-button>
         <el-button
           v-if="selectedPost?.status === 'pending'"
           type="success"
           @click="handleApprove(selectedPost)"
         >
-          Approve
+          通过
         </el-button>
         <el-button
           v-if="selectedPost?.status === 'pending'"
           type="danger"
           @click="handleReject(selectedPost)"
         >
-          Reject
+          拒绝
         </el-button>
       </template>
     </el-dialog>
 
-    <!-- Reject Reason Dialog -->
+    <!-- 拒绝原因弹窗 (Reject Reason Dialog) -->
     <el-dialog
       v-model="rejectDialogVisible"
-      title="Reject Post"
+      title="拒绝内容"
       width="500px"
     >
       <el-form :model="rejectForm" label-width="100px">
-        <el-form-item label="Reason">
+        <el-form-item label="拒绝原因">
           <el-input
             v-model="rejectForm.reason"
             type="textarea"
             :rows="4"
-            placeholder="Enter rejection reason"
+            placeholder="请输入拒绝原因"
           />
         </el-form-item>
       </el-form>
 
       <template #footer>
-        <el-button @click="rejectDialogVisible = false">Cancel</el-button>
+        <el-button @click="rejectDialogVisible = false">取消</el-button>
         <el-button type="danger" @click="confirmReject" :loading="rejecting">
-          Confirm Reject
+          确认拒绝
         </el-button>
       </template>
     </el-dialog>
@@ -256,7 +257,7 @@ import {
   Check,
   Close,
   Picture,
-  Like,
+  Star,
   ChatDotRound
 } from '@element-plus/icons-vue';
 import { getModerationQueue, approveContent, rejectContent } from '@/api/admin';
@@ -312,7 +313,7 @@ const fetchPosts = async () => {
       pendingCount.value = total.value;
     }
   } catch (error) {
-    showError('Failed to load posts');
+    showError('加载内容失败');
     posts.value = [];
     total.value = 0;
   } finally {
@@ -326,7 +327,7 @@ const fetchModerationHistory = async () => {
     // For now, we'll use a placeholder
     moderationHistory.value = [];
   } catch (error) {
-    console.error('Failed to load moderation history');
+    console.error('加载审核历史失败');
   }
 };
 
@@ -375,10 +376,20 @@ const getStatusTagType = (status) => {
   return types[status] || 'info';
 };
 
+// 汉化状态文本
+const formatStatus = (status) => {
+  const map = {
+    pending: '待审核',
+    approved: '已通过',
+    rejected: '已拒绝'
+  };
+  return map[status] || status;
+};
+
 const formatDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -395,7 +406,7 @@ const handleViewPost = (post) => {
 const handleApprove = async (post) => {
   try {
     await approveContent(post.id);
-    showSuccess('Post approved successfully');
+    showSuccess('内容已审核通过');
     
     // Add to moderation history
     moderationHistory.value.unshift({
@@ -408,7 +419,7 @@ const handleApprove = async (post) => {
     viewDialogVisible.value = false;
     fetchPosts();
   } catch (error) {
-    showError('Failed to approve post');
+    showError('审核操作失败');
   }
 };
 
@@ -425,7 +436,7 @@ const confirmReject = async () => {
   rejecting.value = true;
   try {
     await rejectContent(selectedPost.value.id, rejectForm.value.reason);
-    showSuccess('Post rejected successfully');
+    showSuccess('内容已拒绝');
     
     // Add to moderation history
     moderationHistory.value.unshift({
@@ -439,7 +450,7 @@ const confirmReject = async () => {
     rejectDialogVisible.value = false;
     fetchPosts();
   } catch (error) {
-    showError('Failed to reject post');
+    showError('操作失败');
   } finally {
     rejecting.value = false;
   }
@@ -452,6 +463,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .content-moderation {
   padding: 20px;
 }

@@ -1,25 +1,35 @@
+没问题！我已经将 “我的训练计划” (My Training Plans) 页面全部汉化，包括标题、筛选按钮、空状态提示、弹窗详情以及状态标签的中文显示。
+
+请复制以下代码覆盖你原来的文件：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="my-training-plans">
     <div class="page-header">
-      <h1>My Training Plans</h1>
-      <p class="subtitle">View and track your personalized training plans</p>
+      <h1>我的训练计划</h1>
+      <p class="subtitle">查看并追踪您的专属训练计划</p>
     </div>
 
-    <!-- Filter Section -->
+    <!-- 筛选区域 (Filter Section) -->
     <div class="filter-section">
       <el-radio-group v-model="statusFilter" @change="handleFilterChange">
-        <el-radio-button label="all">All</el-radio-button>
-        <el-radio-button label="active">Active</el-radio-button>
-        <el-radio-button label="completed">Completed</el-radio-button>
+        <el-radio-button label="all">全部</el-radio-button>
+        <el-radio-button label="active">进行中</el-radio-button>
+        <el-radio-button label="completed">已完成</el-radio-button>
       </el-radio-group>
     </div>
 
-    <!-- Loading State -->
+    <!-- 加载状态 (Loading State) -->
     <div v-if="loading" class="loading-container">
       <el-skeleton :rows="3" animated />
     </div>
 
-    <!-- Plans List -->
+    <!-- 计划列表 (Plans List) -->
     <div v-else-if="filteredPlans.length > 0" class="plans-list">
       <PlanCard 
         v-for="plan in filteredPlans" 
@@ -29,7 +39,7 @@
       />
     </div>
 
-    <!-- Empty State -->
+    <!-- 空状态 (Empty State) -->
     <div v-else class="empty-state">
       <el-empty :description="emptyStateMessage">
         <template #image>
@@ -37,13 +47,14 @@
             <Document />
           </el-icon>
         </template>
+        <!-- 原逻辑跳转到Home，这里文案改为寻找教练 -->
         <el-button type="primary" @click="handleContactCoach">
-          Find a Coach
+          寻找教练
         </el-button>
       </el-empty>
     </div>
 
-    <!-- Plan Detail Dialog -->
+    <!-- 计划详情弹窗 (Plan Detail Dialog) -->
     <el-dialog
       v-model="dialogVisible"
       :title="selectedPlan?.name"
@@ -52,42 +63,43 @@
     >
       <div v-if="selectedPlan" class="plan-detail">
         <div class="detail-section">
-          <h3>Plan Information</h3>
+          <h3>计划信息</h3>
           <div class="info-grid">
             <div class="info-row">
-              <span class="label">Coach:</span>
+              <span class="label">教练：</span>
               <span class="value">{{ selectedPlan.coachName }}</span>
             </div>
             <div class="info-row">
-              <span class="label">Status:</span>
+              <span class="label">状态：</span>
               <el-tag :type="getStatusType(selectedPlan.status)" size="small">
                 {{ getStatusText(selectedPlan.status) }}
               </el-tag>
             </div>
             <div class="info-row">
-              <span class="label">Start Date:</span>
+              <span class="label">开始日期：</span>
               <span class="value">{{ selectedPlan.startDate }}</span>
             </div>
             <div class="info-row">
-              <span class="label">End Date:</span>
+              <span class="label">结束日期：</span>
               <span class="value">{{ selectedPlan.endDate }}</span>
             </div>
           </div>
         </div>
 
         <div class="detail-section">
-          <h3>Description</h3>
+          <h3>计划详情</h3>
           <p class="description">{{ selectedPlan.description }}</p>
         </div>
 
         <div class="detail-section">
-          <h3>Exercises</h3>
+          <h3>训练动作</h3>
+          <!-- 假设 ExerciseList 组件内部处理了显示，如果内部也有英文需要单独修改那个文件 -->
           <ExerciseList :exercises-data="selectedPlan.exercises" />
         </div>
       </div>
 
       <template #footer>
-        <el-button @click="dialogVisible = false">Close</el-button>
+        <el-button @click="dialogVisible = false">关闭</el-button>
       </template>
     </el-dialog>
   </div>
@@ -118,11 +130,17 @@ const filteredPlans = computed(() => {
   return plans.value.filter(plan => plan.status === statusFilter.value);
 });
 
+// 动态生成中文的空状态提示
 const emptyStateMessage = computed(() => {
   if (statusFilter.value === 'all') {
-    return 'No training plans assigned yet. Contact a coach to get started!';
+    return '暂无训练计划，联系教练为您制定专属计划吧！';
   }
-  return `No ${statusFilter.value} training plans found.`;
+  const statusMap = {
+    active: '进行中',
+    completed: '已完成'
+  };
+  const statusText = statusMap[statusFilter.value] || statusFilter.value;
+  return `暂无${statusText}的训练计划。`;
 });
 
 // Methods
@@ -132,15 +150,15 @@ const fetchPlans = async () => {
     const response = await getTrainingPlans();
     plans.value = response.content || response || [];
   } catch (error) {
-    console.error('Failed to fetch training plans:', error);
-    showError('Failed to load training plans');
+    console.error('获取训练计划失败:', error);
+    showError('获取训练计划失败');
   } finally {
     loading.value = false;
   }
 };
 
 const handleFilterChange = () => {
-  // Filter is handled by computed property
+  // 过滤逻辑由 computed 属性处理
 };
 
 const handlePlanClick = (plan) => {
@@ -149,7 +167,7 @@ const handlePlanClick = (plan) => {
 };
 
 const handleContactCoach = () => {
-  // Navigate to home page (coaches list not yet implemented)
+  // 跳转到首页（因为教练列表功能尚未实现）
   router.push('/home');
 };
 
@@ -162,11 +180,12 @@ const getStatusType = (status) => {
   return statusMap[status] || 'info';
 };
 
+// 将状态码转换为中文显示
 const getStatusText = (status) => {
   const textMap = {
-    active: 'Active',
-    completed: 'Completed',
-    cancelled: 'Cancelled'
+    active: '进行中',
+    completed: '已完成',
+    cancelled: '已取消'
   };
   return textMap[status] || status;
 };

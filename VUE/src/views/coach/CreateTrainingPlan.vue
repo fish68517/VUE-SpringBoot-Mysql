@@ -1,9 +1,33 @@
+没问题！这是 “创建/编辑训练计划” (Create/Edit Training Plan) 页面的完整汉化版本。
+
+主要修改包括：
+
+界面文本：Create Training Plan -> 创建训练计划, Edit Training Plan -> 编辑训练计划, Student -> 学员 等。
+
+表单标签：Plan Name -> 计划名称, Description -> 计划描述, Date Range -> 日期范围, Status -> 状态 等。
+
+状态选项：Active -> 进行中, Completed -> 已完成, Cancelled -> 已取消。
+
+训练动作：Exercises -> 训练动作, Sets -> 组数, Reps -> 次数, Duration -> 时长 等。
+
+校验规则：必填项提示、长度限制提示等。
+
+反馈提示：创建成功、更新成功、加载失败等。
+
+请复制以下代码覆盖：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <Layout>
     <div class="create-training-plan">
       <div class="page-header">
-        <h2>{{ isEditMode ? 'Edit Training Plan' : 'Create Training Plan' }}</h2>
-        <el-button @click="goBack">Back</el-button>
+        <h2>{{ isEditMode ? '编辑训练计划' : '创建训练计划' }}</h2>
+        <el-button @click="goBack">返回</el-button>
       </div>
 
       <el-card>
@@ -14,11 +38,11 @@
           label-width="120px"
           label-position="top"
         >
-          <!-- Student Selector -->
-          <el-form-item label="Student" prop="studentId">
+          <!-- 学员选择 (Student Selector) -->
+          <el-form-item label="学员" prop="studentId">
             <el-select
               v-model="planForm.studentId"
-              placeholder="Select a student"
+              placeholder="请选择一位学员"
               style="width: 100%"
               :disabled="isEditMode"
             >
@@ -38,36 +62,36 @@
             </el-select>
           </el-form-item>
 
-          <!-- Plan Name -->
-          <el-form-item label="Plan Name" prop="name">
+          <!-- 计划名称 (Plan Name) -->
+          <el-form-item label="计划名称" prop="name">
             <el-input
               v-model="planForm.name"
-              placeholder="Enter plan name"
+              placeholder="请输入计划名称"
               maxlength="200"
               show-word-limit
             />
           </el-form-item>
 
-          <!-- Description -->
-          <el-form-item label="Description" prop="description">
+          <!-- 计划描述 (Description) -->
+          <el-form-item label="计划描述" prop="description">
             <el-input
               v-model="planForm.description"
               type="textarea"
               :rows="4"
-              placeholder="Enter plan description"
+              placeholder="请输入计划描述"
               maxlength="1000"
               show-word-limit
             />
           </el-form-item>
 
-          <!-- Date Range -->
+          <!-- 日期范围 (Date Range) -->
           <el-row :gutter="20">
             <el-col :span="12">
-              <el-form-item label="Start Date" prop="startDate">
+              <el-form-item label="开始日期" prop="startDate">
                 <el-date-picker
                   v-model="planForm.startDate"
                   type="date"
-                  placeholder="Select start date"
+                  placeholder="选择开始日期"
                   style="width: 100%"
                   format="YYYY-MM-DD"
                   value-format="YYYY-MM-DD"
@@ -75,11 +99,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="End Date" prop="endDate">
+              <el-form-item label="结束日期" prop="endDate">
                 <el-date-picker
                   v-model="planForm.endDate"
                   type="date"
-                  placeholder="Select end date"
+                  placeholder="选择结束日期"
                   style="width: 100%"
                   format="YYYY-MM-DD"
                   value-format="YYYY-MM-DD"
@@ -88,17 +112,17 @@
             </el-col>
           </el-row>
 
-          <!-- Status -->
-          <el-form-item label="Status" prop="status">
+          <!-- 状态 (Status) -->
+          <el-form-item label="状态" prop="status">
             <el-radio-group v-model="planForm.status">
-              <el-radio label="active">Active</el-radio>
-              <el-radio label="completed">Completed</el-radio>
-              <el-radio label="cancelled">Cancelled</el-radio>
+              <el-radio label="active">进行中</el-radio>
+              <el-radio label="completed">已完成</el-radio>
+              <el-radio label="cancelled">已取消</el-radio>
             </el-radio-group>
           </el-form-item>
 
-          <!-- Exercises Section -->
-          <el-form-item label="Exercises">
+          <!-- 训练动作部分 (Exercises Section) -->
+          <el-form-item label="训练动作">
             <div class="exercises-section">
               <div
                 v-for="(exercise, index) in planForm.exercises"
@@ -106,7 +130,7 @@
                 class="exercise-item"
               >
                 <div class="exercise-header">
-                  <span class="exercise-number">Exercise {{ index + 1 }}</span>
+                  <span class="exercise-number">动作 {{ index + 1 }}</span>
                   <div class="exercise-actions">
                     <el-button
                       size="small"
@@ -136,7 +160,7 @@
                   <el-col :span="24">
                     <el-input
                       v-model="exercise.name"
-                      placeholder="Exercise name"
+                      placeholder="动作名称 (如: 深蹲)"
                       class="exercise-input"
                     />
                   </el-col>
@@ -147,28 +171,28 @@
                     <el-input
                       v-model.number="exercise.sets"
                       type="number"
-                      placeholder="Sets"
+                      placeholder="组数"
                       min="1"
                     >
-                      <template #prepend>Sets</template>
+                      <template #prepend>组数</template>
                     </el-input>
                   </el-col>
                   <el-col :span="8">
                     <el-input
                       v-model.number="exercise.reps"
                       type="number"
-                      placeholder="Reps"
+                      placeholder="次数"
                       min="1"
                     >
-                      <template #prepend>Reps</template>
+                      <template #prepend>次数</template>
                     </el-input>
                   </el-col>
                   <el-col :span="8">
                     <el-input
                       v-model="exercise.duration"
-                      placeholder="e.g., 30 min"
+                      placeholder="如: 30分钟"
                     >
-                      <template #prepend>Duration</template>
+                      <template #prepend>时长</template>
                     </el-input>
                   </el-col>
                 </el-row>
@@ -179,7 +203,7 @@
                       v-model="exercise.notes"
                       type="textarea"
                       :rows="2"
-                      placeholder="Additional notes (optional)"
+                      placeholder="备注信息 (可选)"
                     />
                   </el-col>
                 </el-row>
@@ -192,17 +216,17 @@
                 class="add-exercise-btn"
               >
                 <el-icon><Plus /></el-icon>
-                Add Exercise
+                添加动作
               </el-button>
             </div>
           </el-form-item>
 
-          <!-- Form Actions -->
+          <!-- 表单操作 (Form Actions) -->
           <el-form-item>
             <el-button type="primary" @click="submitForm" :loading="submitting">
-              {{ isEditMode ? 'Update Plan' : 'Create Plan' }}
+              {{ isEditMode ? '更新计划' : '创建计划' }}
             </el-button>
-            <el-button @click="goBack">Cancel</el-button>
+            <el-button @click="goBack">取消</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -240,23 +264,23 @@ const planForm = reactive({
 
 const rules = {
   studentId: [
-    { required: true, message: 'Please select a student', trigger: 'change' }
+    { required: true, message: '请选择一位学员', trigger: 'change' }
   ],
   name: [
-    { required: true, message: 'Please enter plan name', trigger: 'blur' },
-    { min: 3, max: 200, message: 'Length should be 3 to 200 characters', trigger: 'blur' }
+    { required: true, message: '请输入计划名称', trigger: 'blur' },
+    { min: 3, max: 200, message: '名称长度应在 3 到 200 个字符之间', trigger: 'blur' }
   ],
   description: [
-    { max: 1000, message: 'Length should not exceed 1000 characters', trigger: 'blur' }
+    { max: 1000, message: '描述长度不能超过 1000 个字符', trigger: 'blur' }
   ],
   startDate: [
-    { required: true, message: 'Please select start date', trigger: 'change' }
+    { required: true, message: '请选择开始日期', trigger: 'change' }
   ],
   endDate: [
-    { required: true, message: 'Please select end date', trigger: 'change' }
+    { required: true, message: '请选择结束日期', trigger: 'change' }
   ],
   status: [
-    { required: true, message: 'Please select status', trigger: 'change' }
+    { required: true, message: '请选择状态', trigger: 'change' }
   ]
 }
 
@@ -265,7 +289,7 @@ const fetchStudents = async () => {
     const response = await getMyStudents()
     students.value = response
   } catch (error) {
-    showError('Failed to load students')
+    showError('加载学员列表失败')
     console.error('Fetch students error:', error)
   }
 }
@@ -296,19 +320,19 @@ const submitForm = async () => {
 
   await formRef.value.validate(async (valid) => {
     if (!valid) {
-      showWarning('Please fill in all required fields')
+      showWarning('请完善表单信息')
       return
     }
 
     if (planForm.exercises.length === 0) {
-      showWarning('Please add at least one exercise')
+      showWarning('请至少添加一个训练动作')
       return
     }
 
     // Validate exercises
     const hasInvalidExercise = planForm.exercises.some(ex => !ex.name.trim())
     if (hasInvalidExercise) {
-      showWarning('Please provide names for all exercises')
+      showWarning('请为所有动作填写名称')
       return
     }
 
@@ -321,15 +345,15 @@ const submitForm = async () => {
 
       if (isEditMode.value) {
         await updateTrainingPlan(planId.value, data)
-        showSuccess('Training plan updated successfully')
+        showSuccess('训练计划更新成功')
       } else {
         await createTrainingPlan(data)
-        showSuccess('Training plan created successfully')
+        showSuccess('训练计划创建成功')
       }
 
       router.push('/coach/dashboard')
     } catch (error) {
-      showError(error.message || 'Failed to save training plan')
+      showError(error.message || '保存训练计划失败')
     } finally {
       submitting.value = false
     }
@@ -349,7 +373,7 @@ const loadPlanData = async (id) => {
       ? JSON.parse(plan.exercises) 
       : plan.exercises || []
   } catch (error) {
-    showError('Failed to load plan data')
+    showError('加载计划数据失败')
     console.error('Load plan error:', error)
   }
 }
@@ -374,6 +398,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .create-training-plan {
   padding: 20px;
 }

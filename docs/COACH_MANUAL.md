@@ -304,7 +304,7 @@ You can publish three types of fitness content:
 
 **Liking Posts:**
 1. Find a post you like
-2. Click the heart icon
+2. Click the Star icon
 3. Your like is recorded
 
 **Commenting:**

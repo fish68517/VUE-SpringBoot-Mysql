@@ -163,8 +163,8 @@
   }
 }
 
-/* Heart Beat Animation (for likes) */
-@keyframes heartBeat {
+/* Star Beat Animation (for likes) */
+@keyframes StarBeat {
   0% {
     transform: scale(1);
   }
@@ -241,8 +241,8 @@
   animation: spin 1s linear infinite;
 }
 
-.heart-beat {
-  animation: heartBeat 1s ease;
+.Star-beat {
+  animation: StarBeat 1s ease;
 }
 
 /* Vue Router Transitions */

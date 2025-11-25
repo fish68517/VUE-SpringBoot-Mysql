@@ -1,7 +1,7 @@
 <template>
   <div class="like-button" @click="handleLike">
     <el-icon :size="20" :class="{ 'liked': isLiked }">
-      <component :is="isLiked ? 'heart-filled' : 'heart'" />
+      <component :is="isLiked ? 'Star-filled' : 'Star'" />
     </el-icon>
     <span class="like-count">{{ displayCount }}</span>
   </div>
@@ -9,7 +9,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { Heart, HeartFilled } from '@element-plus/icons-vue'
+import { Star, StarFilled } from '@element-plus/icons-vue'
 import { likeDynamic, unlikeDynamic } from '@/api/community'
 import { showError } from '@/utils/feedback'
 
@@ -86,7 +86,7 @@ const handleLike = async () => {
 
 .el-icon.liked {
   color: var(--color-danger, #f56c6c);
-  animation: heartBeat 0.6s ease;
+  animation: StarBeat 0.6s ease;
 }
 
 .like-count {
@@ -99,7 +99,7 @@ const handleLike = async () => {
   color: var(--color-text-primary, #303133);
 }
 
-@keyframes heartBeat {
+@keyframes StarBeat {
   0% {
     transform: scale(1);
   }

@@ -1,19 +1,37 @@
+没问题！这是 “我的收藏” (My Collections) 页面的完整汉化版本。
+
+主要修改包括：
+
+界面文本：标题、副标题、统计文案、按钮文字全部中文化。
+
+空状态：当没有收藏时，提示语更加自然亲切。
+
+交互反馈：移除收藏时的确认框提示、成功/失败提示均已翻译。
+
+请复制以下代码覆盖：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="my-collections-container">
     <div class="collections-header">
-      <h1>My Collections</h1>
-      <p class="subtitle">Your saved fitness resources</p>
+      <h1>我的收藏</h1>
+      <p class="subtitle">您保存的健身资源</p>
     </div>
 
-    <!-- Loading State -->
+    <!-- 加载状态 (Loading State) -->
     <div v-if="loading" class="loading-container">
       <el-icon class="is-loading" :size="40">
         <Loading />
       </el-icon>
-      <p>Loading your collections...</p>
+      <p>正在加载您的收藏...</p>
     </div>
 
-    <!-- Collections Grid -->
+    <!-- 收藏列表 (Collections Grid) -->
     <div v-else-if="collections.length > 0" class="collections-content">
       <div class="collections-stats">
         <el-card shadow="never">
@@ -21,7 +39,7 @@
             <el-icon :size="32" color="#409EFF"><Star /></el-icon>
             <div>
               <h3>{{ collections.length }}</h3>
-              <p>Resources Collected</p>
+              <p>个已收藏资源</p>
             </div>
           </div>
         </el-card>
@@ -42,27 +60,27 @@
               @click="handleRemove(resource)"
               :loading="removingId === resource.id"
             >
-              Remove
+              移除
             </el-button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Empty State -->
+    <!-- 空状态 (Empty State) -->
     <el-empty
       v-else
-      description="No collections yet"
+      description="暂无收藏"
       :image-size="200"
     >
       <template #description>
         <div class="empty-description">
-          <p>You haven't collected any resources yet.</p>
-          <p>Browse our fitness resources and save your favorites!</p>
+          <p>您还没有收藏任何资源。</p>
+          <p>浏览我们的健身资源，收藏您喜欢的内容吧！</p>
         </div>
       </template>
       <el-button type="primary" @click="goToResources">
-        Browse Resources
+        浏览资源
       </el-button>
     </el-empty>
   </div>
@@ -88,7 +106,7 @@ const fetchCollections = async () => {
     collections.value = await getCollections();
   } catch (error) {
     console.error('Failed to fetch collections:', error);
-    showError('Failed to load your collections');
+    showError('加载收藏列表失败');
     collections.value = [];
   } finally {
     loading.value = false;
@@ -97,7 +115,8 @@ const fetchCollections = async () => {
 
 const handleRemove = async (resource) => {
   try {
-    await confirmRemove(`"${resource.title}"`);
+    // 这里的确认提示语也翻译了
+    await confirmRemove(`确定要移除 "${resource.title}" 吗？`);
 
     removingId.value = resource.id;
     await removeCollection(resource.id);
@@ -105,11 +124,11 @@ const handleRemove = async (resource) => {
     // Remove from local array
     collections.value = collections.value.filter(c => c.id !== resource.id);
     
-    showSuccess('Removed from collection');
+    showSuccess('已从收藏中移除');
   } catch (error) {
     if (error !== 'cancel' && error !== 'close') {
       console.error('Failed to remove collection:', error);
-      showError('Failed to remove from collection');
+      showError('移除收藏失败');
     }
   } finally {
     removingId.value = null;

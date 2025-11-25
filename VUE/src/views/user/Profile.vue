@@ -1,14 +1,38 @@
+好的，这是汉化后的 “个人资料” (User Profile) 页面代码。
+
+主要改动：
+
+表单与展示文本：Username -> 用户名, Role -> 角色, Gender -> 性别, Intro -> 个人简介 等。
+
+按钮文案：Edit Profile -> 编辑资料, Save -> 保存, Change Avatar -> 更换头像 等。
+
+性别选项：Male/Female/Other -> 男/女/其他。
+
+统计信息：Total Check-ins -> 累计打卡 等。
+
+日期格式：改为 zh-CN 中文显示。
+
+反馈提示：上传成功、更新成功等消息已翻译。
+
+请复制以下代码覆盖：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="profile-container">
     <el-card class="profile-card">
       <template #header>
         <div class="card-header">
-          <span>User Profile</span>
-          <el-button v-if="!isEditing" type="primary" @click="startEdit">Edit Profile</el-button>
+          <span>个人资料</span>
+          <el-button v-if="!isEditing" type="primary" @click="startEdit">编辑资料</el-button>
         </div>
       </template>
 
-      <!-- Display Mode -->
+      <!-- 展示模式 (Display Mode) -->
       <div v-if="!isEditing" class="profile-display">
         <div class="profile-avatar-section">
           <el-avatar :size="120" :src="profile.avatar || '/default-avatar.png'" />
@@ -16,39 +40,39 @@
         
         <div class="profile-info">
           <el-descriptions :column="1" border>
-            <el-descriptions-item label="Username">{{ profile.username }}</el-descriptions-item>
-            <el-descriptions-item label="Role">{{ profile.role }}</el-descriptions-item>
-            <el-descriptions-item label="Gender">{{ profile.gender || 'Not set' }}</el-descriptions-item>
-            <el-descriptions-item label="Introduction">{{ profile.intro || 'No introduction yet' }}</el-descriptions-item>
-            <el-descriptions-item label="Registration Date">{{ formatDate(profile.createdAt) }}</el-descriptions-item>
+            <el-descriptions-item label="用户名">{{ profile.username }}</el-descriptions-item>
+            <el-descriptions-item label="角色">{{ formatRole(profile.role) }}</el-descriptions-item>
+            <el-descriptions-item label="性别">{{ formatGender(profile.gender) }}</el-descriptions-item>
+            <el-descriptions-item label="个人简介">{{ profile.intro || '暂无简介' }}</el-descriptions-item>
+            <el-descriptions-item label="注册时间">{{ formatDate(profile.createdAt) }}</el-descriptions-item>
           </el-descriptions>
         </div>
 
-        <!-- Check-in Statistics -->
+        <!-- 打卡统计 (Check-in Statistics) -->
         <div class="checkin-stats">
-          <h3>Check-in Statistics</h3>
+          <h3>打卡统计</h3>
           <el-row :gutter="20">
             <el-col :span="8">
-              <el-statistic title="Total Check-ins" :value="checkInStats.totalCount || 0" />
+              <el-statistic title="累计打卡" :value="checkInStats.totalCount || 0" />
             </el-col>
             <el-col :span="8">
-              <el-statistic title="Current Streak" :value="checkInStats.currentStreak || 0">
-                <template #suffix>days</template>
+              <el-statistic title="当前连续" :value="checkInStats.currentStreak || 0">
+                <template #suffix>天</template>
               </el-statistic>
             </el-col>
             <el-col :span="8">
-              <el-statistic title="Longest Streak" :value="checkInStats.longestStreak || 0">
-                <template #suffix>days</template>
+              <el-statistic title="历史最长" :value="checkInStats.longestStreak || 0">
+                <template #suffix>天</template>
               </el-statistic>
             </el-col>
           </el-row>
         </div>
       </div>
 
-      <!-- Edit Mode -->
+      <!-- 编辑模式 (Edit Mode) -->
       <div v-else class="profile-edit">
         <el-form :model="editForm" :rules="rules" ref="profileForm" label-width="120px">
-          <el-form-item label="Avatar">
+          <el-form-item label="头像">
             <div class="avatar-upload-section">
               <el-avatar :size="120" :src="avatarPreview || profile.avatar || '/default-avatar.png'" />
               <el-upload
@@ -58,33 +82,33 @@
                 :http-request="handleAvatarUpload"
                 accept="image/jpeg,image/png,image/gif"
               >
-                <el-button type="primary" size="small">Change Avatar</el-button>
+                <el-button type="primary" size="small">更换头像</el-button>
               </el-upload>
             </div>
           </el-form-item>
 
-          <el-form-item label="Gender" prop="gender">
+          <el-form-item label="性别" prop="gender">
             <el-radio-group v-model="editForm.gender">
-              <el-radio label="Male">Male</el-radio>
-              <el-radio label="Female">Female</el-radio>
-              <el-radio label="Other">Other</el-radio>
+              <el-radio label="Male">男</el-radio>
+              <el-radio label="Female">女</el-radio>
+              <el-radio label="Other">其他</el-radio>
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item label="Introduction" prop="intro">
+          <el-form-item label="个人简介" prop="intro">
             <el-input
               v-model="editForm.intro"
               type="textarea"
               :rows="4"
-              placeholder="Tell us about yourself..."
+              placeholder="介绍一下你自己..."
               maxlength="500"
               show-word-limit
             />
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="saveProfile" :loading="saving">Save</el-button>
-            <el-button @click="cancelEdit">Cancel</el-button>
+            <el-button type="primary" @click="saveProfile" :loading="saving">保存</el-button>
+            <el-button @click="cancelEdit">取消</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -113,7 +137,7 @@ const editForm = reactive({
 
 const rules = {
   intro: [
-    { max: 500, message: 'Introduction cannot exceed 500 characters', trigger: 'blur' }
+    { max: 500, message: '简介不能超过500字', trigger: 'blur' }
   ]
 };
 
@@ -124,7 +148,7 @@ const fetchProfile = async () => {
     profile.value = data;
   } catch (error) {
     // Error already handled by request interceptor
-    console.error('Failed to load profile:', error);
+    console.error('加载个人资料失败:', error);
   }
 };
 
@@ -134,7 +158,7 @@ const fetchCheckInStats = async () => {
     const data = await getCheckInStats();
     checkInStats.value = data;
   } catch (error) {
-    console.error('Failed to load check-in stats:', error);
+    console.error('加载打卡统计失败:', error);
     // Don't show error message as stats are optional
   }
 };
@@ -163,11 +187,11 @@ const beforeAvatarUpload = (file) => {
   const isLt5M = file.size / 1024 / 1024 < 5;
 
   if (!isImage) {
-    showError('Avatar must be JPG, PNG or GIF format');
+    showError('头像必须是 JPG, PNG 或 GIF 格式');
     return false;
   }
   if (!isLt5M) {
-    showError('Avatar size cannot exceed 5MB');
+    showError('头像大小不能超过 5MB');
     return false;
   }
   return true;
@@ -179,10 +203,10 @@ const handleAvatarUpload = async ({ file }) => {
     const data = await uploadAvatar(file);
     editForm.avatar = data.url || data;
     avatarPreview.value = URL.createObjectURL(file);
-    showSuccess('Avatar uploaded successfully');
+    showSuccess('头像上传成功');
   } catch (error) {
     // Error already handled by request interceptor
-    console.error('Failed to upload avatar:', error);
+    console.error('头像上传失败:', error);
   }
 };
 
@@ -207,8 +231,8 @@ const saveProfile = async () => {
         await fetchProfile();
       },
       {
-        successMessage: 'Profile updated successfully',
-        errorMessage: 'Failed to update profile'
+        successMessage: '资料更新成功',
+        errorMessage: '资料更新失败'
       }
     );
   } catch (error) {
@@ -218,11 +242,30 @@ const saveProfile = async () => {
   }
 };
 
-// Format date
+// Helper functions for formatting
+const formatGender = (gender) => {
+  const map = {
+    'Male': '男',
+    'Female': '女',
+    'Other': '其他'
+  };
+  return map[gender] || gender || '未设置';
+};
+
+const formatRole = (role) => {
+  const map = {
+    'user': '普通用户',
+    'coach': '教练',
+    'admin': '管理员'
+  };
+  return map[role] || role;
+};
+
+// Format date to Chinese locale
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A';
+  if (!dateString) return '暂无';
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { 
+  return date.toLocaleDateString('zh-CN', { 
     year: 'numeric', 
     month: 'long', 
     day: 'numeric' 
@@ -236,6 +279,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .profile-container {
   max-width: 900px;
   margin: 20px auto;

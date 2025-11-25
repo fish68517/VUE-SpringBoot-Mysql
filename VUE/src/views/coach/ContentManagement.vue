@@ -2,10 +2,10 @@
   <Layout>
     <div class="content-management">
       <div class="page-header">
-        <h2>My Content</h2>
+        <h2>我的内容</h2>
         <el-button type="primary" @click="openCreateDialog">
           <el-icon><Plus /></el-icon>
-          Create Content
+          添加内容
         </el-button>
       </div>
 
@@ -63,7 +63,7 @@
       <!-- Create/Edit Content Dialog -->
       <el-dialog
         v-model="showContentDialog"
-        :title="isEditMode ? 'Edit Content' : 'Create Content'"
+        :title="isEditMode ? 'Edit Content' : '添加内容'"
         width="700px"
         :close-on-click-modal="false"
       >

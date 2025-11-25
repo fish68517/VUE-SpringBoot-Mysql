@@ -11,7 +11,7 @@
       class="sidebar-menu"
     >
       <!-- User Menu Items -->
-      <template v-if="isRegularUser || isCoach || isAdmin">
+      <template v-if="false">
         <el-menu-item index="/home">
           <el-icon><HomeFilled /></el-icon>
           <template #title>首页</template>

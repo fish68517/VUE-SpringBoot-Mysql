@@ -1,18 +1,42 @@
+没问题！这是 “学员数据分析” (Student Analytics) 页面的完整汉化版本。
+
+主要修改包括：
+
+界面文本：Student Analytics -> 学员数据分析, Select Student -> 选择学员, Time Period -> 时间范围 等。
+
+选项翻译：Last 7 Days -> 最近 7 天 等。
+
+统计卡片：Total Check-ins -> 累计打卡, Avg Calories/Day -> 日均热量, Active Days -> 活跃天数 等。
+
+图表标题：Activity Trends -> 活动趋势, Training Plan Completion Rate -> 训练计划完成率。
+
+空状态与提示：Insufficient data... -> 当前时段数据不足... 等。
+
+日期格式：图表数据的日期格式化为 zh-CN。
+
+请复制以下代码覆盖：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <Layout>
     <div class="student-analytics">
       <div class="page-header">
-        <h2>Student Analytics</h2>
+        <h2>学员数据分析</h2>
       </div>
 
-      <!-- Filters -->
+      <!-- 筛选区域 (Filters) -->
       <el-card class="filter-card">
         <el-row :gutter="20">
           <el-col :xs="24" :sm="12">
-            <el-form-item label="Select Student">
+            <el-form-item label="选择学员">
               <el-select
                 v-model="selectedStudentId"
-                placeholder="Select a student"
+                placeholder="请选择学员"
                 style="width: 100%"
                 @change="fetchAnalytics"
               >
@@ -33,35 +57,35 @@
             </el-form-item>
           </el-col>
           <el-col :xs="24" :sm="12">
-            <el-form-item label="Time Period">
+            <el-form-item label="时间范围">
               <el-select
                 v-model="timePeriod"
-                placeholder="Select time period"
+                placeholder="请选择时间范围"
                 style="width: 100%"
                 @change="fetchAnalytics"
               >
-                <el-option label="Last 7 Days" :value="7" />
-                <el-option label="Last 30 Days" :value="30" />
-                <el-option label="Last 90 Days" :value="90" />
+                <el-option label="最近 7 天" :value="7" />
+                <el-option label="最近 30 天" :value="30" />
+                <el-option label="最近 90 天" :value="90" />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
       </el-card>
 
-      <!-- Loading State -->
+      <!-- 加载状态 (Loading State) -->
       <div v-if="loading" class="loading-container">
         <el-icon class="is-loading" :size="40"><Loading /></el-icon>
       </div>
 
-      <!-- No Student Selected -->
+      <!-- 未选择学员 (No Student Selected) -->
       <div v-else-if="!selectedStudentId" class="empty-state">
-        <el-empty description="Please select a student to view analytics" />
+        <el-empty description="请选择一位学员以查看分析数据" />
       </div>
 
-      <!-- Analytics Content -->
+      <!-- 分析内容 (Analytics Content) -->
       <div v-else-if="analytics">
-        <!-- Insufficient Data Message -->
+        <!-- 数据不足提示 (Insufficient Data Message) -->
         <el-alert
           v-if="!hasEnoughData"
           type="info"
@@ -69,11 +93,11 @@
           class="info-alert"
         >
           <template #title>
-            Insufficient data available for the selected period. Analytics may be limited.
+            所选时间段内数据不足，分析结果可能受限。
           </template>
         </el-alert>
 
-        <!-- Statistics Cards -->
+        <!-- 统计卡片 (Statistics Cards) -->
         <el-row :gutter="20" class="stats-row">
           <el-col :xs="24" :sm="12" :md="6">
             <el-card class="stat-card">
@@ -83,7 +107,7 @@
                 </el-icon>
                 <div class="stat-info">
                   <div class="stat-value">{{ analytics.totalCheckIns || 0 }}</div>
-                  <div class="stat-label">Total Check-ins</div>
+                  <div class="stat-label">累计打卡次数</div>
                 </div>
               </div>
             </el-card>
@@ -96,7 +120,7 @@
                 </el-icon>
                 <div class="stat-info">
                   <div class="stat-value">{{ analytics.checkInFrequency || 0 }}%</div>
-                  <div class="stat-label">Check-in Frequency</div>
+                  <div class="stat-label">打卡频率</div>
                 </div>
               </div>
             </el-card>
@@ -109,7 +133,7 @@
                 </el-icon>
                 <div class="stat-info">
                   <div class="stat-value">{{ analytics.averageCalories || 0 }}</div>
-                  <div class="stat-label">Avg Calories/Day</div>
+                  <div class="stat-label">日均摄入热量 (kcal)</div>
                 </div>
               </div>
             </el-card>
@@ -122,17 +146,17 @@
                 </el-icon>
                 <div class="stat-info">
                   <div class="stat-value">{{ analytics.activeDays || 0 }}</div>
-                  <div class="stat-label">Active Days</div>
+                  <div class="stat-label">活跃天数</div>
                 </div>
               </div>
             </el-card>
           </el-col>
         </el-row>
 
-        <!-- Plan Completion Rate -->
+        <!-- 计划完成率 (Plan Completion Rate) -->
         <el-card class="section-card">
           <template #header>
-            <span>Training Plan Completion Rate</span>
+            <span>训练计划完成率</span>
           </template>
           <div class="completion-rate">
             <el-progress
@@ -141,15 +165,15 @@
               :stroke-width="20"
             />
             <p class="completion-text">
-              {{ analytics.planCompletionRate || 0 }}% of training plans completed
+              已完成 {{ analytics.planCompletionRate || 0 }}% 的训练计划
             </p>
           </div>
         </el-card>
 
-        <!-- Charts -->
+        <!-- 图表 (Charts) -->
         <el-card class="section-card">
           <template #header>
-            <span>Activity Trends</span>
+            <span>活动趋势</span>
           </template>
           <ProgressChart
             :check-in-data="chartData.checkIns"
@@ -197,7 +221,7 @@ const fetchStudents = async () => {
       await fetchAnalytics()
     }
   } catch (error) {
-    showError('Failed to load students')
+    showError('加载学员列表失败')
     console.error('Fetch students error:', error)
   }
 }
@@ -226,7 +250,7 @@ const fetchAnalytics = async () => {
     })
     processDietData(dietResponse)
   } catch (error) {
-    showError('Failed to load analytics')
+    showError('加载分析数据失败')
     console.error('Fetch analytics error:', error)
     analytics.value = null
   } finally {
@@ -239,7 +263,8 @@ const processCheckInData = (checkIns) => {
   const dateMap = new Map()
   
   checkIns.forEach(checkIn => {
-    const date = new Date(checkIn.checkDate).toLocaleDateString('en-US', { 
+    // 改为中文日期格式，如：11月25日
+    const date = new Date(checkIn.checkDate).toLocaleDateString('zh-CN', { 
       month: 'short', 
       day: 'numeric' 
     })
@@ -257,7 +282,8 @@ const processDietData = (dietRecords) => {
   const dateMap = new Map()
   
   dietRecords.forEach(record => {
-    const date = new Date(record.mealDate).toLocaleDateString('en-US', { 
+    // 改为中文日期格式
+    const date = new Date(record.mealDate).toLocaleDateString('zh-CN', { 
       month: 'short', 
       day: 'numeric' 
     })
@@ -282,6 +308,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .student-analytics {
   padding: 20px;
 }

@@ -1,8 +1,34 @@
+没问题！这是 “管理员仪表盘” (Admin Dashboard) 页面的完整汉化版本。
+
+主要修改包括：
+
+界面标题：Admin Dashboard -> 管理员仪表盘, User Distribution -> 用户角色分布 等。
+
+统计指标：Total Users -> 总用户数, Total Coaches -> 总教练数, Pending Moderation -> 待审核内容 等。
+
+图表标签：Regular Users -> 普通用户, Administrators -> 管理员。
+
+表格列名：Avatar -> 头像, Role -> 角色, Registration Date -> 注册时间 等。
+
+系统活动：Total Posts -> 总动态数, Total Check-ins -> 总打卡数 等。
+
+快捷操作：User Management -> 用户管理, Moderation Queue -> 内容审核, Resource Management -> 资源管理。
+
+日期格式：改为中文 年-月-日 格式。
+
+请复制以下代码覆盖：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="admin-dashboard">
-    <h1>Admin Dashboard</h1>
+    <h1>管理员仪表盘</h1>
 
-    <!-- Statistics Cards -->
+    <!-- 统计卡片 (Statistics Cards) -->
     <div class="stats-grid">
       <el-card class="stat-card">
         <div class="stat-content">
@@ -11,7 +37,7 @@
           </el-icon>
           <div class="stat-info">
             <div class="stat-value">{{ statistics.totalUsers }}</div>
-            <div class="stat-label">Total Users</div>
+            <div class="stat-label">总用户数</div>
           </div>
         </div>
       </el-card>
@@ -23,7 +49,7 @@
           </el-icon>
           <div class="stat-info">
             <div class="stat-value">{{ statistics.totalCoaches }}</div>
-            <div class="stat-label">Total Coaches</div>
+            <div class="stat-label">总教练数</div>
           </div>
         </div>
       </el-card>
@@ -35,7 +61,7 @@
           </el-icon>
           <div class="stat-info">
             <div class="stat-value">{{ statistics.totalResources }}</div>
-            <div class="stat-label">Total Resources</div>
+            <div class="stat-label">总资源数</div>
           </div>
         </div>
       </el-card>
@@ -47,121 +73,121 @@
           </el-icon>
           <div class="stat-info">
             <div class="stat-value">{{ statistics.pendingModeration }}</div>
-            <div class="stat-label">Pending Moderation</div>
+            <div class="stat-label">待审核内容</div>
           </div>
         </div>
       </el-card>
     </div>
 
-    <!-- User Count by Role Chart -->
+    <!-- 用户角色分布 (User Count by Role Chart) -->
     <el-card class="chart-card">
       <template #header>
         <div class="card-header">
-          <span>User Distribution by Role</span>
+          <span>用户角色分布</span>
         </div>
       </template>
       <div class="chart-container">
         <div class="role-stats">
           <div class="role-item">
-            <div class="role-label">Regular Users</div>
+            <div class="role-label">普通用户</div>
             <el-progress
               :percentage="getUserPercentage('user')"
               :color="'#409EFF'"
             />
-            <div class="role-count">{{ statistics.usersByRole.user || 0 }}</div>
+            <div class="role-count">{{ statistics.usersByRole.user || 0 }} 人</div>
           </div>
           <div class="role-item">
-            <div class="role-label">Coaches</div>
+            <div class="role-label">教练</div>
             <el-progress
               :percentage="getUserPercentage('coach')"
               :color="'#67C23A'"
             />
-            <div class="role-count">{{ statistics.usersByRole.coach || 0 }}</div>
+            <div class="role-count">{{ statistics.usersByRole.coach || 0 }} 人</div>
           </div>
           <div class="role-item">
-            <div class="role-label">Administrators</div>
+            <div class="role-label">管理员</div>
             <el-progress
               :percentage="getUserPercentage('admin')"
               :color="'#E6A23C'"
             />
-            <div class="role-count">{{ statistics.usersByRole.admin || 0 }}</div>
+            <div class="role-count">{{ statistics.usersByRole.admin || 0 }} 人</div>
           </div>
         </div>
       </div>
     </el-card>
 
-    <!-- Recent Registrations -->
+    <!-- 最近注册 (Recent Registrations) -->
     <el-card class="recent-card">
       <template #header>
         <div class="card-header">
-          <span>Recent Registrations</span>
+          <span>最近注册用户</span>
         </div>
       </template>
       <el-table :data="recentUsers" style="width: 100%">
-        <el-table-column label="Avatar" width="80">
+        <el-table-column label="头像" width="80">
           <template #default="{ row }">
             <el-avatar :src="row.avatar" :size="40">
               {{ row.username.charAt(0).toUpperCase() }}
             </el-avatar>
           </template>
         </el-table-column>
-        <el-table-column prop="username" label="Username" />
-        <el-table-column label="Role">
+        <el-table-column prop="username" label="用户名" />
+        <el-table-column label="角色">
           <template #default="{ row }">
-            <el-tag :type="getRoleTagType(row.role)">{{ row.role }}</el-tag>
+            <el-tag :type="getRoleTagType(row.role)">{{ formatRole(row.role) }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="Registration Date">
+        <el-table-column label="注册时间">
           <template #default="{ row }">
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
       </el-table>
       <div v-if="recentUsers.length === 0" class="empty-state">
-        <el-empty description="No recent registrations" />
+        <el-empty description="暂无新注册用户" />
       </div>
     </el-card>
 
-    <!-- System Activity Overview -->
+    <!-- 系统活动概览 (System Activity Overview) -->
     <el-card class="activity-card">
       <template #header>
         <div class="card-header">
-          <span>System Activity Overview</span>
+          <span>系统活动概览</span>
         </div>
       </template>
       <div class="activity-grid">
         <div class="activity-item">
-          <div class="activity-label">Total Posts</div>
+          <div class="activity-label">总动态数</div>
           <div class="activity-value">{{ statistics.totalPosts || 0 }}</div>
         </div>
         <div class="activity-item">
-          <div class="activity-label">Total Comments</div>
+          <div class="activity-label">总评论数</div>
           <div class="activity-value">{{ statistics.totalComments || 0 }}</div>
         </div>
         <div class="activity-item">
-          <div class="activity-label">Total Check-ins</div>
+          <div class="activity-label">总打卡数</div>
           <div class="activity-value">{{ statistics.totalCheckIns || 0 }}</div>
         </div>
         <div class="activity-item">
-          <div class="activity-label">Total Training Plans</div>
+          <div class="activity-label">总训练计划</div>
           <div class="activity-value">{{ statistics.totalTrainingPlans || 0 }}</div>
         </div>
       </div>
     </el-card>
 
-    <!-- Quick Actions -->
+    <!-- 快捷操作 (Quick Actions) -->
     <div class="quick-actions">
       <el-button type="primary" size="large" @click="goToUserManagement">
         <el-icon><User /></el-icon>
-        User Management
+        用户管理
       </el-button>
       <el-button type="warning" size="large" @click="goToModeration">
         <el-icon><Warning /></el-icon>
-        Moderation Queue
+        内容审核
       </el-button>
       <el-button type="success" size="large" @click="goToResourceManagement">
         <el-icon><Document /></el-icon>
-        Resource Management
+        资源管理
       </el-button>
     </div>
   </div>
@@ -199,7 +225,7 @@ const fetchStatistics = async () => {
     const data = await getStatistics();
     statistics.value = data;
   } catch (error) {
-    showError('Failed to load statistics');
+    showError('加载统计数据失败');
   }
 };
 
@@ -208,7 +234,7 @@ const fetchRecentUsers = async () => {
     const data = await getUsers({ page: 0, size: 5 });
     recentUsers.value = data.content || data.slice(0, 5);
   } catch (error) {
-    showError('Failed to load recent users');
+    showError('加载最近注册用户失败');
   }
 };
 
@@ -228,10 +254,19 @@ const getRoleTagType = (role) => {
   return types[role] || 'info';
 };
 
+const formatRole = (role) => {
+  const map = {
+    admin: '管理员',
+    coach: '教练',
+    user: '用户'
+  };
+  return map[role] || role;
+};
+
 const formatDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'short',
     day: 'numeric'
@@ -257,6 +292,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .admin-dashboard {
   padding: 20px;
 }

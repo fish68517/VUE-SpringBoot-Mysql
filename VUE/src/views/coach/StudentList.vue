@@ -1,30 +1,52 @@
+没问题！这是 “学员列表” (Student List) 页面的完整汉化版本。
+
+主要修改包括：
+
+界面文本：My Students -> 我的学员, Add Student -> 添加学员, View Details -> 查看详情 等。
+
+表格列名：Student -> 学员信息, Gender -> 性别, Joined -> 加入时间 等。
+
+表单占位符：用户名搜索、默认简介等。
+
+详情弹窗：打卡记录 (Check-ins)、饮食记录 (Diet Records) 的表头翻译。
+
+反馈提示：添加成功/失败、删除学员等操作的提示。
+
+请复制以下代码覆盖：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <Layout>
     <div class="student-list">
       <div class="page-header">
-        <h2>My Students</h2>
+        <h2>我的学员</h2>
         <el-button type="primary" @click="showAddStudentDialog = true">
           <el-icon><Plus /></el-icon>
-          Add Student
+          添加学员
         </el-button>
       </div>
 
-      <!-- Loading State -->
+      <!-- 加载状态 -->
       <div v-if="loading" class="loading-container">
         <el-icon class="is-loading" :size="40"><Loading /></el-icon>
       </div>
 
-      <!-- Empty State -->
+      <!-- 空状态 -->
       <div v-else-if="students.length === 0" class="empty-state">
-        <el-empty description="No students yet">
-          <el-button type="primary" @click="showAddStudentDialog = true">Add Your First Student</el-button>
+        <el-empty description="暂无学员">
+          <el-button type="primary" @click="showAddStudentDialog = true">添加您的第一位学员</el-button>
         </el-empty>
       </div>
 
-      <!-- Students Table -->
+      <!-- 学员表格 -->
       <el-card v-else>
         <el-table :data="students" style="width: 100%">
-          <el-table-column label="Student" min-width="200">
+          <el-table-column label="学员信息" min-width="200">
             <template #default="{ row }">
               <div class="student-info">
                 <el-avatar :src="row.avatar" :size="40">
@@ -32,41 +54,45 @@
                 </el-avatar>
                 <div class="student-details">
                   <div class="student-name">{{ row.username }}</div>
-                  <div class="student-intro">{{ row.intro || 'No introduction' }}</div>
+                  <div class="student-intro">{{ row.intro || '暂无简介' }}</div>
                 </div>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="gender" label="Gender" width="100" />
-          <el-table-column label="Joined" width="150">
+          <el-table-column prop="gender" label="性别" width="100">
+            <template #default="{ row }">
+              {{ formatGender(row.gender) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="加入时间" width="150">
             <template #default="{ row }">
               {{ formatDate(row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column label="Actions" width="250">
+          <el-table-column label="操作" width="250">
             <template #default="{ row }">
-              <el-button size="small" @click="viewStudentDetails(row)">View Details</el-button>
-              <el-button size="small" type="danger" @click="confirmRemoveStudent(row)">Remove</el-button>
+              <el-button size="small" @click="viewStudentDetails(row)">查看详情</el-button>
+              <el-button size="small" type="danger" @click="confirmRemoveStudent(row)">移除</el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-card>
 
-      <!-- Add Student Dialog -->
+      <!-- 添加学员弹窗 -->
       <el-dialog
         v-model="showAddStudentDialog"
-        title="Add Student"
+        title="添加学员"
         width="500px"
       >
         <el-form :model="addStudentForm" label-width="100px">
-          <el-form-item label="Username">
+          <el-form-item label="用户名">
             <el-input
               v-model="addStudentForm.username"
-              placeholder="Enter student username"
+              placeholder="请输入学员用户名"
               @keyup.enter="searchUser"
             >
               <template #append>
-                <el-button @click="searchUser" :loading="searching">Search</el-button>
+                <el-button @click="searchUser" :loading="searching">搜索</el-button>
               </template>
             </el-input>
           </el-form-item>
@@ -79,7 +105,7 @@
                 </el-avatar>
                 <div class="user-info">
                   <div class="username">{{ searchedUser.username }}</div>
-                  <div class="user-intro">{{ searchedUser.intro || 'No introduction' }}</div>
+                  <div class="user-intro">{{ searchedUser.intro || '暂无简介' }}</div>
                 </div>
               </div>
             </el-alert>
@@ -87,39 +113,39 @@
         </el-form>
         
         <template #footer>
-          <el-button @click="showAddStudentDialog = false">Cancel</el-button>
+          <el-button @click="showAddStudentDialog = false">取消</el-button>
           <el-button
             type="primary"
             @click="addStudent"
             :disabled="!searchedUser"
             :loading="adding"
           >
-            Add Student
+            确认添加
           </el-button>
         </template>
       </el-dialog>
 
-      <!-- Student Details Dialog -->
+      <!-- 学员详情弹窗 -->
       <el-dialog
         v-model="showDetailsDialog"
-        :title="`${selectedStudent?.username}'s Details`"
+        :title="`${selectedStudent?.username} 的详细信息`"
         width="800px"
       >
         <el-tabs v-model="activeTab">
-          <el-tab-pane label="Check-ins" name="checkins">
+          <el-tab-pane label="打卡记录" name="checkins">
             <div v-if="loadingDetails" class="loading-container">
               <el-icon class="is-loading"><Loading /></el-icon>
             </div>
             <div v-else-if="studentCheckIns.length === 0" class="empty-state">
-              <el-empty description="No check-in records" />
+              <el-empty description="暂无打卡记录" />
             </div>
             <el-table v-else :data="studentCheckIns" style="width: 100%">
-              <el-table-column label="Date" width="150">
+              <el-table-column label="日期" width="150">
                 <template #default="{ row }">
                   {{ formatDate(row.checkDate) }}
                 </template>
               </el-table-column>
-              <el-table-column label="Time" width="150">
+              <el-table-column label="时间" width="150">
                 <template #default="{ row }">
                   {{ formatTime(row.checkTime) }}
                 </template>
@@ -127,22 +153,26 @@
             </el-table>
           </el-tab-pane>
           
-          <el-tab-pane label="Diet Records" name="diet">
+          <el-tab-pane label="饮食记录" name="diet">
             <div v-if="loadingDetails" class="loading-container">
               <el-icon class="is-loading"><Loading /></el-icon>
             </div>
             <div v-else-if="studentDietRecords.length === 0" class="empty-state">
-              <el-empty description="No diet records" />
+              <el-empty description="暂无饮食记录" />
             </div>
             <el-table v-else :data="studentDietRecords" style="width: 100%">
-              <el-table-column label="Date" width="120">
+              <el-table-column label="日期" width="120">
                 <template #default="{ row }">
                   {{ formatDate(row.mealDate) }}
                 </template>
               </el-table-column>
-              <el-table-column prop="mealType" label="Meal Type" width="120" />
-              <el-table-column prop="foodItems" label="Food Items" min-width="200" />
-              <el-table-column prop="calories" label="Calories" width="100" />
+              <el-table-column prop="mealType" label="用餐类型" width="120">
+                 <template #default="{ row }">
+                  {{ formatMealType(row.mealType) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="foodItems" label="食物内容" min-width="200" />
+              <el-table-column prop="calories" label="热量 (千卡)" width="100" />
             </el-table>
           </el-tab-pane>
         </el-tabs>
@@ -186,7 +216,7 @@ const fetchStudents = async () => {
     const response = await getMyStudents()
     students.value = response
   } catch (error) {
-    showError('Failed to load students')
+    showError('加载学员列表失败')
     console.error('Fetch students error:', error)
   } finally {
     loading.value = false
@@ -195,7 +225,7 @@ const fetchStudents = async () => {
 
 const searchUser = async () => {
   if (!addStudentForm.value.username.trim()) {
-    showWarning('Please enter a username')
+    showWarning('请输入用户名')
     return
   }
 
@@ -206,7 +236,7 @@ const searchUser = async () => {
     const response = await getProfile(addStudentForm.value.username)
     searchedUser.value = response
   } catch (error) {
-    showError('User not found')
+    showError('未找到该用户')
     searchedUser.value = null
   } finally {
     searching.value = false
@@ -219,13 +249,13 @@ const addStudent = async () => {
   adding.value = true
   try {
     await addStudentApi(searchedUser.value.id)
-    showSuccess('Student added successfully')
+    showSuccess('添加学员成功')
     showAddStudentDialog.value = false
     addStudentForm.value.username = ''
     searchedUser.value = null
     fetchStudents()
   } catch (error) {
-    showError(error.message || 'Failed to add student')
+    showError(error.message || '添加学员失败')
   } finally {
     adding.value = false
   }
@@ -233,13 +263,13 @@ const addStudent = async () => {
 
 const confirmRemoveStudent = async (student) => {
   try {
-    await confirmRemove(`${student.username} from your students`)
+    await confirmRemove(`将学员 ${student.username} 从您的列表中移除`)
     await removeStudent(student.id)
-    showSuccess('Student removed successfully')
+    showSuccess('移除学员成功')
     fetchStudents()
   } catch (error) {
     if (error !== 'cancel' && error !== 'close') {
-      showError('Failed to remove student')
+      showError('移除学员失败')
     }
   }
 }
@@ -264,23 +294,44 @@ const fetchStudentDetails = async () => {
     const dietResponse = await getStudentDietRecords(selectedStudent.value.id, {})
     studentDietRecords.value = dietResponse
   } catch (error) {
-    showError('Failed to load student details')
+    showError('加载学员详情失败')
     console.error('Fetch student details error:', error)
   } finally {
     loadingDetails.value = false
   }
 }
 
+// 格式化性别
+const formatGender = (gender) => {
+  const map = {
+    'Male': '男',
+    'Female': '女',
+    'Other': '其他'
+  }
+  return map[gender] || gender || '未设置'
+}
+
+// 格式化餐点类型
+const formatMealType = (type) => {
+  const map = {
+    'breakfast': '早餐',
+    'lunch': '午餐',
+    'dinner': '晚餐',
+    'snack': '加餐/零食'
+  }
+  return map[type] || type
+}
+
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return '暂无'
   const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  return date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })
 }
 
 const formatTime = (dateString) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return '暂无'
   const date = new Date(dateString)
-  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+  return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
 
 watch(showAddStudentDialog, (newVal) => {
@@ -296,6 +347,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .student-list {
   padding: 20px;
 }

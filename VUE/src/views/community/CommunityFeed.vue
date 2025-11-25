@@ -1,13 +1,25 @@
+好的，这是汉化后的 “社区动态列表” (Community Feed) 页面代码。
+
+我已经将所有界面文本、按钮、提示语以及 JavaScript 中的反馈消息都翻译成了中文。
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="community-feed">
+    <!-- 顶部标题栏 -->
     <div class="feed-header">
-      <h2>Community</h2>
+      <h2>社区动态</h2>
       <el-button type="primary" @click="handleCreatePost">
-        <el-icon><edit /></el-icon>
-        Create Post
+        <el-icon><Edit /></el-icon>
+        发布动态
       </el-button>
     </div>
 
+    <!-- 动态列表区域 -->
     <div v-loading="loading" class="feed-content">
       <template v-if="!loading && posts.length > 0">
         <post-card
@@ -19,14 +31,16 @@
         />
       </template>
 
+      <!-- 空状态 -->
       <el-empty
         v-else-if="!loading && posts.length === 0"
-        description="No posts yet. Be the first to share!"
+        description="暂无动态，快来发布第一条吧！"
       >
-        <el-button type="primary" @click="handleCreatePost">Create Post</el-button>
+        <el-button type="primary" @click="handleCreatePost">发布动态</el-button>
       </el-empty>
     </div>
 
+    <!-- 分页器 -->
     <div v-if="total > pageSize" class="pagination">
       <el-pagination
         v-model:current-page="currentPage"
@@ -39,29 +53,29 @@
       />
     </div>
 
-    <!-- Edit Post Dialog -->
+    <!-- 编辑动态弹窗 -->
     <el-dialog
       v-model="editDialogVisible"
-      title="Edit Post"
+      title="编辑动态"
       width="600px"
       @close="handleDialogClose"
     >
       <el-form :model="editForm" label-position="top">
-        <el-form-item label="Content">
+        <el-form-item label="内容">
           <el-input
             v-model="editForm.content"
             type="textarea"
             :rows="6"
-            placeholder="Share your fitness journey..."
+            placeholder="分享您的健身心得..."
             maxlength="1000"
             show-word-limit
           />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="editDialogVisible = false">Cancel</el-button>
+        <el-button @click="editDialogVisible = false">取消</el-button>
         <el-button type="primary" :loading="submitting" @click="handleUpdatePost">
-          Update
+          更新
         </el-button>
       </template>
     </el-dialog>
@@ -93,6 +107,7 @@ const editForm = ref({
 })
 
 onMounted(() => {
+  console.log('CommunityFeed mounted')
   loadPosts()
 })
 
@@ -107,7 +122,7 @@ const loadPosts = async () => {
     posts.value = response.content || []
     total.value = response.totalElements || 0
   } catch (error) {
-    showError('Failed to load posts')
+    showError('加载动态失败')
   } finally {
     loading.value = false
   }
@@ -140,7 +155,7 @@ const handleEditPost = (post) => {
 
 const handleUpdatePost = async () => {
   if (!editForm.value.content.trim()) {
-    showWarning('Please enter post content')
+    showWarning('请输入动态内容')
     return
   }
 
@@ -151,11 +166,11 @@ const handleUpdatePost = async () => {
       imageUrls: editForm.value.imageUrls
     })
     
-    showSuccess('Post updated successfully')
+    showSuccess('动态更新成功')
     editDialogVisible.value = false
     loadPosts()
   } catch (error) {
-    showError('Failed to update post')
+    showError('更新动态失败')
   } finally {
     submitting.value = false
   }

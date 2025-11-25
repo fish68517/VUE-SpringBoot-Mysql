@@ -1,22 +1,22 @@
 <template>
   <div class="resource-list-container">
     <div class="resource-list-header">
-      <h1>Fitness Resources</h1>
-      <p class="subtitle">Browse our collection of fitness videos, articles, and documents</p>
+      <h1>健身资源</h1>
+      <p class="subtitle">您可以浏览健身视频，文章，和教程</p>
     </div>
 
     <!-- Filter Section -->
     <div class="filter-section">
       <el-select
         v-model="selectedType"
-        placeholder="Filter by type"
+        placeholder="过滤类型"
         @change="handleFilterChange"
         style="width: 200px"
       >
-        <el-option label="All Types" value="" />
-        <el-option label="Video" value="video" />
-        <el-option label="Article" value="article" />
-        <el-option label="Document" value="document" />
+        <el-option label="所有" value="" />
+        <el-option label="视频" value="video" />
+        <el-option label="文章" value="article" />
+        <el-option label="教程" value="document" />
       </el-select>
     </div>
 

@@ -1,13 +1,35 @@
+没问题！这是 “饮食记录” (Diet Records) 页面的完整汉化版本。
+
+主要修改包括：
+
+界面文本：标题、摘要、表单标签、按钮文案全部汉化。
+
+选择项：早餐/午餐/晚餐/加餐 以及 中文占位符。
+
+统计信息：Total Calories Today -> 今日总摄入, meals recorded -> 次用餐记录。
+
+反馈提示：所有表单校验、保存成功、删除成功的提示。
+
+辅助函数：formatMealType 现在会返回中文（早餐、午餐等）。
+
+请复制以下代码覆盖：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="diet-records-container">
     <el-card class="header-card">
       <div class="header-content">
-        <h2>Diet Records</h2>
+        <h2>饮食记录</h2>
         <div class="header-actions">
           <el-date-picker
             v-model="selectedDate"
             type="date"
-            placeholder="Select date"
+            placeholder="选择日期"
             format="YYYY-MM-DD"
             value-format="YYYY-MM-DD"
             @change="handleDateChange"
@@ -15,36 +37,36 @@
           />
           <el-button type="primary" @click="showAddDialog">
             <el-icon><Plus /></el-icon>
-            Add Record
+            添加记录
           </el-button>
         </div>
       </div>
     </el-card>
 
-    <!-- Daily Summary Card -->
+    <!-- 每日摘要卡片 (Daily Summary Card) -->
     <el-card class="summary-card">
       <div class="summary-content">
         <div class="summary-icon">
           <el-icon><Food /></el-icon>
         </div>
         <div class="summary-info">
-          <div class="summary-label">Total Calories Today</div>
-          <div class="summary-value">{{ dailySummary.totalCalories || 0 }} kcal</div>
-          <div class="summary-detail">{{ dailySummary.mealCount || 0 }} meals recorded</div>
+          <div class="summary-label">今日总摄入</div>
+          <div class="summary-value">{{ dailySummary.totalCalories || 0 }} 千卡</div>
+          <div class="summary-detail">已记录 {{ dailySummary.mealCount || 0 }} 次用餐</div>
         </div>
       </div>
     </el-card>
 
-    <!-- Diet Records List -->
+    <!-- 饮食记录列表 (Diet Records List) -->
     <el-card class="records-card">
       <div v-if="loading" class="loading-container">
         <el-icon class="is-loading"><Loading /></el-icon>
-        <span>Loading records...</span>
+        <span>正在加载记录...</span>
       </div>
 
       <div v-else-if="groupedRecords.length === 0" class="empty-state">
-        <el-empty description="No diet records for this date">
-          <el-button type="primary" @click="showAddDialog">Add Your First Record</el-button>
+        <el-empty description="该日期暂无饮食记录">
+          <el-button type="primary" @click="showAddDialog">添加第一条记录</el-button>
         </el-empty>
       </div>
 
@@ -58,8 +80,9 @@
             <el-icon class="meal-icon">
               <component :is="getMealIcon(group.mealType)" />
             </el-icon>
+            <!-- 使用 formatMealType 显示中文餐点名称 -->
             <h3>{{ formatMealType(group.mealType) }}</h3>
-            <span class="meal-calories">{{ group.totalCalories }} kcal</span>
+            <span class="meal-calories">{{ group.totalCalories }} 千卡</span>
           </div>
 
           <div class="meal-records">
@@ -71,7 +94,7 @@
               <div class="record-content">
                 <div class="record-foods">{{ record.foodItems }}</div>
                 <div class="record-meta">
-                  <span class="record-calories">{{ record.calories }} kcal</span>
+                  <span class="record-calories">{{ record.calories }} 千卡</span>
                   <span class="record-time">{{ formatTime(record.createdAt) }}</span>
                 </div>
               </div>
@@ -99,10 +122,10 @@
       </div>
     </el-card>
 
-    <!-- Add/Edit Dialog -->
+    <!-- 添加/编辑 弹窗 (Add/Edit Dialog) -->
     <el-dialog
       v-model="dialogVisible"
-      :title="isEditing ? 'Edit Diet Record' : 'Add Diet Record'"
+      :title="isEditing ? '编辑饮食记录' : '添加饮食记录'"
       width="500px"
       @close="resetForm"
     >
@@ -112,39 +135,39 @@
         :rules="formRules"
         label-width="100px"
       >
-        <el-form-item label="Meal Type" prop="mealType">
-          <el-select v-model="formData.mealType" placeholder="Select meal type">
-            <el-option label="Breakfast" value="breakfast" />
-            <el-option label="Lunch" value="lunch" />
-            <el-option label="Dinner" value="dinner" />
-            <el-option label="Snack" value="snack" />
+        <el-form-item label="用餐类型" prop="mealType">
+          <el-select v-model="formData.mealType" placeholder="请选择用餐类型">
+            <el-option label="早餐" value="breakfast" />
+            <el-option label="午餐" value="lunch" />
+            <el-option label="晚餐" value="dinner" />
+            <el-option label="加餐/零食" value="snack" />
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Food Items" prop="foodItems">
+        <el-form-item label="食物内容" prop="foodItems">
           <el-input
             v-model="formData.foodItems"
             type="textarea"
             :rows="4"
-            placeholder="Enter food items (e.g., Chicken breast, Brown rice, Broccoli)"
+            placeholder="请输入食物名称 (例如：鸡胸肉、糙米饭、西兰花)"
           />
         </el-form-item>
 
-        <el-form-item label="Calories" prop="calories">
+        <el-form-item label="热量 (千卡)" prop="calories">
           <el-input-number
             v-model="formData.calories"
             :min="0"
             :max="10000"
-            placeholder="Enter calories"
+            placeholder="请输入热量"
             style="width: 100%"
           />
         </el-form-item>
 
-        <el-form-item label="Meal Date" prop="mealDate">
+        <el-form-item label="用餐日期" prop="mealDate">
           <el-date-picker
             v-model="formData.mealDate"
             type="date"
-            placeholder="Select date"
+            placeholder="选择日期"
             format="YYYY-MM-DD"
             value-format="YYYY-MM-DD"
             style="width: 100%"
@@ -153,9 +176,9 @@
       </el-form>
 
       <template #footer>
-        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
         <el-button type="primary" :loading="submitting" @click="handleSubmit">
-          {{ isEditing ? 'Update' : 'Save' }}
+          {{ isEditing ? '更新' : '保存' }}
         </el-button>
       </template>
     </el-dialog>
@@ -182,7 +205,7 @@ import {
   deleteDietRecord,
   getDailySummary
 } from '@/api/diet'
-import { showSuccess, showError, handleDelete, handleFormSubmit } from '@/utils/feedback'
+import { showSuccess, showError, handleDelete as utilHandleDelete, handleFormSubmit } from '@/utils/feedback'
 
 const loading = ref(false)
 const submitting = ref(false)
@@ -206,18 +229,18 @@ const formData = ref({
 
 const formRules = {
   mealType: [
-    { required: true, message: 'Please select meal type', trigger: 'change' }
+    { required: true, message: '请选择用餐类型', trigger: 'change' }
   ],
   foodItems: [
-    { required: true, message: 'Please enter food items', trigger: 'blur' },
-    { min: 2, max: 500, message: 'Length should be 2 to 500 characters', trigger: 'blur' }
+    { required: true, message: '请输入食物内容', trigger: 'blur' },
+    { min: 2, max: 500, message: '长度限制在 2 到 500 个字符', trigger: 'blur' }
   ],
   calories: [
-    { required: true, message: 'Please enter calories', trigger: 'blur' },
-    { type: 'number', min: 0, message: 'Calories must be positive', trigger: 'blur' }
+    { required: true, message: '请输入热量', trigger: 'blur' },
+    { type: 'number', min: 0, message: '热量必须为正数', trigger: 'blur' }
   ],
   mealDate: [
-    { required: true, message: 'Please select meal date', trigger: 'change' }
+    { required: true, message: '请选择用餐日期', trigger: 'change' }
   ]
 }
 
@@ -254,14 +277,21 @@ const getMealIcon = (mealType) => {
   return icons[mealType] || Food
 }
 
+// 汉化后的餐点名称格式化函数
 const formatMealType = (mealType) => {
-  return mealType.charAt(0).toUpperCase() + mealType.slice(1)
+  const map = {
+    breakfast: '早餐',
+    lunch: '午餐',
+    dinner: '晚餐',
+    snack: '加餐/零食'
+  }
+  return map[mealType] || mealType
 }
 
 const formatTime = (dateTime) => {
   if (!dateTime) return ''
   const date = new Date(dateTime)
-  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+  return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
 
 const handleDateChange = () => {
@@ -293,24 +323,25 @@ const handleEdit = (record) => {
   dialogVisible.value = true
 }
 
-// const handleDelete = async (record) => {
-//   try {
-//     await handleDelete(
-//       async () => {
-//         await deleteDietRecord(record.id)
-//         await fetchRecords()
-//         await fetchDailySummary()
-//       },
-//       'this diet record',
-//       {
-//         successMessage: 'Diet record deleted successfully',
-//         errorMessage: 'Failed to delete diet record'
-//       }
-//     )
-//   } catch (error) {
-//     // Error already handled
-//   }
-// }
+// 这里的 handleDelete 重命名为本地函数，避免与 import 冲突
+const handleDelete = async (record) => {
+  try {
+    await utilHandleDelete(
+      async () => {
+        await deleteDietRecord(record.id)
+        await fetchRecords()
+        await fetchDailySummary()
+      },
+      '这条饮食记录', // 这里的文本会被传入 confirm 弹窗
+      {
+        successMessage: '删除记录成功',
+        errorMessage: '删除记录失败'
+      }
+    )
+  } catch (error) {
+    // Error already handled
+  }
+}
 
 const handleSubmit = async () => {
   if (!formRef.value) return
@@ -331,9 +362,9 @@ const handleSubmit = async () => {
         await fetchDailySummary()
       },
       {
-        successMessage: isEditing.value ? 'Diet record updated successfully' : 'Diet record added successfully',
-        errorMessage: 'Failed to save diet record',
-        validationMessage: 'Please fill in all required fields'
+        successMessage: isEditing.value ? '更新记录成功' : '添加记录成功',
+        errorMessage: '保存记录失败',
+        validationMessage: '请填写所有必填项'
       }
     )
   } catch (error) {
@@ -394,6 +425,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .diet-records-container {
   max-width: 1200px;
   margin: 0 auto;

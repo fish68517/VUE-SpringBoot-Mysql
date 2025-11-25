@@ -1,36 +1,57 @@
+没问题！我已经将 “资源详情” (Resource Detail) 页面全部汉化。
+
+主要修改包括：
+
+界面文本：按钮、标题、提示语全部改为中文。
+
+日期格式：调整为符合中国习惯的 年-月-日 格式。
+
+类型显示：增加了 formatContentType 函数，将后台的 video/article 转换为 视频/文章 显示。
+
+交互提示：收藏成功/失败的弹窗提示也改为了中文。
+
+请复制以下代码覆盖你原来的文件：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="resource-detail-container">
-    <!-- Loading State -->
+    <!-- 加载状态 (Loading State) -->
     <div v-if="loading" class="loading-container">
       <el-icon class="is-loading" :size="40">
         <Loading />
       </el-icon>
-      <p>Loading resource...</p>
+      <p>正在加载资源...</p>
     </div>
 
-    <!-- Resource Content -->
+    <!-- 资源内容 (Resource Content) -->
     <div v-else-if="resource" class="resource-content">
-      <!-- Header with Back Button -->
+      <!-- 头部与返回按钮 (Header with Back Button) -->
       <div class="resource-header">
-        <el-button @click="goBack" :icon="ArrowLeft">Back to Resources</el-button>
+        <el-button @click="goBack" :icon="ArrowLeft">返回资源列表</el-button>
         <el-button
           :type="isCollected ? 'warning' : 'primary'"
           :icon="isCollected ? StarFilled : Star"
           @click="toggleCollection"
           :loading="collectionLoading"
         >
-          {{ isCollected ? 'Remove from Collection' : 'Add to Collection' }}
+          {{ isCollected ? '取消收藏' : '加入收藏' }}
         </el-button>
       </div>
 
-      <!-- Resource Title and Meta -->
+      <!-- 资源标题和元数据 (Resource Title and Meta) -->
       <div class="resource-title-section">
         <h1>{{ resource.title }}</h1>
         <div class="resource-meta">
-          <el-tag :type="getTagType()" size="large">{{ resource.contentType }}</el-tag>
+          <!-- 这里使用了 formatContentType 将英文类型转中文 -->
+          <el-tag :type="getTagType()" size="large">{{ formatContentType(resource.contentType) }}</el-tag>
           <div class="meta-item">
             <el-icon><View /></el-icon>
-            <span>{{ resource.viewCount || 0 }} views</span>
+            <span>{{ resource.viewCount || 0 }} 次观看</span>
           </div>
           <div v-if="resource.creatorName" class="meta-item">
             <el-icon><User /></el-icon>
@@ -43,15 +64,15 @@
         </div>
       </div>
 
-      <!-- Resource Description -->
+      <!-- 资源简介 (Resource Description) -->
       <div v-if="resource.description" class="resource-description">
-        <h3>Description</h3>
+        <h3>资源简介</h3>
         <p>{{ resource.description }}</p>
       </div>
 
-      <!-- Resource Content Based on Type -->
+      <!-- 根据类型显示主要内容 (Resource Content Based on Type) -->
       <div class="resource-main-content">
-        <!-- Video Content -->
+        <!-- 视频内容 (Video Content) -->
         <div v-if="resource.contentType?.toLowerCase() === 'video'" class="video-container">
           <video
             v-if="resource.fileUrl"
@@ -59,60 +80,60 @@
             controls
             class="video-player"
           >
-            Your browser does not support the video tag.
+            您的浏览器不支持视频播放。
           </video>
-          <el-empty v-else description="Video file not available" />
+          <el-empty v-else description="视频文件不可用" />
         </div>
 
-        <!-- Document Content -->
+        <!-- 文档内容 (Document Content) -->
         <div v-else-if="resource.contentType?.toLowerCase() === 'document'" class="document-container">
           <el-card>
             <div class="document-info">
               <el-icon :size="64"><Document /></el-icon>
-              <h3>Document File</h3>
-              <p v-if="resource.fileUrl">Click the button below to download the document</p>
+              <h3>文档附件</h3>
+              <p v-if="resource.fileUrl">点击下方按钮下载文档</p>
               <el-button
                 v-if="resource.fileUrl"
                 type="primary"
                 :icon="Download"
                 @click="downloadFile"
               >
-                Download Document
+                下载文档
               </el-button>
-              <el-empty v-else description="Document file not available" />
+              <el-empty v-else description="文档文件不可用" />
             </div>
           </el-card>
         </div>
 
-        <!-- Article Content -->
+        <!-- 文章内容 (Article Content) -->
         <div v-else-if="resource.contentType?.toLowerCase() === 'article'" class="article-container">
           <el-card>
             <div class="article-content" v-html="sanitizedContent"></div>
-            <el-empty v-if="!resource.content" description="Article content not available" />
+            <el-empty v-if="!resource.content" description="暂无文章内容" />
           </el-card>
         </div>
 
-        <!-- Unknown Type -->
+        <!-- 未知类型 (Unknown Type) -->
         <div v-else class="unknown-type">
-          <el-empty description="Content type not supported" />
+          <el-empty description="不支持的内容类型" />
         </div>
       </div>
 
-      <!-- Creator Information -->
+      <!-- 创作者信息 (Creator Information) -->
       <div v-if="resource.creatorName && resource.creatorRole === 'coach'" class="creator-section">
         <el-card>
-          <h3>About the Creator</h3>
+          <h3>关于创作者</h3>
           <div class="creator-info">
             <el-icon :size="48"><UserFilled /></el-icon>
             <div>
               <h4>{{ resource.creatorName }}</h4>
-              <p>Professional Coach</p>
+              <p>专业教练</p>
               <el-button
                 type="primary"
                 size="small"
                 @click="viewCoachProfile"
               >
-                View Coach Profile
+                查看教练主页
               </el-button>
             </div>
           </div>
@@ -120,13 +141,13 @@
       </div>
     </div>
 
-    <!-- Error State -->
+    <!-- 错误状态 (Error State) -->
     <el-empty
       v-else
-      description="Resource not found"
+      description="未找到该资源"
       :image-size="200"
     >
-      <el-button type="primary" @click="goBack">Back to Resources</el-button>
+      <el-button type="primary" @click="goBack">返回资源列表</el-button>
     </el-empty>
   </div>
 </template>
@@ -180,6 +201,17 @@ const getTagType = () => {
   }
 };
 
+// 新增：转换内容类型为中文显示
+const formatContentType = (type) => {
+  if (!type) return '';
+  const map = {
+    video: '视频',
+    article: '文章',
+    document: '文档'
+  };
+  return map[type.toLowerCase()] || '其他';
+};
+
 const getFileUrl = (url) => {
   if (!url) return '';
   // If URL is relative, prepend the API base URL
@@ -189,10 +221,11 @@ const getFileUrl = (url) => {
   return url;
 };
 
+// 修改：使用中文日期格式
 const formatDate = (dateString) => {
   if (!dateString) return '';
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('zh-CN', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
@@ -207,8 +240,7 @@ const fetchResource = async () => {
     await checkIfCollected();
   } catch (error) {
     console.error('Failed to fetch resource:', error);
-    showError('Failed to load resource details');
-    resource.value = null;
+    showError('加载资源详情失败');
   } finally {
     loading.value = false;
   }
@@ -232,15 +264,15 @@ const toggleCollection = async () => {
     if (isCollected.value) {
       await removeCollection(resource.value.id);
       isCollected.value = false;
-      showSuccess('Removed from collection');
+      showSuccess('已取消收藏');
     } else {
       await addCollection(resource.value.id);
       isCollected.value = true;
-      showSuccess('Added to collection');
+      showSuccess('已加入收藏');
     }
   } catch (error) {
     console.error('Failed to toggle collection:', error);
-    showError('Failed to update collection');
+    showError('更新收藏状态失败');
   } finally {
     collectionLoading.value = false;
   }
@@ -268,6 +300,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .resource-detail-container {
   padding: 24px;
   max-width: 1200px;

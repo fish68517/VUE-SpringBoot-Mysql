@@ -754,7 +754,7 @@
     - Edit/delete buttons for own posts
     - Click handler to view full post
   - Create src/components/community/LikeButton.vue with:
-    - Heart icon (filled if liked, outline if not)
+    - Star icon (filled if liked, outline if not)
     - Like count display
     - Toggle like/unlike on click
     - Optimistic UI update

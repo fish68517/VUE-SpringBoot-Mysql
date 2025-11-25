@@ -1,13 +1,23 @@
+没问题！我已经将打卡页面（Check-In）的所有界面文本、按钮状态、弹窗提示以及 JavaScript 中的反馈消息全部翻译成了符合中文使用习惯的用语。
+
+请复制以下代码覆盖你原来的文件：
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <template>
   <div class="check-in-container">
     <el-card class="check-in-card">
       <template #header>
         <div class="card-header">
-          <h2>Daily Check-In</h2>
+          <h2>每日打卡</h2>
         </div>
       </template>
 
-      <!-- Check-in Button Section -->
+      <!-- 打卡按钮区域 (Check-in Button Section) -->
       <div class="check-in-action">
         <el-button
           type="primary"
@@ -20,17 +30,17 @@
           <el-icon v-if="!hasCheckedInToday && !checkingIn" class="button-icon">
             <Calendar />
           </el-icon>
-          <span v-if="hasCheckedInToday">✓ Checked In Today</span>
-          <span v-else>Check In Now</span>
+          <span v-if="hasCheckedInToday">✓ 今日已打卡</span>
+          <span v-else>立即打卡</span>
         </el-button>
 
         <div v-if="hasCheckedInToday" class="success-message">
           <el-icon color="#67c23a"><SuccessFilled /></el-icon>
-          <span>Great job! You've already checked in today!</span>
+          <span>真棒！你今天已经完成打卡了！</span>
         </div>
       </div>
 
-      <!-- Statistics Section -->
+      <!-- 统计数据区域 (Statistics Section) -->
       <div class="stats-section">
         <el-row :gutter="20">
           <el-col :xs="24" :sm="8">
@@ -40,7 +50,7 @@
               </div>
               <div class="stat-content">
                 <div class="stat-value">{{ stats.currentStreak }}</div>
-                <div class="stat-label">Current Streak</div>
+                <div class="stat-label">当前连续天数</div>
               </div>
             </div>
           </el-col>
@@ -51,7 +61,7 @@
               </div>
               <div class="stat-content">
                 <div class="stat-value">{{ stats.totalCount }}</div>
-                <div class="stat-label">Total Check-Ins</div>
+                <div class="stat-label">累计打卡总数</div>
               </div>
             </div>
           </el-col>
@@ -62,7 +72,7 @@
               </div>
               <div class="stat-content">
                 <div class="stat-value">{{ stats.longestStreak }}</div>
-                <div class="stat-label">Longest Streak</div>
+                <div class="stat-label">历史最长连续</div>
               </div>
             </div>
           </el-col>
@@ -70,10 +80,10 @@
       </div>
     </el-card>
 
-    <!-- Calendar Section -->
+    <!-- 日历区域 (Calendar Section) -->
     <el-card class="calendar-card">
       <template #header>
-        <h3>Check-In Calendar</h3>
+        <h3>打卡日历</h3>
       </template>
       <el-calendar v-model="calendarDate">
         <template #date-cell="{ data }">
@@ -87,14 +97,14 @@
       </el-calendar>
     </el-card>
 
-    <!-- Success Animation -->
+    <!-- 成功庆祝动画 (Success Animation) -->
     <transition name="celebration">
       <div v-if="showCelebration" class="celebration-overlay">
         <div class="celebration-content">
           <el-icon class="celebration-icon" color="#67c23a"><SuccessFilled /></el-icon>
-          <h2>Check-In Successful!</h2>
-          <p v-if="stats.currentStreak > 1">🔥 {{ stats.currentStreak }} days streak!</p>
-          <p v-else>Keep it up! Start your streak!</p>
+          <h2>打卡成功！</h2>
+          <p v-if="stats.currentStreak > 1">🔥 已连续打卡 {{ stats.currentStreak }} 天！</p>
+          <p v-else>继续加油！开启你的连胜纪录！</p>
         </div>
       </div>
     </transition>
@@ -137,7 +147,7 @@ const isCheckedInDate = (dateString) => {
 
 const handleCheckIn = async () => {
   if (hasCheckedInToday.value) {
-    showInfo('You have already checked in today!')
+    showInfo('您今天已经完成打卡了！')
     return
   }
 
@@ -157,10 +167,10 @@ const handleCheckIn = async () => {
       fetchStats()
     ])
 
-    showSuccess('Check-in successful! Keep up the great work!')
+    showSuccess('打卡成功！继续保持好状态！')
   } catch (error) {
     // Error already handled by request interceptor
-    console.error('Check-in failed:', error)
+    console.error('打卡失败:', error)
   } finally {
     checkingIn.value = false
   }
@@ -171,7 +181,7 @@ const fetchCheckInHistory = async () => {
     const response = await getCheckInHistory({ page: 0, size: 365 })
     checkInHistory.value = response.content || response || []
   } catch (error) {
-    console.error('Failed to fetch check-in history:', error)
+    console.error('获取打卡历史失败:', error)
   }
 }
 
@@ -181,7 +191,7 @@ const fetchStats = async () => {
     stats.value = response
     userStore.checkInStats = response
   } catch (error) {
-    console.error('Failed to fetch stats:', error)
+    console.error('获取统计数据失败:', error)
   }
 }
 
@@ -194,6 +204,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* 样式保持不变 */
 .check-in-container {
   max-width: 1200px;
   margin: 0 auto;
