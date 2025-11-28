@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -21,8 +23,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import com.archive.app.ApiClient;
+import com.archive.app.ApiService;
 import com.archive.app.MyApplication;
 import com.archive.app.R;
+import com.archive.app.RetrofitClient;
 import com.archive.app.SessionManager;
 import com.archive.app.adapter.AdapterCallback;
 import com.archive.app.adapter.InboundOrderAdapter;
@@ -32,10 +36,12 @@ import com.archive.app.model.Inventory;
 import com.archive.app.view.activity.ScanActivity;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -63,6 +69,8 @@ public class InboundFragment extends Fragment implements AdapterCallback {
 
 
     private List<InboundOrders> currentOrders; // 用于存储当前列表数据
+    private ApiService apiService = RetrofitClient.getApiService();
+    private List<Inventory> mListInventory = new ArrayList<>();
 
 
     @Override
@@ -144,33 +152,86 @@ public class InboundFragment extends Fragment implements AdapterCallback {
         swipeRefreshLayout.setOnRefreshListener(this::fetchInboundOrders);
         btnManualInbound.setOnClickListener(v -> showManualInputDialog("INBOUND")); // *** 新增：为新按钮设置监听器 ***
 
+        initInventory();
+
         return view;
     }
 
+    private void initInventory() {
+        apiService.listInventory().enqueue(new Callback<List<Inventory>>() {
+            @Override
+            public void onResponse(Call<List<Inventory>> call, Response<List<Inventory>> response) {
+                if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()) {
+                    mListInventory.clear();
+                    mListInventory = response.body();
+                    // 数据回来后，更新提示列表
+                    Log.d("InboundFragment", "Inventory 列表加载成功，数量: " + mListInventory.size());
+                } else {
+                    // showNoResults();
+                }
+            }
 
-    /**
-     * *** 新增方法：显示手动输入批次号的对话框 ***
-     */
+            @Override
+            public void onFailure(Call<List<Inventory>> call, Throwable t) {
+
+            }
+        });
+    }
+
+
+
+// ... 其他引用
+
     private void showManualInputDialog(String scanType) {
         // 1. 加载自定义布局
         View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_manual_scan, null);
-        final EditText etInput = dialogView.findViewById(R.id.et_batch_code_input);
 
-        // (可选) 预填一个测试用的批次号，方便调试
-        etInput.setText("例如：BAT-20251011-001");
+        // 2. 获取 AutoCompleteTextView 控件
+        final AutoCompleteTextView actvInput = dialogView.findViewById(R.id.et_batch_code_input);
 
-        // 2. 创建并显示对话框
+        // 3. 准备数据源：从 mListInventory 中提取 batchCode 列表
+        List<String> batchCodeList = new ArrayList<>();
+        if (mListInventory != null && !mListInventory.isEmpty()) {
+            // 使用 Java 8 Stream 快速提取批次号 (如果你的项目不支持 Java 8，可以用普通 for 循环)
+            batchCodeList = mListInventory.stream()
+                    .map(Inventory::getBatchCode) // 假设 Inventory 有 getBatchCode() 方法
+                    .collect(Collectors.toList());
+        }
+
+        // 4. 创建适配器 ArrayAdapter
+        // android.R.layout.simple_dropdown_item_1line 是安卓系统自带的下拉条目样式
+        Log.d("InboundFragment", "批次号列表: " + batchCodeList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                getContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                batchCodeList
+        );
+
+        // 5. 将适配器设置给 AutoCompleteTextView
+        actvInput.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
+        // (可选) 点击输入框时立即显示所有选项（如果你希望不输入内容点一下也显示）
+        actvInput.setOnClickListener(v -> {
+            if (!actvInput.isPopupShowing()) {
+                actvInput.showDropDown();
+            }
+        });
+
+        // 6. 创建并显示对话框
         new AlertDialog.Builder(getContext())
                 .setView(dialogView)
+                .setTitle("手动输入")
                 .setPositiveButton("确认", (dialog, which) -> {
-                    String batchCode = etInput.getText().toString().trim();
+                    String batchCode = actvInput.getText().toString().trim();
+
                     if (batchCode.isEmpty()) {
                         Toast.makeText(getContext(), "输入内容不能为空", Toast.LENGTH_SHORT).show();
                     } else {
-                        // 3. **关键步骤**：将手动输入的字符串作为“模拟扫描结果”传递给 ScanActivity
+                        // 7. 将结果传递给 ScanActivity
                         Intent intent = new Intent(getActivity(), ScanActivity.class);
                         intent.putExtra(ScanActivity.EXTRA_SCAN_TYPE, scanType);
-                        intent.putExtra(ScanActivity.EXTRA_SIMULATED_SCAN_RESULT, batchCode); // 传递模拟结果
+                        intent.putExtra(ScanActivity.EXTRA_SIMULATED_SCAN_RESULT, batchCode);
                         scanActivityResultLauncher.launch(intent);
                     }
                 })
