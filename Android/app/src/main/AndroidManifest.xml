@@ -114,6 +114,14 @@
         </activity>
 
 
+        <activity
+            android:name="com.archive.app.view.activity.ProductDetailActivity"
+            android:exported="true">
+
+        </activity>
+
+
+
 
     </application>
 

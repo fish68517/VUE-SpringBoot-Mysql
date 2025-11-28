@@ -152,6 +152,9 @@ public interface ApiService {
     Call<List<Inventory>> getInventoryByProductSku(@Path("sku") String sku);
 
 
+    @GET("inventory/batch/list")
+    Call<List<Inventory>> listAllBatchCodes();
+
 
     //=========================== 6. 库存 (Inventory) ===========================
     /**
@@ -167,6 +170,9 @@ public interface ApiService {
     // 通常日志是只增不改不删的，但根据您的要求提供完整接口
     @POST("transaction-logs")
     Call<TransactionLogs> createTransactionLog(@Body TransactionLogRequest logRequest);
+
+    @GET("transaction-logs/list")
+    Call<List<TransactionLogs>> getTransactionLogs();
 
     @GET("transaction-logs/{id}")
     Call<TransactionLogs> getTransactionLogById(@Path("id") long id);
@@ -201,5 +207,9 @@ public interface ApiService {
 
     @POST("scan/outbound")
     Call<Void> scanOutbound(@Body ScanRequest scanRequest);
+
+
+
+
 
 }

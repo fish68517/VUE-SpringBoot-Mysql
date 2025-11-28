@@ -13,14 +13,18 @@
         android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
 
-    <EditText
+    <!-- 原来的 EditText 替换为下面的 AutoCompleteTextView -->
+    <AutoCompleteTextView
         android:id="@+id/et_query_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/enter_batch_or_sku"
-        android:inputType="text"
-        android:maxLines="1"
-        android:layout_marginBottom="8dp"/>
+
+        android:hint="请输入批次号或SKU"
+        android:inputType="textCapCharacters"
+        android:completionThreshold="1"
+        android:background="@null"
+        android:padding="12dp" />
+    <!-- completionThreshold="1" 表示输入1个字符就开始提示 -->
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class RetrofitClient {
 
     // IMPORTANT: Replace with your actual backend server IP address or domain
-    private static final String BASE_URL = "http://192.168.2.235:8080/"; // EXAMPLE IP - CHANGE THIS
+    private static final String BASE_URL = "http://192.168.2.185:8080/"; // EXAMPLE IP - CHANGE THIS
 
     private static Retrofit retrofit = null;
 

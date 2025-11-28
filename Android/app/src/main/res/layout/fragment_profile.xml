@@ -12,13 +12,13 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- 用户信息卡片 -->
+        <!-- 1. 用户信息卡片 (保持不变) -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp">
-
+            <!-- ... 内部内容省略，保持原样 ... -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,14 +58,161 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 功能列表 -->
+        <!-- ================== 新增区域开始 ================== -->
+        <!-- 统计数据卡片区 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp">
+
+            <!-- 第一行：今日入库 & 今日出库 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- 卡片1：今日入库 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp"
+                    app:contentPadding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="入库"
+                            android:textSize="14sp"
+                            android:textColor="#666666"/>
+
+                        <TextView
+                            android:id="@+id/tv_today_inbound"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="#2196F3"
+                            tools:text="128" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 中间间距 -->
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="wrap_content"/>
+
+                <!-- 卡片2：今日出库 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp"
+                    app:contentPadding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="出库"
+                            android:textSize="14sp"
+                            android:textColor="#666666"/>
+
+                        <TextView
+                            android:id="@+id/tv_today_outbound"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="#4CAF50"
+                            tools:text="86" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- 第二行：今日盘点 & 占位符 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <!-- 卡片3：今日盘点 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="8dp"
+                    app:cardElevation="2dp"
+                    app:contentPadding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="盘点"
+                            android:textSize="14sp"
+                            android:textColor="#666666"/>
+
+                        <TextView
+                            android:id="@+id/tv_today_check"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:textColor="#FF9800"
+                            tools:text="12" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 中间间距 -->
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="wrap_content"/>
+
+                <!-- 占位View，确保左边的卡片宽度只占一半 -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <!-- ================== 新增区域结束 ================== -->
+
+
+        <!-- 2. 功能列表 (保持不变，只需注意 marginTop) -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="2dp">
 
+            <!-- ... 内部内容省略，保持原样 ... -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,102 +243,12 @@
                         android:src="@drawable/ic_chevron_right" />
                 </RelativeLayout>
 
-
-
-                <!-- 清除缓存 -->
-                <RelativeLayout
-                    android:visibility="gone"
-                    android:id="@+id/btn_clear_cache"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:paddingHorizontal="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="清除缓存"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/tv_cache_size"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_toStartOf="@id/iv_arrow_cache"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="8dp"
-                        tools:text="12.3 MB"/>
-
-                    <ImageView
-                        android:id="@+id/iv_arrow_cache"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_chevron_right" />
-                </RelativeLayout>
-
-
-
-                <!-- 检查更新 -->
-                <RelativeLayout
-                    android:visibility="gone"
-                    android:id="@+id/btn_check_update"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:paddingHorizontal="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="检查更新"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_chevron_right" />
-                </RelativeLayout>
-
-                <!-- 关于我们 -->
-                <RelativeLayout
-                    android:id="@+id/btn_about_us"
-                    android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:paddingHorizontal="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:text="关于我们"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/ic_chevron_right" />
-                </RelativeLayout>
+                <!-- ... 其他按钮省略 ... -->
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 退出登录按钮 -->
+        <!-- 3. 退出登录按钮 (保持不变) -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_logout"
             android:layout_width="match_parent"

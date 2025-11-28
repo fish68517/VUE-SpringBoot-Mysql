@@ -1,11 +1,10 @@
 package com.archive.app.view.fragment;
 
-import android.content.DialogInterface;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +14,23 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+
 import com.archive.app.ApiClient;
+import com.archive.app.ApiService;
 import com.archive.app.MyApplication;
 import com.archive.app.R;
+import com.archive.app.RetrofitClient;
+import com.archive.app.model.TransactionLogs;
 import com.archive.app.model.Users;
 import com.archive.app.view.activity.LoginActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.File;
-import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,30 +38,176 @@ import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
 
-    private TextView tvFullName, tvRole, tvCacheSize;
+    private TextView tvWelcomeUser;
+    private TextView tvTodayInbound;
+    private TextView tvTodayOutbound;
+    private TextView tvTodayCheck;
+    private Button btnLogout;
+    private ApiService apiService;
+
+    private static final String TAG = "ProfileFragment";
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        // 初始化视图
-        tvFullName = view.findViewById(R.id.tv_full_name);
-        tvRole = view.findViewById(R.id.tv_role);
-        tvCacheSize = view.findViewById(R.id.tv_cache_size);
+        // 1. 初始化视图控件
+        tvWelcomeUser = view.findViewById(R.id.tv_full_name);
+        tvTodayInbound = view.findViewById(R.id.tv_today_inbound);
+        tvTodayOutbound = view.findViewById(R.id.tv_today_outbound);
+        tvTodayCheck = view.findViewById(R.id.tv_today_check);
+        btnLogout = view.findViewById(R.id.btn_logout);
+
+        // 2. 获取 ApiService 实例
+        apiService = RetrofitClient.getApiService();
+
+        // 3. 设置按钮点击事件
+        btnLogout.setOnClickListener(v -> logout());
+
 
         // 绑定按钮点击事件
         view.findViewById(R.id.btn_change_password).setOnClickListener(v -> showUpdateProfileDialog());
-        view.findViewById(R.id.btn_clear_cache).setOnClickListener(v -> confirmClearCache());
-        view.findViewById(R.id.btn_check_update).setOnClickListener(v -> checkUpdate());
-        view.findViewById(R.id.btn_about_us).setOnClickListener(v -> showToast("关于我们页面待开发"));
-        view.findViewById(R.id.btn_logout).setOnClickListener(v -> confirmLogout());
-
-        displayUserInfo();
-        calculateCacheSize();
 
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 每次 Fragment 可见时刷新数据
+        displayUserInfo();
+        fetchTodayStatistics();
+    }
+
+    /**
+     * 显示当前登录用户信息
+     */
+    private void displayUserInfo() {
+        Users currentUser = MyApplication.getCurrentUser();
+        if (currentUser != null) {
+            // 优先显示全名，如果没有则显示用户名
+            String displayName = currentUser.getFullName() != null ? currentUser.getFullName() : currentUser.getUsername();
+            tvWelcomeUser.setText(getString(R.string.welcome_user, displayName));
+        } else {
+            tvWelcomeUser.setText(R.string.unknown_user);
+        }
+    }
+
+    /**
+     * 获取并计算今日统计数据
+     */
+    private void fetchTodayStatistics() {
+        // 获取今日日期字符串，格式为 yyyy-MM-dd，用于匹配日志创建时间
+        String todayDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        apiService.getTransactionLogs().enqueue(new Callback<List<TransactionLogs>>() {
+            @Override
+            public void onResponse(Call<List<TransactionLogs>> call, Response<List<TransactionLogs>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<TransactionLogs> logs = response.body();
+                    Log.d(TAG, "Loaded " + logs.size() + " transaction logs");
+                    calculateAndShowStats(logs, todayDate);
+                } else {
+                    Log.e(TAG, "Failed to load stats: " + response.code());
+                    // 可选：显示错误提示或重置数字为0
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TransactionLogs>> call, Throwable t) {
+                Log.e(TAG, "Network error loading stats", t);
+                Toast.makeText(getContext(), R.string.network_error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * 根据日志列表计算今日数据并更新 UI
+     */
+    private void calculateAndShowStats(List<TransactionLogs> logs, String todayDate) {
+        int inboundCount = 0;
+        int outboundCount = 0;
+        int checkCount = 0;
+
+        int userId = MyApplication.getCurrentUser() != null ? MyApplication.getCurrentUser().getId() : -1;
+        if (userId != -1) {
+            for (TransactionLogs log : logs) {
+                if (log.getUserId() == userId) {
+                    switch (log.getType()) {
+                        case "入库":
+                            inboundCount++; // 统计入库笔数
+                            break;
+                        case "出库":
+                            outboundCount++; // 统计出库笔数
+                            break;
+                        case "盘点":
+                            // 数据库中 '调整' 类型通常对应 '盘点' 差异处理
+                            checkCount++;
+                            break;
+                    }
+                }
+            }
+        }
+
+       /* for (TransactionLogs log : logs) {
+            // 确保时间字段和类型字段不为空
+            if (log.getCreatedAt() != null && log.getType() != null) {
+                // 检查是否是今天的记录 (通过字符串前缀匹配 yyyy-MM-dd)
+                switch (log.getType()) {
+                    case "入库":
+                        inboundCount++; // 统计入库笔数
+                        break;
+                    case "出库":
+                        outboundCount++; // 统计出库笔数
+                        break;
+                    case "调整":
+                        // 数据库中 '调整' 类型通常对应 '盘点' 差异处理
+                        checkCount++;
+                        break;
+                }
+*/
+
+
+              /*  if (log.getCreatedAt().startsWith(todayDate)) {
+                    switch (log.getType()) {
+                        case "入库":
+                            inboundCount++; // 统计入库笔数
+                            break;
+                        case "出库":
+                            outboundCount++; // 统计出库笔数
+                            break;
+                        case "调整":
+                            // 数据库中 '调整' 类型通常对应 '盘点' 差异处理
+                            checkCount++;
+                            break;
+                    }
+                }*/
+        //}
+        //  }
+
+        // 更新 UI
+        tvTodayInbound.setText(String.valueOf(inboundCount));
+        tvTodayOutbound.setText(String.valueOf(outboundCount));
+        tvTodayCheck.setText(String.valueOf(checkCount));
+    }
+
+    /**
+     * 退出登录逻辑
+     */
+    private void logout() {
+        // MyApplication.logout(); // 清除全局用户状态
+
+        // 跳转回登录页面，并清空 Activity 栈，防止用户按返回键回来
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+
+        if (getActivity() != null) {
+            getActivity().finish();
+        }
+    }
+
 
 
     /**
@@ -151,23 +301,6 @@ public class ProfileFragment extends Fragment {
         });
     }
 
-    private void displayUserInfo() {
-        Users currentUser = MyApplication.getCurrentUser();
-        if (currentUser != null) {
-            tvFullName.setText(currentUser.getFullName() != null ? currentUser.getFullName() : currentUser.getUsername());
-            // 假设 roleId 1:管理员, 2:经理, 3:操作员
-            String roleName = "未知角色";
-            switch (currentUser.getRoleId()) {
-                case 1: roleName = "系统管理员"; break;
-                case 2: roleName = "用户"; break;
-                case 3: roleName = "操作员"; break;
-            }
-            tvRole.setText(String.format("角色: %s", roleName));
-        } else {
-            tvFullName.setText(R.string.unknown_user);
-            tvRole.setText("");
-        }
-    }
 
     private void confirmLogout() {
         new AlertDialog.Builder(getContext())
@@ -178,7 +311,7 @@ public class ProfileFragment extends Fragment {
                 .show();
     }
 
-    private void logout() {
+/*    private void logout() {
         MyApplication.logout();
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -186,82 +319,8 @@ public class ProfileFragment extends Fragment {
         if (getActivity() != null) {
             getActivity().finish();
         }
-    }
+    }*/
 
-    private void confirmClearCache() {
-        new AlertDialog.Builder(getContext())
-                .setTitle("清除缓存")
-                .setMessage("确定要清除所有本地缓存数据吗？")
-                .setPositiveButton("确定", (dialog, which) -> {
-                    clearCache();
-                    showToast("缓存已清除");
-                    calculateCacheSize(); // 重新计算并显示
-                })
-                .setNegativeButton("取消", null)
-                .show();
-    }
 
-    private void calculateCacheSize() {
-        long size = 0;
-        if (getContext() != null) {
-            size += getDirSize(getContext().getCacheDir());
-            size += getDirSize(getContext().getExternalCacheDir());
-        }
-        tvCacheSize.setText(formatSize(size));
-    }
 
-    private void clearCache() {
-        if (getContext() != null) {
-            deleteDir(getContext().getCacheDir());
-            deleteDir(getContext().getExternalCacheDir());
-        }
-    }
-
-    private void checkUpdate() {
-        Toast.makeText(getContext(), "正在检查更新...", Toast.LENGTH_SHORT).show();
-        // 模拟网络请求
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            Toast.makeText(getContext(), "当前已是最新版本", Toast.LENGTH_LONG).show();
-        }, 1500);
-    }
-
-    // --- 辅助方法 ---
-
-    private void showToast(String message) {
-        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    public static long getDirSize(File dir) {
-        long size = 0;
-        if (dir != null && dir.isDirectory()) {
-            for (File file : dir.listFiles()) {
-                if (file.isFile()) {
-                    size += file.length();
-                } else {
-                    size += getDirSize(file);
-                }
-            }
-        }
-        return size;
-    }
-
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (String child : children) {
-                boolean success = deleteDir(new File(dir, child));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        return dir.delete();
-    }
-
-    public static String formatSize(long size) {
-        if (size <= 0) return "0 B";
-        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
-        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-    }
 }

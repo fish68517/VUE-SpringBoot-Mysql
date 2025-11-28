@@ -54,7 +54,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="32dp"
-        android:hint="用户名"
+        android:hint="全名"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/til_username">
@@ -85,6 +85,41 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
+    <!-- 2. 强度指示容器 -->
+    <LinearLayout
+        android:id="@+id/ggg"
+        app:layout_constraintTop_toBottomOf="@+id/til_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="32dp"
+        android:paddingEnd="4dp">
+
+        <!-- 强度文字提示 -->
+        <TextView
+            android:id="@+id/tv_password_strength_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="密码强度: 未输入"
+            android:textSize="12sp"
+            android:textColor="#666666"/>
+
+        <!-- 强度指示条 (使用 ProgressBar 或 View 模拟) -->
+        <!-- 这里使用 style="?android:attr/progressBarStyleHorizontal" -->
+        <ProgressBar
+            android:id="@+id/pb_password_strength"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:max="3"
+            android:progress="0"
+
+            android:layout_marginTop="2dp"/>
+
+    </LinearLayout>
+
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/til_department"
         style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
@@ -96,7 +131,7 @@
         android:hint="选择部门"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/til_password">
+        app:layout_constraintTop_toBottomOf="@id/ggg">
 
         <AutoCompleteTextView
             android:id="@+id/actv_department"
