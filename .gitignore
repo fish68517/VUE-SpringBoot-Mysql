@@ -36,6 +36,9 @@
 /VUE/.cache/
 /VUE/coverage/
 
+/Android/app/build
+
+
 # Vue CLI / Vite 构建产物
 /VUE/build/
 /VUE/.temp/
