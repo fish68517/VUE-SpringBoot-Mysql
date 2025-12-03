@@ -61,25 +61,41 @@ onUnmounted(() => {
 <style scoped>
 .layout-container {
   height: 100vh;
-  width: 100vw; /* 确保容器占满视窗宽度 */
+  width: 100%; /* 使用 100% 避免 100vw 可能导致的滚动条 */
+  display: flex; /* 显式声明 flex */
+  overflow: hidden; /* 防止整体溢出 */
 }
 
-.el-aside {
+.layout-aside {
   background-color: #304156;
   color: white;
-  /* width: 200px;  <-- 侧边栏宽度通常是固定的 */
-}
-
-.el-header {
-  background-color: #fff;
-  border-bottom: 1px solid #e6e6e6;
-  /* padding: 0 20px; */
-}
-
-.el-main {
-  background-color: #f5f7fa; /* 灰色背景 */
-  padding: 20px; /* 给内容留一点边距，但不要太大 */
   height: 100%;
-  overflow-y: auto; /* 内容过多时只在 main 区域滚动 */
+  transition: width 0.3s; /* 添加过渡动画 */
+  flex-shrink: 0; /* 防止侧边栏被挤压 */
+  overflow-x: hidden;
+}
+
+/* 核心修复样式 */
+.layout-main-container {
+  flex: 1; /* 关键：让它自动填满剩余宽度 */
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* 关键：防止 flex 子元素内容过宽导致溢出 */
+  height: 100vh;
+  overflow: hidden;
+}
+
+.layout-header {
+  padding: 0; /* 关键：移除 Element 默认 padding，由 Header 组件内部控制 */
+  height: 60px; /* 固定高度 */
+  border-bottom: 1px solid #e6e6e6;
+  background-color: #fff;
+}
+
+.layout-main {
+  background-color: #f5f7fa;
+  padding: 20px;
+  flex: 1; /* 占满垂直剩余空间 */
+  overflow-y: auto; /* 内容滚动 */
 }
 </style>

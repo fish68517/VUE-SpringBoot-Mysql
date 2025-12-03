@@ -5,6 +5,7 @@ import com.sharkfitness.exception.ValidationException;
 import com.sharkfitness.service.FileUploadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.juli.logging.Log;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -94,40 +95,66 @@ public class FileUploadServiceImpl implements FileUploadService {
         }
     }
 
+
+
     /**
-     * Save file to disk and return URL path
+     * Save file to src/main/resources/static/{subDirectory}
      */
     private String saveFile(MultipartFile file, String subDirectory) {
+        // subDirectory 应该是 "images" 或 "videos"
+        System.out.println("Processing file upload for type: " + subDirectory);
+
         try {
-            // Generate unique filename
+            // 1. 获取文件名和后缀
             String originalFilename = file.getOriginalFilename();
             String extension = "";
             if (originalFilename != null && originalFilename.contains(".")) {
                 extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             }
-            
-            String uniqueFilename = generateUniqueFilename(extension);
-            
-            // Create file path
-            String directoryPath = fileUploadConfig.getUploadPath() + File.separator + subDirectory;
-            File directory = new File(directoryPath);
+
+            // 2. 生成唯一文件名
+            String uniqueFilename = UUID.randomUUID().toString() + extension;
+
+            // 3. 【关键修改】获取项目根目录的绝对路径 (即你的项目文件夹路径)
+            String projectRoot = System.getProperty("user.dir");
+
+            // 4. 拼凑出 src/main/resources/static/images 的绝对路径
+            // 路径格式： D:\MyProjects\shark-fitness\src\main\resources\static\images
+            String saveDirectoryPath = projectRoot + File.separator + "src" +
+                    File.separator + "main" +
+                    File.separator + "resources" +
+                    File.separator + "static" +
+                    File.separator + subDirectory;
+
+            System.out.println("Save directory path: " + saveDirectoryPath);
+            File directory = new File(saveDirectoryPath);
+
+            // 5. 如果目录不存在，强制创建 (解决了 FileNotFoundException)
             if (!directory.exists()) {
-                directory.mkdirs();
+                boolean created = directory.mkdirs();
+                if (created) {
+                    System.out.println("Created directory: " + saveDirectoryPath);
+                } else {
+                    // 如果创建失败，可能是权限问题，或者路径太长
+                    System.err.println("Failed to create directory: " + saveDirectoryPath);
+                }
             }
-            
-            // Save file
-            String filePath = directoryPath + File.separator + uniqueFilename;
+
+            // 6. 保存文件到该路径
+            String filePath = saveDirectoryPath + File.separator + uniqueFilename;
             File destinationFile = new File(filePath);
             file.transferTo(destinationFile);
-            
-            log.info("File saved successfully: {}", filePath);
-            
-            // Return URL path (relative path for frontend access)
-            return "/uploads/" + subDirectory + "/" + uniqueFilename;
-            
+
+            log.info("File saved to source directory: {}", filePath);
+
+            // 7. 返回访问路径
+            // 因为放在了 static 下，Spring Boot 默认会自动映射
+            // 如果是 static/images/123.png -> 访问地址是 /images/123.png
+            return "/" + subDirectory + "/" + uniqueFilename;
+
         } catch (IOException e) {
             log.error("Failed to save file: {}", e.getMessage(), e);
-            throw new ValidationException("Failed to save file: " + e.getMessage());
+            throw new RuntimeException("Failed to save file: " + e.getMessage());
         }
     }
 
