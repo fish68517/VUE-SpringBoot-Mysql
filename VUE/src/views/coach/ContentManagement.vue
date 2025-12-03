@@ -440,7 +440,7 @@ onMounted(() => {
   width: 100%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1280px) {
   .content-management {
     padding: 10px;
   }

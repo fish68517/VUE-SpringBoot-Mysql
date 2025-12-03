@@ -238,116 +238,64 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 核心修改：移除 max-width 和 margin: 0 auto */
-.dashboard-container {
-  /* padding: 20px;  <-- 如果 Layout.vue 的 el-main 已经有 padding，这里可以去掉或减少 */
-  width: 100%;
-}
-
-.header-section {
-  margin-bottom: 24px;
-}
-
-.dashboard-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #303133;
-  margin: 0;
-  text-align: left; /* 标题左对齐 */
-}
-
-/* 统计卡片样式优化 */
-.stat-card {
-  height: 100%;
-  transition: all 0.3s;
-}
-
-.stat-content {
+/* 1. 确保整个应用占满屏幕，无滚动条 */
+.app-wrapper {
   display: flex;
-  align-items: center;
-  padding: 10px;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #f5f7fa;
 }
 
-.stat-icon {
-  padding: 10px;
-  background-color: #f0f9eb;
-  border-radius: 8px;
-  margin-right: 16px;
+/* 2. 左侧侧边栏样式 */
+.sidebar-container {
+  background-color: #304156;
+  height: 100%;
+  flex-shrink: 0; /* 禁止侧边栏被压缩 */
+  transition: width 0.3s;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 1001;
 }
-/* 不同颜色的背景微调 */
-.el-col:nth-child(1) .stat-icon { background-color: #ecf5ff; }
-.el-col:nth-child(2) .stat-icon { background-color: #f0f9eb; }
-.el-col:nth-child(3) .stat-icon { background-color: #fdf6ec; }
 
-.stat-info {
+/* 3. 右侧容器核心修复：flex: 1 让它自动占满剩余宽度 */
+.main-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
+  min-width: 0; /* 防止 flex 子元素内容过宽导致溢出 */
+  height: 100%;
+  position: relative;
 }
 
-.stat-value {
-  font-size: 24px;
-  font-weight: bold;
-  color: #303133;
-  line-height: 1.2;
+/* 4. 头部样式 */
+.fixed-header {
+  height: 60px;
+  background: #fff;
+  border-bottom: 1px solid #dcdfe6;
+  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  flex-shrink: 0; /* 防止头部被压缩 */
+  z-index: 999;
 }
 
-.stat-label {
-  font-size: 14px;
-  color: #909399;
-  margin-top: 4px;
+/* 5. 内容区域样式 */
+.app-main {
+  flex: 1; /* 占据垂直方向剩余空间 */
+  padding: 20px;
+  overflow-y: auto; /* 内容过多时，只有这里滚动 */
+  overflow-x: hidden;
+  position: relative;
 }
 
-/* 快捷操作按钮区域 */
-.action-buttons {
-  display: flex;
-  gap: 15px;
-  justify-content: flex-start; /* 按钮左对齐 */
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* 学生列表样式 */
-.student-item {
-  display: flex;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #EBEEF5;
-}
-
-.student-item:last-child {
-  border-bottom: none;
-}
-
-.student-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #409EFF;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  margin-right: 12px;
-}
-
-.student-info {
-  flex: 1;
-}
-
-.student-name {
-  font-weight: 500;
-  font-size: 14px;
-  color: #303133;
-}
-
-.student-date {
-  font-size: 12px;
-  color: #909399;
+/* 移动端遮罩层 */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 </style>
 

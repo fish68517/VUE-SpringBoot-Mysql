@@ -54,11 +54,22 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-#app {
+/* #app {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+} */
+
+/* 2. 强制重置 #app 挂载点，去除任何自带的 max-width 或 margin: auto */
+#app {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  max-width: none !important; /* 关键：取消最大宽度限制 */
+  display: block !important; /* 防止被设为 grid 或 flex center */
+  text-align: left !important; /* 防止文字默认居中 */
 }
 
 @media (prefers-color-scheme: light) {

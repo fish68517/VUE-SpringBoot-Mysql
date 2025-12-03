@@ -111,9 +111,10 @@ const handleCommand = async (command) => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%;
+  width: 100%; /* 确保撑满 layout-header */
   height: 100%;
-  padding: 0 20px;
+  padding: 0 20px; /* 这里控制左右内边距 */
+  box-sizing: border-box; /* 防止 padding 撑大宽度 */
 }
 
 .header-left {
