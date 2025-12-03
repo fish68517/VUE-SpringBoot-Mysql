@@ -88,30 +88,40 @@ expand_less
       </template>
       <div class="chart-container">
         <div class="role-stats">
+          
+          <!-- 普通用户 -->
           <div class="role-item">
             <div class="role-label">普通用户</div>
             <el-progress
               :percentage="getUserPercentage('user')"
               :color="'#409EFF'"
             />
-            <div class="role-count">{{ statistics.usersByRole.user || 0 }} 人</div>
+            <!-- 修改点：usersByRole.user -> totalRegularUsers -->
+            <div class="role-count">{{ statistics.totalRegularUsers || 0 }} 人</div>
           </div>
+
+          <!-- 教练 -->
           <div class="role-item">
             <div class="role-label">教练</div>
             <el-progress
               :percentage="getUserPercentage('coach')"
               :color="'#67C23A'"
             />
-            <div class="role-count">{{ statistics.usersByRole.coach || 0 }} 人</div>
+            <!-- 修改点：usersByRole.coach -> totalCoaches -->
+            <div class="role-count">{{ statistics.totalCoaches || 0 }} 人</div>
           </div>
+
+          <!-- 管理员 -->
           <div class="role-item">
             <div class="role-label">管理员</div>
             <el-progress
               :percentage="getUserPercentage('admin')"
               :color="'#E6A23C'"
             />
-            <div class="role-count">{{ statistics.usersByRole.admin || 0 }} 人</div>
+            <!-- 修改点：usersByRole.admin -> totalAdmins -->
+            <div class="role-count">{{ statistics.totalAdmins || 0 }} 人</div>
           </div>
+
         </div>
       </div>
     </el-card>
@@ -158,15 +168,15 @@ expand_less
       <div class="activity-grid">
         <div class="activity-item">
           <div class="activity-label">总动态数</div>
-          <div class="activity-value">{{ statistics.totalPosts || 0 }}</div>
+          <div class="activity-value">{{ statistics.totalDynamicPosts || 0 }}</div>
         </div>
-        <div class="activity-item">
+        <div class="activity-item" v-if="false">
           <div class="activity-label">总评论数</div>
           <div class="activity-value">{{ statistics.totalComments || 0 }}</div>
         </div>
         <div class="activity-item">
-          <div class="activity-label">总打卡数</div>
-          <div class="activity-value">{{ statistics.totalCheckIns || 0 }}</div>
+          <div class="activity-label">总资源数</div>
+          <div class="activity-value">{{ statistics.totalResources || 0 }}</div>
         </div>
         <div class="activity-item">
           <div class="activity-label">总训练计划</div>
@@ -239,9 +249,26 @@ const fetchRecentUsers = async () => {
 };
 
 const getUserPercentage = (role) => {
+  // 1. 安全检查：如果 statistics 还是 undefined (数据未加载)，直接返回 0
+  if (!statistics.value) return 0;
+
   const total = statistics.value.totalUsers;
   if (total === 0) return 0;
-  const count = statistics.value.usersByRole[role] || 0;
+
+  // 2. 核心修改：根据 role 字符串手动匹配对应的字段名
+  // 日志显示你的数据字段是 totalRegularUsers, totalCoaches, totalAdmins
+  let count = 0;
+  
+  if (role === 'user') {
+    count = statistics.value.totalRegularUsers || 0;
+  } else if (role === 'coach') {
+    count = statistics.value.totalCoaches || 0;
+  } else if (role === 'admin') {
+    count = statistics.value.totalAdmins || 0;
+  } 
+  // 如果你的 role 还有其他名字，可以在这里继续加 else if
+
+  // 3. 计算百分比
   return Math.round((count / total) * 100);
 };
 
