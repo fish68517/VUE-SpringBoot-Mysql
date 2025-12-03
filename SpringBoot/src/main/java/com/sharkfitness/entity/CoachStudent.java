@@ -28,6 +28,6 @@ public class CoachStudent {
     private User student;
     
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = true)
     private LocalDateTime createdAt;
 }

@@ -1,27 +1,4 @@
-没问题！这是 “学员数据分析” (Student Analytics) 页面的完整汉化版本。
 
-主要修改包括：
-
-界面文本：Student Analytics -> 学员数据分析, Select Student -> 选择学员, Time Period -> 时间范围 等。
-
-选项翻译：Last 7 Days -> 最近 7 天 等。
-
-统计卡片：Total Check-ins -> 累计打卡, Avg Calories/Day -> 日均热量, Active Days -> 活跃天数 等。
-
-图表标题：Activity Trends -> 活动趋势, Training Plan Completion Rate -> 训练计划完成率。
-
-空状态与提示：Insufficient data... -> 当前时段数据不足... 等。
-
-日期格式：图表数据的日期格式化为 zh-CN。
-
-请复制以下代码覆盖：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <Layout>
     <div class="student-analytics">

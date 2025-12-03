@@ -73,7 +73,7 @@
             <template #title>创建计划</template>
           </el-menu-item>
 
-          <el-menu-item index="/coach/analytics">
+          <el-menu-item index="/coach/analytics" v-if="false">
             <el-icon><TrendCharts /></el-icon>
             <template #title>数据分析</template>
           </el-menu-item>

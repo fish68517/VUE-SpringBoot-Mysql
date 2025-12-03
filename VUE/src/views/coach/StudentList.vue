@@ -1,25 +1,4 @@
-没问题！这是 “学员列表” (Student List) 页面的完整汉化版本。
 
-主要修改包括：
-
-界面文本：My Students -> 我的学员, Add Student -> 添加学员, View Details -> 查看详情 等。
-
-表格列名：Student -> 学员信息, Gender -> 性别, Joined -> 加入时间 等。
-
-表单占位符：用户名搜索、默认简介等。
-
-详情弹窗：打卡记录 (Check-ins)、饮食记录 (Diet Records) 的表头翻译。
-
-反馈提示：添加成功/失败、删除学员等操作的提示。
-
-请复制以下代码覆盖：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <Layout>
     <div class="student-list">
@@ -50,18 +29,18 @@ expand_less
             <template #default="{ row }">
               <div class="student-info">
                 <el-avatar :src="row.avatar" :size="40">
-                  {{ row.username.charAt(0).toUpperCase() }}
+                  {{ row.student.username.charAt(0).toUpperCase() }}
                 </el-avatar>
                 <div class="student-details">
-                  <div class="student-name">{{ row.username }}</div>
-                  <div class="student-intro">{{ row.intro || '暂无简介' }}</div>
+                  <div class="student-name">{{ row.student.username }}</div>
+                  <div class="student-intro">{{ row.student.intro || '暂无简介' }}</div>
                 </div>
               </div>
             </template>
           </el-table-column>
           <el-table-column prop="gender" label="性别" width="100">
             <template #default="{ row }">
-              {{ formatGender(row.gender) }}
+              {{ formatGender(row.student.gender) }}
             </template>
           </el-table-column>
           <el-table-column label="加入时间" width="150">
@@ -71,7 +50,7 @@ expand_less
           </el-table-column>
           <el-table-column label="操作" width="250">
             <template #default="{ row }">
-              <el-button size="small" @click="viewStudentDetails(row)">查看详情</el-button>
+              <el-button size="small" @click="viewStudentDetails(row)" v-if="false">查看详情</el-button>
               <el-button size="small" type="danger" @click="confirmRemoveStudent(row)">移除</el-button>
             </template>
           </el-table-column>
@@ -187,7 +166,7 @@ import { useRouter } from 'vue-router'
 import { Plus, Loading } from '@element-plus/icons-vue'
 import Layout from '@/components/common/Layout.vue'
 import { getMyStudents, addStudent as addStudentApi, removeStudent, getStudentCheckIns, getStudentDietRecords } from '@/api/coach'
-import { getProfile } from '@/api/user'
+import { getProfileByName } from '@/api/user'
 import { showSuccess, showError, showWarning, confirmRemove } from '@/utils/feedback'
 
 const router = useRouter()
@@ -233,7 +212,12 @@ const searchUser = async () => {
   try {
     // Search for user by username - using profile endpoint as proxy
     // In real implementation, there should be a search user endpoint
-    const response = await getProfile(addStudentForm.value.username)
+    // 打印学生
+    console.log('搜索学生：', addStudentForm.value.username)
+
+    const response = await getProfileByName(addStudentForm.value.username)
+    // 打印返回结果以便调试
+    console.log('搜索用户成功，返回数据：', JSON.stringify(response))
     searchedUser.value = response
   } catch (error) {
     showError('未找到该用户')

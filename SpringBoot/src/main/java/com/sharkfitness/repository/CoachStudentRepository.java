@@ -3,6 +3,7 @@ package com.sharkfitness.repository;
 import com.sharkfitness.entity.CoachStudent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -41,7 +42,12 @@ public interface CoachStudentRepository extends JpaRepository<CoachStudent, Long
     
     /**
      * Delete all relationships where user is a student
+     *
+     *
      */
+    // 添加 @Transactional 注解
+
+    @Transactional
     void deleteByStudentId(Long studentId);
 
     // 获取所有教练

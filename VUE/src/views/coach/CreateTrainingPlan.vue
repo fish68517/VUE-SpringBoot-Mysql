@@ -1,27 +1,4 @@
-没问题！这是 “创建/编辑训练计划” (Create/Edit Training Plan) 页面的完整汉化版本。
 
-主要修改包括：
-
-界面文本：Create Training Plan -> 创建训练计划, Edit Training Plan -> 编辑训练计划, Student -> 学员 等。
-
-表单标签：Plan Name -> 计划名称, Description -> 计划描述, Date Range -> 日期范围, Status -> 状态 等。
-
-状态选项：Active -> 进行中, Completed -> 已完成, Cancelled -> 已取消。
-
-训练动作：Exercises -> 训练动作, Sets -> 组数, Reps -> 次数, Duration -> 时长 等。
-
-校验规则：必填项提示、长度限制提示等。
-
-反馈提示：创建成功、更新成功、加载失败等。
-
-请复制以下代码覆盖：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <Layout>
     <div class="create-training-plan">
@@ -47,16 +24,16 @@ expand_less
               :disabled="isEditMode"
             >
               <el-option
-                v-for="student in students"
-                :key="student.id"
-                :label="student.username"
-                :value="student.id"
+                v-for="studentAnCoachs in students"
+                :key="studentAnCoachs.id"
+                :label="studentAnCoachs.student.username"
+                :value="studentAnCoachs.id"
               >
                 <div class="student-option">
-                  <el-avatar :src="student.avatar" :size="30">
-                    {{ student.username.charAt(0).toUpperCase() }}
+                  <el-avatar :src="studentAnCoachs.avatar" :size="30">
+                    {{ studentAnCoachs.student.username.charAt(0).toUpperCase() }}
                   </el-avatar>
-                  <span>{{ student.username }}</span>
+                  <span>{{ studentAnCoachs.student.username }}</span>
                 </div>
               </el-option>
             </el-select>
@@ -288,6 +265,10 @@ const fetchStudents = async () => {
   try {
     const response = await getMyStudents()
     students.value = response
+    // 打印获取到的学生列表以便调试
+    console.log('获取学生列表成功，学生数：', students.value.length)
+    // 打印学生列表详情
+    console.log('学生列表详情：', JSON.stringify(students.value))
   } catch (error) {
     showError('加载学员列表失败')
     console.error('Fetch students error:', error)

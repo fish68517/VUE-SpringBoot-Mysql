@@ -22,14 +22,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/**")  // Apply to all API endpoints
                 .excludePathPatterns(
                         "/api/auth/register",    // Allow registration
-                        "/api/auth/login",       // Allow login
-                        "/api/search",           // Allow public search
-                        "/api/resources",        // Allow public resource browsing
-                        "/api/resources/**",     // Allow public resource details
+                        "/api/auth/login"       // Allow login
+                        /*"/api/search",           // Allow public search*/
+                     /*   "/api/resources",        // Allow public resource browsing
+                        "/api/resources/**"     // Allow public resource details*/
 //                        "/api/dynamics",         // Allow public community feed
 //                        "/api/dynamics/**",      // Allow public post details
-                        "/api/coaches",          // Allow public coach listing
-                        "/api/coaches/**"        // Allow public coach profiles
+                     /*   "/api/coaches",          // Allow public coach listing
+                        "/api/coaches/**"        // Allow public coach profiles*/
                 );
     }
 

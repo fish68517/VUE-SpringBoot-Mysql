@@ -1,5 +1,6 @@
 package com.sharkfitness.controller;
 
+import com.sharkfitness.entity.CoachStudent;
 import com.sharkfitness.entity.User;
 import com.sharkfitness.exception.BusinessException;
 import com.sharkfitness.repository.CoachStudentRepository;
@@ -45,6 +46,15 @@ public class CoachController {
         
         List<CheckInVO> checkIns = checkInService.getStudentCheckIns(currentUser.getId(), studentId);
         return ApiResponse.success(checkIns);
+    }
+
+    // 获取教练所指导学生列表
+    @GetMapping("/students")
+    public ApiResponse<List<CoachStudent>> getCoachStudents(
+            @RequestAttribute("currentUser") User currentUser) {
+
+        List<CoachStudent> students = coachStudentRepository.findByCoachId(currentUser.getId());
+        return ApiResponse.success(students);
     }
     
     /**
@@ -110,5 +120,47 @@ public class CoachController {
             throw new BusinessException(400, "User is not a coach");
         }
         return ApiResponse.success(coach);
+    }
+
+    // api/coaches/students/6. 添加学生
+    @PostMapping("/students/{studentId}")
+    public ApiResponse<Void> addStudent(
+            @RequestAttribute("currentUser") User currentUser,
+            @PathVariable Long studentId) {
+
+        // 检查学生是否存在
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new BusinessException(404, "Student not found"));
+
+        if (!"user".equals(student.getRole())) {
+            throw new BusinessException(400, "User is not a student");
+        }
+
+        // 检查关系是否已存在
+        if (coachStudentRepository.existsByCoachIdAndStudentId(currentUser.getId(), studentId)) {
+            throw new BusinessException(400, "已经是你的学员了");
+        }
+
+        // 创建教练-学生关系
+        CoachStudent coachStudent = new CoachStudent();
+        coachStudent.setStudent(student);
+        coachStudent.setCoach(currentUser);
+        coachStudentRepository.save(coachStudent);
+
+        return ApiResponse.success(null);
+    }
+
+    // 添加接口  ： DELETE
+    //	http://localhost:8080/api/coaches/students/5
+    @DeleteMapping("/students/{studentId}")
+    public ApiResponse<Void> removeStudent(
+            @RequestAttribute("currentUser") User currentUser,
+            @PathVariable Long studentId) {
+
+
+        // 删除教练-学生关系
+        coachStudentRepository.deleteByStudentId(studentId);
+
+        return ApiResponse.success(null);
     }
 }

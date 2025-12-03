@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <div class="header-center">
+    <div class="header-center" v-if="false">
       <SearchBar @search="handleSearch" />
     </div>
 

@@ -11,6 +11,15 @@ export function getProfile() {
   });
 }
 
+
+export function getProfileByName(username) {
+  return request({
+    url: '/api/users/profile/by-username',
+    method: 'get',
+    params: { username: username } // 使用 params，后端才能通过 @RequestParam 接收
+  });
+}
+
 /**
  * Update user profile
  * @param {Object} data - Profile update data

@@ -88,12 +88,14 @@ export const showConfirm = (message, title = 'Confirm', options = {}) => {
  * @returns {Promise} - Resolves if confirmed, rejects if cancelled
  */
 export const confirmDelete = (itemName = 'this item') => {
+  // 打印 itemName 以便调试
+  console.log('confirmDelete called with itemName:', JSON.stringify(itemName))
   return showConfirm(
-    `Are you sure you want to delete ${itemName}? This action cannot be undone.`,
-    'Delete Confirmation',
+    `你想删除 吗? 此操作不可撤销.`,
+    '删除确认',
     {
-      confirmText: 'Delete',
-      cancelText: 'Cancel',
+      confirmText: '删除',
+      cancelText: '取消',
       type: 'error',
       confirmButtonClass: 'el-button--danger'
     }

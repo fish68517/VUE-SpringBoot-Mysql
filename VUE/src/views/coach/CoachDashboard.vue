@@ -1,7 +1,7 @@
 <template>
   <Layout>
     <div class="coach-dashboard">
-      <h2>Coach Dashboard</h2>
+      <h2>仪表板</h2>
       
       <!-- Statistics Cards -->
       <el-row :gutter="20" class="stats-row">
@@ -13,7 +13,7 @@
               </el-icon>
               <div class="stat-info">
                 <div class="stat-value">{{ stats.totalStudents }}</div>
-                <div class="stat-label">Total Students</div>
+                <div class="stat-label">学生总数</div>
               </div>
             </div>
           </el-card>
@@ -26,7 +26,7 @@
               </el-icon>
               <div class="stat-info">
                 <div class="stat-value">{{ stats.totalContent }}</div>
-                <div class="stat-label">Total Content</div>
+                <div class="stat-label">内容总数</div>
               </div>
             </div>
           </el-card>
@@ -39,7 +39,7 @@
               </el-icon>
               <div class="stat-info">
                 <div class="stat-value">{{ stats.totalPlans }}</div>
-                <div class="stat-label">Training Plans</div>
+                <div class="stat-label">训练计划</div>
               </div>
             </div>
           </el-card>
@@ -49,20 +49,20 @@
       <!-- Quick Actions -->
       <el-card class="section-card">
         <template #header>
-          <span>Quick Actions</span>
+          <span>快捷控制</span>
         </template>
         <div class="quick-actions">
           <el-button type="primary" @click="goToAddStudent">
             <el-icon><UserFilled /></el-icon>
-            Add Student
+            添加学员
           </el-button>
           <el-button type="success" @click="goToCreatePlan">
             <el-icon><Plus /></el-icon>
-            Create Training Plan
+            创建训练计划
           </el-button>
           <el-button type="warning" @click="goToCreateContent">
             <el-icon><Edit /></el-icon>
-            Create Content
+            创建内容
           </el-button>
         </div>
       </el-card>
@@ -71,8 +71,8 @@
       <el-card class="section-card">
         <template #header>
           <div class="card-header">
-            <span>Recent Students</span>
-            <el-button text type="primary" @click="goToStudentList">View All</el-button>
+            <span>最近学员</span>
+            <el-button text type="primary" @click="goToStudentList">查看所有</el-button>
           </div>
         </template>
         <div v-if="loading" class="loading-container">
@@ -80,7 +80,7 @@
         </div>
         <div v-else-if="recentStudents.length === 0" class="empty-state">
           <el-empty description="No students yet">
-            <el-button type="primary" @click="goToAddStudent">Add Your First Student</el-button>
+            <el-button type="primary" @click="goToAddStudent">添加您的第一位学员</el-button>
           </el-empty>
         </div>
         <el-table v-else :data="recentStudents" style="width: 100%">
@@ -88,21 +88,21 @@
             <template #default="{ row }">
               <div class="student-info">
                 <el-avatar :src="row.avatar" :size="40">
-                  {{ row.username.charAt(0).toUpperCase() }}
+                  {{ row.student.username.charAt(0).toUpperCase() }}
                 </el-avatar>
-                <span class="student-name">{{ row.username }}</span>
+                <span class="student-name">{{ row.student.username }}</span>
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="intro" label="Introduction" min-width="250" show-overflow-tooltip />
-          <el-table-column label="Joined" width="150">
+          <el-table-column prop="student.intro" label="简介" min-width="250" show-overflow-tooltip />
+          <el-table-column label="加入时间" width="150">
             <template #default="{ row }">
               {{ formatDate(row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column label="Actions" width="200">
+          <el-table-column label="操作" width="200" v-if="false">
             <template #default="{ row }">
-              <el-button size="small" @click="viewStudentDetails(row.id)">View Details</el-button>
+              <el-button size="small" @click="viewStudentDetails(row.id)">查看详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -112,8 +112,8 @@
       <el-card class="section-card">
         <template #header>
           <div class="card-header">
-            <span>Recent Training Plans</span>
-            <el-button text type="primary" @click="goToCreatePlan">Create New</el-button>
+            <span>最近训练计划</span>
+            <el-button text type="primary" @click="goToCreatePlan">创建新计划</el-button>
           </div>
         </template>
         <div v-if="loadingPlans" class="loading-container">
@@ -121,22 +121,22 @@
         </div>
         <div v-else-if="recentPlans.length === 0" class="empty-state">
           <el-empty description="No training plans yet">
-            <el-button type="primary" @click="goToCreatePlan">Create Your First Plan</el-button>
+            <el-button type="primary" @click="goToCreatePlan">创建新计划</el-button>
           </el-empty>
         </div>
         <el-table v-else :data="recentPlans" style="width: 100%">
-          <el-table-column prop="name" label="Plan Name" min-width="200" />
-          <el-table-column label="Student" width="150">
+          <el-table-column prop="name" label="计划名称" min-width="200" />
+          <el-table-column label="学员" width="150">
             <template #default="{ row }">
               {{ row.studentName }}
             </template>
           </el-table-column>
-          <el-table-column label="Duration" width="200">
+          <el-table-column label="持续时间" width="200">
             <template #default="{ row }">
               {{ formatDate(row.startDate) }} - {{ formatDate(row.endDate) }}
             </template>
           </el-table-column>
-          <el-table-column label="Status" width="120">
+          <el-table-column label="状态" width="120">
             <template #default="{ row }">
               <el-tag :type="getStatusType(row.status)">{{ row.status }}</el-tag>
             </template>
@@ -156,6 +156,7 @@ import { getMyStudents } from '@/api/coach'
 import { getTrainingPlans } from '@/api/training'
 import { getResources } from '@/api/resource'
 import { showError } from '@/utils/feedback'
+import { getUserInfo } from '@/utils/auth'
 
 const router = useRouter()
 
@@ -186,7 +187,8 @@ const fetchDashboardData = async () => {
     stats.value.totalPlans = plansResponse.length
 
     // Fetch content created by coach
-    const contentResponse = await getResources({ creatorId: 'current' })
+    const userId = getUserInfo().userId
+    const contentResponse = await getResources({ creatorId: userId })
     stats.value.totalContent = contentResponse.total || contentResponse.length || 0
   } catch (error) {
     showError('Failed to load dashboard data')

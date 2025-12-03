@@ -1,17 +1,21 @@
 package com.sharkfitness.controller;
 
 import com.sharkfitness.dto.UserProfileUpdateRequest;
+import com.sharkfitness.entity.User;
+import com.sharkfitness.repository.UserRepository;
 import com.sharkfitness.service.UserService;
 import com.sharkfitness.vo.ApiResponse;
 import com.sharkfitness.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controller for user profile management
@@ -22,6 +26,9 @@ import java.util.Map;
 public class UserController {
     
     private final UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
     
     /**
      * Get current user profile
@@ -34,7 +41,23 @@ public class UserController {
         UserVO userVO = userService.getProfile(userId);
         return ApiResponse.success(userVO);
     }
-    
+
+
+    @GetMapping("/profile/by-username")
+    public ApiResponse<User> getProfileByName(@RequestParam("username") String username) {
+        // 这里的 username 来自 URL 参数 ?username=xxx
+        // 不需要 request.getAttribute("currentUserId")，因为是查别人
+
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+
+        Optional<User> userVO = userRepository.findByUsername(username);
+        if (userVO.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
+        }
+        return ApiResponse.success(userVO.get());
+    }
     /**
      * Update current user profile
      * @param request HTTP request containing current user ID

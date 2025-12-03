@@ -10,7 +10,7 @@ import request from '../utils/request';
  */
 export function getResources(params) {
   return request({
-    url: '/api/resources',
+    url: '/api/resources/by-creator',
     method: 'get',
     params
   });

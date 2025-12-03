@@ -57,4 +57,7 @@ public interface ResourceRepository extends JpaRepository<FitnessResource, Long>
      * @return list of matching resources
      */
     List<FitnessResource> findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String title, String description);
+
+    // 通过 creatorId 获取所有资源
+    List<FitnessResource> findByCreatorId(Long creatorId);
 }

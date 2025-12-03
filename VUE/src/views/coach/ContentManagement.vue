@@ -24,24 +24,24 @@
       <!-- Content Table -->
       <el-card v-else>
         <el-table :data="contentList" style="width: 100%">
-          <el-table-column prop="title" label="Title" min-width="200" />
-          <el-table-column label="Type" width="120">
+          <el-table-column prop="title" label="名称" min-width="200" />
+          <el-table-column label="类型" width="120">
             <template #default="{ row }">
               <el-tag :type="getContentTypeColor(row.contentType)">
                 {{ row.contentType }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="viewCount" label="Views" width="100" />
-          <el-table-column label="Created" width="150">
+          <el-table-column prop="viewCount" label="浏览量" width="100" />
+          <el-table-column label="创建时间" width="150">
             <template #default="{ row }">
               {{ formatDate(row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column label="Actions" width="180">
+          <el-table-column label="操作" width="180">
             <template #default="{ row }">
-              <el-button size="small" @click="openEditDialog(row)">Edit</el-button>
-              <el-button size="small" type="danger" @click="confirmDelete(row)">Delete</el-button>
+              <el-button size="small" @click="openEditDialog(row)">编辑</el-button>
+              <el-button size="small" type="danger" @click="confirmDeleteqqqq(row)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -73,38 +73,38 @@
           :rules="contentRules"
           label-width="120px"
         >
-          <el-form-item label="Title" prop="title">
+          <el-form-item label="标题" prop="title">
             <el-input
               v-model="contentForm.title"
-              placeholder="Enter content title"
+              placeholder="输入内容标题"
               maxlength="200"
               show-word-limit
             />
           </el-form-item>
 
-          <el-form-item label="Description" prop="description">
+          <el-form-item label="描述" prop="description">
             <el-input
               v-model="contentForm.description"
               type="textarea"
               :rows="3"
-              placeholder="Enter content description"
+              placeholder="输入内容描述"
               maxlength="1000"
               show-word-limit
             />
           </el-form-item>
 
-          <el-form-item label="Content Type" prop="contentType">
+          <el-form-item label="内容类型" prop="contentType">
             <el-radio-group v-model="contentForm.contentType" @change="handleContentTypeChange">
-              <el-radio label="video">Video</el-radio>
-              <el-radio label="article">Article</el-radio>
-              <el-radio label="document">Document</el-radio>
+              <el-radio label="video">视频</el-radio>
+              <el-radio label="article">文章</el-radio>
+              <el-radio label="document">文档</el-radio>
             </el-radio-group>
           </el-form-item>
 
           <!-- File Upload for Video/Document -->
           <el-form-item
             v-if="contentForm.contentType === 'video' || contentForm.contentType === 'document'"
-            label="Upload File"
+            label="上传文件"
             prop="fileUrl"
           >
             <el-upload
@@ -133,7 +133,7 @@
           <!-- Rich Text Editor for Article -->
           <el-form-item
             v-if="contentForm.contentType === 'article'"
-            label="Content"
+            label="内容"
             prop="content"
           >
             <el-input
@@ -162,6 +162,7 @@ import { Plus, Loading, Upload } from '@element-plus/icons-vue'
 import Layout from '@/components/common/Layout.vue'
 import { getResources, createResource, updateResource, deleteResource } from '@/api/resource'
 import { getToken } from '@/utils/auth'
+import { getUserInfo } from '@/utils/auth'
 import { showSuccess, showError, showWarning, confirmDelete } from '@/utils/feedback'
 
 const contentList = ref([])
@@ -236,11 +237,14 @@ const contentRules = {
 
 const fetchContent = async () => {
   loading.value = true
+  const userInfo = getUserInfo()
+  // 打印当前用户信息以便调试
+  console.log('Fetching content for user:', JSON.stringify(userInfo))
   try {
     const response = await getResources({
       page: currentPage.value - 1,
       size: pageSize.value,
-      creatorId: 'current' // Filter by current coach
+      creatorId: userInfo.userId // 使用当前用户的ID
     })
     
     if (response.content) {
@@ -347,7 +351,9 @@ const submitContent = async () => {
         description: contentForm.description,
         contentType: contentForm.contentType,
         fileUrl: contentForm.fileUrl,
-        content: contentForm.content
+        content: contentForm.content,
+        // 增加其他必要字段，如 creatorId 等
+        creatorId: getUserInfo().userId
       }
 
       if (isEditMode.value) {
@@ -368,18 +374,20 @@ const submitContent = async () => {
   })
 }
 
-// const confirmDelete = async (content) => {
-//   try {
-//     await confirmDelete(`"${content.title}"`)
-//     await deleteResource(content.id)
-//     showSuccess('Content deleted successfully')
-//     fetchContent()
-//   } catch (error) {
-//     if (error !== 'cancel' && error !== 'close') {
-//       showError('Failed to delete content')
-//     }
-//   }
-// }
+const confirmDeleteqqqq = async (content) => {
+  // 打印要删除的内容以便调试
+  console.log('Attempting to delete content:', JSON.stringify(content))
+  try {
+    await confirmDelete(`"${content.title}"`)
+    await deleteResource(content.id)
+    showSuccess('删除成功')
+    fetchContent()
+  } catch (error) {
+    if (error !== 'cancel' && error !== 'close') {
+      showError('Failed to delete content')
+    }
+  }
+}
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A'
@@ -440,7 +448,7 @@ onMounted(() => {
   width: 100%;
 }
 
-@media (max-width: 1280px) {
+@media (max-width: 768px) {
   .content-management {
     padding: 10px;
   }

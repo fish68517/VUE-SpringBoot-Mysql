@@ -1,11 +1,14 @@
 package com.sharkfitness.controller;
 
 import com.sharkfitness.dto.ResourceCreateRequest;
+import com.sharkfitness.entity.FitnessResource;
 import com.sharkfitness.entity.User;
+import com.sharkfitness.repository.ResourceRepository;
 import com.sharkfitness.service.ResourceService;
 import com.sharkfitness.vo.ApiResponse;
 import com.sharkfitness.vo.ResourceVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,9 @@ import jakarta.validation.Valid;
 public class ResourceController {
     
     private final ResourceService resourceService;
+
+    @Autowired
+    private ResourceRepository resourceRepository;
     
     /**
      * Get all resources with pagination
@@ -92,5 +98,22 @@ public class ResourceController {
         
         resourceService.delete(id, currentUser.getId());
         return ApiResponse.success(null);
+    }
+
+    // GET
+    //	http://localhost:8080/api/resources?page=0&size=10&creatorId=-1
+    @GetMapping("/by-creator")
+    public ApiResponse<Page<ResourceVO>> getResourcesByCreator(
+            @RequestParam Long creatorId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        if (creatorId == -1) {
+
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<FitnessResource> resources = resourceRepository.findByCreatorId(creatorId, pageable);
+        Page<ResourceVO> resourceVOs = resources.map(resource -> ResourceVO.fromEntity(resource));
+        return ApiResponse.success(resourceVOs);
     }
 }
