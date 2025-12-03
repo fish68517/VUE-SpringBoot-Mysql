@@ -57,101 +57,29 @@ onUnmounted(() => {
 })
 </script>
 
+<!-- Layout.vue 的建议样式 -->
 <style scoped>
 .layout-container {
-  min-height: 100vh;
-  width: 100%;
+  height: 100vh;
+  width: 100vw; /* 确保容器占满视窗宽度 */
 }
 
-.layout-aside {
+.el-aside {
   background-color: #304156;
-  transition: width 0.3s ease, left 0.3s ease;
-  overflow-x: hidden;
+  color: white;
+  /* width: 200px;  <-- 侧边栏宽度通常是固定的 */
 }
 
-.layout-main-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.layout-header {
+.el-header {
   background-color: #fff;
   border-bottom: 1px solid #e6e6e6;
-  padding: 0;
-  height: var(--header-height, 60px);
-  display: flex;
-  align-items: center;
+  /* padding: 0 20px; */
 }
 
-.layout-main {
-  background-color: var(--color-bg-light, #f0f2f5);
-  padding: var(--spacing-lg, 20px);
-  flex: 1;
-  overflow-y: auto;
-}
-
-.sidebar-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Desktop layout */
-@media (min-width: 768px) {
-  .layout-aside {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 100;
-  }
-  
-  .layout-main-container {
-    margin-left: 200px;
-    transition: margin-left 0.3s ease;
-  }
-  
-  .layout-aside.is-collapsed + .layout-main-container {
-    margin-left: 64px;
-  }
-}
-
-/* Mobile layout */
-@media (max-width: 767px) {
-  .layout-aside {
-    position: fixed;
-    left: -100%;
-    top: 0;
-    bottom: 0;
-    z-index: 1000;
-    width: 240px !important;
-  }
-  
-  .layout-aside.is-open {
-    left: 0;
-  }
-  
-  .layout-main-container {
-    margin-left: 0;
-  }
-  
-  .layout-main {
-    padding: var(--spacing-md, 15px);
-  }
+.el-main {
+  background-color: #f5f7fa; /* 灰色背景 */
+  padding: 20px; /* 给内容留一点边距，但不要太大 */
+  height: 100%;
+  overflow-y: auto; /* 内容过多时只在 main 区域滚动 */
 }
 </style>

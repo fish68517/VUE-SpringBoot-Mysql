@@ -17,6 +17,17 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true,
         secure: false
+      },
+
+           // === 新增：图片静态资源的代理 ===
+      '/images': {
+        target: 'http://localhost:8080', // 转发给后端
+        changeOrigin: true
+      },
+      // === 如果还有视频，也要加 ===
+      '/videos': {
+        target: 'http://localhost:8080',
+        changeOrigin: true
       }
     }
   },

@@ -238,52 +238,70 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.coach-dashboard {
-  padding: 20px;
+/* 核心修改：移除 max-width 和 margin: 0 auto */
+.dashboard-container {
+  /* padding: 20px;  <-- 如果 Layout.vue 的 el-main 已经有 padding，这里可以去掉或减少 */
+  width: 100%;
 }
 
-.coach-dashboard h2 {
-  margin-bottom: 20px;
+.header-section {
+  margin-bottom: 24px;
+}
+
+.dashboard-title {
+  font-size: 24px;
+  font-weight: 600;
   color: #303133;
+  margin: 0;
+  text-align: left; /* 标题左对齐 */
 }
 
-.stats-row {
-  margin-bottom: 20px;
-}
-
+/* 统计卡片样式优化 */
 .stat-card {
-  margin-bottom: 20px;
+  height: 100%;
+  transition: all 0.3s;
 }
 
 .stat-content {
   display: flex;
   align-items: center;
-  gap: 15px;
+  padding: 10px;
 }
 
 .stat-icon {
-  flex-shrink: 0;
+  padding: 10px;
+  background-color: #f0f9eb;
+  border-radius: 8px;
+  margin-right: 16px;
 }
+/* 不同颜色的背景微调 */
+.el-col:nth-child(1) .stat-icon { background-color: #ecf5ff; }
+.el-col:nth-child(2) .stat-icon { background-color: #f0f9eb; }
+.el-col:nth-child(3) .stat-icon { background-color: #fdf6ec; }
 
 .stat-info {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .stat-value {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: bold;
   color: #303133;
-  line-height: 1;
-  margin-bottom: 5px;
+  line-height: 1.2;
 }
 
 .stat-label {
   font-size: 14px;
   color: #909399;
+  margin-top: 4px;
 }
 
-.section-card {
-  margin-bottom: 20px;
+/* 快捷操作按钮区域 */
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-start; /* 按钮左对齐 */
 }
 
 .card-header {
@@ -292,47 +310,44 @@ onMounted(() => {
   align-items: center;
 }
 
-.quick-actions {
+/* 学生列表样式 */
+.student-item {
   display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #EBEEF5;
 }
 
-.quick-actions .el-button {
-  flex: 1;
-  min-width: 150px;
+.student-item:last-child {
+  border-bottom: none;
+}
+
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #409EFF;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 12px;
 }
 
 .student-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  flex: 1;
 }
 
 .student-name {
   font-weight: 500;
+  font-size: 14px;
+  color: #303133;
 }
 
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-  font-size: 32px;
-  color: #409EFF;
-}
-
-.empty-state {
-  padding: 20px;
-}
-
-@media (max-width: 768px) {
-  .coach-dashboard {
-    padding: 10px;
-  }
-
-  .quick-actions .el-button {
-    flex: 1 1 100%;
-  }
+.student-date {
+  font-size: 12px;
+  color: #909399;
 }
 </style>
+

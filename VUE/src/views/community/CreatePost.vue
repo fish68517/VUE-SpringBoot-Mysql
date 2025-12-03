@@ -1,13 +1,3 @@
-没问题！我已经将 “发布动态” (Create Post) 页面进行了完整的汉化，包括表单标签、占位符、上传提示以及操作按钮的反馈信息。
-
-请复制以下代码覆盖你原来的文件：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="create-post">
     <div class="page-header">
@@ -32,19 +22,23 @@ expand_less
         </el-form-item>
 
         <el-form-item label="配图 (可选)">
+          <!-- 
+            修改说明：
+            1. 移除了 action 属性，改用 http-request 自定义上传
+            2. 使用 list-type="picture-card" 展示照片墙
+          -->
           <el-upload
             v-model:file-list="fileList"
-            :action="uploadAction"
+            action="#"
+            :http-request="handleCustomUpload"
             :before-upload="beforeUpload"
-            :on-success="handleUploadSuccess"
             :on-remove="handleRemove"
-            :on-error="handleUploadError"
             list-type="picture-card"
             :limit="9"
             accept="image/jpeg,image/png,image/gif"
             multiple
           >
-            <el-icon><plus /></el-icon>
+            <el-icon><Plus /></el-icon>
             <template #tip>
               <div class="upload-tip">
                 最多支持 9 张图片（JPG/PNG/GIF 格式，每张不超过 5MB）
@@ -59,7 +53,7 @@ expand_less
             <el-button
               type="primary"
               :loading="submitting"
-              :disabled="!form.content.trim()"
+              :disabled="!form.content.trim() && form.imageUrls.length === 0"
               @click="handleSubmit"
             >
               发布
@@ -72,30 +66,24 @@ expand_less
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ArrowLeft, Plus } from '@element-plus/icons-vue'
-import { createDynamic } from '@/api/community'
-// 注意：如果你的项目中没有 uploadImage 这个 API，可以忽略这个导入，或者确保路径正确
-import { uploadImage } from '@/api/upload' 
-import { showSuccess, showError, showWarning, confirmDiscard } from '@/utils/feedback'
+import { createDynamic } from '@/api/community.js'
+import { uploadImage } from '@/api/upload.js' // 确保导入路径正确
+import { showSuccess, showError, showWarning, confirmDiscard } from '@/utils/feedback.js'
 
 const router = useRouter()
 
 const form = ref({
   content: '',
-  imageUrls: []
+  imageUrls: [] // 存储上传成功的图片路径/名称
 })
 
 const fileList = ref([])
 const submitting = ref(false)
 
-const uploadAction = computed(() => {
-  // 这里的 URL 仅用于显示，实际上传逻辑可能由 before-upload 或自定义 request 处理
-  // 请确保这里指向你后端的真实上传接口
-  return import.meta.env.VITE_API_BASE_URL + '/api/upload/image'
-})
-
+// 图片上传前的校验
 const beforeUpload = (file) => {
   const isImage = ['image/jpeg', 'image/png', 'image/gif'].includes(file.type)
   const isLt5M = file.size / 1024 / 1024 < 5
@@ -112,63 +100,79 @@ const beforeUpload = (file) => {
   return true
 }
 
-const handleUploadSuccess = (response, file) => {
-  // 根据后端返回的数据结构获取 URL
-  if (response && response.url) {
+// 自定义上传逻辑，直接调用 API
+const handleCustomUpload = async (options) => {
+  const { file, onSuccess, onError } = options
+  try {
+    // 调用封装好的 uploadImage API，它会发送 POST 请求到后端的 /api/upload/image
+    const response = await uploadImage(file)
+    // 打印返回结果以便调试
+    console.log('上传成功，返回数据：', JSON.stringify(response))
+    // 上传成功，返回数据： {"filename":"7bc4a906a96b3aeed5bd252a035ab377.jpeg","url":"/images/89637cd0-a9da-4d68-9ada-63ed69c9ecff.jpeg"}
+    
+    // 假设后端返回的是图片的相对路径或完整URL字符串
+    // 将返回的图片路径存入 form.imageUrls
     form.value.imageUrls.push(response.url)
-    file.url = response.url
-  } else if (typeof response === 'string') {
-    // 如果直接返回字符串 URL
-    form.value.imageUrls.push(response)
-    file.url = response
+    
+    // 通知 Element Plus 上传成功（这样图片会有绿色的勾选标记）
+    // 我们把 response 传给 onSuccess，这样 handleRemove 时可以通过 file.response 获取到
+    onSuccess(response)
+  } catch (error) {
+    console.error('上传失败:', error)
+    onError(error)
+    showError('图片上传失败')
   }
 }
 
-const handleRemove = (file) => {
-  if (file.url) {
-    const index = form.value.imageUrls.indexOf(file.url)
+// 移除图片时的逻辑
+const handleRemove = (uploadFile) => {
+  // uploadFile.response 是我们在 onSuccess 中传入的值
+  // 如果是回显的图片可能没有 response，取 url
+  const urlToRemove = uploadFile.response || uploadFile.url
+  
+  if (urlToRemove) {
+    const index = form.value.imageUrls.indexOf(urlToRemove)
     if (index > -1) {
       form.value.imageUrls.splice(index, 1)
     }
   }
 }
 
-const handleUploadError = (error) => {
-  showError('图片上传失败')
-  console.error('上传错误:', error)
-}
-
+// 提交发布
 const handleSubmit = async () => {
-  if (!form.value.content.trim()) {
-    showWarning('请输入动态内容')
+  if (!form.value.content.trim() && form.value.imageUrls.length === 0) {
+    showWarning('请输入内容或上传图片')
     return
   }
 
   submitting.value = true
   try {
-    await createDynamic({
+    // 构造提交给后端的数据
+    // imageUrls 数组转换为逗号分隔的字符串
+    const postData = {
       content: form.value.content,
       imageUrls: form.value.imageUrls.join(',')
-    })
+    }
+
+    await createDynamic(postData)
     
     showSuccess('动态发布成功！')
     router.push('/community')
   } catch (error) {
-    // 错误通常已被拦截器处理
     console.error('发布动态失败:', error)
+    // 错误通常已被拦截器处理，这里不一定需要再次弹窗
   } finally {
     submitting.value = false
   }
 }
 
 const handleCancel = async () => {
-  // 如果有内容或已上传图片，提示用户是否放弃
   if (form.value.content.trim() || form.value.imageUrls.length > 0) {
     try {
-      await confirmDiscard() // 这里假设 confirmDiscard 内部提示语也是中文，或者它是通用的确认框
+      await confirmDiscard()
       goBack()
     } catch (error) {
-      // 用户取消了放弃操作，什么都不做
+      // 用户取消
     }
   } else {
     goBack()

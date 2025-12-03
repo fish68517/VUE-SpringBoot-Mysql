@@ -1,21 +1,4 @@
-好的，这是汉化后的 “动态详情” (Post Detail) 页面代码。
 
-主要改动：
-
-界面文本：全部按钮、菜单项、占位符均已改为中文。
-
-时间格式：formatTime 函数已调整为中文显示逻辑（刚刚、分钟前、小时前等）。
-
-反馈提示：所有成功/失败/确认提示都已翻译。
-
-请复制以下代码覆盖：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="post-detail">
     <!-- 返回按钮 -->
@@ -77,6 +60,7 @@ expand_less
         <!-- 底部操作栏 (Post Footer) -->
         <div class="post-footer">
           <like-button
+            v-if="false"
             :dynamic-id="post.id"
             :like-count="post.likeCount"
             :liked="post.liked"
@@ -192,6 +176,8 @@ const isOwnPost = computed(() => {
 })
 
 const imageList = computed(() => {
+  // 打印图片 imageList 列表以便调试
+  console.log("图片 imageList：" + JSON.stringify(post.value?.imageUrls));
   if (!post.value?.imageUrls) return []
   return post.value.imageUrls.split(',').filter(url => url.trim())
 })

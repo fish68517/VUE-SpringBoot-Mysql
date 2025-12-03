@@ -1,7 +1,7 @@
 <template>
   <div class="comment-list">
     <div class="comment-header">
-      <h3>Comments ({{ comments.length }})</h3>
+      <h3>评论列表 ({{ comments.length }})</h3>
     </div>
 
     <div v-if="comments.length > 0" class="comments">
@@ -34,7 +34,7 @@
 
     <el-empty
       v-else
-      description="No comments yet. Be the first to comment!"
+      description="还没有评论，请发表第一条评论把"
       :image-size="100"
     />
   </div>
