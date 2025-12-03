@@ -3,6 +3,7 @@ package com.sharkfitness.controller;
 import com.sharkfitness.entity.User;
 import com.sharkfitness.exception.BusinessException;
 import com.sharkfitness.repository.CoachStudentRepository;
+import com.sharkfitness.repository.UserRepository;
 import com.sharkfitness.service.AnalyticsService;
 import com.sharkfitness.service.CheckInService;
 import com.sharkfitness.service.DietRecordService;
@@ -29,7 +30,8 @@ public class CoachController {
     private final DietRecordService dietRecordService;
     private final AnalyticsService analyticsService;
     private final CoachStudentRepository coachStudentRepository;
-    
+    private final UserRepository userRepository;
+
     /**
      * Get check-in history for a specific student
      * @param currentUser Current authenticated user (coach)
@@ -90,5 +92,23 @@ public class CoachController {
         
         AnalyticsVO analytics = analyticsService.calculateStudentAnalytics(studentId, days);
         return ApiResponse.success(analytics);
+    }
+
+    // 获取教练列表
+    @GetMapping("/list")
+    public ApiResponse<List<User>> getCoaches() {
+        List<User> users = userRepository.findByRole("coach");
+        return ApiResponse.success(users);
+    }
+
+    // 根据id 获取教练信息
+    @GetMapping("/{coachId}")
+    public ApiResponse<User> getCoachById(@PathVariable Long coachId) {
+        User coach = userRepository.findById(coachId)
+                .orElseThrow(() -> new BusinessException(404, "Coach not found"));
+        if (!"coach".equals(coach.getRole())) {
+            throw new BusinessException(400, "User is not a coach");
+        }
+        return ApiResponse.success(coach);
     }
 }

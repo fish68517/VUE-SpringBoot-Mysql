@@ -44,7 +44,7 @@ public class FileUploadServiceImpl implements FileUploadService {
     public String uploadVideo(MultipartFile file) {
         log.debug("Uploading video file: {}", file.getOriginalFilename());
         validateVideoFile(file);
-        return saveFile(file, "videos");
+        return saveFile(file, "static/videos");
     }
 
     @Override

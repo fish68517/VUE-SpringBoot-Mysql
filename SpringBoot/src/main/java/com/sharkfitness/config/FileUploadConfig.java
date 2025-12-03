@@ -49,7 +49,7 @@ public class FileUploadConfig {
     public void init() {
         createDirectoryIfNotExists(uploadPath);
         createDirectoryIfNotExists(uploadPath + "/images");
-        createDirectoryIfNotExists(uploadPath + "/videos");
+        createDirectoryIfNotExists(uploadPath + "/static/videos");
         createDirectoryIfNotExists(uploadPath + "/avatars");
     }
 

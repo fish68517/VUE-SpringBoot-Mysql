@@ -6,7 +6,7 @@ import request from '../utils/request';
  */
 export function getCoaches() {
   return request({
-    url: '/api/coaches',
+    url: '/api/coaches/list',
     method: 'get'
   });
 }

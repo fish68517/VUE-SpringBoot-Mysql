@@ -1,23 +1,4 @@
-没问题！我已经将 “资源详情” (Resource Detail) 页面全部汉化。
 
-主要修改包括：
-
-界面文本：按钮、标题、提示语全部改为中文。
-
-日期格式：调整为符合中国习惯的 年-月-日 格式。
-
-类型显示：增加了 formatContentType 函数，将后台的 video/article 转换为 视频/文章 显示。
-
-交互提示：收藏成功/失败的弹窗提示也改为了中文。
-
-请复制以下代码覆盖你原来的文件：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="resource-detail-container">
     <!-- 加载状态 (Loading State) -->
@@ -129,6 +110,7 @@ expand_less
               <h4>{{ resource.creatorName }}</h4>
               <p>专业教练</p>
               <el-button
+                v-if="false"
                 type="primary"
                 size="small"
                 @click="viewCoachProfile"
@@ -215,9 +197,22 @@ const formatContentType = (type) => {
 const getFileUrl = (url) => {
   if (!url) return '';
   // If URL is relative, prepend the API base URL
+  // // https://api.example.com/videos/beginner_tutorial.mp4 视频存储在 springboot 的 resoureces/videos 目录下，可以直接访问
+  if (url.startsWith('http') || url.startsWith('https')) {
+    // 但是需要过滤出 videos/beginner_tutorial.mp4
+    const index = url.lastIndexOf('/');
+    if (index !== -1) {
+      url = url.substring(index + 1);
+    }
+    // http://localhost:8080/api/videos/beginner_tutorial.mp4
+    url = import.meta.env.VITE_API_BASE_URL.replace('/api', '') + '/videos/' + url;
+    return url;
+  
+  }
   if (url.startsWith('/')) {
     return import.meta.env.VITE_API_BASE_URL.replace('/api', '') + url;
   }
+  console.log("文件URL：" + url);
   return url;
 };
 
@@ -249,8 +244,9 @@ const fetchResource = async () => {
 const checkIfCollected = async () => {
   try {
     const collections = await getCollections();
+    console.log("收藏列表：" + JSON.stringify(collections));
     isCollected.value = collections.some(
-      (collection) => collection.resourceId === resource.value.id
+      (collection) => collection.id === resource.value.id
     );
   } catch (error) {
     console.error('Failed to check collection status:', error);
@@ -260,6 +256,8 @@ const checkIfCollected = async () => {
 
 const toggleCollection = async () => {
   collectionLoading.value = true;
+  // 打印resource
+  console.log("资源：" + JSON.stringify(resource.value));
   try {
     if (isCollected.value) {
       await removeCollection(resource.value.id);

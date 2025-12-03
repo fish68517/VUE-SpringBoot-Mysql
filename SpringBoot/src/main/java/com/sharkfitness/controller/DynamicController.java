@@ -60,6 +60,9 @@ public class DynamicController {
     public ApiResponse<DynamicVO> createDynamic(
             HttpServletRequest request,
             @Valid @RequestBody DynamicCreateRequest createRequest) {
+        // 打印 request
+        System.out.println("request: " + request);
+        System.out.println("request userId: " +  request.getAttribute("currentUserId"));
         Long userId = (Long) request.getAttribute("currentUserId");
         DynamicVO dynamic = dynamicService.create(userId, createRequest);
         return ApiResponse.success(dynamic);

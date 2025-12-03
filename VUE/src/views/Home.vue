@@ -219,6 +219,13 @@ const quickAccessItems = [
     icon: Trophy,
     route: '/checkin',
     color: '#F56C6C'
+  },
+  {
+    title: '教练列表',
+    description: '查看你喜欢的教练',
+    icon: Trophy,
+    route: '/coaches',
+    color: '#F56C6C'
   }
 ];
 

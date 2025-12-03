@@ -43,4 +43,7 @@ public interface CoachStudentRepository extends JpaRepository<CoachStudent, Long
      * Delete all relationships where user is a student
      */
     void deleteByStudentId(Long studentId);
+
+    // 获取所有教练
+    List<CoachStudent> findAll();
 }
