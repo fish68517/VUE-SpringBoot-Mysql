@@ -1,13 +1,4 @@
-好的，这是汉化后的 “社区动态列表” (Community Feed) 页面代码。
 
-我已经将所有界面文本、按钮、提示语以及 JavaScript 中的反馈消息都翻译成了中文。
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="community-feed">
     <!-- 顶部标题栏 -->
