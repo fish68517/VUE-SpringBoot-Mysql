@@ -1,13 +1,4 @@
-没问题！我已经将页面中所有的静态英文文本、按钮标签、提示信息以及脚本中的描述全部翻译成了中文，并优化了一些中文表达以更符合国内使用习惯（例如将 "Check-in" 翻译为 "打卡"）。
 
-请直接复制以下代码覆盖你原来的文件：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="home-container">
     <!-- 欢迎横幅 (Welcome Banner) -->
@@ -155,6 +146,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/store/modules/auth';
 import { getResources } from '@/api/resource';
+import { getResourcesAll } from '@/api/resource';
 import { getDynamics } from '@/api/community';
 import { getCheckInStats } from '@/api/checkin';
 import { getCollections } from '@/api/collection';
@@ -233,7 +225,7 @@ const quickAccessItems = [
 const fetchFeaturedResources = async () => {
   loadingResources.value = true;
   try {
-    const data = await getResources({ page: 0, size: 6 });
+    const data = await getResourcesAll({ page: 0, size: 6 });
     featuredResources.value = data.content || data || [];
   } catch (error) {
     console.error('获取资源失败:', error);

@@ -16,6 +16,14 @@ export function getResources(params) {
   });
 }
 
+export function getResourcesAll(params) {
+  return request({
+    url: '/api/resources',
+    method: 'get',
+    params
+  });
+}
+
 /**
  * Get resource by ID
  * @param {number} id - Resource ID

@@ -22,9 +22,9 @@ public class ModerationServiceImpl implements ModerationService {
     private final DynamicRepository dynamicRepository;
     
     @Override
-    public Page<DynamicVO> getModerationQueue(int page, int size) {
+    public Page<DynamicVO> getModerationQueue(String status,int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Dynamic> dynamics = dynamicRepository.findByStatusOrderByCreatedAtDesc("pending", pageable);
+        Page<Dynamic> dynamics = dynamicRepository.findByStatusOrderByCreatedAtDesc(status, pageable);
         
         return dynamics.map(this::convertToVO);
     }

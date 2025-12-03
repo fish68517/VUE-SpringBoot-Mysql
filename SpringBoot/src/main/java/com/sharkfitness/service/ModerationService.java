@@ -15,7 +15,7 @@ public interface ModerationService {
      * @param size Page size
      * @return Page of dynamics pending moderation
      */
-    Page<DynamicVO> getModerationQueue(int page, int size);
+    Page<DynamicVO> getModerationQueue(String status,int page, int size);
     
     /**
      * Approve a dynamic post

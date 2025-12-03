@@ -35,7 +35,7 @@ public class DynamicServiceImpl implements DynamicService {
         dynamic.setContent(request.getContent());
         dynamic.setImageUrls(request.getImageUrls());
         dynamic.setUser(user);
-        dynamic.setStatus("approved");  // Set initial status to approved for regular posts
+        dynamic.setStatus("pending");  // Set initial status to approved for regular posts
         dynamic.setLikeCount(0);
         dynamic.setCommentCount(0);
         

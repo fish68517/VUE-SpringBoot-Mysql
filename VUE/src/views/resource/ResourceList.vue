@@ -69,6 +69,7 @@ import { Loading } from '@element-plus/icons-vue';
 import ResourceCard from '@/components/resource/ResourceCard.vue';
 import { getResources } from '@/api/resource';
 import { showError } from '@/utils/feedback';
+import { getResourcesAll } from '../../api/resource';
 
 const resources = ref([]);
 const loading = ref(false);
@@ -96,7 +97,7 @@ const fetchResources = async () => {
       params.contentType = selectedType.value;
     }
 
-    const response = await getResources(params);
+    const response = await getResourcesAll(params);
     resources.value = response.content || [];
     total.value = response.totalElements || 0;
   } catch (error) {

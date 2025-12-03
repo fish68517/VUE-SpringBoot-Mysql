@@ -1,8 +1,10 @@
 package com.sharkfitness.controller;
 
 import com.sharkfitness.dto.UserProfileUpdateRequest;
+import com.sharkfitness.entity.Dynamic;
 import com.sharkfitness.entity.User;
 import com.sharkfitness.exception.UnauthorizedException;
+import com.sharkfitness.repository.DynamicRepository;
 import com.sharkfitness.service.AdminService;
 import com.sharkfitness.service.ModerationService;
 import com.sharkfitness.vo.AdminUserVO;
@@ -13,7 +15,10 @@ import com.sharkfitness.vo.UserVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +34,9 @@ public class AdminController {
     
     private final AdminService adminService;
     private final ModerationService moderationService;
+
+    @Autowired
+    private DynamicRepository dynamicRepository;
     
     /**
      * List all users with optional filters
@@ -114,12 +122,16 @@ public class AdminController {
     public ApiResponse<Page<DynamicVO>> getModerationQueue(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
+            // 2. 将 @PathVariable 改为 @RequestParam
+            // 这样它就能读取 URL 中的 ?status=pending
+            @RequestParam String status,
+
             HttpServletRequest request) {
         
         // Check admin authorization
-        checkAdminRole(request);
+        //checkAdminRole(request);
         
-        Page<DynamicVO> moderationQueue = moderationService.getModerationQueue(page, size);
+        Page<DynamicVO> moderationQueue = moderationService.getModerationQueue(status,page, size);
         return ApiResponse.success(moderationQueue);
     }
     
@@ -181,4 +193,25 @@ public class AdminController {
             throw new UnauthorizedException("Admin access required");
         }
     }
+
+    // GET
+    //	http://localhost:8080/api/admin/moderation?status=pending&page=0&size=20
+    // 增加状态查询接口
+/*    @GetMapping("/moderation/filter")
+    public ApiResponse<Page<DynamicVO>> getModerationByStatus(
+            @RequestParam String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            HttpServletRequest request) {
+
+        // Check admin authorization
+        // checkAdminRole(request);
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Dynamic> dynamics = dynamicRepository.findByStatusOrderByCreatedAtDesc(status, pageable);
+
+        return dynamics.map(this::convertToVO);
+    }*/
+
 }

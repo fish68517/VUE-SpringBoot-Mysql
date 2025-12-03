@@ -4,7 +4,7 @@
     <h1>内容审核</h1>
 
     <!-- 筛选栏 (Filter Bar) -->
-    <el-card class="filter-card">
+    <el-card class="filter-card" v-if="false">
       <div class="filter-bar">
         <el-date-picker
           v-model="dateRange"
@@ -131,7 +131,7 @@
     </el-card>
 
     <!-- 审核历史 (Moderation History) -->
-    <el-card class="history-card">
+    <el-card class="history-card" v-if="false">
       <template #header>
         <div class="card-header">
           <span>最近审核记录</span>

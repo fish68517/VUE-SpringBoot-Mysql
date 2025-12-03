@@ -200,7 +200,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { Plus, Edit, Delete, View, Upload } from '@element-plus/icons-vue';
-import { getResources, createResource, updateResource, deleteResource } from '@/api/resource';
+import { getResourcesAll, createResource, updateResource, deleteResource } from '@/api/resource';
 import { getToken } from '@/utils/auth';
 import { showSuccess, showError, confirmDelete } from '@/utils/feedback';
 
@@ -281,9 +281,10 @@ const fetchResources = async () => {
     const params = {
       page: currentPage.value - 1,
       size: pageSize.value
+      
     };
 
-    const data = await getResources(params);
+    const data = await getResourcesAll(params);
     
     if (data.content) {
       resources.value = data.content;
