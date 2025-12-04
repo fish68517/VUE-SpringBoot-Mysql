@@ -13,7 +13,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
+// 1. 删除这一行！defineProps 不需要导入
+// import { defineProps } from 'vue' 
 
 interface CarouselItem {
   image: string
@@ -21,13 +22,12 @@ interface CarouselItem {
   description: string
 }
 
-defineProps<{
+// 2. defineProps 只能调用一次，请直接赋值给一个变量（通常命名为 props）
+const props = defineProps<{
   items: CarouselItem[]
 }>()
 
-const carouselItems = defineProps<{
-  items: CarouselItem[]
-}>().items
+
 </script>
 
 <style scoped>

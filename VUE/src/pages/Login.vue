@@ -181,7 +181,13 @@ const handlePasswordLogin = async () => {
         userStore.setToken(token)
         userStore.setUserInfo({ userId, phone: passwordForm.phone })
         ElMessage.success('登录成功')
-        router.push('/')
+        const userRole = response.data.role
+        if (userRole === 'admin') {
+          router.push('/admin')
+        } else {
+          router.push('/')
+        }
+      
       } else {
         ElMessage.error(response.message || '登录失败')
       }

@@ -41,8 +41,8 @@
         <!-- MySQL Driver -->
         <dependency>
             <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Lombok -->
@@ -59,21 +59,22 @@
         </dependency>
 
         <!-- JWT Token Support -->
+        <!-- JWT Token Support -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.12.3</version>
+            <version>0.11.5</version> <!-- 修改这里 -->
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.12.3</version>
+            <version>0.11.5</version> <!-- 修改这里 -->
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.12.3</version>
+            <version>0.11.5</version> <!-- 修改这里 -->
             <scope>runtime</scope>
         </dependency>
 

@@ -2,6 +2,61 @@ import { createRouter, createWebHistory, RouteRecordRaw, NavigationGuardNext, Ro
 import { useUserStore } from '../stores/user'
 
 const routes: RouteRecordRaw[] = [
+
+  // 管理员后台路由
+  {
+    path: '/admin',
+    component: () => import('../pages/admin/AdminLayout.vue'),
+    meta: { requiresAuth: true, role: 'admin' }, // 建议配合后端角色权限
+    children: [
+      {
+        path: '', // 默认跳转
+        redirect: '/admin/dashboard'
+      },
+      {
+        path: 'dashboard',
+        name: 'AdminDashboard',
+        component: () => import('../pages/admin/Dashboard.vue')
+      },
+      {
+        path: 'users',
+        name: 'AdminUsers',
+        component: () => import('../pages/admin/UserManagement.vue')
+      },
+      {
+        path: 'tickets',
+        name: 'AdminTickets',
+        component: () => import('../pages/admin/TicketManagement.vue')
+      },
+      {
+        path: 'products',
+        name: 'AdminProducts',
+        component: () => import('../pages/admin/ProductManagement.vue')
+      },
+      {
+        path: 'orders',
+        name: 'AdminOrders',
+        component: () => import('../pages/admin/OrderManagement.vue')
+      },
+      {
+        path: 'content',
+        name: 'AdminContent',
+        component: () => import('../pages/admin/ContentManagement.vue')
+      },
+      {
+        path: 'tasks',
+        name: 'AdminTasks',
+        component: () => import('../pages/admin/TaskManagement.vue')
+      },
+      {
+        path: 'points',
+        name: 'AdminPoints',
+        component: () => import('../pages/admin/PointsMallManagement.vue')
+      }
+    ]
+  },
+
+
   {
     path: '/',
     name: 'Home',

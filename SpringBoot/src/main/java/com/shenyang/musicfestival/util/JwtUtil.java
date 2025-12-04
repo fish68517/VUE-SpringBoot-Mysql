@@ -34,26 +34,32 @@ public class JwtUtil {
     /**
      * Generate JWT token
      */
+    /**
+     * Generate JWT token
+     */
     public String generateToken(Long userId, String role) {
         return Jwts.builder()
-            .subject(userId.toString())
-            .claim("role", role)
-            .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
-            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-            .compact();
+                .setSubject(userId.toString())  // 修改：增加 set
+                .claim("role", role)            // 保持不变：claim 方法在旧版本中也可以直接用
+                .setIssuedAt(new Date())        // 修改：增加 set
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration)) // 修改：增加 set
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     /**
      * Generate refresh token
      */
+    /**
+     * Generate refresh token
+     */
     public String generateRefreshToken(Long userId) {
         return Jwts.builder()
-            .subject(userId.toString())
-            .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
-            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-            .compact();
+                .setSubject(userId.toString())  // 修改这里：增加 set
+                .setIssuedAt(new Date())        // 修改这里：增加 set
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpiration)) // 修改这里：增加 set
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     /**
