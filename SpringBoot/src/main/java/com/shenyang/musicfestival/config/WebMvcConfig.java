@@ -39,10 +39,12 @@ public class WebMvcConfig implements WebMvcConfigurer {
                     "/api/users/login",
                     "/api/users/register",
                     "/api/users/**",      // 或者直接放行 /api/users 下的所有接口
+
+                    "/api/admin/**",
                 // Public endpoints that don't require authentication
                 "/auth/**",
-                "/festival/info",
-                "/festival/schedule",
+                "/api/festival/info",
+                "/api/festival/schedule",
                 "/artists",
                 "/artists/**",
                 "/weather",

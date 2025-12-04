@@ -1,7 +1,7 @@
 <template>
   <div class="carousel-container">
-    <el-carousel :interval="5000" type="card" height="400px">
-      <el-carousel-item v-for="(item, index) in carouselItems" :key="index">
+    <el-carousel :interval="5000" type="card" height="400px" width="100%">
+      <el-carousel-item v-for="(item, index) in props.items" :key="index">
         <img :src="item.image" :alt="item.title" class="carousel-image" />
         <div class="carousel-overlay">
           <h3>{{ item.title }}</h3>
@@ -13,8 +13,7 @@
 </template>
 
 <script setup lang="ts">
-// 1. 删除这一行！defineProps 不需要导入
-// import { defineProps } from 'vue' 
+
 
 interface CarouselItem {
   image: string
@@ -22,12 +21,11 @@ interface CarouselItem {
   description: string
 }
 
-// 2. defineProps 只能调用一次，请直接赋值给一个变量（通常命名为 props）
 const props = defineProps<{
   items: CarouselItem[]
 }>()
 
-
+console.log('轮播图数据:', props.items)
 </script>
 
 <style scoped>

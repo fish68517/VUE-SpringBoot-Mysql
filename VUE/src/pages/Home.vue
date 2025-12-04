@@ -7,6 +7,8 @@
         <el-button type="primary" size="small" @click="handleGoToTicket">购票</el-button>
         <el-button type="primary" size="small" @click="handleGoToShop">商城</el-button>
         <el-button type="primary" size="small" @click="handleGoToOrders">我的订单</el-button>
+        <el-button type="primary" size="small" @click="handleGoToWeather">天气交通</el-button>
+        <el-button type="primary" size="small" @click="handleGoToPoints">打卡积分</el-button>
         <el-button type="danger" size="small" @click="handleLogout">退出登录</el-button>
       </div>
     </div>
@@ -55,6 +57,13 @@ import Carousel from '@/components/Carousel.vue'
 import Countdown from '@/components/Countdown.vue'
 import ArtistList from '@/components/ArtistList.vue'
 
+// 1. 引入图片资源
+// '@' 符号通常配置为指向 'src' 目录
+import banner1 from '@/assets/images/banner1.jpg'
+import banner2 from '@/assets/images/banner2.jpg'
+import banner3 from '@/assets/images/banner3.jpg'
+
+
 interface CarouselItem {
   image: string
   title: string
@@ -83,22 +92,23 @@ interface FestivalInfo {
 const router = useRouter()
 const userStore = useUserStore()
 
+// 2. 在数组中使用引入的变量
 const carouselItems = ref<CarouselItem[]>([
   {
-    image: 'https://via.placeholder.com/1200x400?text=沈阳音乐节',
+    image: banner1,  // 这里直接使用变量，不要加引号
     title: '沈阳音乐节',
     description: '汇聚国内外顶级艺人，打造沉浸式音乐体验',
   },
   {
-    image: 'https://via.placeholder.com/1200x400?text=音乐盛宴',
+    image: banner2,
     title: '音乐盛宴',
     description: '融合沈阳本地文化，展现满族风情',
   },
-  {
-    image: 'https://via.placeholder.com/1200x400?text=打卡盛京',
-    title: '打卡盛京',
-    description: '完成打卡任务，赢取积分奖励',
-  },
+  // {
+  //   image: banner1,
+  //   title: '打卡盛京',
+  //   description: '完成打卡任务，赢取积分奖励',
+  // },
 ])
 
 const artists = ref<Artist[]>([])
@@ -133,6 +143,14 @@ const handleSelectArtist = (artist: Artist) => {
 
 const handleGoToTicket = () => {
   router.push('/ticket-purchase')
+}
+
+const handleGoToWeather = () => {
+  router.push('/weather')
+}
+
+const handleGoToPoints = () => {
+  router.push('/points')
 }
 
 const handleGoToShop = () => {
