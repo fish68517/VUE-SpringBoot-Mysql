@@ -218,6 +218,13 @@ const quickAccessItems = [
     icon: Trophy,
     route: '/coaches',
     color: '#F56C6C'
+  },
+   {
+    title: '饮食记录',
+    description: '查看你的饮食摄入情况',
+    icon: Trophy,
+    route: '/diet',
+    color: '#E6A23C'
   }
 ];
 

@@ -34,6 +34,32 @@ export function getMyStudents() {
   });
 }
 
+
+/**
+ * Get current coach's students
+ * @returns {Promise} List of students
+ */
+export function getCoachStudentsById(coachId, studentId) {
+  return request({
+    url: `/api/coaches/coachId/${coachId}/students/${studentId}`,
+    method: 'get'
+  });
+}
+
+/**
+ * Renew coach-student relationship
+ * @param {Object} data - Renewal data { coachId, studentId, expireAt }
+ * @returns {Promise} Response
+ */
+export function renewCoachStudent(data) {
+  return request({
+    url: '/api/coach-student/renew',
+    method: 'post',
+    data
+  });
+}
+
+
 /**
  * Add student to coach's roster
  * @param {number} userId - User ID to add as student

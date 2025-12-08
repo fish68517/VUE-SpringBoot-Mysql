@@ -56,6 +56,14 @@ public class CoachController {
         List<CoachStudent> students = coachStudentRepository.findByCoachId(currentUser.getId());
         return ApiResponse.success(students);
     }
+
+    @GetMapping("/coachId/{coachId}/students/{studentId}")
+    public ApiResponse<CoachStudent> getCoachStudentsById(@PathVariable Long coachId,@PathVariable Long studentId) {
+
+        CoachStudent students = coachStudentRepository.findByCoachIdAndStudentId(coachId,studentId);
+
+        return ApiResponse.success(students);
+    }
     
     /**
      * Get diet records for a specific student

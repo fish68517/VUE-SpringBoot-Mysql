@@ -30,4 +30,10 @@ public class CoachStudent {
     @CreationTimestamp
     @Column(name = "created_at", updatable = true)
     private LocalDateTime createdAt;
+
+    @Column(name = "expire_at")
+    private LocalDateTime expireAt;
+
+    @Column(name = "status")
+    private int status;
 }

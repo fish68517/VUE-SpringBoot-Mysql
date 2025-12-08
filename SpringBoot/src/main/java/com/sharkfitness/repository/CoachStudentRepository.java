@@ -52,4 +52,7 @@ public interface CoachStudentRepository extends JpaRepository<CoachStudent, Long
 
     // 获取所有教练
     List<CoachStudent> findAll();
+
+    // 根据 coachId 和 studentId
+    CoachStudent findByCoachIdAndStudentId(Long coachId, Long studentId);
 }
