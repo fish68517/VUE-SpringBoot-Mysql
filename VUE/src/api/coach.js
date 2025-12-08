@@ -53,7 +53,7 @@ export function getCoachStudentsById(coachId, studentId) {
  */
 export function renewCoachStudent(data) {
   return request({
-    url: '/api/coach-student/renew',
+    url: '/api/coaches/renew',
     method: 'post',
     data
   });

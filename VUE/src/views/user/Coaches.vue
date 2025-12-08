@@ -198,7 +198,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Search, Timer, Warning, Calendar, Money, UserFilled } from '@element-plus/icons-vue'
 import Layout from '@/components/common/Layout.vue'
-import { getCoaches, getCoachById, getCoachStudentsById } from '@/api/coach.js'
+import { getCoaches, getCoachById, getCoachStudentsById, renewCoachStudent } from '@/api/coach.js'
 import { getUserInfo } from '@/utils/auth.js'
 import { showSuccess, showError, showInfo } from '@/utils/feedback.js'
 
@@ -319,18 +319,59 @@ const handleRenew = (coach) => {
 }
 
 // 确认续约逻辑
-const confirmRenew = () => {
+// 确认续约逻辑 (真实逻辑)
+const confirmRenew = async () => {
   renewing.value = true
-  // 模拟 API 请求
-  // 续约的逻辑就是：1. 获取当前教练的 ID，2. 获取当前教练的到期时间，3. 然后根据时间：1个月。3个月，12个月来修改教练的到期时间
-  setTimeout(() => {
-    renewing.value = false
-    renewDialogVisible.value = false
-    showSuccess(`成功为 ${targetRenewCoach.value.username} 办理了续约！`)
+  try {
+    const userInfo = getUserInfo()
+    const studentId = userInfo.userId
+    const coachId = targetRenewCoach.value.id
     
-    // 续约成功后重新刷新列表以更新状态
-    fetchCoaches()
-  }, 1500)
+    // 1. 获取当前基础时间
+    const now = new Date()
+    let startDate = now
+    
+    // 如果已经是活跃会员，则在当前到期时间基础上累加
+    const currentStatus = getRelationStatus(targetRenewCoach.value)
+    if (currentStatus === 'active') {
+      const currentExpire = new Date(targetRenewCoach.value.relationship.expireAt)
+      if (currentExpire > now) {
+        startDate = currentExpire
+      }
+    }
+    
+    // 2. 计算新的到期时间
+    const months = parseInt(renewDuration.value)
+    const newExpireDate = new Date(startDate)
+    newExpireDate.setMonth(newExpireDate.getMonth() + months)
+    
+    // 3. 调用 API 更新
+    console.log(`正在续约: 教练=${coachId}, 学员=${studentId}, 新到期时间=${newExpireDate.toISOString()}`)
+    
+    await renewCoachStudent({
+      coachId: coachId,
+      studentId: studentId,
+      expireAt: newExpireDate.toISOString() // 发送 ISO 格式字符串
+    })
+
+    showSuccess(`成功为 ${targetRenewCoach.value.username} 办理了续约！`)
+    renewDialogVisible.value = false
+    
+    // 4. 刷新列表状态
+    await fetchCoaches()
+    
+    // 如果详情弹窗开着，也尝试刷新详情数据
+    if (dialogVisible.value && selectedCoach.value?.id === coachId) {
+      const relation = await getCoachStudentsById(coachId, studentId)
+      selectedCoach.value.relationship = relation
+    }
+
+  } catch (error) {
+    console.error('续约失败:', error)
+    showError(error.message || '续约失败，请重试')
+  } finally {
+    renewing.value = false
+  }
 }
 
 const handleSearch = () => { /* Computed handled */ }

@@ -1,5 +1,6 @@
 package com.sharkfitness.controller;
 
+import com.sharkfitness.dto.CoachStudentDTO;
 import com.sharkfitness.entity.CoachStudent;
 import com.sharkfitness.entity.User;
 import com.sharkfitness.exception.BusinessException;
@@ -17,6 +18,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -168,6 +170,43 @@ public class CoachController {
 
         // 删除教练-学生关系
         coachStudentRepository.deleteByStudentId(studentId);
+
+        return ApiResponse.success(null);
+    }
+
+    // 续约接口 {"coachId":3,"studentId":5,"expireAt":"2026-01-08T04:33:43.754Z"}
+    @PostMapping("/renew")
+    public ApiResponse<Void> renewStudent(
+            @RequestBody CoachStudentDTO coachStudentRequest) {
+
+        Long coachId = coachStudentRequest.getCoachId();
+        Long studentId = coachStudentRequest.getStudentId();
+        CoachStudent existingRelation = coachStudentRepository.findByCoachIdAndStudentId(coachId, studentId);
+
+        if (existingRelation == null) {
+            // 不会会员就增加会员
+            // 创建教练-学生关系
+            CoachStudent coachStudent = new CoachStudent();
+            // 检查学生是否存在
+            User student = userRepository.findById(studentId)
+                    .orElseThrow(() -> new BusinessException(404, "Student not found"));
+
+
+            User coach = userRepository.findById(coachId)
+                    .orElseThrow(() -> new BusinessException(404, "Student not found"));
+
+            coachStudent.setStudent(student);
+            coachStudent.setCoach(coach);
+            coachStudentRepository.save(coachStudent);
+
+            existingRelation = coachStudentRepository.findByCoachIdAndStudentId(coachId, studentId);
+
+        }
+
+        // 直接 set 即可，Spring 已经帮你转好了
+        existingRelation.setExpireAt(coachStudentRequest.getExpireAt());
+        existingRelation.setStatus(1);
+        coachStudentRepository.save(existingRelation);
 
         return ApiResponse.success(null);
     }
