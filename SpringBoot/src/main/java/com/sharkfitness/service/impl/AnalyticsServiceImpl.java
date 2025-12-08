@@ -65,7 +65,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         int activeDays = activeDates.size();
         
         // Calculate training plan completion rate
-        double planCompletionRate = calculatePlanCompletionRate(student, startDate, endDate);
+        double planCompletionRate = calculatePlanCompletionRate(student/*, startDate, endDate*/);
         
         return new AnalyticsVO(
                 checkInFrequency,
@@ -76,10 +76,10 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         );
     }
     
-    /**
+  /*  *//**
      * Calculate training plan completion rate
      * Based on plans that have ended within the period and their status
-     */
+     *//*
     private double calculatePlanCompletionRate(User student, LocalDate startDate, LocalDate endDate) {
         // Get all training plans for the student
         List<TrainingPlan> allPlans = trainingPlanRepository.findByStudent(student);
@@ -131,7 +131,36 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         long completedPlans = relevantPlans.stream()
                 .filter(plan -> "completed".equalsIgnoreCase(plan.getStatus()))
                 .count();
-        
+        System.out.println("Completed plans: " + completedPlans);
+        System.out.println("Relevant plans: " + relevantPlans.size());
         return (completedPlans * 100.0) / relevantPlans.size();
+    }*/
+
+    /**
+     * Calculate training plan completion rate (Simplified)
+     * Logic: Total Completed Plans / Total Plans Assigned * 100
+     * Ignores time periods.
+     */
+    private double calculatePlanCompletionRate(User student) {
+        // 1. 获取该学生的所有训练计划
+        List<TrainingPlan> allPlans = trainingPlanRepository.findByStudent(student);
+
+        // 如果没有计划，完成率为 0
+        if (allPlans.isEmpty()) {
+            return 0.0;
+        }
+
+        // 2. 统计状态为 "completed" 的计划数量
+        long completedPlans = allPlans.stream()
+                .filter(plan -> "completed".equalsIgnoreCase(plan.getStatus()))
+                .count();
+
+        // 调试日志（可选）
+        System.out.println("Total plans: " + allPlans.size());
+        System.out.println("Completed plans: " + completedPlans);
+
+        // 3. 直接计算百分比
+        return ((double) completedPlans * 100.0) / allPlans.size();
     }
+
 }

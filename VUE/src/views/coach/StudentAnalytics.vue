@@ -19,13 +19,13 @@
               >
                 <el-option
                   v-for="student in students"
-                  :key="student.id"
-                  :label="student.username"
-                  :value="student.id"
+                  :key="student.student.id"
+                  :label="student.student.username"
+                  :value="student.student.id"
                 >
                   <div class="student-option">
-                   
-                    <span>{{ student.username }}</span>
+
+                    <span>{{ student.student.username }}</span>
                   </div>
                 </el-option>
               </el-select>
@@ -106,10 +106,8 @@
                 <el-icon class="stat-icon" :size="35" color="#E6A23C">
                   <Food />
                 </el-icon>
-                <div class="stat-info">
-                  <div class="stat-value">{{ analytics.averageCalories || 0 }}</div>
-                  <div class="stat-label">日均摄入热量 (kcal)</div>
-                </div>
+                <div class="stat-value">{{ (analytics.averageCalories || 0).toFixed(2) }}</div>
+
               </div>
             </el-card>
           </el-col>

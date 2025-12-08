@@ -8,14 +8,14 @@
     </div>
     <div v-else>
       <!-- Check-in Trend Chart -->
-      <div class="chart-section">
+      <div class="chart-section" v-if="false">
         <h4>Check-in Trend</h4>
         <div ref="checkInChartRef" class="chart-container"></div>
       </div>
 
       <!-- Calorie Intake Chart -->
       <div class="chart-section">
-        <h4>Daily Calorie Intake</h4>
+        <h4>热量摄入</h4>
         <div ref="calorieChartRef" class="chart-container"></div>
       </div>
     </div>

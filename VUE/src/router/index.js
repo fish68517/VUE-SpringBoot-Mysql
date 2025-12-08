@@ -137,6 +137,13 @@ const router = createRouter({
       meta: { requiresAuth: true, roles: ['coach'] }
     },
     
+    {
+      path: '/coach/certification',
+      name: 'CertificationManagement',
+      component: () => import('@/views/coach/CertificationManagement.vue'),
+      meta: { requiresAuth: true, roles: ['coach'] }
+    },
+
     // Admin routes
     {
       path: '/admin/dashboard',

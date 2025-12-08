@@ -128,3 +128,71 @@ export function getStudentAnalytics(studentId, params = {}) {
     params
   });
 }
+
+
+// --- Certification Interfaces ---
+
+/**
+ * Get my certifications
+ * @returns {Promise} List of certifications
+ */
+export function getMyCertifications() {
+  return request({
+    url: '/api/coach/certifications',
+    method: 'get'
+  });
+}
+
+/**
+ * Add certification
+ * @param {Object} data - Certification data
+ * @returns {Promise} Response
+ */
+export function addCertification(data) {
+  return request({
+    url: '/api/coach/certifications',
+    method: 'post',
+    data
+  });
+}
+
+/**
+ * Update certification
+ * @param {Object} data - Certification data
+ * @returns {Promise} Response
+ */
+export function updateCertification(data) {
+  return request({
+    url: '/api/coach/certifications',
+    method: 'put',
+    data
+  });
+}
+
+/**
+ * Delete certification
+ * @param {number} id - Certification ID
+ * @returns {Promise} Response
+ */
+export function deleteCertification(id) {
+  return request({
+    url: `/api/coach/certifications/${id}`,
+    method: 'delete'
+  });
+}
+
+/**
+ * Upload certification image
+ * @param {File} file - Image file
+ * @returns {Promise} Image URL string
+ */
+export function uploadCertImage(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return request({
+    url: '/api/coach/certifications/upload',
+    method: 'post',
+    data: formData,
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+}

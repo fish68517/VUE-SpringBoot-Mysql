@@ -1,27 +1,4 @@
-好的，这是汉化后的 “个人资料” (User Profile) 页面代码。
 
-主要改动：
-
-表单与展示文本：Username -> 用户名, Role -> 角色, Gender -> 性别, Intro -> 个人简介 等。
-
-按钮文案：Edit Profile -> 编辑资料, Save -> 保存, Change Avatar -> 更换头像 等。
-
-性别选项：Male/Female/Other -> 男/女/其他。
-
-统计信息：Total Check-ins -> 累计打卡 等。
-
-日期格式：改为 zh-CN 中文显示。
-
-反馈提示：上传成功、更新成功等消息已翻译。
-
-请复制以下代码覆盖：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="profile-container">
     <el-card class="profile-card">
@@ -35,7 +12,7 @@ expand_less
       <!-- 展示模式 (Display Mode) -->
       <div v-if="!isEditing" class="profile-display">
         <div class="profile-avatar-section">
-          <el-avatar :size="120" :src="profile.avatar || '/default-avatar.png'" />
+          <el-avatar :size="120" :src="profile.avatar || defaultAvatarImg" />
         </div>
         
         <div class="profile-info">
@@ -49,7 +26,7 @@ expand_less
         </div>
 
         <!-- 打卡统计 (Check-in Statistics) -->
-        <div class="checkin-stats">
+        <div class="checkin-stats" v-if="false">
           <h3>打卡统计</h3>
           <el-row :gutter="20">
             <el-col :span="8">
@@ -74,7 +51,7 @@ expand_less
         <el-form :model="editForm" :rules="rules" ref="profileForm" label-width="120px">
           <el-form-item label="头像">
             <div class="avatar-upload-section">
-              <el-avatar :size="120" :src="avatarPreview || profile.avatar || '/default-avatar.png'" />
+              <el-avatar :size="120" :src="avatarPreview || profile.avatar || defaultAvatarImg" />
               <el-upload
                 class="avatar-uploader"
                 :show-file-list="false"
@@ -121,6 +98,9 @@ import { ref, reactive, onMounted } from 'vue';
 import { getProfile, updateProfile, uploadAvatar } from '@/api/user';
 import { getCheckInStats } from '@/api/checkin';
 import { showSuccess, showError, showWarning, handleFormSubmit } from '@/utils/feedback';
+
+// 关键点：导入 assets 下的图片，把它当做一个变量使用
+import defaultAvatarImg from '@/assets/default-avatar.png' 
 
 const profile = ref({});
 const checkInStats = ref({});

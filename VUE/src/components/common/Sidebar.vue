@@ -82,6 +82,11 @@
             <el-icon><Document /></el-icon>
             <template #title>我的内容</template>
           </el-menu-item>
+
+          <el-menu-item index="/coach/certification">
+            <el-icon><Document /></el-icon>
+            <template #title>专业认证</template>
+          </el-menu-item>
         </el-sub-menu>
       </template>
 
