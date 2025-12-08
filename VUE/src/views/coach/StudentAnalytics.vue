@@ -24,9 +24,7 @@
                   :value="student.id"
                 >
                   <div class="student-option">
-                    <el-avatar :src="student.avatar" :size="30">
-                      {{ student.username.charAt(0).toUpperCase() }}
-                    </el-avatar>
+                   
                     <span>{{ student.username }}</span>
                   </div>
                 </el-option>
@@ -190,6 +188,8 @@ const hasEnoughData = computed(() => {
 const fetchStudents = async () => {
   try {
     const response = await getMyStudents()
+    // 打印 response
+    console.log('获取学生列表成功，学生数：', JSON.stringify(response))
     students.value = response
     
     // Auto-select first student if available
@@ -206,14 +206,21 @@ const fetchStudents = async () => {
 const fetchAnalytics = async () => {
   if (!selectedStudentId.value) return
 
+  console.log('Selected student ID:', selectedStudentId.value)
   loading.value = true
   try {
     // Fetch analytics data
-    const analyticsResponse = await getStudentAnalytics(selectedStudentId.value, timePeriod.value)
+    const analyticsResponse = await getStudentAnalytics(selectedStudentId.value)
+    // 打印
+    console.log('Analytics:', analyticsResponse)
+    
     analytics.value = analyticsResponse
 
     // Fetch check-in data for chart
     const checkInsResponse = await getStudentCheckIns(selectedStudentId.value)
+
+    // 打印
+    console.log('Check-ins:', checkInsResponse)
     processCheckInData(checkInsResponse)
 
     // Fetch diet records for chart

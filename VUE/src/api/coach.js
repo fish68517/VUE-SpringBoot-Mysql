@@ -90,7 +90,7 @@ export function removeStudent(userId) {
  * @param {Object} params - Query parameters
  * @returns {Promise} Student's check-in history
  */
-export function getStudentCheckIns(studentId, params) {
+export function getStudentCheckIns(studentId, params = {}) {
   return request({
     url: `/api/coaches/students/${studentId}/checkins`,
     method: 'get',
@@ -106,7 +106,7 @@ export function getStudentCheckIns(studentId, params) {
  * @param {string} params.endDate - End date filter
  * @returns {Promise} Student's diet records
  */
-export function getStudentDietRecords(studentId, params) {
+export function getStudentDietRecords(studentId, params = {}) {
   return request({
     url: `/api/coaches/students/${studentId}/diet-records`,
     method: 'get',
@@ -121,7 +121,7 @@ export function getStudentDietRecords(studentId, params) {
  * @param {number} params.days - Number of days for analytics (default 30)
  * @returns {Promise} Student analytics data
  */
-export function getStudentAnalytics(studentId, params) {
+export function getStudentAnalytics(studentId, params = {}) {
   return request({
     url: `/api/coaches/analytics/${studentId}`,
     method: 'get',
