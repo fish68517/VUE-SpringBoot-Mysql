@@ -30,4 +30,6 @@ public class TrainingPlanRequest {
     private LocalDate endDate;
     
     private String status;  // active, completed, cancelled
+
+    private Long coachId;
 }

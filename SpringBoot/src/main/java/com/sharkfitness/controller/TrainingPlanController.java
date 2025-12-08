@@ -82,6 +82,14 @@ public class TrainingPlanController {
         TrainingPlanVO plan = trainingPlanService.create(request, currentUser.getId());
         return ApiResponse.success(plan);
     }
+
+    @PostMapping("/coachAndStudent")
+    public ApiResponse<TrainingPlanVO> createTrainingPlanqq(
+            @Valid @RequestBody TrainingPlanRequest request) {
+
+        TrainingPlanVO plan = trainingPlanService.create(request, request.getCoachId());
+        return ApiResponse.success(plan);
+    }
     
     /**
      * Update a training plan (Coach only - creator)

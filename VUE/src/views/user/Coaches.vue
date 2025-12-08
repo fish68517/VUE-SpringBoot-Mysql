@@ -304,22 +304,23 @@ const showCoachDetails = async (coach) => {
 }
 
 // 跳转到制定计划页面
+// 跳转到制定计划页面
 const goToTrainingPlan = (coach) => {
-  // 直接跳转到现有页面，通过 query 传递教练ID (如果目标页面支持)
-  // router.push({ 
-  //   path: '/training-plans',
-  //   query: { coachId: coach.id, action: 'create' }
-  // })
+  const userInfo = getUserInfo()
+  const studentId = userInfo.userId // 这行代码可能在这个跳转场景中暂时用不到，但保留着没关系
 
-    // 跳转到新页面，通过路由参数传递教练ID (如果目标页面不支持 query)
+  // 打印 coach
+  console.log("当前跳转的教练 :", JSON.stringify(coach))
 
-    const userInfo = getUserInfo()
-    const studentId = userInfo.userId
-    router.push({ 
-      path: '/user/training-plans/create',
-      params: { coachId: coach.id, studentId: studentId }
-    })
+  // ✅ 正确的跳转方式：使用命名路由 (name) 和 params
+  router.push({
+    name: 'CreateTrainingPlanStudent', // <--- 使用路由的名称
+    params: {
+      coachId: coach.id // <--- 在 params 中传递 coachId
+    }
+  })
 }
+
 
 // 打开续约弹窗
 const handleRenew = (coach) => {

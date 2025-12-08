@@ -31,12 +31,7 @@ const router = createRouter({
       component: () => import('@/views/user/Profile.vue'),
       meta: { requiresAuth: true, roles: ['user', 'coach', 'admin'] }
     },
-     {
-      path: '/training-plans/create',
-      name: 'CreateTrainingPlan',
-      component: () => import('@/views/user/CreateTrainingPlan.vue'),
-      meta: { requiresAuth: false, roles: ['user'] }
-    },
+  
     {
       path: '/resources',
       name: 'ResourceList',
@@ -87,6 +82,14 @@ const router = createRouter({
       path: '/checkin',
       name: 'CheckIn',
       component: () => import('@/views/user/CheckIn.vue'),
+      meta: { requiresAuth: true, roles: ['user', 'coach', 'admin'] }
+    },
+
+    // 需要添加 coachId 参数到 CreateTrainingPlanStudent页面
+    {
+      path: '/user/training-plans/create/:coachId',
+      name: 'CreateTrainingPlanStudent',
+      component: () => import('@/views/user/CreateTrainingPlanStudent.vue'),
       meta: { requiresAuth: true, roles: ['user', 'coach', 'admin'] }
     },
     {

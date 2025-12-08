@@ -1,6 +1,6 @@
 
 <template>
-  <Layout>
+ 
     <div class="create-training-plan">
       <div class="page-header">
         <h2>{{ isEditMode ? '编辑训练计划' : '创建训练计划' }}</h2>
@@ -16,7 +16,7 @@
           label-position="top"
         >
           <!-- 学员选择 (Student Selector) -->
-          <el-form-item label="学员" prop="studentId">
+          <el-form-item label="学员" prop="studentId" v-if="false">
             <el-select
               v-model="planForm.studentId"
               placeholder="请选择一位学员"
@@ -208,20 +208,24 @@
         </el-form>
       </el-card>
     </div>
-  </Layout>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { Plus, ArrowUp, ArrowDown, Delete } from '@element-plus/icons-vue'
-import Layout from '@/components/common/Layout.vue'
 import { getMyStudents } from '@/api/coach'
-import { createTrainingPlan, updateTrainingPlan, getTrainingPlanById } from '@/api/training'
+import { createTrainingPlan, updateTrainingPlan, getTrainingPlanById,createTrainingPlanByCoachAndStudent } from '@/api/training'
 import { showSuccess, showError, showWarning } from '@/utils/feedback'
+import { getUserInfo } from '@/utils/auth.js'
+
 
 const router = useRouter()
 const route = useRoute()
+
+// 2. 从路由对象的 params 属性中直接访问 coachId
+//    注意：这里的 'coachId' 必须与你在路由定义中 path: '.../:coachId' 的名称完全匹配
+const coachId = route.params.coachId
 
 const formRef = ref(null)
 const students = ref([])
@@ -263,10 +267,10 @@ const rules = {
 
 const fetchStudents = async () => {
   try {
-    const response = await getMyStudents()
+    const response = getUserInfo()
     students.value = response
     // 打印获取到的学生列表以便调试
-    console.log('获取学生列表成功，学生数：', students.value.length)
+
     // 打印学生列表详情
     console.log('学生列表详情：', JSON.stringify(students.value))
   } catch (error) {
@@ -310,6 +314,15 @@ const submitForm = async () => {
       return
     }
 
+    // planForm  studentId 为null ,需要添加 
+    planForm.studentId = getUserInfo().userId
+
+    // 添加coachId
+    planForm.coachId = coachId
+
+    // 需要添加coachId
+
+
     // Validate exercises
     const hasInvalidExercise = planForm.exercises.some(ex => !ex.name.trim())
     if (hasInvalidExercise) {
@@ -328,11 +341,11 @@ const submitForm = async () => {
         await updateTrainingPlan(planId.value, data)
         showSuccess('训练计划更新成功')
       } else {
-        await createTrainingPlan(data)
+        await createTrainingPlanByCoachAndStudent(data)
         showSuccess('训练计划创建成功')
       }
 
-      router.push('/coach/dashboard')
+    
     } catch (error) {
       showError(error.message || '保存训练计划失败')
     } finally {
@@ -364,17 +377,24 @@ const goBack = () => {
 }
 
 onMounted(async () => {
-  await fetchStudents()
+        // 打印日志
+    const userInfo = getUserInfo()
+    const userId = userInfo ? userInfo.userId : null
+    console.log("当前用户ID:", userId)
 
-  // Check if editing existing plan
-  if (route.params.id) {
-    isEditMode.value = true
-    planId.value = route.params.id
-    await loadPlanData(planId.value)
-  } else {
-    // Add one default exercise for new plans
-    addExercise()
-  }
+     console.log('组件已经挂载 (onMounted).')
+      console.log('从 URL 中获取的 coachId 是:', coachId)
+    await fetchStudents()
+
+    // Check if editing existing plan
+    if (route.params.id) {
+        isEditMode.value = true
+        planId.value = route.params.id
+        await loadPlanData(planId.value)
+    } else {
+        // Add one default exercise for new plans
+        addExercise()
+    }
 })
 </script>
 

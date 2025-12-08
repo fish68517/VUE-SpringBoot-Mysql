@@ -47,6 +47,15 @@ export function createTrainingPlan(data) {
   });
 }
 
+export function createTrainingPlanByCoachAndStudent(data) {
+  return request({
+    url: '/api/training-plans/coachAndStudent',
+    method: 'post',
+    data
+  });
+}
+
+
 /**
  * Update training plan
  * @param {number} id - Training plan ID
