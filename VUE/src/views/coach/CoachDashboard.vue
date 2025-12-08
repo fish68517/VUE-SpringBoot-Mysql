@@ -226,6 +226,11 @@ const goToCreateContent = () => {
   router.push('/coach/content')
 }
 
+const goToCreateCertificate = () => {
+  router.push('/coach/certification')
+}
+
+
 const goToStudentList = () => {
   router.push('/coach/students')
 }

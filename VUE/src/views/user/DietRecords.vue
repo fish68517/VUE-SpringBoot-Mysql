@@ -1,25 +1,4 @@
-没问题！这是 “饮食记录” (Diet Records) 页面的完整汉化版本。
 
-主要修改包括：
-
-界面文本：标题、摘要、表单标签、按钮文案全部汉化。
-
-选择项：早餐/午餐/晚餐/加餐 以及 中文占位符。
-
-统计信息：Total Calories Today -> 今日总摄入, meals recorded -> 次用餐记录。
-
-反馈提示：所有表单校验、保存成功、删除成功的提示。
-
-辅助函数：formatMealType 现在会返回中文（早餐、午餐等）。
-
-请复制以下代码覆盖：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="diet-records-container">
     <el-card class="header-card">
