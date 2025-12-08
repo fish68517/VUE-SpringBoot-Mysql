@@ -31,6 +31,12 @@ const router = createRouter({
       component: () => import('@/views/user/Profile.vue'),
       meta: { requiresAuth: true, roles: ['user', 'coach', 'admin'] }
     },
+     {
+      path: '/training-plans/create',
+      name: 'CreateTrainingPlan',
+      component: () => import('@/views/user/CreateTrainingPlan.vue'),
+      meta: { requiresAuth: false, roles: ['user'] }
+    },
     {
       path: '/resources',
       name: 'ResourceList',
@@ -113,7 +119,7 @@ const router = createRouter({
       path: '/coach/training-plans/create',
       name: 'CreateTrainingPlan',
       component: () => import('@/views/coach/CreateTrainingPlan.vue'),
-      meta: { requiresAuth: true, roles: ['coach'] }
+      meta: { requiresAuth: false, roles: ['coach'] }
     },
     {
       path: '/coach/analytics',

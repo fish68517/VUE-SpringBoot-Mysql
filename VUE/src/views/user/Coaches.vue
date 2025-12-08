@@ -306,10 +306,19 @@ const showCoachDetails = async (coach) => {
 // 跳转到制定计划页面
 const goToTrainingPlan = (coach) => {
   // 直接跳转到现有页面，通过 query 传递教练ID (如果目标页面支持)
-  router.push({ 
-    path: '/training-plans',
-    query: { coachId: coach.id, action: 'create' }
-  })
+  // router.push({ 
+  //   path: '/training-plans',
+  //   query: { coachId: coach.id, action: 'create' }
+  // })
+
+    // 跳转到新页面，通过路由参数传递教练ID (如果目标页面不支持 query)
+
+    const userInfo = getUserInfo()
+    const studentId = userInfo.userId
+    router.push({ 
+      path: '/user/training-plans/create',
+      params: { coachId: coach.id, studentId: studentId }
+    })
 }
 
 // 打开续约弹窗
