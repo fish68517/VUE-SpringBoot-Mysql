@@ -1,60 +1,77 @@
-没问题！我已经将 “我的训练计划” (My Training Plans) 页面全部汉化，包括标题、筛选按钮、空状态提示、弹窗详情以及状态标签的中文显示。
 
-请复制以下代码覆盖你原来的文件：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="my-training-plans">
+   
+   
+     <div class="my-training-plans">
     <div class="page-header">
       <h1>我的训练计划</h1>
-      <p class="subtitle">查看并追踪您的专属训练计划</p>
+      <p class="subtitle">查看、追踪并反馈您的专属训练计划</p>
     </div>
 
-    <!-- 筛选区域 (Filter Section) -->
-    <div class="filter-section">
-      <el-radio-group v-model="statusFilter" @change="handleFilterChange">
-        <el-radio-button label="all">全部</el-radio-button>
-        <el-radio-button label="active">进行中</el-radio-button>
-        <el-radio-button label="completed">已完成</el-radio-button>
-      </el-radio-group>
-    </div>
+    <el-tabs v-model="activeTab" class="custom-tabs">
+      <!-- Tab 1: 我的训练计划 -->
+      <el-tab-pane label="训练计划" name="plans">
+        <!-- 筛选区域 -->
+        <div class="filter-section">
+          <el-radio-group v-model="statusFilter" @change="handleFilterChange">
+            <el-radio-button label="all">全部</el-radio-button>
+            <el-radio-button label="active">进行中</el-radio-button>
+            <el-radio-button label="completed">已完成</el-radio-button>
+          </el-radio-group>
+        </div>
 
-    <!-- 加载状态 (Loading State) -->
-    <div v-if="loading" class="loading-container">
-      <el-skeleton :rows="3" animated />
-    </div>
+        <!-- 列表、加载、空状态 -->
+        <div v-if="loading" class="loading-container">
+          <el-skeleton :rows="3" animated />
+        </div>
+        <div v-else-if="filteredPlans.length > 0" class="plans-list">
+          <PlanCard
+            v-for="plan in filteredPlans"
+            :key="plan.id"
+            :plan="plan"
+            @click="handlePlanClick(plan)"
+          />
+        </div>
+        <div v-else class="empty-state">
+           <el-empty :description="emptyStateMessage">
+             <template #image>
+               <el-icon :size="100" color="#909399"><Document /></el-icon>
+             </template>
+             <el-button type="primary" @click="handleContactCoach">寻找教练</el-button>
+           </el-empty>
+        </div>
+      </el-tab-pane>
 
-    <!-- 计划列表 (Plans List) -->
-    <div v-else-if="filteredPlans.length > 0" class="plans-list">
-      <PlanCard 
-        v-for="plan in filteredPlans" 
-        :key="plan.id" 
-        :plan="plan"
-        @click="handlePlanClick"
-      />
+      <!-- Tab 2: 训练反馈 -->
+      <el-tab-pane label="训练反馈" name="feedback">
+        <div v-if="loading" class="loading-container">
+           <el-skeleton :rows="3" animated />
+        </div>
+        <!-- 直接使用所有计划列表，不进行状态过滤 -->
+        <div v-else-if="plans.length > 0" class="plans-list">
+           <p class="feedback-prompt">请选择一个训练计划以查看或提交反馈。</p>
+           <PlanCard
+             v-for="plan in plans"
+             :key="plan.id"
+             :plan="plan"
+             @click="handleFeedbackClick(plan)"
+             clickable-style="feedback"
+           />
+        </div>
+        <div v-else class="empty-state">
+           <el-empty description="暂无任何训练计划，无法提交反馈。">
+             <template #image>
+               <el-icon :size="100" color="#909399"><Document /></el-icon>
+             </template>
+           </el-empty>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
     </div>
-
-    <!-- 空状态 (Empty State) -->
-    <div v-else class="empty-state">
-      <el-empty :description="emptyStateMessage">
-        <template #image>
-          <el-icon :size="100" color="#909399">
-            <Document />
-          </el-icon>
-        </template>
-        <!-- 原逻辑跳转到Home，这里文案改为寻找教练 -->
-        <el-button type="primary" @click="handleContactCoach">
-          寻找教练
-        </el-button>
-      </el-empty>
-    </div>
-
-    <!-- 计划详情弹窗 (Plan Detail Dialog) -->
+    
+    
+     <!-- 计划详情弹窗 (Plan Detail Dialog) -->
     <el-dialog
       v-model="dialogVisible"
       :title="selectedPlan?.name"
@@ -102,6 +119,14 @@ expand_less
         <el-button @click="dialogVisible = false">关闭</el-button>
       </template>
     </el-dialog>
+
+       <!-- 新增: 训练反馈弹窗 -->
+    <TrainingFeedbackDialog
+      v-if="selectedPlanForFeedback"
+      v-model:visible="feedbackDialogVisible"
+      :plan="selectedPlanForFeedback"
+    />
+
   </div>
 </template>
 
@@ -113,6 +138,9 @@ import { getTrainingPlans } from '../../api/training';
 import PlanCard from '../../components/training/PlanCard.vue';
 import ExerciseList from '../../components/training/ExerciseList.vue';
 import { showError } from '@/utils/feedback';
+import TrainingFeedbackDialog from '../../components/training/TrainingFeedbackDialog.vue';
+
+
 
 const router = useRouter();
 
@@ -122,6 +150,10 @@ const statusFilter = ref('all');
 const dialogVisible = ref(false);
 const selectedPlan = ref(null);
 
+// 新增：训练反馈弹窗 state
+const feedbackDialogVisible = ref(false);
+const selectedPlanForFeedback = ref(null);
+
 // Computed properties
 const filteredPlans = computed(() => {
   if (statusFilter.value === 'all') {
@@ -129,6 +161,14 @@ const filteredPlans = computed(() => {
   }
   return plans.value.filter(plan => plan.status === statusFilter.value);
 });
+
+// 新增：点击计划卡片 (在"训练反馈"Tab)
+const handleFeedbackClick = (plan) => {
+  // 打印计划信息
+  console.log('点击计划卡片:', plan);
+  selectedPlanForFeedback.value = plan;
+  feedbackDialogVisible.value = true;
+};
 
 // 动态生成中文的空状态提示
 const emptyStateMessage = computed(() => {

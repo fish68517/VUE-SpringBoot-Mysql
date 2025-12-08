@@ -33,6 +33,9 @@ export const showError = (message, duration = 3000) => {
   })
 }
 
+
+
+
 /**
  * Show warning message
  * @param {string} message - Warning message to display
