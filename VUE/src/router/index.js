@@ -89,6 +89,11 @@ const routes = [
         name: 'SystemLogs',
         component: () => import('../views/admin/SystemLogPage.vue')
       },
+      {
+        path: 'item-logs',
+        name: 'ItemLogs',
+        component: () => import('../views/admin/ItemOperationLogPage.vue')
+      },
     ]
   },
 

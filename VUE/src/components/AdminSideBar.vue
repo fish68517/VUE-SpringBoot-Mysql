@@ -49,9 +49,15 @@
      <!-- ===== 新增日志菜单 ===== -->
     <el-menu-item index="/admin/system-logs">
       <el-icon><Monitor /></el-icon>
-      <span>安全日志</span>
+      <span>用户操作日志</span>
     </el-menu-item>
     <!-- ====================== -->
+
+    
+     <el-menu-item index="/admin/item-logs">
+      <el-icon><Monitor /></el-icon>
+      <span>商品操作日志</span>
+    </el-menu-item>
     
   </el-menu>
 </template>
