@@ -49,6 +49,14 @@ const api = {
             // 后端需要提供一个 /users/login 的接口
             return apiClient.post('/users/login', credentials);
         },
+         // --- 新增：注册接口 ---
+        register(data) {
+            // 假设后端注册接口为 POST /users/register 或者直接复用 POST /users (创建用户)
+            // 根据常规做法，如果有专门的注册逻辑（比如不需要鉴权），通常是 /users/register
+            // 如果复用创建接口，则是 apiClient.post('/users', data);
+            // 这里我们假设有一个专门的注册入口或者开放的创建入口
+            return apiClient.post('/users/register', data); 
+        },
         create(data) {
             return apiClient.post('/users', data);
         },
@@ -87,10 +95,10 @@ const api = {
 
     //=========================== 5. 入库单 (Inbound Orders) ===========================
     inboundOrdersApi: {
-        createOrder(data) {
+         createOrder(data) {
             return apiClient.post('/inbound-orders/create/order', data);
         },
-
+        
         create(data) {
             return apiClient.post('/inbound-orders', data);
         },

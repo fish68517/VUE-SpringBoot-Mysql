@@ -9,7 +9,6 @@
                <el-icon><Plus /></el-icon> 手动创建入库单
             </el-button>
             <el-upload
-              v-if="false"
               :action="uploadUrl"
               :show-file-list="false"
               :on-success="handleUploadSuccess"
@@ -18,16 +17,17 @@
               style="display: inline-block; margin-left: 10px;"
             >
               <el-button type="success">
-                <el-icon><Upload /></el-icon> "1"
+                <el-icon><Upload /></el-icon> 从Excel导入
               </el-button>
             </el-upload>
-            <el-button @click="downloadTemplate" style="margin-left: 10px;" v-if="false">
-                <el-icon><Download /></el-icon> 下载
+            <el-button @click="downloadTemplate" style="margin-left: 10px;">
+                <el-icon><Download /></el-icon> 下载导入模板
             </el-button>
           </div>
         </div>
       </template>
 
+      <!-- 入库单列表 -->
       <el-table :data="orders" v-loading="loading">
         <el-table-column type="expand">
           <template #default="props">
@@ -42,7 +42,7 @@
                     <template #default="scope">{{ getProductName(scope.row.productId, 'name') }}</template>
                  </el-table-column>
                  <el-table-column prop="quantity" label="计划数量" />
-                 </el-table>
+              </el-table>
               <el-button 
                 type="primary" 
                 plain 
@@ -78,23 +78,22 @@
         <el-table-column prop="createdAt" label="创建时间" />
         <el-table-column label="操作" width="220">
             <template #default="scope">
-                <el-button
+                 <el-button
                     size="small"
                     type="primary"
                     link
                     @click="downloadOrderDetails(scope.row)"
-                    :disabled="!scope.row.inventoryItems || scope.row.inventoryItems.length === 0">
-              
+                    :disabled="!scope.row.inventoryItems || scope.row.inventoryItems.length === 0"
+                 >
                     <el-icon><Download /></el-icon> 下载详情
                  </el-button>
-                <el-button size="small" type="danger" @click="handleDeleteOrder(scope.row.id)">删除</el-button>
-                <el-button size="small" type="warning" @click="handleUpdateStatus(scope.row.id, '处理中')">处理中</el-button>
-                <el-button size="small" type="success" @click="handleUpdateStatus(scope.row.id, '已完成')">已完成</el-button>
+                 <el-button size="small" type="danger" @click="handleDeleteOrder(scope.row.id)">删除</el-button>
             </template>
         </el-table-column>
       </el-table>
     </el-card>
 
+     <!-- 手动创建入库单 Dialog -->
      <el-dialog v-model="createDialogVisible" title="手动创建入库单">
       <el-form :model="createForm" label-width="100px">
         <el-form-item label="入库单号">
@@ -103,7 +102,8 @@
         <el-form-item label="备注">
           <el-input v-model="createForm.notes" type="textarea" />
         </el-form-item>
-        <el-form-item label="入库明细">
+        <!-- 入库商品明细 -->
+         <el-form-item label="入库明细">
             <div v-for="(item, index) in createForm.items" :key="index" class="item-row">
                  <el-select v-model="item.productId" placeholder="选择产品" filterable style="width: 200px;">
                     <el-option
@@ -125,10 +125,14 @@
       </template>
     </el-dialog>
 
+    <!-- 二维码生成与打印 Dialog -->
     <el-dialog v-model="qrCodeDialogVisible" title="批次二维码" width="80%" top="5vh">
        <div id="qrCodePrintArea" class="qr-code-grid">
            <div v-for="item in itemsToQrCode" :key="item.batchCode" class="qr-code-item">
-               <qrcode-vue :value="item.batchCode" :size="qrCodeSize" level="H" />
+               <!-- 【关键修改】render-as="svg"： -->
+               <!-- 使用 SVG 模式渲染，这样 innerHTML 就能获取到二维码的 DOM 结构，从而可以被打印出来 -->
+               <qrcode-vue :value="item.batchCode" :size="qrCodeSize" level="H" render-as="svg" />
+               
                <div class="qr-code-label">
                    <p>产品: {{ getProductName(item.productId, 'name') }}</p>
                    <p>SKU: {{ getProductName(item.productId, 'sku') }}</p>
@@ -151,41 +155,31 @@
 import { ref, onMounted, reactive, computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import api from '../../api/NetWorkApi.js';
-// ===== 修改：导入更多图标 =====
 import { Plus, Upload, Download, Delete, Printer, Grid, Document } from '@element-plus/icons-vue';
-// =============================
-import * as XLSX from 'xlsx'; // 导入xlsx库
-import QrcodeVue from 'qrcode.vue'; // 导入二维码库
-import { BASE_URL } from '../../api/NetWorkApi.js';
+import * as XLSX from 'xlsx';
+import QrcodeVue from 'qrcode.vue';
+import apiClientInstance from '../../api/NetWorkApi.js';
 
 const orders = ref([]);
-const products = ref([]); // 用于产品选择和显示名称
+const products = ref([]); 
 const loading = ref(true);
 const createDialogVisible = ref(false);
 const qrCodeDialogVisible = ref(false);
-const itemsToQrCode = ref([]); // 需要生成二维码的库存项
-const qrCodeSize = ref(100); // 二维码大小
+const itemsToQrCode = ref([]); 
+const qrCodeSize = ref(100); 
 
-// 假设当前登录管理员用户ID为 1 或从状态管理获取
-const currentAdminUserId = 1; 
+const currentAdminUserId = 1;
 
-// 手动创建表单
 const createForm = reactive({
   orderNumber: `IN-${Date.now()}`,
   createdByUserId: currentAdminUserId,
   status: '待处理',
   notes: '',
-  items: [{ productId: null, quantity: 1 }] // 入库明细项
+  items: [{ productId: null, quantity: 1 }]
 });
 
-// Excel上传URL (需要后端提供)
-const uploadUrl = computed(() => `${BASE_URL}/inbound-orders/import`);
+const uploadUrl = computed(() => `${apiClientInstance.defaults.baseURL}/inbound-orders/import`);
 
-// Excel上传URL (需要后端提供)
-// ===== 修改：从 apiClient 实例获取 baseURL =====
-import apiClientInstance from '../../api/NetWorkApi.js'; // 导入 apiClient 实例
-
-// 获取产品列表，用于下拉选择和名称显示
 const fetchProducts = async () => {
     try {
         const res = await api.productsApi.list();
@@ -195,43 +189,37 @@ const fetchProducts = async () => {
     }
 };
 
-// 获取入库单列表及关联的库存项
 const fetchData = async () => {
     loading.value = true;
     try {
         const [ordersRes, inventoryRes, usersRes] = await Promise.all([
             api.inboundOrdersApi.list(),
             api.inventoryApi.list(),
-            api.usersApi.list() // 获取用户信息以显示创建人
+            api.usersApi.list()
         ]);
         
         const allOrders = ordersRes.data || [];
         const allInventory = inventoryRes.data || [];
         const usersMap = new Map((usersRes.data || []).map(u => [u.id, u]));
 
-        // 将库存项按入库单ID分组
         const inventoryByOrderId = allInventory.reduce((acc, item) => {
             if (item.inboundOrderId) {
                 if (!acc[item.inboundOrderId]) {
                     acc[item.inboundOrderId] = [];
                 }
-                // ===== 修改：确保 inventoryItems 包含 productId =====
                 acc[item.inboundOrderId].push({
                     id: item.id,
                     batchCode: item.batchCode,
-                    productId: item.productId, // 确保 productId 存在
+                    productId: item.productId, 
                     quantity: item.quantity,
                     receivedAt: item.receivedAt,
                     createdAt: item.createdAt,
                     updatedAt: item.updatedAt
                 });
-                // ===============================================
-                // acc[item.inboundOrderId].push(item);
             }
             return acc;
         }, {});
 
-        // 组合数据
         orders.value = allOrders.map(order => ({
             ...order,
             creator: usersMap.get(order.createdByUserId) || { fullName: '未知' },
@@ -246,21 +234,17 @@ const fetchData = async () => {
     }
 };
 
-// 工具函数：根据产品ID获取产品名称或SKU
 const getProductName = (productId, field = 'name') => {
     const product = products.value.find(p => p.id === productId);
     return product ? product[field] : '未知产品';
 };
-
 
 onMounted(() => {
     fetchProducts();
     fetchData();
 });
 
-// --- 手动创建相关 ---
 const openCreateDialog = () => {
-  // 重置表单
   Object.assign(createForm, {
       orderNumber: `IN-${Date.now()}`,
       createdByUserId: currentAdminUserId,
@@ -280,50 +264,35 @@ const removeItem = (index) => {
 };
 
 const handleManualCreate = async () => {
-    // 验证表单
     if (!createForm.items.every(item => item.productId && item.quantity > 0)) {
         ElMessage.warning('请确保所有入库明细都选择了产品且数量大于0');
         return;
     }
 
-    // 构造提交的数据 (需要后端支持这种格式或调整)
-    // 理想情况：后端提供一个接口，接收订单头信息和明细列表
-    // 这里模拟创建一个入库单，然后为每个明细创建库存记录 (非最佳实践)
     try {
         loading.value = true;
-        // 1. 创建入库单头
         const orderData = {
             orderNumber: createForm.orderNumber,
             createdByUserId: createForm.createdByUserId,
             status: createForm.status,
             notes: createForm.notes,
         };
-        const orderRes = await api.inboundOrdersApi.createOrder(orderData);
+        const orderRes = await api.inboundOrdersApi.create(orderData);
         
-        // 假设创建成功后后端返回了包含ID的订单对象
-        // 后端返回的就是 true/false，不是对象,需要判断是否是true or false
-        // if (!orderRes.data) {
-        //         throw new Error("创建入库单失败");              
-        // }
         const createdOrderId = orderRes.data?.id; 
         if (!createdOrderId) {
              throw new Error("创建入库单失败，未返回ID");
         }
 
-        // 2. 为每个明细创建库存记录 (生成唯一批次号)
         const inventoryPromises = createForm.items.map(item => {
-            // const batchCode = `BAT-${createdOrderId}-${item.productId}-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-            // ===== 修改：改进批次号生成，避免潜在的过长问题 =====
-             const timestampPart = Date.now().toString().slice(-6); // 取时间戳后6位
-             const randomPart = Math.random().toString(36).substring(2, 6); // 取4位随机字符
+             const timestampPart = Date.now().toString().slice(-6); 
+             const randomPart = Math.random().toString(36).substring(2, 6); 
              const batchCode = `BAT-${createdOrderId}-${item.productId}-${timestampPart}-${randomPart}`;
-             // ===============================================
              const inventoryData = {
                  productId: item.productId,
                  batchCode: batchCode,
                  inboundOrderId: createdOrderId,
                  quantity: item.quantity,
-                 // receivedAt: null, // 这个字段通常由App扫码入库时更新
              };
              return api.inventoryApi.create(inventoryData);
         });
@@ -332,36 +301,28 @@ const handleManualCreate = async () => {
 
         ElMessage.success("入库单及批次创建成功");
         createDialogVisible.value = false;
-        fetchData(); // 刷新列表
+        fetchData(); 
     } catch (error) {
         console.error("手动创建入库单失败:", error);
-        ElMessage.error("操作失败: " + "批次号已经存在，请修改后重试");
+        ElMessage.error("操作失败: " + (error.response?.data?.message || error.message));
     } finally {
         loading.value = false;
     }
 };
 
-// --- Excel 导入相关 ---
 const beforeUpload = (file) => {
   const isExcel = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type === 'application/vnd.ms-excel' || file.name.endsWith('.csv');
   if (!isExcel) {
     ElMessage.error('只能上传 Excel 文件 (xls, xlsx, csv)!');
   }
-  // 可以增加大小限制
-  // const isLt2M = file.size / 1024 / 1024 < 2;
-  // if (!isLt2M) {
-  //   ElMessage.error('上传文件大小不能超过 2MB!');
-  // }
-  return isExcel; // && isLt2M;
+  return isExcel;
 };
 
 const handleUploadSuccess = (response, file, fileList) => {
-  // 假设后端处理成功后返回了成功消息
   ElMessage.success('Excel 文件上传成功，后端正在处理...');
-  // 延迟一段时间后刷新列表，给后端处理时间
   setTimeout(() => {
     fetchData();
-  }, 3000); // 3秒后刷新
+  }, 3000);
 };
 
 const handleUploadError = (error, file, fileList) => {
@@ -375,64 +336,45 @@ const handleUploadError = (error, file, fileList) => {
 };
 
 const downloadTemplate = () => {
-    // 定义模板数据结构
     const templateData = [
         { SKU: '产品SKU (必填)', Quantity: '数量 (必填, 正整数)' },
-        // 添加一些示例数据
         { SKU: 'SKU-A001', Quantity: 100 },
         { SKU: 'SKU-B002', Quantity: 50 },
     ];
-    
-    // 创建工作簿和工作表
-    const ws = XLSX.utils.json_to_sheet(templateData, { skipHeader: true }); // skipHeader: true 因为我们手动定义了第一行
-    // ===== 修改：设置列宽 =====
-    ws['!cols'] = [ { wch: 20 }, { wch: 15 } ]; // 第一列宽度20，第二列宽度15
-    // ========================
+    const ws = XLSX.utils.json_to_sheet(templateData, { skipHeader: true });
+    ws['!cols'] = [ { wch: 20 }, { wch: 15 } ]; 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, '入库模板');
-
-    // 生成Excel文件并触发下载
     XLSX.writeFile(wb, 'inbound_template.xlsx');
 };
 
-
-// ===== 新增：下载入库单批次详情功能 =====
 const downloadOrderDetails = (order) => {
     if (!order.inventoryItems || order.inventoryItems.length === 0) {
         ElMessage.warning('该入库单没有关联的批次信息可供下载');
         return;
     }
 
-    // 准备要导出的数据
     const exportData = order.inventoryItems.map(item => ({
         '批次号 (二维码内容)': item.batchCode,
         '产品SKU': getProductName(item.productId, 'sku'),
         '产品名称': getProductName(item.productId, 'name'),
         '计划数量': item.quantity,
-        // 可以根据需要添加更多字段，例如入库时间 (item.receivedAt) 等
     }));
 
-    // 创建工作簿和工作表
     const ws = XLSX.utils.json_to_sheet(exportData);
-
-    // 设置列宽 (根据需要调整)
     ws['!cols'] = [
-        { wch: 30 }, // 批次号
-        { wch: 20 }, // SKU
-        { wch: 30 }, // 产品名称
-        { wch: 10 }  // 计划数量
+        { wch: 30 }, 
+        { wch: 20 }, 
+        { wch: 30 }, 
+        { wch: 10 } 
     ];
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, `入库单-${order.orderNumber}`);
-
-    // 生成Excel文件并触发下载，文件名包含入库单号
     XLSX.writeFile(wb, `入库单详情_${order.orderNumber}.xlsx`);
     ElMessage.success(`入库单 ${order.orderNumber} 的批次详情已开始下载`);
 };
-// ======================================
 
-// --- 二维码相关 ---
 const openQrCodeDialog = (items) => {
     if (!items || items.length === 0) {
         ElMessage.warning('该入库单没有关联的库存批次信息');
@@ -447,7 +389,6 @@ const printQrCodes = () => {
     if (printContent) {
         const newWindow = window.open('', '_blank');
         newWindow.document.write('<html><head><title>打印二维码</title>');
-        // 添加打印样式
         newWindow.document.write(`
             <style>
                 body { margin: 20px; font-family: sans-serif; }
@@ -457,7 +398,7 @@ const printQrCodes = () => {
                 .qr-code-label p { margin: 2px 0; }
                 @media print {
                     body { margin: 0; }
-                    .qr-code-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; } /* 打印时尝试每行3个 */
+                    .qr-code-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
                     .qr-code-item { border: none; padding: 5px; }
                      .qr-code-label { font-size: 8px; }
                 }
@@ -467,27 +408,12 @@ const printQrCodes = () => {
         newWindow.document.write(printContent.innerHTML);
         newWindow.document.write('</body></html>');
         newWindow.document.close();
-        newWindow.focus(); // 聚焦新窗口
-        setTimeout(() => { newWindow.print(); newWindow.close(); }, 500); // 延迟打印以确保内容加载
+        newWindow.focus();
+        setTimeout(() => { newWindow.print(); newWindow.close(); }, 500);
     }
 };
 
-// ---添加处理中，已完成的功能函数
-const handleUpdateStatus = async(id, status) => {
-    try {
-        await api.inboundOrdersApi.updateById(id, { status: status });
-        ElMessage.success(`入库单状态更新为${status}成功`);
-        fetchData();
-    } catch (error) {
-        ElMessage.error("状态更新失败: " + (error.response?.data?.message || error.message));
-    }
-};
-
-// --- 其他 ---
 const handleDeleteOrder = async (id) => {
-    // 注意：删除入库单前，需要考虑是否允许删除已有关联库存项的入库单
-    // 可能需要在后端进行检查，或者提供级联删除的选项（危险）
-    // 此处仅做简单删除演示
     ElMessageBox.confirm(
         '确定要删除此入库单吗？关联的库存批次信息可能也会受影响。',
         '警告',
@@ -505,7 +431,6 @@ const handleDeleteOrder = async (id) => {
             ElMessage.error("删除失败: " + (error.response?.data?.message || error.message));
         }
     }).catch(() => {
-        // 用户取消
     });
 };
 
@@ -515,10 +440,6 @@ const getStatusTagType = (status) => {
     if (status === '待处理') return 'warning';
     return 'info';
 };
-
-// 需要 apiClient 实例来获取 baseURL
-import apiClient from '../../api/NetWorkApi.js';
-import { id, th } from 'element-plus/es/locales.mjs';
 
 </script>
 
@@ -559,7 +480,6 @@ import { id, th } from 'element-plus/es/locales.mjs';
     margin: 3px 0;
 }
 
-/* 简单的打印样式，可以根据需要调整 */
 @media print {
   body * {
     visibility: hidden;
@@ -575,7 +495,7 @@ import { id, th } from 'element-plus/es/locales.mjs';
   }
    .qr-code-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 尝试打印时每行3个 */
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px; 
     max-height: none; 
     overflow-y: visible; 
@@ -583,7 +503,7 @@ import { id, th } from 'element-plus/es/locales.mjs';
   .qr-code-item {
      border: none;
      padding: 5px;
-     page-break-inside: avoid; /* 避免二维码被分页截断 */
+     page-break-inside: avoid; 
   }
   .qr-code-label { font-size: 8px; }
 }

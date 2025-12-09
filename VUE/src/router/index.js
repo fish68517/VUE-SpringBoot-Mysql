@@ -5,7 +5,7 @@ import AdminLayout from '../layout/AdminLayout.vue';
 const routes = [
   // --- 普通用户/操作员路由 ---
   {
-    path: '/',
+    path: '/user',
     component: Layout,
     redirect: '/dashboard',
     children: [
@@ -88,8 +88,19 @@ const routes = [
   // --- 登录页 ---
   {
     path: '/login',
+    name: '',
+    component: () => import('../views/LoginPage.vue')
+  },
+   // --- 登录页 ---
+  {
+    path: '/',
     name: 'Login',
     component: () => import('../views/LoginPage.vue')
+  },
+   {
+    path: '/register',
+    name: 'Register',
+    component: () => import('../views/RegisterPage.vue')
   }
 ];
 

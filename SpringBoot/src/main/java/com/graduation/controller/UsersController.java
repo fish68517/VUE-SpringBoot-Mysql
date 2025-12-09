@@ -2,6 +2,7 @@ package com.graduation.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.graduation.dto.LoginRequest;
+import com.graduation.dto.RegisterDto;
 import com.graduation.entity.Users;
 import com.graduation.service.UsersService;
 import org.springframework.http.HttpStatus;
@@ -60,4 +61,20 @@ public class UsersController extends BaseController<UsersService, Users> {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "用户名或密码错误"));
         }
     }
+
+    // register接口
+    // {"username":"admin123","passwordHash":"123456","fullName":"张管理","departmentId":null,"roleId":3,"isActive":true}
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody RegisterDto userDto) {
+        Users newUser = new Users();
+        newUser.setUsername(userDto.getUsername());
+        newUser.setPasswordHash(userDto.getPasswordHash());
+        newUser.setFullName(userDto.getFullName());
+        newUser.setRoleId(userDto.getRoleId());
+        newUser.setDepartmentId(userDto.getDepartmentId() == null ? 1 : userDto.getDepartmentId());
+        newUser.setIsActive(true);
+        return service.save(newUser) ? ResponseEntity.ok(newUser) : ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "注册失败"));
+
+    }
+
 }

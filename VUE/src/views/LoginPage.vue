@@ -18,6 +18,10 @@
         <el-form-item>
           <el-button type="primary" style="width: 100%;" @click="handleSubmit">登 录</el-button>
         </el-form-item>
+
+        <el-form-item>
+          <el-button type="normal" style="width: 100%;" @click="handleRegister">注 册</el-button>
+        </el-form-item>
       </el-form>
     </div>
   </div>
@@ -80,6 +84,11 @@ const handleSubmit = () => {
       }
     }
   });
+};
+
+const handleRegister = () => {
+  console.log('跳转到注册页');
+  router.push('/register');
 };
 </script>
 
