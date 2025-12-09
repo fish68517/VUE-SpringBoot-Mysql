@@ -5,7 +5,7 @@ import AdminLayout from '../layout/AdminLayout.vue'; // 引入Admin布局
 const routes = [
   // ... 普通用户路由保持不变
   {
-    path: '/',
+    path: '/user',
     component: Layout,
     redirect: '/dashboard',
     children: [
@@ -15,12 +15,16 @@ const routes = [
         { path: '/achievement', name: 'Achievement', component: () => import('../views/AchievementPage.vue') }
     ]
   },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../views/LoginPage.vue')
-  },
-  
+ {
+  path: '/',
+  redirect: '/login'                 // 直接重定向
+},
+
+{
+  path: '/login',
+  name: 'Login',
+  component: () => import('../views/LoginPage.vue')
+},
   // ===== 新增管理员专属路由 =====
   {
     path: '/admin',
@@ -48,8 +52,43 @@ const routes = [
         path: 'resources',
         name: 'ResourceManagement',
         component: () => import('../views/admin/ResourceManagementPage.vue')
+      },
+
+    
+
+      // ... 在 admin 路由的 children 数组中添加：
+      {
+        path: 'focus',
+        name: 'FocusManagement',
+        component: () => import('../views/admin/FocusManagement.vue')
+      },
+
+          // ... 在 admin 路由的 children 数组中添加：
+      {
+        path: 'habits',
+        name: 'HabitManagement',
+        component: () => import('../views/admin/HabitManagement.vue')
+      },
+              // ... 在 admin 路由的 children 数组中添加：
+      {
+        path: 'user-achievements',
+        name: 'UserAchievementManagement',
+        component: () => import('../views/admin/UserAchievementManagement.vue')
+      },
+
+      // ... 在 admin children 中添加
+      {
+        path: 'interactions',
+        name: 'UserActionManagement',
+        component: () => import('../views/admin/UserActionManagement.vue')
+      },
+
+      // ... 在 admin children 中添加
+      {
+        path: 'resource-editor',
+        name: 'ResourceEditor',
+        component: () => import('../views/admin/ResourceContentEditor.vue')
       }
-      // 在这里继续添加其他页面的路由
     ]
   },
   // 如果有登录页面等不需要侧边栏和头部的页面，可以在这里单独配置

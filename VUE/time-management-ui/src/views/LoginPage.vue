@@ -17,7 +17,7 @@
 
         <el-form-item v-if="!isLogin" prop="campusUserType">
           <el-select v-model="formData.campusUserType" placeholder="请选择用户类型" style="width: 100%;">
-            <el-option label="学生" value="student"></el-option>
+            <el-option label="学生" value="student" v-if="false"></el-option>
             <el-option label="管理员" value="admin"></el-option>
           </el-select>
         </el-form-item>

@@ -28,7 +28,27 @@
       <el-icon><Collection /></el-icon>
       <span>资源维护</span>
     </el-menu-item>
-    
+
+      <el-menu-item index="/admin/habits">
+    <el-icon><Calendar /></el-icon>
+    <span>习惯监管</span>
+  </el-menu-item>
+
+  <el-menu-item index="/admin/focus">
+  <el-icon><Timer /></el-icon>
+  <span>专注监管</span>
+</el-menu-item>
+
+
+<el-menu-item index="/admin/user-achievements">
+  <el-icon><Medal /></el-icon> <span>成就颁发</span>
+</el-menu-item>
+
+<el-menu-item index="/admin/interactions">
+  <el-icon><Star /></el-icon>
+  <span>交互监控</span>
+</el-menu-item>
+      
   </el-menu>
 </template>
 

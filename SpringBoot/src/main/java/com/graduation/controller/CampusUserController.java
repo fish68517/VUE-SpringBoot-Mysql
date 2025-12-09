@@ -3,7 +3,6 @@ package com.graduation.controller;
 import com.graduation.entity.CampusUser;
 import com.graduation.service.CampusUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +27,19 @@ public class CampusUserController extends BaseController<CampusUserService, Camp
     @Autowired
     private CampusUserService campusUserService;
 
+    // 添加注册接口
+    @PostMapping("/register")
+    public boolean register(@RequestBody CampusUser user) {
+        String nickname = user.getCampusNickname();
+        if (nickname == null || nickname.isEmpty()) {
+            // 随机生成两位数
+            int randomNum = (int)(Math.random() * 100);
+            user.setCampusNickname("管理员" + randomNum);
+        }
+        user.setCampusStatusFlag((byte) 1);
+        return campusUserService.save(user);
+    }
+
     /**
      * 用户登录接口
      * @return 登录结果（包含 token 或用户信息）
@@ -36,6 +48,7 @@ public class CampusUserController extends BaseController<CampusUserService, Camp
     public Map<String, Object> login(@RequestBody Map<String, String> params) {
         String email = params.get("campusEmailAddr");
         String password = params.get("password");
+
 
         // 调用服务层进行登录验证
         CampusUser user = campusUserService.login(email, password);  // 假设服务层有此方法

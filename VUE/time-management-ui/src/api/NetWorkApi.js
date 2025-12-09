@@ -23,7 +23,7 @@ const api = {
             return apiClient.post('/campusUser/login', credentials);
         },
         register(data) { // 注册
-            return apiClient.post('/campusUser', data);
+            return apiClient.post('/campusUser/register', data);
         },
         getById(id) {
             return apiClient.get(`/campusUser/${id}`);
@@ -285,7 +285,55 @@ const api = {
         delete(id) {
             return apiClient.delete(`/user/${id}`);
         }
-    }
+    },
+
+    // ... 之前的代码
+
+    // =========================== 4. 资源详情与上传 ===========================
+    resourceDetailApi: {
+        // 根据基础资源ID获取详情
+        getByResourceId(id) {
+            return apiClient.get(`/resourceDetail/getByResourceId/${id}`);
+        },
+        // 保存或更新详情
+        saveOrUpdate(data) {
+            if (data.detailId) {
+                return apiClient.put('/resourceDetail', data);
+            } else {
+                return apiClient.post('/resourceDetail', data);
+            }
+        },
+        // 文件上传 (返回文件名)
+        uploadFile(file, type) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('type', type); // 'image' or 'video'
+            return apiClient.post('/resourceDetail/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+        }
+    },
+    
+    
+    // ... 之前的代码
+
+    // =========================== 5. 用户资源交互 (点赞/收藏) ===========================
+    userResourceActionApi: {
+        // 获取列表 (用于管理员监控)
+        list() {
+            return apiClient.get('/userResourceAction/list');
+        },
+        // 删除记录
+        delete(id) {
+            return apiClient.delete(`/userResourceAction/${id}`);
+        },
+        // 执行操作 (可选，管理员也能帮用户点赞?)
+        toggle(userId, resourceId, type) {
+            return apiClient.post(`/userResourceAction/toggle/${userId}/${resourceId}/${type}`);
+        }
+    },
+    
+    // ...
 };
 
 export default api;

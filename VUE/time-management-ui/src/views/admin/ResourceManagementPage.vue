@@ -13,6 +13,16 @@
         <template #default="scope">
           <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
           <el-button size="small" type="danger" @click="handleDelete(scope.row.learnResourceId)">删除</el-button>
+          <el-button 
+              size="small" 
+              type="warning" 
+              @click="$router.push({ 
+                name: 'ResourceEditor', 
+                query: { resourceId: scope.row.learnResourceId, resourceName: scope.row.resourceNameText } 
+              })"
+            >
+              内容配置
+            </el-button>
         </template>
       </el-table-column>
     </el-table>
