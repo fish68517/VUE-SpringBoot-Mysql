@@ -1,5 +1,6 @@
 package com.archive.app.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.archive.app.R;
+import com.archive.app.view.activity.HabitDetailActivity;
 import com.archive.app.view.adapter.HabitAdapter;
 import com.archive.app.viewmodel.HabitViewModel;
+import com.google.gson.Gson;
 
 
 public class HabitFragment extends Fragment {
@@ -45,6 +48,14 @@ public class HabitFragment extends Fragment {
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         habitAdapter = new HabitAdapter(); // 假设HabitAdapter已创建
+
+        // 设置点击跳转
+        habitAdapter.setOnItemClickListener(habit -> {
+            Intent intent = new Intent(getContext(), HabitDetailActivity.class);
+            // 使用 Gson 传递对象
+            intent.putExtra("habit_json", new Gson().toJson(habit));
+            startActivity(intent);
+        });
         recyclerView.setAdapter(habitAdapter);
     }
 

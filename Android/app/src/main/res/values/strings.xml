@@ -36,4 +36,12 @@
         <item>提前30分钟</item>
     </string-array>
 
+    <string-array name="task_categories">
+        <item>专业学习</item>
+        <item>英语学习</item>
+        <item>课程作业</item>
+        <item>生活琐事</item>
+        <item>体育锻炼</item>
+    </string-array>
+
 </resources>

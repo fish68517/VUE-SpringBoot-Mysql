@@ -16,8 +16,15 @@ import retrofit2.http.Path;
 public interface ApiService {
 
     //=========================== 1. 校园用户 (CampusUser) ===========================
+/*
     @POST("/campusUser/login")
     Call<CampusUser> login(@Body CampusUser user);
+*/
+
+
+    // ApiService.java
+    @POST("/campusUser/login")// 你的接口地址
+    Call<BaseResponse<CampusUser>> login(@Body CampusUser user);
 
     @POST("/campusUser")
     Call<Boolean> register(@Body CampusUser user);
@@ -209,4 +216,22 @@ public interface ApiService {
 
     @DELETE("/notificationCenter/{id}")
     Call<Boolean> deleteNotificationCenter(@Path("id") Long id);
+
+
+    // ... 原有代码 ...
+
+    // =========================== 资源详情与交互 ===========================
+
+    // 获取资源详情
+    @GET("/resourceDetail/getByResourceId/{id}")
+    Call<ResourceDetail> getResourceDetail(@Path("id") Long resourceId);
+
+    // 查询当前用户的交互状态 (点赞/收藏)
+    // 假设后端添加了此接口: UserResourceActionController.getStatus(userId, resourceId)
+    @GET("/userResourceAction/status/{userId}/{resourceId}")
+    Call<UserResourceAction> getActionStatus(@Path("userId") Long userId, @Path("resourceId") Long resourceId);
+
+    // 执行点赞或收藏操作 (type: "like" 或 "collect")
+    @POST("/userResourceAction/toggle/{userId}/{resourceId}/{type}")
+    Call<Boolean> toggleResourceAction(@Path("userId") Long userId, @Path("resourceId") Long resourceId, @Path("type") String type);
 }

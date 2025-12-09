@@ -1,5 +1,6 @@
 package com.archive.app.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.archive.app.R;
+import com.archive.app.view.activity.TaskEditorActivity;
 import com.archive.app.view.adapter.TaskAdapter;
 import com.archive.app.viewmodel.TaskViewModel;
 
@@ -24,6 +26,7 @@ public class TaskFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private TaskAdapter taskAdapter; // 需要创建一个Adapter
+    private View fab;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -42,11 +45,22 @@ public class TaskFragment extends Fragment {
         // 初始化UI组件
         recyclerView = view.findViewById(R.id.recycler_view_tasks);
         progressBar = view.findViewById(R.id.progress_bar_tasks);
+        fab = view.findViewById(R.id.fab);
 
         setupRecyclerView();
 
         // 观察ViewModel中的数据变化
         observeViewModel();
+
+        fab.setOnClickListener(v -> {
+            startActivity(new Intent(getContext(), TaskEditorActivity.class));
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     private void setupRecyclerView() {
@@ -59,7 +73,7 @@ public class TaskFragment extends Fragment {
         // 观察任务列表数据
         taskViewModel.getUserTasks().observe(getViewLifecycleOwner(), tasks -> {
             if (tasks != null) {
-                taskAdapter.setTasks(tasks); // 更新Adapter的数据
+                taskAdapter.setTasks(tasks,getActivity()); // 更新Adapter的数据
             }
         });
 

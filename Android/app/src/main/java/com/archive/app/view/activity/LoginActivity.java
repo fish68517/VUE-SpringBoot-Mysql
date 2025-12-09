@@ -20,6 +20,7 @@ import com.archive.app.MyApplication;
 import com.archive.app.RetrofitClient;
 
 import com.archive.app.R; // 引入您的 R 文件
+import com.archive.app.model.BaseResponse;
 import com.archive.app.model.CampusUser;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -138,31 +139,39 @@ public class LoginActivity extends AppCompatActivity {
         CampusUser user = new CampusUser();
         user.setCampusEmailAddr(username);
         user.setPassword(password);
-        apiService.login(user).enqueue(new Callback<CampusUser>() {
+        apiService.login(user).enqueue(new Callback<BaseResponse<CampusUser>>() { // 注意这里变了
             @Override
-            public void onResponse(Call<CampusUser> call, Response<CampusUser> response) {
-                if (response.isSuccessful()) {
-                    CampusUser userFromDb = response.body();
-                    // 情况二：密码正确，登录成功
-                    Toast.makeText(LoginActivity.this, "登录成功！", Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<BaseResponse<CampusUser>> call, Response<BaseResponse<CampusUser>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    BaseResponse<CampusUser> wrapper = response.body();
 
-                    // 处理“记住密码”逻辑
-                    handleRememberPassword(username, password);
+                    // 建议判断一下业务状态码，比如 200 代表成功
+                    if (wrapper.getCode() == 200) {
+                        CampusUser userFromDb = wrapper.getData(); // 【关键】从 data 字段里取数据
 
-                    MyApplication.curUser = userFromDb; // 设置当前用户
+                        if (userFromDb != null) {
+                            System.out.println("userFromDb = " + userFromDb); // 此时应该有数据了
+                            Toast.makeText(LoginActivity.this, "登录成功！", Toast.LENGTH_SHORT).show();
 
-                    // TODO: 跳转到应用主界面
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish(); // 销毁登录页，防止用户按返回键回到这里
+                            handleRememberPassword(username, password);
+                            MyApplication.curUser = userFromDb;
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Log.e("LoginActivity", "Data is null");
+                        }
+                    } else {
+                        // 处理业务错误，比如 "密码错误"
+                        Toast.makeText(LoginActivity.this, wrapper.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<CampusUser> call, Throwable t) {
-
-                Log.e("LoginActivity", "登录失败：" + t.getMessage());
-                Toast.makeText(LoginActivity.this, "登录失败！请检查用户名和密码", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<BaseResponse<CampusUser>> call, Throwable t) {
+                Log.e("LoginActivity", "网络请求失败：" + t.getMessage());
             }
         });
 

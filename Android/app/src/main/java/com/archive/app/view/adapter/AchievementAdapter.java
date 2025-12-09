@@ -37,12 +37,12 @@ public class AchievementAdapter extends RecyclerView.Adapter<AchievementAdapter.
                 .placeholder(R.mipmap.ic_launcher) // 默认图片
                 .into(holder.icon);
 
-        // 如果徽章未获得，设置灰度效果
-        // if (!currentAchievement.isEarned()) {
-        //     holder.itemView.setAlpha(0.5f);
-        // } else {
-        //     holder.itemView.setAlpha(1.0f);
-        // }
+         //如果徽章未获得，设置灰度效果
+         if (!currentAchievement.isEarned()) {
+             holder.itemView.setAlpha(0.5f);
+         } else {
+             holder.itemView.setAlpha(1.0f);
+         }
     }
 
     @Override

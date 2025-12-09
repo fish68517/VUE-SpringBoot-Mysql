@@ -140,4 +140,23 @@ public class CampusUser {
     public void setCampusUserType(String campusUserType) {
         this.campusUserType = campusUserType;
     }
+
+
+    @Override
+    public String toString() {
+        return "CampusUser{" +
+                "campusUserId=" + campusUserId +
+                ", campusNickname='" + campusNickname + '\'' +
+                ", campusAvatarUrl='" + campusAvatarUrl + '\'' +
+                ", campusSchoolId='" + campusSchoolId + '\'' +
+                ", campusEmailAddr='" + campusEmailAddr + '\'' +
+                ", password='" + password + '\'' +
+                ", campusStatusFlag=" + campusStatusFlag +
+                ", campusCreateTimestamp='" + campusCreateTimestamp + '\'' +
+                ", campusLevelCode=" + campusLevelCode +
+                ", campusBadgeCount=" + campusBadgeCount +
+                ", campusLastLoginTs='" + campusLastLoginTs + '\'' +
+                ", campusUserType='" + campusUserType + '\'' +
+                '}';
+    }
 }

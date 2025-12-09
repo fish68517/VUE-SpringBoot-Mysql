@@ -13,6 +13,7 @@ import com.archive.app.R;
 import com.archive.app.view.fragment.AchievementFragment;
 import com.archive.app.view.fragment.HabitFragment;
 import com.archive.app.view.fragment.ProfileFragment;
+import com.archive.app.view.fragment.ResourceFragment;
 import com.archive.app.view.fragment.TaskFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,11 +44,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-        fab = findViewById(R.id.fab);
 
-        fab.setOnClickListener(view -> {
-           // startActivity(new android.content.Intent(MainActivity.this, AddEditScheduleActivity.class));
-        });
 
         // 默认加载日程Fragment
         if (savedInstanceState == null) {
@@ -99,7 +96,10 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new HabitFragment();
             } else if (itemId == R.id.nav_settings) {
                 selectedFragment = new AchievementFragment();
-            } else {
+            }  else if (itemId == R.id.nav_resources) {
+                selectedFragment = new ResourceFragment();
+            }
+            else {
                 selectedFragment = new ProfileFragment();
             }
 

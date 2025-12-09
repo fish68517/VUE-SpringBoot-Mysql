@@ -50,6 +50,7 @@ public class AchievementFragment extends Fragment {
     }
 
     private void observeViewModel() {
+
         achievementViewModel.getAllAchievements().observe(getViewLifecycleOwner(), achievements -> {
             if (achievements != null) {
                 achievementAdapter.setAchievements(achievements);

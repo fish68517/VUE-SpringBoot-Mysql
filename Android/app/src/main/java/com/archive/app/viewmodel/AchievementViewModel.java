@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.archive.app.ApiClient;
 import com.archive.app.ApiService;
+import com.archive.app.MyApplication;
 import com.archive.app.model.Achievement;
 import com.archive.app.model.UserAchieveRel;
 
@@ -23,7 +24,7 @@ public class AchievementViewModel extends ViewModel {
     private final MutableLiveData<List<Achievement>> allAchievements = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
-    private final Long currentUserId = 1L;
+    private final Long currentUserId = MyApplication.curUser.getCampusUserId();
 
     public LiveData<List<Achievement>> getAllAchievements() { return allAchievements; }
     public LiveData<Boolean> getIsLoading() { return isLoading; }
@@ -36,6 +37,19 @@ public class AchievementViewModel extends ViewModel {
     private void fetchAchievements() {
         isLoading.setValue(true);
         ApiService apiService = ApiClient.getClient().create(ApiService.class);
+
+   /*     // 获取当前 userId 的 徽章
+        apiService.getUserAchieveRels().enqueue(new Callback<List<UserAchieveRel>>() {
+            @Override
+            public void onResponse(Call<List<UserAchieveRel>> call, Response<List<UserAchieveRel>> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<List<UserAchieveRel>> call, Throwable t) {
+
+            }
+        });*/
 
         // 1. 先获取所有徽章
         apiService.getAllAchievements().enqueue(new Callback<List<Achievement>>() {
@@ -61,7 +75,7 @@ public class AchievementViewModel extends ViewModel {
 
                             // 遍历所有徽章，标记是否已获得 (在模型中添加isEarned字段)
                             for(Achievement ach : achievements) {
-                                // ach.setEarned(earnedIds.contains(ach.getAchievementId()));
+                                ach.setEarned(earnedIds.contains(ach.getAchievementId()));
                             }
                         }
                         allAchievements.setValue(achievements); // 更新合并后的数据

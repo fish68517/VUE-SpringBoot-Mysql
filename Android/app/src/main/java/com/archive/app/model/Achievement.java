@@ -20,6 +20,16 @@ public class Achievement {
     @SerializedName("achieveActiveFlag")
     private Boolean achieveActiveFlag;
 
+    private boolean isEarned;
+
+    public boolean isEarned() {
+        return isEarned;
+    }
+
+    public void setEarned(boolean earned) {
+        isEarned = earned;
+    }
+
     // Getters and Setters...
 
 

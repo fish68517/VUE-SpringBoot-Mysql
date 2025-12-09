@@ -1,5 +1,7 @@
 package com.archive.app.view.adapter;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -9,8 +11,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.archive.app.MyApplication;
 import com.archive.app.R;
 import com.archive.app.model.TaskFocus;
+import com.archive.app.view.activity.TaskEditorActivity;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +23,8 @@ import java.util.List;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
     private List<TaskFocus> tasks = new ArrayList<>();
+    private Context context;
+
 
     @NonNull
     @Override
@@ -54,6 +61,15 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 background.setColor(Color.GRAY);
                 break;
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, TaskEditorActivity.class);
+            // 传递对象需要序列化，这里简单用Gson转Json
+            intent.putExtra("task_json", new Gson().toJson(currentTask));
+            // FLAG_ACTIVITY_NEW_TASK
+            // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -61,8 +77,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return tasks.size();
     }
 
-    public void setTasks(List<TaskFocus> tasks) {
+    public void setTasks(List<TaskFocus> tasks, Context context) {
         this.tasks = tasks;
+        this.context = context;
         notifyDataSetChanged();
     }
 

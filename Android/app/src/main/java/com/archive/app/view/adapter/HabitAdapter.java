@@ -17,12 +17,22 @@ import java.util.List;
 public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHolder> {
 
     private List<HabitTrack> habits = new ArrayList<>();
+    private OnItemClickListener listener; // 点击监听器接口
 
     @NonNull
     @Override
     public HabitViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_habit, parent, false);
         return new HabitViewHolder(view);
+    }
+
+    // 定义接口
+    public interface OnItemClickListener {
+        void onItemClick(HabitTrack habit);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -37,6 +47,13 @@ public class HabitAdapter extends RecyclerView.Adapter<HabitAdapter.HabitViewHol
         } catch (Exception e) {
             holder.colorView.setBackgroundColor(Color.GRAY);
         }
+
+        // 绑定点击事件
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(currentHabit);
+            }
+        });
     }
 
     @Override

@@ -12,7 +12,7 @@ public class MyApplication extends android.app.Application{
     public static CampusUser curUser;
 
     private static final String TAG = "MyApplication";
-    private Context context;
+    public static Context context;
 
 
 

@@ -79,6 +79,27 @@
         </activity>
 
 
+        <activity
+            android:name="com.archive.app.view.activity.ResourceDetailActivity"
+            android:exported="true">
+
+        </activity>
+
+
+        <activity
+            android:name="com.archive.app.view.activity.TaskEditorActivity"
+            android:exported="true">
+
+        </activity>
+
+
+        <activity
+            android:name="com.archive.app.view.activity.HabitDetailActivity"
+            android:exported="true">
+
+        </activity>
+
+
 
     </application>
 
