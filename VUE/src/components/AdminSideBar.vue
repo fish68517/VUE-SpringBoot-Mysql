@@ -45,6 +45,13 @@
       <el-icon><TrendCharts /></el-icon>
       <span>数据统计</span>
     </el-menu-item>
+
+     <!-- ===== 新增日志菜单 ===== -->
+    <el-menu-item index="/admin/system-logs">
+      <el-icon><Monitor /></el-icon>
+      <span>安全日志</span>
+    </el-menu-item>
+    <!-- ====================== -->
     
   </el-menu>
 </template>

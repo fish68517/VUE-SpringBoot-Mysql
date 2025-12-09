@@ -43,6 +43,8 @@ const api = {
         // 通常角色是预设的，较少提供创建、更新、删除接口
     },
 
+    
+
     //=========================== 3. 用户 (Users) ===========================
     usersApi: {
         login(credentials) {
@@ -159,6 +161,13 @@ const api = {
         },
         list() {
             return apiClient.get('/transaction-logs/list');
+        }
+    },
+
+    // ===== 新增：系统日志接口 =====
+    systemLogsApi: {
+        list() {
+            return apiClient.get('/system-logs/list');
         }
     }
 };

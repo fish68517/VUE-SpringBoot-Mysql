@@ -82,6 +82,13 @@ const routes = [
         component: () => import('../views/admin/AdminProductManagementPage.vue')
       },
       // ===========================
+
+      // ===== 新增：系统日志路由 =====
+      {
+        path: 'system-logs',
+        name: 'SystemLogs',
+        component: () => import('../views/admin/SystemLogPage.vue')
+      },
     ]
   },
 
