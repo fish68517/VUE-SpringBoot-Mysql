@@ -43,7 +43,7 @@
         type="primary"
         @click="handleLogin"
         :loading="isLoading"
-        :disabled="!isFormValid"
+        
         style="width: 100%"
       >
         Login

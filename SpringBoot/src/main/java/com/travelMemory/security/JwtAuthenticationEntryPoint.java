@@ -29,7 +29,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         Map<String, Object> body = new HashMap<>();
         body.put("code", 401);
-        body.put("message", "Unauthorized: " + authException.getMessage());
+        body.put("message", "Unauthorizedn 你好: " + authException.getMessage());
         body.put("timestamp", System.currentTimeMillis());
 
         ObjectMapper mapper = new ObjectMapper();

@@ -4,7 +4,7 @@ import { useUserStore } from '../stores/userStore'
 const routes = [
   {
     path: '/',
-    redirect: '/dashboard'
+    redirect: '/login'
   },
   {
     path: '/login',
@@ -88,14 +88,15 @@ const router = createRouter({
 router.beforeEach((to, _from, next) => {
   const userStore = useUserStore()
   const requiresAuth = to.meta.requiresAuth
+  next()
 
-  if (requiresAuth && !userStore.isAuthenticated) {
-    next('/login')
-  } else if (!requiresAuth && userStore.isAuthenticated && (to.path === '/login' || to.path === '/register')) {
-    next('/dashboard')
-  } else {
-    next()
-  }
+  // if (requiresAuth && !userStore.isAuthenticated) {
+  //   next('/login')
+  // } else if (!requiresAuth && userStore.isAuthenticated && (to.path === '/login' || to.path === '/register')) {
+  //   next('/dashboard')
+  // } else {
+  //   next()
+  // }
 })
 
 export default router

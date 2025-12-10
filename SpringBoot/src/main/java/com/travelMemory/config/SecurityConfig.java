@@ -58,8 +58,11 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/auth/**").permitAll()
                 .requestMatchers("/api/travels/public").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                    // 静态资源放行 (如果是前后端不分离项目)
+                    .requestMatchers("/static/**", "/resources/**").permitAll()
                 .anyRequest().authenticated()
             )
             // Add security headers

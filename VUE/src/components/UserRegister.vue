@@ -90,7 +90,7 @@
           type="primary"
           @click="handleRegister"
           :loading="loading"
-          :disabled="!isFormValid"
+        
           style="width: 100%"
         >
           Register
