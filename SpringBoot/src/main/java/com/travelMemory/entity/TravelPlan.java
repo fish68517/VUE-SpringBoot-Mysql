@@ -25,7 +25,8 @@ public class TravelPlan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    // 修改点 2：显式指定数据库列名为 user_id
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Column(nullable = false, length = 200)
@@ -46,7 +47,7 @@ public class TravelPlan {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)

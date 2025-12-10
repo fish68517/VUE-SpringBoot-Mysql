@@ -22,8 +22,12 @@ public class MultimediaFile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    // --- 修改重点 START ---
+    // 必须显式添加 name = "travel_record_id"
+    @Column(name = "travel_record_id", nullable = false)
     private Long travelRecordId;
+    // --- 修改重点 END ---
+
 
     @Column(nullable = false, length = 255)
     private String fileName;

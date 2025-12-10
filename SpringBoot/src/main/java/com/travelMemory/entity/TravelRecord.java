@@ -25,7 +25,8 @@ public class TravelRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    // 修改点 2：显式指定数据库列名为 user_id
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Column(nullable = false, length = 200)
@@ -46,13 +47,13 @@ public class TravelRecord {
     @Column(columnDefinition = "LONGTEXT")
     private String diaryContent;
 
-    @Column(nullable = false)
+    @Column(nullable = false,name = "is_public", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isPublic;
 
     @Column(nullable = false)
     private Integer viewCount;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, name = "created_at",updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)

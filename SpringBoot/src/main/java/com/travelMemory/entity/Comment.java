@@ -24,16 +24,16 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,name = "travel_record_id")
     private Long travelRecordId;
 
-    @Column(nullable = false)
+    @Column(nullable = false,name = "user_id")
     private Long userId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(nullable = false)

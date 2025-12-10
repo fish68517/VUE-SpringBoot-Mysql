@@ -38,7 +38,8 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
-    @Column(nullable = false, updatable = false)
+    // 修改点 3：建议也显式指定 created_at，保持风格一致且安全
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)

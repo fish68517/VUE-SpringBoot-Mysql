@@ -24,10 +24,10 @@ public class ItineraryItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "plan_id")
     private Long planId;
 
-    @Column(nullable = false)
+    @Column(nullable = false,name = "item_date")
     private LocalDate itemDate;
 
     @Column(nullable = false, length = 50)
