@@ -11,8 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.parameters.Parameter;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/travels")
 @RequiredArgsConstructor
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
-@Tag(name = "Travel Records", description = "Endpoints for managing travel records and memories")
 public class TravelController {
 
     private final TravelService travelService;
@@ -44,13 +42,6 @@ public class TravelController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Create a new travel record", description = "Create a new travel record with title, destination, dates, and description")
     @SecurityRequirement(name = "Bearer Authentication")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Travel record created successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.travelMemory.common.ApiResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
-    })
     public ResponseEntity<ApiResponse<TravelRecordResponse>> createTravelRecord(
             @Valid @RequestBody CreateTravelRecordRequest request,
             @RequestHeader(value = "Authorization", required = false) String authHeader) {

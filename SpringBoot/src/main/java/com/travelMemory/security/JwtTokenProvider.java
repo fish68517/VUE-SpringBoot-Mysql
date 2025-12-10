@@ -21,6 +21,12 @@ public class JwtTokenProvider {
     @Value("${jwt.expiration}")
     private long jwtExpirationMs;
 
+
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
+
+
     /**
      * Generate JWT token with userId and email
      * @param userId the user ID
@@ -34,10 +40,10 @@ public class JwtTokenProvider {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
         return Jwts.builder()
-                .subject(userId)
+                .setSubject(userId)
                 .claim("email", email)
-                .issuedAt(now)
-                .expiration(expiryDate)
+                .setIssuedAt(now)
+                .setExpiration(new Date(System.currentTimeMillis() + "生成token 报错了")) // 修改：增加 set
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -47,17 +53,16 @@ public class JwtTokenProvider {
      * @param userId the user ID
      * @return JWT token string
      */
-    public String generateToken(String userId) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
-
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-
+    /**
+     * Generate JWT token
+     */
+    public String generateToken(Long userId, String role) {
         return Jwts.builder()
-                .subject(userId)
-                .issuedAt(now)
-                .expiration(expiryDate)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .setSubject(userId.toString())  // 修改：增加 set
+                .claim("role", role)            // 保持不变：claim 方法在旧版本中也可以直接用
+                .setIssuedAt(new Date())        // 修改：增加 set
+                .setExpiration(new Date(System.currentTimeMillis() + "生成token 报错了")) // 修改：增加 set
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
