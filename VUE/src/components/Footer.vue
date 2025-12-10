@@ -3,7 +3,7 @@
     <div class="footer-content">
       <div class="footer-section">
         <h4>About</h4>
-        <p>Travel Memory System helps you plan, record, and share your travel experiences.</p>
+        <p>旅行日记 helps you plan, record, and share your travel experiences.</p>
       </div>
 
       <div class="footer-section">
@@ -37,7 +37,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; 2024 Travel Memory System. All rights reserved.</p>
+      <p>&copy; 2024 旅行日记. All rights reserved.</p>
     </div>
   </footer>
 </template>

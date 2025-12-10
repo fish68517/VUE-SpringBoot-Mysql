@@ -1,26 +1,28 @@
 <template>
   <div class="record-list-container">
     <div class="record-list-header">
-      <h1>My Travel Records</h1>
-      <el-button type="primary" @click="handleCreateRecord">
+      <h1>我的旅行记录</h1>
+      <el-button type="primary" size="large" @click="handleCreateRecord">
         <el-icon><Plus /></el-icon>
-        Create New Record
+        新建旅行记录
       </el-button>
     </div>
 
-    <!-- Loading state with skeleton -->
-    <SkeletonLoader v-if="loading" :count="5" type="card" />
+    <!-- 加载中 -->
+    <SkeletonLoader v-if="loading" :count="6" type="card" />
 
-    <!-- Empty state -->
+    <!-- 空状态 -->
     <el-empty
       v-else-if="records.length === 0"
-      description="No travel records yet"
-      style="margin-top: 40px"
+      description="你还没有创建任何旅行记录哦～"
+      style="padding: 80px 0"
     >
-      <el-button type="primary" @click="handleCreateRecord">Create First Record</el-button>
+      <el-button type="primary" size="large" @click="handleCreateRecord">
+        去创建第一篇旅行记忆
+      </el-button>
     </el-empty>
 
-    <!-- Records list -->
+    <!-- 记录列表 -->
     <div v-else class="records-grid">
       <div
         v-for="record in records"
@@ -29,12 +31,13 @@
         @click="handleViewRecord(record.id)"
       >
         <div class="record-card-header">
-          <h3>{{ record.title }}</h3>
+          <h3 class="title">{{ record.title }}</h3>
           <el-tag
             :type="record.isPublic ? 'success' : 'info'"
-            size="small"
+            size="large"
+            effect="light"
           >
-            {{ record.isPublic ? 'Public' : 'Private' }}
+            {{ record.isPublic ? '公开' : '私密' }}
           </el-tag>
         </div>
 
@@ -47,50 +50,51 @@
             <el-icon><Calendar /></el-icon>
             {{ formatDateRange(record.startDate, record.endDate) }}
           </p>
-          <p class="description">{{ truncateText(record.description, 100) }}</p>
+          <p class="description" v-if="record.description">
+            {{ truncateText(record.description, 90) }}
+          </p>
+          <p class="no-desc" v-else>暂无描述，点击查看详情～</p>
         </div>
 
         <div class="record-card-footer">
-          <span class="created-date">{{ formatDate(record.createdAt) }}</span>
-          <el-button
-            type="primary"
-            text
-            size="small"
-            @click.stop="handleViewRecord(record.id)"
-          >
-            View Details
+          <span class="created-date">
+            创建于 {{ formatDate(record.createdAt) }}
+          </span>
+          <el-button type="primary" text size="small" @click.stop="handleViewRecord(record.id)">
+            查看详情
           </el-button>
         </div>
       </div>
     </div>
 
-    <!-- Pagination -->
-    <div v-if="records.length > 0" class="pagination-container">
+    <!-- 分页 -->
+    <div v-if="total > 0" class="pagination-container">
       <el-pagination
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
-        :page-sizes="[5, 10, 20]"
+        :page-sizes="[6, 12, 24]"
         :total="total"
         layout="total, sizes, prev, pager, next, jumper"
+        background
         @current-change="handlePageChange"
         @size-change="handlePageSizeChange"
       />
     </div>
 
-    <!-- Error message -->
+    <!-- 错误提示 -->
     <el-alert
       v-if="errorMessage"
       :title="errorMessage"
       type="error"
       closable
       @close="errorMessage = ''"
-      style="margin-top: 20px"
+      style="margin-top: 24px"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Plus, Location, Calendar } from '@element-plus/icons-vue'
 import { travelService } from '../services/travelService'
@@ -102,13 +106,12 @@ const router = useRouter()
 const travelStore = useTravelStore()
 
 const records = ref([])
-const loading = ref(false)
+const loading = ref(true)
 const errorMessage = ref('')
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(12)
 const total = ref(0)
 
-// Fetch records on component mount
 onMounted(() => {
   fetchRecords()
 })
@@ -123,139 +126,122 @@ const fetchRecords = async () => {
       pageSize.value
     )
 
-    // Handle the ApiResponse structure
-    if (response && response.data) {
-      const pageData = response.data
-      records.value = pageData.content || []
-      total.value = pageData.totalElements || 0
-      travelStore.setRecords(pageData.content || [])
+    if (response?.data) {
+      records.value = response.data.content || []
+      total.value = response.data.totalElements || 0
+      travelStore.setRecords(records.value)
     }
-  } catch (error) {
-    const errorMsg = error.message || 'Failed to load travel records'
-    errorMessage.value = errorMsg
-    showError(errorMsg)
-    console.error('Error fetching records:', error)
+  } catch (err) {
+    errorMessage.value = '加载旅行记录失败，请刷新重试'
+    showError(errorMessage.value)
   } finally {
     loading.value = false
   }
 }
 
-const handlePageChange = () => {
-  fetchRecords()
-}
-
+const handlePageChange = () => fetchRecords()
 const handlePageSizeChange = () => {
   currentPage.value = 1
   fetchRecords()
 }
 
-const handleViewRecord = (recordId) => {
-  router.push(`/records/${recordId}`)
-}
+const handleViewRecord = (id) => router.push(`/records/${id}`)
+const handleCreateRecord = () => router.push('/records/create')
 
-const handleCreateRecord = () => {
-  router.push('/records/create')
-}
-
-const formatDate = (dateString) => {
-  if (!dateString) return ''
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
+// 中文友好日期格式
+const formatDate = (dateStr) => {
+  if (!dateStr) return '未知时间'
+  return new Date(dateStr).toLocaleDateString('zh-CN', {
     year: 'numeric',
-    month: 'short',
+    month: 'numeric',
     day: 'numeric'
   })
 }
 
-const formatDateRange = (startDate, endDate) => {
-  if (!startDate || !endDate) return ''
-  const start = new Date(startDate).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric'
-  })
-  const end = new Date(endDate).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  })
-  return `${start} - ${end}`
+const formatDateRange = (start, end) => {
+  if (!start || !end) return '日期未知'
+  const s = new Date(start).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
+  const e = new Date(end).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' })
+  return `${s} - ${e}`
 }
 
-const truncateText = (text, length) => {
-  if (!text) return ''
-  return text.length > length ? text.substring(0, length) + '...' : text
+const truncateText = (text, len) => {
+  return text && text.length > len ? text.substring(0, len) + '...' : text || ''
 }
 </script>
 
 <style scoped>
 .record-list-container {
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px 20px;
 }
 
 .record-list-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .record-list-header h1 {
   margin: 0;
-  color: #333;
   font-size: 28px;
+  color: #303133;
+  font-weight: 600;
 }
 
 .records-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
 }
 
 .record-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .record-card:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.15);
 }
 
 .record-card-header {
-  padding: 16px;
-  border-bottom: 1px solid #f0f0f0;
+  padding: 20px 20px 16px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
+  background: linear-gradient(120deg, #f8f9ff 0%, #f0f4ff 100%);
 }
 
-.record-card-header h3 {
+.title {
   margin: 0;
-  color: #333;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
+  color: #303133;
+  line-height: 1.4;
   flex: 1;
-  word-break: break-word;
 }
 
 .record-card-body {
-  padding: 16px;
+  padding: 0 20px 16px;
   flex: 1;
 }
 
 .record-card-body p {
-  margin: 8px 0;
-  color: #666;
+  margin: 12px 0;
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -265,45 +251,51 @@ const truncateText = (text, length) => {
 .destination {
   color: #409eff;
   font-weight: 500;
+  font-size: 15px !important;
 }
 
 .dates {
-  color: #666;
+  color: #67c23a;
 }
 
 .description {
-  color: #999;
-  line-height: 1.5;
-  max-height: 60px;
-  overflow: hidden;
+  color: #909399;
+  line-height: 1.7;
+  margin-top: 16px;
+}
+
+.no-desc {
+  color: #c0c4cc;
+  font-style: italic;
+  margin-top: 16px;
 }
 
 .record-card-footer {
-  padding: 12px 16px;
-  border-top: 1px solid #f0f0f0;
+  padding: 16px 20px;
+  border-top: 1px dashed #ebeef5;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: #fafafa;
 }
 
 .created-date {
-  font-size: 12px;
+  font-size: 13px;
   color: #999;
 }
 
 .pagination-container {
   display: flex;
   justify-content: center;
-  margin-top: 30px;
+  margin-top: 40px;
 }
 
+/* 手机端适配 */
 @media (max-width: 768px) {
   .record-list-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
+    align-items: stretch;
   }
-
   .records-grid {
     grid-template-columns: 1fr;
   }

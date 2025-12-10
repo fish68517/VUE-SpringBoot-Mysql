@@ -1,12 +1,13 @@
 <template>
   <div class="plan-edit-container">
     <div class="plan-edit-card">
-      <h2>Edit Travel Plan</h2>
+      <h2>编辑旅行计划</h2>
+      <p class="tip">修改以下信息后点击保存，即可更新你的旅行计划</p>
 
-      <!-- Loading state -->
-      <el-skeleton v-if="loading" :rows="10" animated />
+      <!-- 加载中 -->
+      <el-skeleton v-if="loading" :rows="12" animated style="padding: 40px" />
 
-      <!-- Edit form -->
+      <!-- 编辑表单 -->
       <el-form
         v-else
         ref="formRef"
@@ -15,91 +16,105 @@
         label-width="140px"
         @submit.prevent="handleUpdatePlan"
       >
-        <el-form-item label="Title" prop="title">
+        <!-- 计划标题 -->
+        <el-form-item label="计划标题" prop="title">
           <el-input
             v-model="form.title"
-            placeholder="Enter plan title"
+            placeholder="例如：2025北海道赏樱之旅"
             clearable
             maxlength="200"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Destination" prop="destination">
+        <!-- 目的地 -->
+        <el-form-item label="目的地" prop="destination">
           <el-input
             v-model="form.destination"
-            placeholder="Enter destination"
+            placeholder="例如：日本·北海道、泰国·曼谷"
             clearable
             maxlength="200"
             show-word-limit
           />
         </el-form-item>
 
-        <el-form-item label="Start Date" prop="startDate">
+        <!-- 开始日期 -->
+        <el-form-item label="开始日期" prop="startDate">
           <el-date-picker
             v-model="form.startDate"
             type="date"
-            placeholder="Select start date"
+            placeholder="选择出发日期"
             style="width: 100%"
+            :disabled-date="time => time.getTime() < Date.now() - 8.64e7"
           />
         </el-form-item>
 
-        <el-form-item label="End Date" prop="endDate">
+        <!-- 结束日期 -->
+        <el-form-item label="结束日期" prop="endDate">
           <el-date-picker
             v-model="form.endDate"
             type="date"
-            placeholder="Select end date"
+            placeholder="选择返程日期"
             style="width: 100%"
+            :disabled-date="time => form.startDate && time.getTime() < new Date(form.startDate).getTime()"
           />
         </el-form-item>
 
-        <el-form-item label="Budget" prop="budget">
+        <!-- 预算金额 -->
+        <el-form-item label="预算金额" prop="budget">
           <el-input-number
             v-model="form.budget"
-            placeholder="Enter budget amount"
             :min="0"
-            :step="100"
-            :precision="2"
+            :step="500"
+            :precision="0"
+            placeholder="请输入预计预算（元）"
             style="width: 100%"
+            controls-position="right"
           />
         </el-form-item>
 
-        <el-form-item label="Description" prop="description">
+        <!-- 计划描述 -->
+        <el-form-item label="计划描述" prop="description">
           <el-input
             v-model="form.description"
             type="textarea"
-            placeholder="Enter a brief description"
-            rows="3"
+            :rows="5"
+            placeholder="简单说说这次旅行的亮点、想去的地方、期待的事～（可选）"
             maxlength="500"
             show-word-limit
           />
         </el-form-item>
 
+        <!-- 操作按钮 -->
         <el-form-item>
           <el-button
             type="primary"
+            size="large"
             @click="handleUpdatePlan"
             :loading="submitting"
-            style="width: 100%"
+            style="width: 100%; height: 52px; font-size: 16px"
           >
-            Update Plan
+            保存修改
           </el-button>
+
           <el-button
+            size="large"
             @click="handleCancel"
-            style="width: 100%; margin-top: 10px"
+            style="width: 100%; margin-top: 14px; margin-left: 0"
           >
-            Cancel
+            取消返回
           </el-button>
         </el-form-item>
       </el-form>
 
+      <!-- 错误提示 -->
       <el-alert
         v-if="errorMessage"
         :title="errorMessage"
         type="error"
         closable
         @close="errorMessage = ''"
-        style="margin-top: 20px"
+        style="margin-top: 24px"
       />
     </div>
   </div>
@@ -116,7 +131,7 @@ const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const formRef = ref(null)
-const loading = ref(false)
+const loading = ref(true)
 const submitting = ref(false)
 const errorMessage = ref('')
 
@@ -131,125 +146,95 @@ const form = reactive({
   description: ''
 })
 
-// Validation rules
+// 全中文校验规则
 const rules = {
   title: [
-    { required: true, message: 'Title is required', trigger: 'blur' },
-    { min: 1, max: 200, message: 'Title must be between 1 and 200 characters', trigger: 'blur' }
+    { required: true, message: '请输入计划标题', trigger: 'blur' },
+    { min: 2, max: 200, message: '标题长度为2-200个字符', trigger: 'blur' }
   ],
   destination: [
-    { required: true, message: 'Destination is required', trigger: 'blur' },
-    { min: 1, max: 200, message: 'Destination must be between 1 and 200 characters', trigger: 'blur' }
+    { required: true, message: '请输入目的地', trigger: 'blur' },
+    { min: 2, max: 200, message: '目的地长度为2-200个字符', trigger: 'blur' }
   ],
   startDate: [
-    { required: true, message: 'Start date is required', trigger: 'change' }
+    { required: true, message: '请选择开始日期', trigger: 'change' }
   ],
   endDate: [
-    { required: true, message: 'End date is required', trigger: 'change' },
+    { required: true, message: '请选择结束日期', trigger: 'change' },
     {
       validator: (rule, value, callback) => {
         if (form.startDate && value && value < form.startDate) {
-          callback(new Error('End date must be after or equal to start date'))
+          callback(new Error('结束日期不能早于开始日期'))
         } else {
           callback()
         }
       },
       trigger: 'change'
     }
-  ],
-  description: [
-    { max: 500, message: 'Description must not exceed 500 characters', trigger: 'blur' }
   ]
 }
 
-/**
- * Load plan details from API
- */
+// 加载计划详情
 const loadPlanDetails = async () => {
   try {
     loading.value = true
     errorMessage.value = ''
 
-    // Check if user is authenticated
     if (!userStore.isAuthenticated) {
-      errorMessage.value = 'You must be logged in to edit a plan'
+      errorMessage.value = '请先登录后再编辑计划'
+      router.push('/login')
       return
     }
 
-    // Fetch plan details
     const response = await planService.getTravelPlanById(planId)
+    const data = response.data
 
-    if (response.data) {
-      form.title = response.data.title
-      form.destination = response.data.destination
-      form.startDate = new Date(response.data.startDate)
-      form.endDate = new Date(response.data.endDate)
-      form.budget = response.data.budget
-      form.description = response.data.description
-    }
-  } catch (error) {
-    errorMessage.value = error.message || 'Failed to load travel plan'
+    // 填充表单
+    form.title = data.title
+    form.destination = data.destination
+    form.startDate = new Date(data.startDate)
+    form.endDate = new Date(data.endDate)
+    form.budget = data.budget
+    form.description = data.description || ''
+  } catch (err) {
+    errorMessage.value = err.message || '加载计划失败，请刷新重试'
   } finally {
     loading.value = false
   }
 }
 
-/**
- * Update the travel plan
- */
+// 保存修改
 const handleUpdatePlan = async () => {
   if (!formRef.value) return
 
   try {
     await formRef.value.validate()
-    
-    // Check if user is authenticated
-    if (!userStore.isAuthenticated) {
-      errorMessage.value = 'You must be logged in to update a plan'
-      return
-    }
-
     submitting.value = true
     errorMessage.value = ''
 
-    // Prepare data for API call
     const planData = {
-      title: form.title,
-      destination: form.destination,
+      title: form.title.trim(),
+      destination: form.destination.trim(),
       startDate: form.startDate,
       endDate: form.endDate,
       budget: form.budget,
-      description: form.description
+      description: form.description.trim()
     }
 
-    // Call API to update plan
     await planService.updateTravelPlan(planId, planData)
 
-    ElMessage.success('Travel plan updated successfully!')
-    
-    // Redirect to plan detail page
+    ElMessage.success('旅行计划已成功更新！')
     router.push(`/plans/${planId}`)
-  } catch (error) {
+  } catch (err) {
     submitting.value = false
-    
-    if (error.message) {
-      errorMessage.value = error.message
-    } else if (error.errors && error.errors.length > 0) {
-      errorMessage.value = error.errors[0].message
-    } else {
-      errorMessage.value = 'Failed to update travel plan. Please try again.'
-    }
+    errorMessage.value = err.message || '保存失败，请稍后重试'
   }
 }
 
-/**
- * Cancel editing and go back
- */
 const handleCancel = () => {
   router.back()
 }
 
-// Load plan details on component mount
 onMounted(() => {
   loadPlanDetails()
 })
@@ -257,21 +242,29 @@ onMounted(() => {
 
 <style scoped>
 .plan-edit-container {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 860px;
+  margin: 20px auto;
   padding: 20px;
 }
 
 .plan-edit-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 30px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
 }
 
 .plan-edit-card h2 {
   text-align: center;
-  margin-bottom: 30px;
-  color: #333;
+  font-size: 26px;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.tip {
+  text-align: center;
+  color: #909399;
+  margin-bottom: 36px;
+  font-size: 14px;
 }
 </style>

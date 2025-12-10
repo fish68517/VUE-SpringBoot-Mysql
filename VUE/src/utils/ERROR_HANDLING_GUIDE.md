@@ -1,6 +1,6 @@
 # Frontend Error Handling Guide
 
-This guide explains how to use the comprehensive error handling system implemented in the Travel Memory System frontend.
+This guide explains how to use the comprehensive error handling system implemented in the 旅行日记 frontend.
 
 ## Overview
 

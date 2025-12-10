@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login-card">
-      <h1>Travel Memory System</h1>
+      <h1>旅行日记</h1>
       <h2>Login</h2>
       <UserLogin />
     </div>

@@ -1,50 +1,53 @@
 <template>
   <aside class="sidebar" :class="{ collapsed: isCollapsed }">
     <div class="sidebar-content">
+
+      <!-- 主菜单
       <div class="menu-section">
-        <div class="menu-title">Main</div>
+        <div class="menu-title">主菜单</div>
         <router-link to="/dashboard" class="menu-item" active-class="active">
           <el-icon><HomeFilled /></el-icon>
-          <span class="menu-label">Dashboard</span>
+          <span class="menu-label">首页仪表盘</span>
         </router-link>
       </div>
 
+      <!-- 旅行管理 -->
       <div class="menu-section">
-        <div class="menu-title">Travel</div>
+        <div class="menu-title">旅行管理</div>
         <router-link to="/records" class="menu-item" active-class="active">
           <el-icon><DocumentCopy /></el-icon>
-          <span class="menu-label">My Records</span>
+          <span class="menu-label">我的旅行记录</span>
         </router-link>
         <router-link to="/records/create" class="menu-item" active-class="active">
           <el-icon><Plus /></el-icon>
-          <span class="menu-label">New Record</span>
+          <span class="menu-label">新建旅行记录</span>
         </router-link>
         <router-link to="/plans" class="menu-item" active-class="active">
           <el-icon><Calendar /></el-icon>
-          <span class="menu-label">My Plans</span>
+          <span class="menu-label">我的旅行计划</span>
         </router-link>
         <router-link to="/plans/create" class="menu-item" active-class="active">
           <el-icon><Plus /></el-icon>
-          <span class="menu-label">New Plan</span>
+          <span class="menu-label">新建旅行计划</span>
         </router-link>
       </div>
 
+      <!-- 社区互动 -->
       <div class="menu-section">
-        <div class="menu-title">Community</div>
+        <div class="menu-title">社区互动</div>
         <router-link to="/social" class="menu-item" active-class="active">
           <el-icon><Share /></el-icon>
-          <span class="menu-label">Social Feed</span>
+          <span class="menu-label">社区动态</span>
         </router-link>
       </div>
+
     </div>
 
+    <!-- 展开/收起按钮 -->
     <div class="sidebar-footer">
-      <el-button
-        type="text"
-        @click="toggleCollapse"
-        class="collapse-btn"
-      >
-        <el-icon><ArrowLeft v-if="!isCollapsed" /><ArrowRight v-else /></el-icon>
+      <el-button type="text" @click="toggleCollapse" class="collapse-btn" title="展开/收起菜单">
+        <el-icon v-if="!isCollapsed"><ArrowLeftBold /></el-icon>
+        <el-icon v-else><ArrowRightBold /></el-icon>
       </el-button>
     </div>
   </aside>
@@ -58,8 +61,8 @@ import {
   Calendar,
   Share,
   Plus,
-  ArrowLeft,
-  ArrowRight
+  ArrowLeftBold,
+  ArrowRightBold
 } from '@element-plus/icons-vue'
 
 const isCollapsed = ref(false)
@@ -71,38 +74,41 @@ const toggleCollapse = () => {
 
 <style scoped>
 .sidebar {
-  width: 250px;
-  background: #f5f7fa;
-  border-right: 1px solid #e4e7eb;
+  width: 260px;
+  background: #ffffff;
+  border-right: 1px solid #e6e6e6;
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 60px);
-  overflow-y: auto;
-  transition: width 0.3s ease;
+  height: calc(100vh - 64px); /* 与顶部 Header 高度保持一致 */
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.06);
   position: relative;
+  z-index: 10;
 }
 
 .sidebar.collapsed {
-  width: 80px;
+  width: 72px;
 }
 
 .sidebar-content {
   flex: 1;
-  padding: 20px 0;
+  padding: 16px 0;
+  overflow-y: auto;
 }
 
 .menu-section {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .menu-title {
-  padding: 0 20px;
+  padding: 0 24px;
   font-size: 12px;
   font-weight: bold;
   color: #909399;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 10px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  user-select: none;
 }
 
 .sidebar.collapsed .menu-title {
@@ -112,86 +118,69 @@ const toggleCollapse = () => {
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
+  gap: 14px;
+  padding: 12px 24px;
   color: #606266;
   text-decoration: none;
   transition: all 0.3s ease;
   border-left: 3px solid transparent;
+  border-radius: 0 20px 20px 0;
+  margin: 2px 12px;
 }
 
 .menu-item:hover {
-  background-color: #e8f4f8;
-  color: #667eea;
+  background: #f0f9ff;
+  color: #409eff;
 }
 
 .menu-item.active {
-  background-color: #e8f4f8;
-  color: #667eea;
-  border-left-color: #667eea;
-  font-weight: bold;
+  background: linear-gradient(to right, #e6f7ff, #f0f9ff);
+  color: #409eff;
+  border-left-color: #409eff;
+  font-weight: 600;
 }
 
 .menu-label {
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 14px;
+  transition: opacity 0.2s;
 }
 
 .sidebar.collapsed .menu-label {
-  display: none;
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
 }
 
 .sidebar-footer {
-  padding: 15px 20px;
-  border-top: 1px solid #e4e7eb;
-  display: flex;
-  justify-content: center;
+  padding: 12px 0;
+  border-top: 1px solid #ebeef5;
+  text-align: center;
 }
 
 .collapse-btn {
   color: #909399;
-  padding: 0;
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s;
 }
 
 .collapse-btn:hover {
-  color: #667eea;
+  color: #409eff;
+  background: #f0f9ff;
+  transform: scale(1.1);
 }
 
-/* Responsive design */
+/* 移动端处理（可配合父组件控制显示） */
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
     left: 0;
-    top: 60px;
-    height: calc(100vh - 60px);
-    z-index: 99;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
-
-  .sidebar.collapsed {
-    width: 250px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    width: 200px;
-  }
-
-  .menu-item {
-    padding: 10px 15px;
-    gap: 10px;
-  }
-
-  .menu-title {
-    padding: 0 15px;
+    top: 64px;
+    height: calc(100vh - 64px);
+    z-index: 999;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.12);
   }
 }
 </style>

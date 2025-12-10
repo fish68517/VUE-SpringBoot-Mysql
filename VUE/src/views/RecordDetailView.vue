@@ -140,7 +140,7 @@
             @click="handleToggleLike"
             :loading="liking"
           >
-            <el-icon><Thumb /></el-icon>
+            <el-icon><Share /></el-icon>
             {{ isLiked ? 'Unlike' : 'Like' }} ({{ record.likeCount || 0 }})
           </el-button>
         </div>
@@ -178,7 +178,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ArrowLeft, Location, Calendar, Edit, Delete, Share, Thumb } from '@element-plus/icons-vue'
+import { ArrowLeft, Location, Calendar, Edit, Delete, Share, Share } from '@element-plus/icons-vue'
 import { travelService } from '../services/travelService'
 import { useTravelStore } from '../stores/travelStore'
 import { useUserStore } from '../stores/userStore'

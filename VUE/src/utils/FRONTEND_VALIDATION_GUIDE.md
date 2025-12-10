@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide documents the comprehensive client-side validation system implemented in the Travel Memory System frontend. The validation system provides real-time feedback, field-level error display, and a consistent user experience across all forms.
+This guide documents the comprehensive client-side validation system implemented in the 旅行日记 frontend. The validation system provides real-time feedback, field-level error display, and a consistent user experience across all forms.
 
 ## Architecture
 

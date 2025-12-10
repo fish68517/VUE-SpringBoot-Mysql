@@ -1,6 +1,6 @@
 <template>
   <div class="register-form">
-    <h2>Create Account</h2>
+    <h2>创建账号</h2>
     
     <el-form
       ref="formRef"
@@ -9,11 +9,12 @@
       label-width="120px"
       @submit.prevent="handleRegister"
     >
-      <el-form-item label="Username" prop="username">
+      <!-- 用户名 -->
+      <el-form-item label="用户名" prop="username">
         <div class="form-field-wrapper">
           <el-input
             v-model="form.username"
-            placeholder="Enter username (3-50 characters)"
+            placeholder="请输入用户名（3-50个字符）"
             clearable
             maxlength="50"
             show-word-limit
@@ -24,17 +25,18 @@
             <span>{{ getFieldError('username') }}</span>
           </div>
           <div v-else-if="form.username" class="field-hint">
-            Username must be 3-50 characters, letters, numbers, underscores, and hyphens only
+            用户名只能包含字母、数字、下划线和连字符，长度3-50个字符
           </div>
         </div>
       </el-form-item>
 
-      <el-form-item label="Email" prop="email">
+      <!-- 邮箱 -->
+      <el-form-item label="邮箱" prop="email">
         <div class="form-field-wrapper">
           <el-input
             v-model="form.email"
             type="email"
-            placeholder="Enter your email"
+            placeholder="请输入您的邮箱"
             clearable
             @blur="validateField('email')"
           />
@@ -43,17 +45,18 @@
             <span>{{ getFieldError('email') }}</span>
           </div>
           <div v-else-if="form.email" class="field-hint">
-            Enter a valid email address
+            请输入有效的邮箱地址
           </div>
         </div>
       </el-form-item>
 
-      <el-form-item label="Password" prop="password">
+      <!-- 密码 -->
+      <el-form-item label="密码" prop="password">
         <div class="form-field-wrapper">
           <el-input
             v-model="form.password"
             type="password"
-            placeholder="Enter password (at least 8 characters)"
+            placeholder="请输入密码（至少6位）"
             show-password
             clearable
             @blur="validateField('password')"
@@ -63,17 +66,18 @@
             <span>{{ getFieldError('password') }}</span>
           </div>
           <div v-else-if="form.password" class="field-hint">
-            Password strength: {{ passwordStrength }}
+            密码强度：{{ passwordStrength }}
           </div>
         </div>
       </el-form-item>
 
-      <el-form-item label="Confirm Password" prop="confirmPassword">
+      <!-- 确认密码 -->
+      <el-form-item label="确认密码" prop="confirmPassword">
         <div class="form-field-wrapper">
           <el-input
             v-model="form.confirmPassword"
             type="password"
-            placeholder="Confirm your password"
+            placeholder="请再次输入密码"
             show-password
             clearable
             @blur="validateField('confirmPassword')"
@@ -85,26 +89,28 @@
         </div>
       </el-form-item>
 
+      <!-- 注册按钮 -->
       <el-form-item>
         <el-button
           type="primary"
           @click="handleRegister"
           :loading="loading"
-        
           style="width: 100%"
         >
-          Register
+          立即注册
         </el-button>
       </el-form-item>
 
+      <!-- 登录链接 -->
       <el-form-item>
         <p class="login-link">
-          Already have an account?
-          <router-link to="/login">Login here</router-link>
+          已经有账号了？
+          <router-link to="/login">立即登录</router-link>
         </p>
       </el-form-item>
     </el-form>
 
+    <!-- 全局错误提示 -->
     <el-alert
       v-if="errorMessage"
       :title="errorMessage"
@@ -139,26 +145,26 @@ const form = reactive({
   confirmPassword: ''
 })
 
-// Validation rules
+// 表单校验规则（也全部改成中文提示）
 const rules = {
   username: [
-    { required: true, message: 'Username is required', trigger: 'blur' },
-    { min: 3, max: 50, message: 'Username must be between 3 and 50 characters', trigger: 'blur' }
+    { required: true, message: '请输入用户名', trigger: 'blur' },
+    { min: 3, max: 50, message: '用户名长度必须在3到50个字符之间', trigger: 'blur' }
   ],
   email: [
-    { required: true, message: 'Email is required', trigger: 'blur' },
-    { type: 'email', message: 'Email format is invalid', trigger: 'blur' }
+    { required: true, message: '请输入邮箱', trigger: 'blur' },
+    { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
   ],
   password: [
-    { required: true, message: 'Password is required', trigger: 'blur' },
-    { min: 8, max: 100, message: 'Password must be between 8 and 100 characters', trigger: 'blur' }
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, max: 100, message: '密码长度必须在6到100个字符之间', trigger: 'blur' }
   ],
   confirmPassword: [
-    { required: true, message: 'Please confirm your password', trigger: 'blur' },
+    { required: true, message: '请再次输入密码', trigger: 'blur' },
     {
       validator: (rule, value, callback) => {
         if (value !== form.password) {
-          callback(new Error('Passwords do not match'))
+          callback(new Error('两次输入的密码不一致'))
         } else {
           callback()
         }
@@ -168,7 +174,7 @@ const rules = {
   ]
 }
 
-// Use form validation composable
+// 表单校验组合式函数（错误提示也建议改成中文，下面是示例）
 const {
   errors,
   touched,
@@ -179,14 +185,15 @@ const {
   hasFieldError,
   isFormValid
 } = useFormValidation(form, {
-  username: { required: true, label: 'Username', minLength: 3, maxLength: 50 },
-  email: { required: true, type: 'email' },
-  password: { required: true, type: 'password' },
+  username: { required: true, label: '用户名', minLength: 3, maxLength: 50 },
+  email: { required: true, type: 'email', label: '邮箱' },
+  password: { required: true, label: '密码' },
   confirmPassword: {
     required: true,
+    label: '确认密码',
     validator: (value) => {
       if (value !== form.password) {
-        return { isValid: false, message: 'Passwords do not match' }
+        return { isValid: false, message: '两次密码不一致' }
       }
       return { isValid: true, message: '' }
     }
@@ -194,9 +201,10 @@ const {
 })
 
 const passwordStrength = computed(() => {
-  if (!form.password) return ''
+  if (!form.password) return '无'
   const validation = validatePassword(form.password)
-  return validation.strength.charAt(0).toUpperCase() + validation.strength.slice(1)
+  const map = { weak: '弱', medium: '中', strong: '强', veryStrong: '非常强' }
+  return map[validation.strength] || '中'
 })
 
 const handleRegister = async () => {
@@ -213,18 +221,15 @@ const handleRegister = async () => {
       password: form.password
     })
 
-    // Store token and user info
     userStore.setToken(response.data.token)
     userStore.setUser(response.data.user)
 
-    showSuccess('Registration successful! Welcome to Travel Memory System')
-    
-    // Redirect to dashboard
+    showSuccess('注册成功！欢迎加入旅行记忆系统')
     router.push('/dashboard')
   } catch (error) {
     loading.value = false
     
-    let errorMsg = 'Registration failed. Please try again.'
+    let errorMsg = '注册失败，请稍后重试'
     if (error.message) {
       errorMsg = error.message
     } else if (error.errors && error.errors.length > 0) {
@@ -238,31 +243,33 @@ const handleRegister = async () => {
 </script>
 
 <style scoped>
+/* 样式部分保持不变 */
 .register-form {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 30px;
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 40px;
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
 .register-form h2 {
   text-align: center;
   margin-bottom: 30px;
-  color: #333;
+  color: #303133;
+  font-size: 24px;
 }
 
 .login-link {
   text-align: center;
-  margin: 0;
+  margin: 20px 0 0;
   font-size: 14px;
+  color: #606266;
 }
 
 .login-link a {
   color: #409eff;
   text-decoration: none;
-  margin-left: 5px;
 }
 
 .login-link a:hover {
@@ -280,23 +287,11 @@ const handleRegister = async () => {
   margin-top: 6px;
   font-size: 12px;
   color: #f56c6c;
-  line-height: 1;
-}
-
-.field-error :deep(.el-icon) {
-  font-size: 14px;
-  flex-shrink: 0;
 }
 
 .field-hint {
   margin-top: 6px;
   font-size: 12px;
   color: #909399;
-  line-height: 1.5;
-}
-
-:deep(.el-button:disabled) {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 </style>

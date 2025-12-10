@@ -1,4 +1,4 @@
-# Travel Memory System - Frontend (Vue.js 3)
+# 旅行日记 - Frontend (Vue.js 3)
 
 ## Project Structure
 

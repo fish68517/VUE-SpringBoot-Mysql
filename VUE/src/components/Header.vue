@@ -1,47 +1,53 @@
 <template>
   <header class="header">
     <div class="header-content">
+      <!-- Logo -->
       <div class="logo-section">
-        <h1 class="logo">✈️ Travel Memory</h1>
+        <h1 class="logo">Travel Memory</h1>
       </div>
 
+      <!-- 主导航菜单 -->
       <nav class="nav-menu">
         <router-link to="/dashboard" class="nav-link" active-class="active">
           <el-icon><HomeFilled /></el-icon>
-          <span>Dashboard</span>
+          <span>首页仪表盘</span>
         </router-link>
         <router-link to="/records" class="nav-link" active-class="active">
           <el-icon><DocumentCopy /></el-icon>
-          <span>Records</span>
+          <span>旅行记录</span>
         </router-link>
         <router-link to="/plans" class="nav-link" active-class="active">
           <el-icon><Calendar /></el-icon>
-          <span>Plans</span>
+          <span>旅行计划</span>
         </router-link>
         <router-link to="/social" class="nav-link" active-class="active">
           <el-icon><Share /></el-icon>
-          <span>Social</span>
+          <span>社区分享</span>
         </router-link>
       </nav>
 
+      <!-- 用户区域 -->
       <div class="user-section">
+        <!-- 已登录显示用户名 -->
         <div class="user-info" v-if="userStore.user">
-          <span class="username">{{ userStore.user.username }}</span>
+          <span class="username">Hi, {{ userStore.user.username }}</span>
         </div>
+
+        <!-- 个人中心下拉菜单 -->
         <el-dropdown @command="handleCommand">
-          <el-button type="primary" link>
+          <el-button type="primary" link class="account-btn">
             <el-icon><User /></el-icon>
-            <span>Account</span>
+            <span>我的账户</span>
           </el-button>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item command="profile">
                 <el-icon><UserFilled /></el-icon>
-                <span>Profile</span>
+                个人中心
               </el-dropdown-item>
               <el-dropdown-item command="logout" divided>
                 <el-icon><SwitchButton /></el-icon>
-                <span>Logout</span>
+                退出登录
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -73,7 +79,7 @@ const handleCommand = (command) => {
     router.push('/profile')
   } else if (command === 'logout') {
     userStore.logout()
-    ElMessage.success('Logged out successfully')
+    ElMessage.success('退出登录成功')
     router.push('/login')
   }
 }
@@ -83,41 +89,38 @@ const handleCommand = (command) => {
 .header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 0;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  height: 60px;
+  padding: 0 30px;
+  height: 64px;
   max-width: 100%;
 }
 
 .logo-section {
   display: flex;
   align-items: center;
-  min-width: 200px;
 }
 
 .logo {
   margin: 0;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
-  white-space: nowrap;
+  letter-spacing: 1px;
 }
 
 .nav-menu {
   display: flex;
-  gap: 30px;
+  gap: 40px;
   flex: 1;
   justify-content: center;
-  align-items: center;
 }
 
 .nav-link {
@@ -126,84 +129,77 @@ const handleCommand = (command) => {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: 8px;
   transition: all 0.3s ease;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 
 .nav-link.active {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.35);
   font-weight: bold;
 }
 
 .user-section {
   display: flex;
   align-items: center;
-  gap: 15px;
-  min-width: 200px;
-  justify-content: flex-end;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
+  gap: 20px;
 }
 
 .username {
-  font-size: 14px;
-  margin-right: 10px;
+  font-size: 15px;
+  font-weight: 500;
 }
 
-/* Responsive design */
+.account-btn {
+  color: white !important;
+  font-size: 15px;
+}
+
+/* 移动端适配 */
+@media (max-width: 992px) {
+  .nav-menu {
+    gap: 20px;
+  }
+  .nav-link span {
+    font-size: 14px;
+  }
+}
+
 @media (max-width: 768px) {
   .header-content {
-    flex-wrap: wrap;
+    padding: 0 15px;
     height: auto;
-    padding: 10px 15px;
+    flex-direction: column;
+    py: 12px;
   }
 
   .logo-section {
-    width: 100%;
-    margin-bottom: 10px;
-  }
-
-  .logo {
-    font-size: 18px;
+    margin-bottom: 8px;
   }
 
   .nav-menu {
+    order: 3;
     width: 100%;
+    justify-content: center;
+    margin-top: 10px;
     gap: 15px;
-    margin-bottom: 10px;
-  }
-
-  .nav-link {
-    font-size: 12px;
-    padding: 6px 10px;
   }
 
   .nav-link span {
-    display: none;
+    display: none; /* 小屏幕只显示图标 */
   }
 
   .user-section {
-    width: 100%;
-    justify-content: flex-end;
-  }
-}
-
-@media (max-width: 480px) {
-  .nav-menu {
-    gap: 10px;
-  }
-
-  .logo {
-    font-size: 16px;
+    position: absolute;
+    right: 15px;
+    top: 18px;
   }
 }
 </style>

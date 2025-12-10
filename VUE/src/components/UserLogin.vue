@@ -3,15 +3,16 @@
     ref="loginFormRef"
     :model="loginForm"
     :rules="rules"
-    label-width="80px"
+    label-width="90px"
     @submit.prevent="handleLogin"
   >
-    <el-form-item label="Email" prop="email">
+   
+    <el-form-item label="邮箱" prop="email">
       <div class="form-field-wrapper">
         <el-input
           v-model="loginForm.email"
           type="email"
-          placeholder="Enter your email"
+          placeholder="请输入您的邮箱"
           clearable
           @blur="validateField('email')"
         />
@@ -22,12 +23,13 @@
       </div>
     </el-form-item>
 
-    <el-form-item label="Password" prop="password">
+   
+    <el-form-item label="密码" prop="password">
       <div class="form-field-wrapper">
         <el-input
           v-model="loginForm.password"
           type="password"
-          placeholder="Enter your password"
+          placeholder="请输入密码"
           show-password
           @blur="validateField('password')"
         />
@@ -38,21 +40,22 @@
       </div>
     </el-form-item>
 
+    
     <el-form-item>
       <el-button
         type="primary"
         @click="handleLogin"
         :loading="isLoading"
-        
-        style="width: 100%"
+        style="width: 100%; height: 44px; font-size: 16px"
       >
-        Login
+        立即登录
       </el-button>
     </el-form-item>
 
-    <el-form-item>
-      <span>Don't have an account? </span>
-      <router-link to="/register">Register here</router-link>
+
+    <el-form-item class="register-link">
+      <span>还没有账号？</span>
+      <router-link to="/register">立即注册</router-link>
     </el-form-item>
   </el-form>
 </template>
@@ -62,7 +65,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { CircleCloseFilled } from '@element-plus/icons-vue'
 import { useUserStore } from '../stores/userStore'
-import { useFormValidation } from '../composables/useFormValidation'
+import { useFormValidation} from '../composables/useFormValidation'
 import { loginService } from '../services/loginService'
 import { showSuccess, showError } from '../utils/notificationUtils'
 
@@ -76,26 +79,26 @@ const loginForm = reactive({
   password: ''
 })
 
+// 表单校验规则全部改成中文提示
 const rules = {
   email: [
-    { required: true, message: 'Email is required', trigger: 'blur' },
-    { type: 'email', message: 'Email format is invalid', trigger: 'blur' }
+    { required: true, message: '请输入邮箱', trigger: 'blur' },
+    { type: 'email', message: '邮箱格式不正确', trigger: 'blur' }
   ],
   password: [
-    { required: true, message: 'Password is required', trigger: 'blur' },
-    { min: 8, message: 'Password must be at least 8 characters', trigger: 'blur' }
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, message: '密码至少6位', trigger: 'blur' }
   ]
 }
 
-// Use form validation composable
+// 表单校验组合式函数
 const {
   validateField,
   getFieldError,
   hasFieldError,
-  isFormValid
 } = useFormValidation(loginForm, {
-  email: { required: true, type: 'email' },
-  password: { required: true, minLength: 8 }
+  email: { required: true, type: 'email', label: '邮箱' },
+  password: { required: true, minLength: 6, label: '密码' }
 })
 
 const handleLogin = async () => {
@@ -110,17 +113,15 @@ const handleLogin = async () => {
       password: loginForm.password
     })
 
-    // Save token and user info to store
+    // 保存登录信息
     userStore.setToken(response.data.token)
     userStore.setUser(response.data.user)
 
-    showSuccess('Login successful! Welcome back')
-    
-    // Redirect to dashboard
+    showSuccess('登录成功！欢迎回来')
     router.push('/dashboard')
   } catch (error) {
-    const errorMessage = error.message || 'Login failed. Please check your credentials.'
-    showError(errorMessage)
+    const msg = error.message || '登录失败，请检查邮箱和密码是否正确'
+    showError(msg)
   } finally {
     isLoading.value = false
   }
@@ -131,19 +132,23 @@ const handleLogin = async () => {
 :deep(.el-form) {
   max-width: 400px;
   margin: 0 auto;
+  padding: 40px 20px;
 }
 
-:deep(.el-form-item) {
-  margin-bottom: 20px;
+.register-link {
+  text-align: center;
+  font-size: 14px;
+  color: #606266;
 }
 
-a {
+.register-link a {
   color: #409eff;
   text-decoration: none;
+  margin-left: 4px;
 }
 
-a:hover {
-  color: #66b1ff;
+.register-link a:hover {
+  text-decoration: underline;
 }
 
 .form-field-wrapper {
@@ -157,16 +162,10 @@ a:hover {
   margin-top: 6px;
   font-size: 12px;
   color: #f56c6c;
-  line-height: 1;
 }
 
 .field-error :deep(.el-icon) {
   font-size: 14px;
   flex-shrink: 0;
-}
-
-:deep(.el-button:disabled) {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 </style>

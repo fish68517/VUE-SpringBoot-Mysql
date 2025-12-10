@@ -1,71 +1,75 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-header">
-      <h1>Dashboard</h1>
-      <p class="subtitle">Welcome back! Here's your travel statistics.</p>
+      <h1>个人仪表盘</h1>
+      <p class="subtitle">欢迎回来！以下是你的旅行数据统计</p>
     </div>
 
+    <!-- 加载中 -->
     <div v-if="loading" class="loading-container">
-      <el-skeleton :rows="3" animated />
+      <el-skeleton :rows="6" animated />
     </div>
 
+    <!-- 加载失败提示 -->
     <div v-else-if="error" class="error-container">
       <el-alert :title="error" type="error" :closable="false" />
     </div>
 
+    <!-- 数据统计卡片 -->
     <div v-else class="statistics-grid">
       <StatisticsCard
-        title="Travel Records"
+        title="旅行记录"
         :value="statistics.totalRecords"
-        label="Total records created"
+        label="累计创建的记录数"
         class="card records"
       />
       <StatisticsCard
-        title="Travel Plans"
+        title="旅行计划"
         :value="statistics.totalPlans"
-        label="Total plans created"
+        label="累计创建的计划数"
         class="card plans"
       />
       <StatisticsCard
-        title="Likes Received"
+        title="获得点赞"
         :value="statistics.totalLikesReceived"
-        label="Likes on public records"
+        label="公开记录收到的点赞"
         class="card likes"
       />
       <StatisticsCard
-        title="Comments Received"
+        title="获得评论"
         :value="statistics.totalCommentsReceived"
-        label="Comments on public records"
+        label="公开记录收到的评论"
         class="card comments"
       />
       <StatisticsCard
-        title="Map Footprints"
+        title="地图足迹"
         :value="statistics.totalFootprints"
-        label="Total footprints added"
+        label="累计添加的足迹点"
         class="card footprints"
       />
       <StatisticsCard
-        title="Multimedia Files"
+        title="多媒体文件"
         :value="statistics.totalMultimediaFiles"
-        label="Total files uploaded"
+        label="累计上传的照片/视频"
         class="card multimedia"
       />
     </div>
 
+    <!-- 快捷操作 -->
     <div class="quick-actions">
-      <h2>Quick Actions</h2>
+      <h2>快捷操作</h2>
       <div class="action-buttons">
-        <el-button type="primary" @click="navigateTo('/records/create')">
-          <i class="el-icon-plus"></i> Create Record
+        <el-button type="primary" size="large" @click="navigateTo('/records/create')">
+          新建旅行记录
         </el-button>
-        <el-button type="success" @click="navigateTo('/plans/create')">
-          <i class="el-icon-plus"></i> Create Plan
+        <el-button type="success" size="large" @click="navigateTo('/plans/create')">
+          新建旅行计划
         </el-button>
-        <el-button type="info" @click="navigateTo('/records')">
-          <i class="el-icon-document"></i> View Records
+        <el-button type="info" size="large" @click="navigateTo('/records')">
+          查看所有记录
         </el-button>
-        <el-button type="warning" @click="navigateTo('/plans')">
-          <i class="el-icon-document"></i> View Plans
+        <el-button type="warning" size="large" @click="navigateTo('/plans')">
+          查看所有计划
         </el-button>
       </div>
     </div>
@@ -82,6 +86,7 @@ import { statisticsService } from '../services/statisticsService'
 const router = useRouter()
 const loading = ref(true)
 const error = ref(null)
+
 const statistics = ref({
   totalRecords: 0,
   totalPlans: 0,
@@ -100,7 +105,7 @@ const fetchStatistics = async () => {
       statistics.value = response.data.data
     }
   } catch (err) {
-    error.value = err.response?.data?.message || 'Failed to load statistics'
+    error.value = err.response?.data?.message || '加载统计数据失败，请刷新重试'
     ElMessage.error(error.value)
   } finally {
     loading.value = false
@@ -118,87 +123,79 @@ onMounted(() => {
 
 <style scoped>
 .dashboard-container {
-  padding: 24px;
+  padding: 30px 24px;
   max-width: 1400px;
   margin: 0 auto;
 }
 
 .dashboard-header {
-  margin-bottom: 32px;
+  margin-bottom: 36px;
+  text-align: center;
 }
 
 .dashboard-header h1 {
-  margin: 0 0 8px 0;
-  font-size: 28px;
+  margin: 0 0 12px 0;
+  font-size: 30px;
   font-weight: 600;
-  color: #333;
+  color: #303133;
 }
 
 .subtitle {
   margin: 0;
-  font-size: 14px;
-  color: #666;
+  font-size: 16px;
+  color: #909399;
 }
 
 .loading-container {
-  padding: 20px;
-}
-
-.error-container {
-  margin-bottom: 20px;
+  padding: 60px 20px;
+  text-align: center;
 }
 
 .statistics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
+  gap: 24px;
+  margin-bottom: 48px;
 }
 
 .quick-actions {
-  background: white;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .quick-actions h2 {
-  margin: 0 0 16px 0;
-  font-size: 18px;
+  margin: 0 0 20px 0;
+  font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: #303133;
 }
 
 .action-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
 }
 
-.action-buttons :deep(.el-button) {
-  flex: 1;
-  min-width: 150px;
+.action-buttons .el-button {
+  min-width: 180px;
+ 
+  height: 48px;
+  font-size: 16px;
 }
 
+/* 手机端适配 */
 @media (max-width: 768px) {
-  .dashboard-container {
-    padding: 16px;
-  }
-
   .dashboard-header h1 {
-    font-size: 24px;
-  }
-
-  .statistics-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
+    font-size: 26px;
   }
 
   .action-buttons {
     flex-direction: column;
   }
 
-  .action-buttons :deep(.el-button) {
+  .action-buttons .el-button {
     width: 100%;
   }
 }

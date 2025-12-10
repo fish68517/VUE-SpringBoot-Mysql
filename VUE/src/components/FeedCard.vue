@@ -44,7 +44,7 @@
           @click="handleToggleLike"
           :loading="liking"
         >
-          <el-icon><Thumb /></el-icon>
+          <el-icon><Share /></el-icon>
           {{ record.likeCount || 0 }} Likes
         </el-button>
         <span class="stat">
@@ -68,7 +68,7 @@
 import { defineProps, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Location, Calendar, Thumb, ChatDotRound } from '@element-plus/icons-vue'
+import { Location, Calendar, Share, ChatDotRound } from '@element-plus/icons-vue'
 import { useUserStore } from '../stores/userStore'
 import likeService from '../services/likeService'
 
