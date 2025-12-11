@@ -94,7 +94,7 @@
         </el-form-item>
 
         <!-- 富文本日记内容 -->
-        <el-form-item label="详细日记" prop="diaryContent">
+        <el-form-item label="详细日记" prop="diaryContent" v-if="false">
           <div class="diary-editor">
             <div id="editor" ref="editorRef"></div>
             <div v-if="!form.diaryContent && submitted" class="editor-hint">
@@ -104,7 +104,7 @@
         </el-form-item>
 
         <!-- 公开/私密 -->
-        <el-form-item label="可见性" prop="isPublic">
+        <el-form-item label="可见性" prop="isPublic" v-if="false">
           <el-radio-group v-model="form.isPublic" size="large">
             <el-radio :label="false">
               <el-icon><Lock /></el-icon> 仅自己可见（私密）

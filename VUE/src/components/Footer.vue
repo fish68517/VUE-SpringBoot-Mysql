@@ -16,7 +16,7 @@
         </ul>
       </div>
 
-      <div class="footer-section">
+      <div class="footer-section" v-if="false">
         <h4>Support</h4>
         <ul>
           <li><a href="#" target="_blank">Help Center</a></li>
@@ -26,7 +26,7 @@
         </ul>
       </div>
 
-      <div class="footer-section">
+      <div class="footer-section" v-if="false">
         <h4>Follow Us</h4>
         <div class="social-links">
           <a href="#" class="social-link" title="Facebook">f</a>

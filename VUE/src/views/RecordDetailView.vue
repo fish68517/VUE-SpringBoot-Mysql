@@ -53,7 +53,7 @@
             @click="handleTogglePrivacy"
             :loading="updatingPrivacy"
           >
-            <el-icon><Share /></el-icon>
+          
             {{ record.isPublic ? 'Make Private' : 'Make Public' }}
           </el-button>
           <el-button type="primary" @click="handleEdit">
@@ -178,7 +178,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { ArrowLeft, Location, Calendar, Edit, Delete, Share, Share } from '@element-plus/icons-vue'
+import { ArrowLeft, Location, Calendar, Edit, Delete, Share } from '@element-plus/icons-vue'
 import { travelService } from '../services/travelService'
 import { useTravelStore } from '../stores/travelStore'
 import { useUserStore } from '../stores/userStore'

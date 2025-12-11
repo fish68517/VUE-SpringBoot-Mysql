@@ -77,6 +77,12 @@ const routes = [
     name: 'Profile',
     component: () => import('../views/ProfileView.vue'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/footprints',
+    name: 'TravelFootprints',
+    component: () => import('../views/TravelFootprints.vue'),
+    meta: { title: '旅行足迹' }
   }
 ]
 

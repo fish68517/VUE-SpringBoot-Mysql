@@ -30,6 +30,11 @@
           <el-icon><Plus /></el-icon>
           <span class="menu-label">新建旅行计划</span>
         </router-link>
+
+          <router-link to="/footprints" class="menu-item" active-class="active">
+            <el-icon><Plus /></el-icon>
+            <span class="menu-label">旅行足迹</span>
+        </router-link>
       </div>
 
       <!-- 社区互动 -->

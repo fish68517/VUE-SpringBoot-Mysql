@@ -139,13 +139,48 @@ const isVideo = (file) => {
  * Get full file URL
  */
 const getFileUrl = (file) => {
-  if (!file.filePath) return ''
-  // If filePath is already a full URL, return it
+  // 1. 安全检查：如果没有文件或路径，返回空
+  console.log('%c[File URL Debug]', 'file is null or path is null');
+  if (!file || !file.filePath) return ''
+
+  // 2. 如果已经是完整 http/https 链接，直接返回
   if (file.filePath.startsWith('http')) {
     return file.filePath
   }
-  // Otherwise, construct the full URL
-  return `${props.baseUrl}${file.filePath}`
+
+  // 3. 规范化 BaseUrl：去掉末尾可能存在的斜杠
+  // 假设 props.baseUrl 是 "http://localhost:8080"
+  let cleanBase = props.baseUrl || '';
+  if (cleanBase.endsWith('/')) {
+    cleanBase = cleanBase.slice(0, -1);
+  }
+
+  // 4. 规范化 FilePath：确保开头有斜杠
+  // 假设 file.filePath 是 "uploads/records/..."
+  let cleanPath = file.filePath;
+  if (!cleanPath.startsWith('/')) {
+    cleanPath = '/' + cleanPath;
+  }
+
+  // 5. 关键修改：拼接 /api
+  // 逻辑：BaseUrl + ContextPath + FilePath
+  const contextPath = '/api';
+  
+  // 防御性编程：如果 props.baseUrl 本身已经包含了 /api，就不要重复添加
+  let fullUrl = '';
+  if (cleanBase.endsWith(contextPath)) {
+      fullUrl = `${cleanBase}${cleanPath}`;
+  } else {
+      fullUrl = `${cleanBase}${contextPath}${cleanPath}`;
+  }
+
+  // 6. 增加调试日志
+  console.log('%c[Image URL Debug]', 'color: blue; font-weight: bold;');
+  console.log('1. BaseUrl:', props.baseUrl);
+  console.log('2. FilePath:', file.filePath);
+  console.log('3. Result  :', fullUrl);
+
+  return fullUrl
 }
 
 /**

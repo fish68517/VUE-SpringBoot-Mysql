@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     // 静态资源放行 (如果是前后端不分离项目)
                     .requestMatchers("/static/**", "/resources/**").permitAll()
+                    .requestMatchers("/uploads/**").permitAll()
                 .anyRequest().authenticated()
             )
             // Add security headers
