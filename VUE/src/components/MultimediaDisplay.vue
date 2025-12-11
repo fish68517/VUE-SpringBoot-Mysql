@@ -99,6 +99,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { Picture, ZoomIn, VideoPlay } from '@element-plus/icons-vue'
+import { el } from 'element-plus/es/locales.mjs'
 
 const props = defineProps({
   files: {
@@ -127,11 +128,14 @@ const isImage = (file) => {
   console.log('%c[Image Type Debug]file .....' + JSON.stringify(file));
   // "fileType":"image/jpeg"  截取文件类型
   // 从 "image/jpeg" 或 "image/png" 中提取 jpeg/png/webp 等
-  const fileTypeSub = (file.fileType || '').split('/').pop().toLowerCase();
-
+  // 判断 file 是 image/jpeg 还是 jpeg
+  let fileTypeSub;
+  if (file.fileType && file.fileType.startsWith('image')) {
+    fileTypeSub = (file.fileType || '').split('/').pop().toLowerCase();
+  } else  {
+    fileTypeSub = (file.fileType || '').toLowerCase();
+  }
   console.log('%c[Image Type Debug] 提取的后缀:', 'color: #409eff', fileTypeSub);
-
-  
   const ext = fileTypeSub?.toLowerCase() || ''
   // 打印return 返回值
   const isImage = imageTypes.includes(ext)
@@ -146,7 +150,12 @@ const isVideo = (file) => {
    console.log('%c[isVideo Type Debug]file .....' + JSON.stringify(file));
   // "fileType":"image/jpeg"  截取文件类型
   // 从 "image/jpeg" 或 "image/png" 中提取 jpeg/png/webp 等
-  const fileTypeSub = (file.fileType || '').split('/').pop().toLowerCase();
+  let fileTypeSub; // 使用 let 代替 const
+  if (file.fileType && file.fileType.startsWith('image')) {
+    fileTypeSub = (file.fileType || '').split('/').pop().toLowerCase();
+  } else  {
+    fileTypeSub = (file.fileType || '').toLowerCase();
+  }
 
   console.log('%c[isVideo Type Debug] 提取的后缀:', 'color: #409eff', fileTypeSub);
   const ext = fileTypeSub?.toLowerCase() || ''

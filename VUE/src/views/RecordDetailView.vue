@@ -187,7 +187,7 @@ import MultimediaUpload from '../components/MultimediaUpload.vue'
 import MultimediaDisplay from '../components/MultimediaDisplay.vue'
 import MapFootprint from '../components/MapFootprint.vue'
 import CommentSection from '../components/CommentSection.vue'
-import fileService from '../services/fileService'
+import { fileService } from '../services/fileService' 
 import likeService from '../services/likeService'
 
 const router = useRouter()
@@ -240,9 +240,11 @@ const fetchRecord = async () => {
 
 const fetchMultimediaFiles = async (recordId) => {
   try {
+    console.log('Fetching multimedia files for record:', recordId)
     const response = await fileService.getFilesByTravelRecord(recordId)
+    console.log('Multimedia files:', JSON.stringify(response))
     if (response && response.data) {
-      multimediaFiles.value = response.data
+      multimediaFiles.value = response.data.data
     }
   } catch (error) {
     console.error('Error fetching multimedia files:', error)

@@ -120,7 +120,9 @@
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
-import fileService from '@/services/fileService'
+// 使用花括号 {} 来进行命名导入
+import { fileService } from '../services/fileService';
+
 
 const props = defineProps({
   travelRecordId: {

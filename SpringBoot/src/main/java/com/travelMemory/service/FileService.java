@@ -28,8 +28,9 @@ public class FileService {
     private final MultimediaFileRepository multimediaFileRepository;
     private final TravelRecordRepository travelRecordRepository;
 
-    @Value("${file.upload.path:uploads/}")
-    private String uploadPath;
+    // 依然读取配置文件，默认为 uploads
+    @Value("${file.upload.path:uploads}")
+    private String configUploadPath;
 
     @Value("${file.upload.max-size:524288000}")
     private Long maxFileSize;
@@ -39,16 +40,6 @@ public class FileService {
 
     /**
      * Upload a multimedia file chunk
-     * @param travelRecordId the travel record ID
-     * @param file the file chunk
-     * @param chunkIndex the chunk index
-     * @param totalChunks the total number of chunks
-     * @param fileName the original file name
-     * @param fileSize the total file size
-     * @param userId the user ID (for ownership verification)
-     * @return MultimediaFileResponse if all chunks are uploaded, null otherwise
-     * @throws IllegalArgumentException if validation fails
-     * @throws IOException if file operation fails
      */
     public MultimediaFileResponse uploadFileChunk(
             Long travelRecordId,
@@ -59,134 +50,128 @@ public class FileService {
             Long fileSize,
             Long userId) throws IOException {
 
-        // Verify travel record exists and user is the owner
+        // 1. 验证权限
         TravelRecord record = travelRecordRepository.findByIdAndUserId(travelRecordId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel record not found or access denied"));
 
-        // Validate file size
         if (fileSize > maxFileSize) {
-            throw new IllegalArgumentException("File size exceeds maximum limit of " + maxFileSize + " bytes");
+            throw new IllegalArgumentException("File size exceeds maximum limit");
         }
 
-        // Validate file type
         String fileExtension = getFileExtension(fileName);
         if (!isAllowedFileType(fileExtension)) {
-            throw new IllegalArgumentException("File type not allowed. Allowed types: " + allowedTypes);
+            throw new IllegalArgumentException("File type not allowed");
         }
 
-        // Create upload directory if it doesn't exist
-        Path uploadDir = Paths.get(uploadPath);
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
+        // ======================= 路径修正核心代码开始 =======================
+
+        // 2. 获取项目绝对根路径 (解决 Tomcat 临时目录问题)
+        // 结果类似: D:\Acode\Android\complete\AA项目\SpringBoot
+        String projectRoot = System.getProperty("user.dir");
+
+        // 3. 构建基础上传目录 (项目根目录/uploads)
+        // 注意：这里去掉 configUploadPath 可能带有的 "./" 前缀
+        String cleanConfigPath = configUploadPath.replace("./", "").replace("/", File.separator);
+        Path baseUploadDir = Paths.get(projectRoot, cleanConfigPath);
+
+        // 4. 构建目标用户存储目录: uploads/records/{userId}
+        Path targetUserDir = baseUploadDir.resolve("records").resolve(String.valueOf(userId));
+
+        // 确保目录存在
+        if (!Files.exists(targetUserDir)) {
+            Files.createDirectories(targetUserDir);
         }
 
-        // Create a temporary directory for chunks
-        String uploadSessionId = UUID.randomUUID().toString();
-        Path sessionDir = uploadDir.resolve(uploadSessionId);
-        if (!Files.exists(sessionDir)) {
-            Files.createDirectories(sessionDir);
+        // 5. 临时分片目录: uploads/temp/{uuid}
+        // 分片不直接放在用户目录下，避免污染，合并完后删除
+        Path tempSessionDir = baseUploadDir.resolve("temp").resolve(UUID.nameUUIDFromBytes((userId + fileName).getBytes()).toString());
+        if (!Files.exists(tempSessionDir)) {
+            Files.createDirectories(tempSessionDir);
         }
 
-        // Save chunk
-        Path chunkPath = sessionDir.resolve("chunk_" + chunkIndex);
+        // ======================= 路径修正核心代码结束 =======================
+
+        // 6. 保存分片
+        Path chunkPath = tempSessionDir.resolve("chunk_" + chunkIndex);
         file.transferTo(chunkPath.toFile());
 
-        // Check if all chunks are uploaded
-        if (isAllChunksUploaded(sessionDir, totalChunks)) {
-            // Merge chunks into final file
-            String finalFileName = UUID.randomUUID() + "." + fileExtension;
-            Path finalFilePath = uploadDir.resolve(finalFileName);
-            mergeChunks(sessionDir, finalFilePath, totalChunks);
+        // 7. 检查是否所有分片已上传
+        if (isAllChunksUploaded(tempSessionDir, totalChunks)) {
 
-            // Clean up session directory
-            deleteDirectory(sessionDir.toFile());
+            // 8. 合并文件
+            // 使用原始文件名 (匹配你的截图需求: sensoji-night.jpg)
+            // 如果为了防止重名覆盖，可以在这里加个时间戳或UUID前缀，但为了匹配截图，这里用原名
+            String finalFileName = fileName;
+            Path finalFilePath = targetUserDir.resolve(finalFileName);
 
-            // Save file metadata to database
+            // 如果文件已存在，为了避免报错，可以删除旧的或者重命名。这里选择覆盖。
+            Files.deleteIfExists(finalFilePath);
+
+            mergeChunks(tempSessionDir, finalFilePath, totalChunks);
+
+            // 清理临时分片目录
+            deleteDirectory(tempSessionDir.toFile());
+
+            // 9. 保存到数据库
+            // filePath 保存相对路径: records/2/sensoji-night.jpg
+            // 这样前端访问时: http://localhost:8080/uploads/records/2/sensoji-night.jpg
+            String relativeDbPath = "/uploads/records/" + userId + "/" + finalFileName;
+
             MultimediaFile multimediaFile = MultimediaFile.builder()
                     .travelRecordId(travelRecordId)
                     .fileName(fileName)
-                    .filePath(finalFileName)
+                    .filePath(relativeDbPath) // 存相对路径
                     .fileType(fileExtension)
                     .fileSize(fileSize)
                     .build();
 
             MultimediaFile savedFile = multimediaFileRepository.save(multimediaFile);
+
+            // 返回给前端的可能是完整 URL，这取决于你的 DTO 转换逻辑
+            // 这里返回实体即可
             return MultimediaFileResponse.from(savedFile);
         }
 
-        return null; // Chunk uploaded, waiting for more chunks
+        return null;
     }
 
-    /**
-     * Get all multimedia files for a travel record
-     * @param travelRecordId the travel record ID
-     * @param userId the user ID (for ownership verification)
-     * @return List of MultimediaFileResponse
-     * @throws IllegalArgumentException if travel record not found or access denied
-     */
     @Transactional(readOnly = true)
     public List<MultimediaFileResponse> getFilesByTravelRecord(Long travelRecordId, Long userId) {
-        // Verify travel record exists and user is the owner
         travelRecordRepository.findByIdAndUserId(travelRecordId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Travel record not found or access denied"));
 
         List<MultimediaFile> files = multimediaFileRepository.findByTravelRecordId(travelRecordId);
+
+        // 注意：如果你的 DTO 转换需要完整的 URL，可以在这里处理
+        // 目前保持原样
         return files.stream()
                 .map(MultimediaFileResponse::from)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Delete a multimedia file
-     * @param fileId the file ID
-     * @param userId the user ID (for ownership verification)
-     * @throws IllegalArgumentException if file not found or access denied
-     * @throws IOException if file deletion fails
-     */
     public void deleteFile(Long fileId, Long userId) throws IOException {
-        // Get file
         MultimediaFile file = multimediaFileRepository.findById(fileId)
                 .orElseThrow(() -> new IllegalArgumentException("File not found"));
 
-        // Verify ownership by checking if user owns the travel record
         travelRecordRepository.findByIdAndUserId(file.getTravelRecordId(), userId)
                 .orElseThrow(() -> new IllegalArgumentException("Access denied"));
 
-        // Delete file from filesystem
-        Path filePath = Paths.get(uploadPath).resolve(file.getFilePath());
-        if (Files.exists(filePath)) {
-            Files.delete(filePath);
-        }
+        // ======================= 删除逻辑修正 =======================
+        String projectRoot = System.getProperty("user.dir");
+        String cleanConfigPath = configUploadPath.replace("./", "").replace("/", File.separator);
 
-        // Delete from database
+        // 拼装绝对路径: D:/.../uploads/records/2/xxx.jpg
+        Path fullFilePath = Paths.get(projectRoot, cleanConfigPath).resolve(file.getFilePath());
+
+        if (Files.exists(fullFilePath)) {
+            Files.delete(fullFilePath);
+        }
+        // ==========================================================
+
         multimediaFileRepository.delete(file);
     }
 
-    /**
-     * Delete all multimedia files for a travel record
-     * @param travelRecordId the travel record ID
-     * @throws IOException if file deletion fails
-     */
-    public void deleteFilesByTravelRecord(Long travelRecordId) throws IOException {
-        List<MultimediaFile> files = multimediaFileRepository.findByTravelRecordId(travelRecordId);
-
-        for (MultimediaFile file : files) {
-            // Delete file from filesystem
-            Path filePath = Paths.get(uploadPath).resolve(file.getFilePath());
-            if (Files.exists(filePath)) {
-                Files.delete(filePath);
-            }
-        }
-
-        // Delete all from database
-        multimediaFileRepository.deleteByTravelRecordId(travelRecordId);
-    }
-
-    /**
-     * Check if file type is allowed
-     * @param fileExtension the file extension
-     * @return true if allowed, false otherwise
-     */
+    // 辅助方法保持不变
     private boolean isAllowedFileType(String fileExtension) {
         String[] types = allowedTypes.split(",");
         for (String type : types) {
@@ -197,11 +182,6 @@ public class FileService {
         return false;
     }
 
-    /**
-     * Get file extension from file name
-     * @param fileName the file name
-     * @return the file extension
-     */
     private String getFileExtension(String fileName) {
         int lastDot = fileName.lastIndexOf('.');
         if (lastDot > 0 && lastDot < fileName.length() - 1) {
@@ -210,12 +190,6 @@ public class FileService {
         return "";
     }
 
-    /**
-     * Check if all chunks are uploaded
-     * @param sessionDir the session directory
-     * @param totalChunks the total number of chunks
-     * @return true if all chunks are uploaded, false otherwise
-     */
     private boolean isAllChunksUploaded(Path sessionDir, Integer totalChunks) {
         try {
             long chunkCount = Files.list(sessionDir)
@@ -227,13 +201,6 @@ public class FileService {
         }
     }
 
-    /**
-     * Merge chunks into final file
-     * @param sessionDir the session directory
-     * @param finalFilePath the final file path
-     * @param totalChunks the total number of chunks
-     * @throws IOException if merge fails
-     */
     private void mergeChunks(Path sessionDir, Path finalFilePath, Integer totalChunks) throws IOException {
         try (var output = Files.newOutputStream(finalFilePath)) {
             for (int i = 0; i < totalChunks; i++) {
@@ -244,10 +211,6 @@ public class FileService {
         }
     }
 
-    /**
-     * Delete directory recursively
-     * @param directory the directory to delete
-     */
     private void deleteDirectory(File directory) {
         File[] files = directory.listFiles();
         if (files != null) {
@@ -260,5 +223,20 @@ public class FileService {
             }
         }
         directory.delete();
+    }
+
+    public void deleteFilesByTravelRecord(Long travelRecordId) throws IOException {
+        List<MultimediaFile> files = multimediaFileRepository.findByTravelRecordId(travelRecordId);
+        String projectRoot = System.getProperty("user.dir");
+        String cleanConfigPath = configUploadPath.replace("./", "").replace("/", File.separator);
+        Path baseDir = Paths.get(projectRoot, cleanConfigPath);
+
+        for (MultimediaFile file : files) {
+            Path filePath = baseDir.resolve(file.getFilePath());
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+            }
+        }
+        multimediaFileRepository.deleteByTravelRecordId(travelRecordId);
     }
 }

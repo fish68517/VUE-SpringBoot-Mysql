@@ -71,6 +71,7 @@
         <el-button type="warning" size="large" @click="navigateTo('/plans')">
           查看所有计划
         </el-button>
+
       </div>
     </div>
   </div>
@@ -101,8 +102,8 @@ const fetchStatistics = async () => {
     loading.value = true
     error.value = null
     const response = await statisticsService.getUserStatistics()
-    if (response.data && response.data.data) {
-      statistics.value = response.data.data
+    if (response.data && response.data) {
+      statistics.value = response.data
     }
   } catch (err) {
     error.value = err.response?.data?.message || '加载统计数据失败，请刷新重试'
