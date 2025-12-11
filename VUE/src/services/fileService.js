@@ -1,10 +1,6 @@
 import axios from 'axios'
 import { useUserStore } from '../stores/userStore'
 
-// 配置 API 基础路径
-// 如果你的 application.properties 设置了 server.servlet.context-path=/api
-// 或者是 Vite 代理了 /api，请保留 '/api/files'
-// 如果直连后端且没有 context-path，请改为 'http://localhost:8080/files'
 const API_BASE_URL = 'http://localhost:8080/api/files' 
 
 export const fileService = {
