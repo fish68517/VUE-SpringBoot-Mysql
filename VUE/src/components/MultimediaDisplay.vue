@@ -5,7 +5,7 @@
         <div class="card-header">
           <span>
             <el-icon><Picture /></el-icon>
-            多媒体内容 ({{ files.length }})
+            多媒体内容. ({{ files.length }})
           </span>
         </div>
       </template>
@@ -123,15 +123,33 @@ const videoTypes = ['mp4', 'avi', 'mov', 'mkv', 'webm', 'flv']
  * Check if file is an image
  */
 const isImage = (file) => {
-  const ext = file.fileType?.toLowerCase() || ''
-  return imageTypes.includes(ext)
+  // 打印 file
+  console.log('%c[Image Type Debug]file .....' + JSON.stringify(file));
+  // "fileType":"image/jpeg"  截取文件类型
+  // 从 "image/jpeg" 或 "image/png" 中提取 jpeg/png/webp 等
+  const fileTypeSub = (file.fileType || '').split('/').pop().toLowerCase();
+
+  console.log('%c[Image Type Debug] 提取的后缀:', 'color: #409eff', fileTypeSub);
+
+  
+  const ext = fileTypeSub?.toLowerCase() || ''
+  // 打印return 返回值
+  const isImage = imageTypes.includes(ext)
+  console.log('[Image Type Debug]' + JSON.stringify(isImage));
+  return isImage
 }
 
 /**
  * Check if file is a video
  */
 const isVideo = (file) => {
-  const ext = file.fileType?.toLowerCase() || ''
+   console.log('%c[isVideo Type Debug]file .....' + JSON.stringify(file));
+  // "fileType":"image/jpeg"  截取文件类型
+  // 从 "image/jpeg" 或 "image/png" 中提取 jpeg/png/webp 等
+  const fileTypeSub = (file.fileType || '').split('/').pop().toLowerCase();
+
+  console.log('%c[isVideo Type Debug] 提取的后缀:', 'color: #409eff', fileTypeSub);
+  const ext = fileTypeSub?.toLowerCase() || ''
   return videoTypes.includes(ext)
 }
 

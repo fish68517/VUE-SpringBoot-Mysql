@@ -94,7 +94,7 @@
         </el-form-item>
 
         <!-- 富文本日记内容 -->
-        <el-form-item label="详细日记" prop="diaryContent" v-if="false">
+        <el-form-item label="详细日记" prop="diaryContent">
           <div class="diary-editor">
             <div id="editor" ref="editorRef"></div>
             <div v-if="!form.diaryContent && submitted" class="editor-hint">
