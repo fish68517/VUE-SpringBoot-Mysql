@@ -64,6 +64,10 @@
             <el-icon><Edit /></el-icon>
             创建内容
           </el-button>
+          <el-button type="danger" @click="goToStudentFeedback">
+            <el-icon><Edit /></el-icon>
+            学员反馈
+          </el-button>
         </div>
       </el-card>
 
@@ -159,6 +163,11 @@ import { showError } from '@/utils/feedback'
 import { getUserInfo } from '@/utils/auth'
 
 const router = useRouter()
+
+const goToStudentFeedback = () => {
+  // 跳转到新页面
+  router.push({ name: 'CoachStudentFeedback' })
+}
 
 const stats = ref({
   totalStudents: 0,

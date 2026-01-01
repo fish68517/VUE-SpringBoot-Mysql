@@ -81,3 +81,39 @@ export function deleteTrainingPlan(id) {
     method: 'delete'
   });
 }
+
+// ==========================================
+//  下面的代码不需要再次 import request
+// ==========================================
+
+// 获取某学员在该教练下的反馈列表
+export function getFeedbackListByStudent(params) {
+  return request({
+    url: '/training-feedback/list',
+    method: 'get',
+    params: {
+      student_id: params.studentId,
+      coach_id: params.coachId
+    }
+  })
+}
+
+// 教练回复反馈
+export function replyFeedback(data) {
+  return request({
+    url: '/training-feedback/reply',
+    method: 'post',
+    data: {
+      id: data.id,          // 反馈ID
+      coach_reply: data.coach_reply // 回复内容
+    }
+  })
+}
+
+// 删除反馈
+export function deleteFeedback(id) {
+  return request({
+    url: `/training-feedback/${id}`,
+    method: 'delete'
+  })
+}

@@ -1,5 +1,6 @@
 package com.sharkfitness.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.sharkfitness.dto.CreateFeedbackRequest;
 import com.sharkfitness.dto.TrainingFeedbackDto;
 import com.sharkfitness.entity.TrainingFeedback;
@@ -40,6 +41,7 @@ public class TrainingFeedbackService {
         feedback.setContent(request.getContent());
         feedback.setRating(request.getRating());
         feedback.setFeedbackDate(request.getFeedbackDate());
+        feedback.setCoachId(request.getCoachId());
 
         TrainingFeedback savedFeedback = feedbackRepository.save(feedback);
         return convertToDto(savedFeedback);
@@ -56,5 +58,23 @@ public class TrainingFeedbackService {
                 .rating(feedback.getRating())
                 .feedbackDate(feedback.getFeedbackDate())
                 .build();
+    }
+
+    public List<TrainingFeedback> list(Long studentId, Long coachId) {
+        return feedbackRepository.findByStudentIdAndCoachIdOrderByFeedbackDateDesc(studentId, coachId);
+    }
+
+    public void removeById(Long id) {
+        feedbackRepository.deleteById(id);
+    }
+
+    public void updateById(TrainingFeedback feedback) {
+        int id = Math.toIntExact(feedback.getId());
+        // 更新 content
+        feedbackRepository.findById((long) id).ifPresent(existingFeedback -> {
+            existingFeedback.setCoachReply(feedback.getCoachReply());
+            existingFeedback.setReplyAt(feedback.getReplyAt());
+            feedbackRepository.save(existingFeedback);
+        });
     }
 }

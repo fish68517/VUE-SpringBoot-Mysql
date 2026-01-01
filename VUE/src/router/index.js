@@ -112,6 +112,18 @@ const router = createRouter({
       component: () => import('@/views/coach/CoachDashboard.vue'),
       meta: { requiresAuth: true, roles: ['coach'] }
     },
+
+    {
+      path: '/coach/student-feedback',
+      name: 'CoachStudentFeedback',
+      component: () => import('@/views/coach/CoachStudentFeedback.vue'),
+        meta: { 
+          title: '学员反馈管理',
+          requiresAuth: true
+        
+        }
+    },
+
     {
       path: '/coach/students',
       name: 'StudentList',

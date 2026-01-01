@@ -18,4 +18,11 @@ public interface TrainingFeedbackRepository extends JpaRepository<TrainingFeedba
      * @return A list of TrainingFeedback entities.
      */
     List<TrainingFeedback> findByPlanIdOrderByFeedbackDateDesc(Long planId);
+
+
+    List<TrainingFeedback> findByStudentIdOrderByFeedbackDateDesc(Long studentId);
+
+    List<TrainingFeedback> findByCoachIdOrderByFeedbackDateDesc(Long coachId);
+
+    List<TrainingFeedback> findByStudentIdAndCoachIdOrderByFeedbackDateDesc(Long studentId, Long coachId);
 }

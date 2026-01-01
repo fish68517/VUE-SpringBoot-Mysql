@@ -27,4 +27,7 @@ public class CreateFeedbackRequest {
     private LocalDate feedbackDate;
 
     private Long studentId;
+
+    private Long coachId;
+    private String feeling;
 }

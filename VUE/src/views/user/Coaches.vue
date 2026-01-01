@@ -80,6 +80,15 @@
             <el-icon><Calendar /></el-icon> 制定计划
           </el-button>
 
+          <!-- 情况3: 反馈 -> 评价 需要弹框-->
+          <el-button 
+            v-if="isActiveMember(coach)"  
+            type="success" 
+    
+            size="small" 
+            class="action-btn"
+            @click.stop="showFeedbackDialog(coach)">  <el-icon><Star /></el-icon> 反馈</el-button>
+
           <!-- 情况2: 过期或未签约 -> 续约/签约 -->
           <el-button 
             v-else
@@ -101,6 +110,75 @@
     <div v-else class="empty-state">
       <el-empty description="暂无符合条件的教练" />
     </div>
+
+  
+    <!-- 评价反馈弹框 (修改后) -->
+    <el-dialog
+      v-model="feedbackDialogVisible"
+      title="训练反馈与评价"
+      width="500px"
+      center
+      destroy-on-close
+      class="feedback-dialog"
+    >
+      <el-form 
+        ref="feedbackFormRef" 
+        :model="feedbackForm" 
+        :rules="feedbackRules"
+        label-width="100px"
+      >
+        <!-- 对应 DB: feedback_date -->
+        <el-form-item label="训练日期" prop="feedback_date">
+          <el-date-picker
+            v-model="feedbackForm.feedback_date"
+            type="date"
+            placeholder="选择日期"
+            value-format="YYYY-MM-DD"
+            style="width: 100%"
+            :disabled-date="(time) => time.getTime() > Date.now()" 
+          />
+        </el-form-item>
+
+        <!-- 对应 DB: feeling (easy, normal, hard, exhausted) -->
+        <el-form-item label="体感状态" prop="feeling">
+          <el-radio-group v-model="feedbackForm.feeling">
+            <el-radio-button label="easy">轻松</el-radio-button>
+            <el-radio-button label="normal">适中</el-radio-button>
+            <el-radio-button label="hard">困难</el-radio-button>
+            <el-radio-button label="exhausted">力竭</el-radio-button>
+          </el-radio-group>
+        </el-form-item>
+
+        <!-- 对应 DB: rating -->
+        <el-form-item label="评分" prop="rating"> 
+          <el-rate 
+            v-model="feedbackForm.rating" 
+            :max="5" 
+            show-text
+            :texts="['极差', '失望', '一般', '满意', '惊喜']"
+          />          
+        </el-form-item>
+
+        <!-- 对应 DB: content -->
+        <el-form-item label="评价内容" prop="content">
+          <el-input 
+            v-model="feedbackForm.content" 
+            type="textarea" 
+            rows="4" 
+            maxlength="255"
+            show-word-limit
+            placeholder="请详细描述今天的训练感受或遇到的问题..." 
+          />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="feedbackDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitFeedback" :loading="submittingFeedback">提交评价</el-button>
+        </span>
+      </template>
+    </el-dialog>
 
     <!-- 教练详情弹窗 -->
     <el-dialog
@@ -194,11 +272,14 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick, reactive } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { Search, Timer, Warning, Calendar, Money, UserFilled } from '@element-plus/icons-vue'
 import Layout from '@/components/common/Layout.vue'
 import { getCoaches, getCoachById, getCoachStudentsById, renewCoachStudent } from '@/api/coach.js'
+// 
+import { submitNewFeedback} from '@/api/feedback.js'
 import { getUserInfo } from '@/utils/auth.js'
 import { showSuccess, showError, showInfo } from '@/utils/feedback.js'
 
@@ -208,6 +289,105 @@ const loading = ref(false)
 const searchQuery = ref('')
 const dialogVisible = ref(false)
 const selectedCoach = ref(null)
+
+// --- 状态定义 ---
+const feedbackDialogVisible = ref(false)
+const submittingFeedback = ref(false)
+const feedbackFormRef = ref(null)
+
+// 当前选中的教练或计划信息缓存
+const currentCoachInfo = ref(null)
+
+// 表单数据 (结构对应 training_feedback 表)
+const feedbackForm = reactive({
+  plan_id: null,        // 需要在打开弹窗时赋值
+  feedback_date: '',    // 对应 feedback_date
+  feeling: 'normal',    // 对应 feeling，默认适中
+  rating: 5,            // 对应 rating
+  content: ''           // 对应 content
+})
+
+// 表单验证规则
+const feedbackRules = {
+  feedback_date: [{ required: true, message: '请选择训练日期', trigger: 'change' }],
+  feeling: [{ required: true, message: '请选择体感状态', trigger: 'change' }],
+  rating: [{ required: true, message: '请评分', trigger: 'change' }],
+  content: [{ required: true, message: '请输入评价内容', trigger: 'blur' }]
+}
+
+
+/**
+ * 打开反馈弹窗
+ * @param {Object} coach - 点击的教练对象
+ */
+const showFeedbackDialog = (coach) => {
+  currentCoachInfo.value = coach;
+  feedbackDialogVisible.value = true;
+  
+  // 重置表单
+  nextTick(() => {
+    if(feedbackFormRef.value) feedbackFormRef.value.resetFields();
+    
+    // 初始化默认值
+    feedbackForm.rating = 5;
+    feedbackForm.feeling = 'normal';
+    // 默认日期为今天
+    feedbackForm.feedback_date = new Date().toISOString().split('T')[0];
+    feedbackForm.content = '';
+    
+    // 【关键】关联 plan_id
+    // 假设 coach 对象中有当前计划的 ID，或者你需要从其他地方获取 plan_id
+    // 如果数据库表要求 plan_id 必填，这里必须赋值
+    if (coach.currentPlanId) {
+        feedbackForm.plan_id = coach.currentPlanId; 
+    } else {
+        console.warn("未找到关联的 plan_id，提交可能会失败");
+        // 如果 coach 对象里没有 plan_id，你可能需要根据业务逻辑去查找
+        feedbackForm.plan_id = 1; // 占位符，实际应用中请替换
+    }
+  });
+}
+
+/**
+ * 提交反馈
+ */
+const submitFeedback = async () => {
+  if (!feedbackFormRef.value) return;
+  
+  await feedbackFormRef.value.validate(async (valid) => {
+    if (valid) {
+      submittingFeedback.value = true;
+      const userInfo = getUserInfo()
+      const userId = userInfo ? userInfo.userId : null
+      try {
+        // 构造发送给后端的数据
+        const payload = {
+          planId: feedbackForm.plan_id, // 必填
+          studentId: userId,
+          coachId: currentCoachInfo.value.id,
+          feedbackDate: feedbackForm.feedback_date,
+          rating: feedbackForm.rating,
+          feeling: feedbackForm.feeling,
+          content: feedbackForm.content
+        };
+
+        console.log('提交的数据:', payload);
+
+        // TODO: 调用后端 API
+       await submitNewFeedback(payload);
+
+        ElMessage.success('反馈提交成功');
+        feedbackDialogVisible.value = false;
+        
+      } catch (error) {
+        console.error(error);
+        ElMessage.error('提交失败，请重试');
+      } finally {
+        submittingFeedback.value = false;
+      }
+    }
+  });
+}
 
 // 续约相关状态
 const renewDialogVisible = ref(false)

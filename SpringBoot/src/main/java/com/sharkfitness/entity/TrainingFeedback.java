@@ -37,6 +37,21 @@ public class TrainingFeedback {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "coach_id")
+    private Long coachId;
+
+    @Column(name = "feeling")
+    private String feeling;
+
+    // coach_reply 数据库是 text类型
+
+    @Column(name = "coach_reply")
+    private String coachReply;
+
+    @Column(name = "reply_at")
+    private LocalDate replyAt;
+
+
     // We don't need to map the foreign key constraints directly in the entity
     // for this simple use case, but you could use @ManyToOne if you map
     // TrainingPlan and User entities.
