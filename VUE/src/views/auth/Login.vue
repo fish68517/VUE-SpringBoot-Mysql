@@ -1,187 +1,92 @@
 <template>
-  <div class="login-container">
-    <el-card class="login-card">
+  <!-- 
+    修改点 1: 
+    background: 保持淡绿色渐变
+    flex-direction: column;  关键！让标题和卡片垂直对齐，而不是左右排
+  -->
+  <div style="height: 100vh; display:flex; flex-direction: column; align-items:center; justify-content:center; background: linear-gradient(135deg, #f0f9eb 0%, #d1e9d3 100%);">
+    
+    <!-- 修改点 2: 新增的大标题 -->
+    <div style="margin-bottom: 30px; font-size: 34px; font-weight: 800; color: #2e5c33; letter-spacing: 2px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1);">
+      求职招聘系统
+    </div>
+
+    <!-- 登录卡片 -->
+    <el-card style="width: 420px; box-shadow: 0 8px 16px rgba(0,0,0,0.08); border-radius: 12px;">
       <template #header>
-        <div class="card-header">
-          <h2>小鲨鱼运动健身管理系统</h2>
-          <p>用户登录</p>
-        </div>
+        <div style="font-weight:700; text-align: center; font-size: 18px;">用户登录</div>
       </template>
 
-      <el-form
-        ref="loginFormRef"
-        :model="loginForm"
-        :rules="loginRules"
-        label-width="80px"
-        @submit.prevent="handleLogin"
-      >
-        <el-form-item label="用户名" prop="username">
-          <el-input
-            v-model="loginForm.username"
-            placeholder="请输入用户名"
-            clearable
-          />
+      <el-form :model="form" label-width="80px" size="large">
+        <el-form-item label="角色">
+          <el-select v-model="form.role" style="width: 100%">
+            <el-option label="求职者" value="JOBSEEKER" />
+            <el-option label="商家" value="MERCHANT" />
+            <el-option label="管理员" value="ADMIN" />
+          </el-select>
         </el-form-item>
 
-        <el-form-item label="密码" prop="password">
-          <el-input
-            v-model="loginForm.password"
-            type="password"
-            placeholder="请输入密码"
-            show-password
-            clearable
-            @keyup.enter="handleLogin"
-          />
+        <el-form-item label="账号">
+          <el-input v-model="form.username" placeholder="请输入账号">
+            <!-- 这是一个小细节：可以加图标，如果没有引入图标库可忽略 -->
+          </el-input>
+        </el-form-item>
+
+        <el-form-item label="密码">
+          <el-input v-model="form.password" type="password" show-password placeholder="请输入密码" />
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            :loading="loading"
-            style="width: 100%"
-            @click="handleLogin"
-          >
-            登录
+          <!-- 按钮使用 success 绿色主题 -->
+          <el-button type="success" style="width:100%; font-weight: bold; letter-spacing: 1px;" :loading="loading" @click="onLogin">
+            立即登录
           </el-button>
         </el-form-item>
 
-        <el-form-item>
-          <div class="register-link">
-            还没有账号？
-            <router-link to="/register">立即注册</router-link>
-          </div>
-        </el-form-item>
+        <div style="display:flex; justify-content:space-between; padding: 0 10px;">
+          <el-link type="success" :underline="false" @click="$router.push('/register')">注册新账号</el-link>
+          <!-- 预留找回密码位置，保持对称美观 -->
+          <el-link type="info" :underline="false" disabled>忘记密码?</el-link>
+        </div>
       </el-form>
     </el-card>
+    
+    <!-- 底部版权信息 (可选，增加系统完整感) -->
+    <div style="margin-top: 40px; color: #889489; font-size: 12px;">
+      &copy; 2026 求职招聘平台 版权所有
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { login } from '@/api/auth'
-import { setToken, setUserInfo } from '@/utils/auth'
-import { commonRules } from '@/utils/validator'
-import { showError } from '@/utils/feedback'
+import { reactive, ref } from "vue";
+import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/store/auth";
+import { AuthApi } from "@/api/Api"; 
 
-const router = useRouter()
-const loginFormRef = ref(null)
-const loading = ref(false)
+const router = useRouter();
+const auth = useAuthStore();
+const loading = ref(false);
 
-const loginForm = reactive({
-  username: '',
-  password: ''
-})
+const form = reactive({
+  role: "JOBSEEKER",
+  username: "",
+  password: "",
+});
 
-const loginRules = {
-  username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, message: '用户名至少3个字符', trigger: 'blur' }
-  ],
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码至少6个字符', trigger: 'blur' }
-  ]
-}
-
-const handleLogin = async () => {
-  if (!loginFormRef.value) return
-
+async function onLogin() {
+  loading.value = true;
   try {
-    // Validate form
-    const valid = await loginFormRef.value.validate().catch(() => false)
-    if (!valid) {
-      showError('Please fill in all login information')
-      return
-    }
-
-    loading.value = true
-
-    const response = await login(loginForm)
-    console.log('实际收到的 response:', response) // <--- 查看控制台这里的输出
-    // Store token and user info
-    setToken(response.token)
-    setUserInfo(response)
-
-    // Success message will be shown by the redirect
-
-    // Redirect based on role
-    const role = response.role
-    if (role === 'admin') {
-      router.push('/admin/dashboard')
-    } else if (role === 'coach') {
-      router.push('/coach/dashboard')
-    } else {
-      router.push('/home')
-    }
-  } catch (error) {
-    // Error is already handled by request interceptor
-    console.error('Login error:', error)
-    // Only show additional message if it's a validation error
-    if (error.message && !error.response) {
-      showError(error.message)
-    }
+    const user = await AuthApi.login(form);
+    auth.setUser(user);
+    ElMessage.success("登录成功");
+    router.push("/app");
+  } catch (e) {
+    ElMessage.error(e?.message || "登录失败");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 </script>
-
-<style scoped>
-.login-container {
-  /* 核心修改开始：强制铺满屏幕 */
-  position: fixed; /* 使用固定定位，无视父级元素的 padding/margin */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* 核心修改结束 */
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
-  /* 背景渐变 */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  
-  /* 防止背景图过大出现滚动条 */
-  overflow: hidden; 
-}
-
-.login-card {
-  width: 450px;
-  max-width: 90%;
-}
-
-.card-header {
-  text-align: center;
-}
-
-.card-header h2 {
-  margin: 0 0 10px 0;
-  color: #303133;
-  font-size: 24px;
-}
-
-.card-header p {
-  margin: 0;
-  color: #909399;
-  font-size: 14px;
-}
-
-.register-link {
-  width: 100%;
-  text-align: center;
-  color: #606266;
-  font-size: 14px;
-}
-
-.register-link a {
-  color: #409eff;
-  text-decoration: none;
-}
-
-.register-link a:hover {
-  text-decoration: underline;
-}
-</style>

@@ -1,47 +1,56 @@
 package com.sharkfitness.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sharkfitness.entity.enums.Role;
+import com.sharkfitness.entity.enums.UserStatus;
 import jakarta.persistence.*;
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
 
-/**
- * User entity representing system users with different roles
- */
+
 @Entity
 @Table(name = "user")
-@Data
-public class User {
-    
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(unique = true, nullable = false, length = 50)
+
+    @Column(nullable=false, unique=true, length=50)
     private String username;
-    
-    @Column(nullable = false, length = 100)
-    private String password;  // Plain text storage as per requirements
-    
-    @Column(nullable = false, length = 20)
-    private String role;  // user, coach, admin
-    
-    @Column(length = 255)
-    private String avatar;
-    
-    @Column(length = 10)
-    private String gender;
-    
-    @Column(length = 500)
-    private String intro;
-    
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-    
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+
+    @Column(name="password_hash", nullable=false, length=255)
+    private String passwordHash;
+
+    private String phone;
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false, length=20)
+    private Role role;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable=false, length=20)
+    private UserStatus status = UserStatus.NORMAL;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public UserStatus getStatus() { return status; }
+    public void setStatus(UserStatus status) { this.status = status; }
 }
