@@ -2,20 +2,54 @@
   <div>
     <div style="display:flex; justify-content:space-between; margin-bottom: 12px;">
       <div style="font-weight:700">{{ title }}</div>
-      <el-button type="primary" @click="openCreate">新增</el-button>
+
+      <div style="display:flex; gap:8px;">
+        <slot name="toolbar-left"></slot>
+        <el-button v-if="showCreate" type="primary" @click="openCreate">新增</el-button>
+        <el-button v-if="showRefresh" @click="load">刷新</el-button>
+        <slot name="toolbar-right"></slot>
+      </div>
     </div>
 
     <el-table :data="rows" border style="width: 100%">
-      <el-table-column v-for="c in columns" :key="c.prop" :prop="c.prop" :label="c.label" :width="c.width" />
+      <el-table-column
+        v-for="c in columns"
+        :key="c.prop"
+        :prop="c.prop"
+        :label="c.label"
+        :width="c.width"
+      >
+        <template v-if="c.slot" #default="{ row }">
+          <slot :name="c.slot" :row="row"></slot>
+        </template>
+      </el-table-column>
 
-      <el-table-column label="操作" width="180">
+      <el-table-column v-if="hasActions" label="操作" :width="actionWidth">
         <template #default="{ row }">
-          <el-button size="small" @click="openEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="onDelete(row)">删除</el-button>
+          <!-- 默认：编辑/删除 -->
+          <template v-if="defaultActions">
+            <el-button size="small" v-if="showEdit" @click="openEdit(row)">编辑</el-button>
+            <el-button size="small" v-if="showDelete" type="danger" @click="onDelete(row)">删除</el-button>
+          </template>
+
+          <!-- 额外：业务按钮 -->
+          <template v-for="(act, idx) in rowActions" :key="idx">
+            <el-button
+              size="small"
+              :type="act.type || 'default'"
+              :disabled="act.disabled ? act.disabled(row) : false"
+              @click="act.onClick(row)"
+            >
+              {{ act.label }}
+            </el-button>
+          </template>
+
+          <slot name="row-actions" :row="row"></slot>
         </template>
       </el-table-column>
     </el-table>
 
+    <!-- 新增/编辑弹窗 -->
     <el-dialog v-model="dlg" :title="editingId ? '编辑' : '新增'" width="520px">
       <el-form :model="form" label-width="120px">
         <el-form-item v-for="f in formFields" :key="f.prop" :label="f.label">
@@ -38,18 +72,34 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, computed } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 
 const props = defineProps({
   title: { type: String, required: true },
   api: { type: Object, required: true }, // createCrud() 返回的对象
   columns: { type: Array, required: true },
-  formFields: { type: Array, required: true },
-  // 转换：表单->提交 payload
+  formFields: { type: Array, default: () => [] },
+
+  // 原有：转换
   transformOut: { type: Function, default: (x) => x },
-  // 转换：row->表单
   transformIn: { type: Function, default: (x) => ({ ...x }) },
+
+  // 新增：控制
+  showCreate: { type: Boolean, default: true },
+  showEdit: { type: Boolean, default: true },
+  showDelete: { type: Boolean, default: true },
+  showRefresh: { type: Boolean, default: true },
+
+  // 新增：自定义加载（例如只加载当前用户数据）
+  loadFn: { type: Function, default: null },
+
+  // 新增：业务按钮
+  rowActions: { type: Array, default: () => [] },
+
+  // 操作列
+  defaultActions: { type: Boolean, default: true },
+  actionWidth: { type: Number, default: 220 },
 });
 
 const rows = ref([]);
@@ -58,8 +108,20 @@ const saving = ref(false);
 const editingId = ref(null);
 const form = reactive({});
 
+const hasActions = computed(() => props.defaultActions || (props.rowActions && props.rowActions.length > 0));
+
 async function load() {
-  rows.value = await props.api.list();
+  console.log("加载数据...");
+  try {
+    if (props.loadFn) {
+       console.log("使用自定义加载...");
+      rows.value = await props.loadFn();
+    } else {
+      rows.value = await props.api.list();
+    }
+  } catch (e) {
+    ElMessage.error(e?.response?.data || e?.message || "加载失败");
+  }
 }
 
 function resetForm(obj = {}) {
@@ -103,6 +165,8 @@ async function onDelete(row) {
     await load();
   } catch {}
 }
+
+defineExpose({ load });
 
 onMounted(load);
 </script>
