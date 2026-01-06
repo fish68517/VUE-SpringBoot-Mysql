@@ -1,7 +1,7 @@
 <template>
   <el-card>
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <div style="font-weight:700">岗位管理（商家）.</div>
+      <div style="font-weight:700">岗位管理（商家）</div>
       <div style="display:flex; gap:8px;">
         <el-button @click="reloadAll" :loading="loading">刷新</el-button>
       </div>
@@ -17,16 +17,17 @@
     />
 
     <el-alert
-      v-else-if="!companyId && !loading"
+      v-else-if="needCompanyHint"
       type="info"
       show-icon
       :closable="false"
-      title="你还没有创建企业资料（或企业未绑定到该商家）。请先去【企业管理】创建企业。"
+      title="未找到你的企业资料，请先去【企业管理】创建企业，然后再来发布岗位。"
       style="margin-bottom: 12px"
     />
 
+    <!-- 注意：这里始终渲染 CrudPage，让它触发 loadFn -->
     <CrudPage
-      v-else
+      v-if="role === 'MERCHANT'"
       ref="crudRef"
       title="我发布的岗位"
       :api="JobPostApi"
@@ -55,11 +56,13 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import CrudPage from "@/components/CrudPage.vue";
 import { useAuthStore } from "@/store/auth";
 import { CompanyApi, JobPostApi } from "@/api/Api";
+
+console.log("JobPostManage component loaded !!!"); // ✅ 用于确认路由是否进来了
 
 const auth = useAuthStore();
 const role = computed(() => auth.role);
@@ -68,7 +71,8 @@ const me = computed(() => auth.user);
 const crudRef = ref(null);
 const loading = ref(false);
 
-const companyId = ref(null); // 当前商家企业ID（默认取第一条企业）
+const companyId = ref(null);
+const needCompanyHint = ref(false);
 
 function fmt(v) {
   if (!v) return "";
@@ -90,7 +94,6 @@ function statusType(s) {
   return "";
 }
 
-/** columns：只展示商家关心的字段 */
 const columns = [
   { prop: "id", label: "ID", width: 70 },
   { prop: "title", label: "标题", width: 220 },
@@ -103,7 +106,6 @@ const columns = [
   { prop: "status", label: "状态", slot: "statusTag", width: 110 },
 ];
 
-/** formFields：商家可编辑字段（不让商家自己填 companyId，自动绑定到当前企业） */
 const fields = [
   { prop: "title", label: "标题", type: "text" },
   { prop: "category", label: "分类", type: "text" },
@@ -150,24 +152,28 @@ const fields = [
   },
 ];
 
-/** 只加载当前商家企业的岗位 */
 async function loadMyJobs() {
-  console.log("loadMyJobs......");
+  console.log("loadMyJobs...... called"); // ✅ 你要的日志应该能看到
+
   if (role.value !== "MERCHANT") return [];
   if (!me.value?.id) return [];
 
   loading.value = true;
-  console.log("loadMyJobs......", me.value);
- 
+  needCompanyHint.value = false;
+
   try {
-    // 1) 找当前商家的企业（取第一条企业；你业务上可以限制只能一条）
+    console.log("loadMyJobs...... me =", me.value);
+
     const allCompanies = await CompanyApi.list();
     const myCompanies = allCompanies.filter((c) => c.merchant?.id === me.value.id);
 
     companyId.value = myCompanies[0]?.id || null;
-    if (!companyId.value) return [];
 
-    // 2) 加载所有岗位 -> 过滤出 companyId = 我的企业
+    if (!companyId.value) {
+      needCompanyHint.value = true;
+      return [];
+    }
+
     const allJobs = await JobPostApi.list();
     return allJobs
       .filter((j) => j.company?.id === companyId.value)
@@ -177,22 +183,17 @@ async function loadMyJobs() {
   }
 }
 
-/** row -> form（编辑时把 company 展开不需要，保留原字段即可） */
 function transformIn(row) {
-  return {
-    ...row,
-    // company 不让商家编辑，不需要 companyId
-  };
+  return { ...row };
 }
 
-/** form -> payload（保存时强制绑定到当前商家企业） */
 function transformOut(form) {
   const payload = { ...form };
-  payload.company = { id: companyId.value }; // 关键：商家岗位永远属于自己的企业
+  // 强制绑定当前商家企业
+  payload.company = { id: companyId.value };
   return payload;
 }
 
-/** 快捷业务按钮：发布/下架/关闭 */
 async function quickSetStatus(row, status) {
   try {
     await JobPostApi.update(row.id, {
@@ -231,4 +232,9 @@ const rowActions = [
 async function reloadAll() {
   if (crudRef.value?.load) await crudRef.value.load();
 }
+
+// ✅ 主动触发一次加载（即使 CrudPage 的 onMounted 没生效，也能保证加载）
+onMounted(() => {
+  reloadAll();
+});
 </script>

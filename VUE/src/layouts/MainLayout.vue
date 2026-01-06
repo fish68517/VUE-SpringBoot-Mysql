@@ -5,7 +5,7 @@
 
       <el-menu :default-active="active" router>
         <template v-if="role === 'JOBSEEKER'">
-          <el-menu-item index="/app">首页</el-menu-item>
+          <!-- <el-menu-item index="/app">首页</el-menu-item> -->
           <el-menu-item index="/app/jobs">兼职浏览</el-menu-item>
           <el-menu-item index="/app/my-applications">我的报名</el-menu-item>
           <el-menu-item index="/app/my-profile">我的资料</el-menu-item>
@@ -14,7 +14,7 @@
         </template>
 
         <template v-else-if="role === 'MERCHANT'">
-          <el-menu-item index="/app">首页</el-menu-item>
+          <!-- <el-menu-item index="/app">首页</el-menu-item> -->
           <el-menu-item index="/app/merchant-company">企业管理</el-menu-item>
           <el-menu-item index="/app/merchant-jobs">岗位管理</el-menu-item>
           <el-menu-item index="/app/merchant-applications">报名管理</el-menu-item>

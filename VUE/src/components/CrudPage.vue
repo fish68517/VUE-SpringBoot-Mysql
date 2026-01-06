@@ -161,9 +161,12 @@ async function onDelete(row) {
   try {
     await ElMessageBox.confirm("确认删除该记录？", "提示", { type: "warning" });
     await props.api.remove(row.id);
+
     ElMessage.success("删除成功");
     await load();
-  } catch {}
+  } catch {
+    ElMessage.success("该用户已被关联（例如有申请记录等其他数据），无法直接删除");
+  }
 }
 
 defineExpose({ load });
