@@ -1,7 +1,7 @@
 <template>
   <div class="product-card" @click="goToDetail">
     <div class="product-image">
-      <img :src="product.image" :alt="product.name" />
+      <img :src="getImageUrl(product.image)" :alt="product.name" />
       <div v-if="product.stock === 0" class="out-of-stock">缺货</div>
     </div>
     <div class="product-info">
@@ -41,6 +41,13 @@ const goToDetail = () => {
     router.push(`/user/product/${props.product.id}`);
   }
 };
+
+// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
+const getImageUrl = (src) => {
+  console.log("图片路径：" + src);
+  return `http://localhost:8080/uploads/${src}`;
+};
+
 </script>
 
 <style scoped>

@@ -12,7 +12,7 @@
       <div v-if="petList.length > 0" class="pet-list">
         <div v-for="pet in petList" :key="pet.id" class="pet-card-item">
           <div class="pet-avatar">
-            <img v-if="pet.avatar" :src="pet.avatar" :alt="pet.name" class="avatar-img" />
+            <img v-if="pet.avatar" :src="getImageUrl(pet.avatar)" :alt="pet.name" class="avatar-img" />
             <div v-else class="avatar-placeholder">
               <span>{{ pet.species }}</span>
             </div>
@@ -69,6 +69,13 @@ const petList = ref([]);
 const formVisible = ref(false);
 const selectedPet = ref(null);
 const loading = ref(false);
+
+// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
+const getImageUrl = (src) => {
+  console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
+  return `http://localhost:8080/uploads/${src}`;
+};
+
 
 onMounted(() => {
   loadPetList();

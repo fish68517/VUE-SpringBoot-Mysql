@@ -33,5 +33,21 @@ public class CorsConfig implements WebMvcConfigurer {
         // 映射: 访问 http://localhost:8080/images/xxx.jpg -> 读取本地目录
         registry.addResourceHandler("/images/**")
                 .addResourceLocations(imageDir);
+
+
+        // 获取项目根目录 (例如 D:\Projects\petshop)
+        String path = System.getProperty("user.dir");
+
+        // 统一处理路径分隔符，防止 Windows/Mac 差异
+        String uploadDir = "file:" + path + "/uploads/";
+
+        // 映射:
+        // 访问 http://localhost:8080/uploads/products/p1.jpg
+
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations(uploadDir);
+
+        // 打印一下路径方便调试 (可选)
+        System.out.println("图片映射路径: " + uploadDir);
     }
 }

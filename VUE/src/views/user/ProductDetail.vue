@@ -12,6 +12,7 @@
             </div>
             <div v-if="images.length > 1" class="thumbnail-images">
               <img
+                v-if="false"
                 v-for="(img, index) in images"
                 :key="index"
                 :src="img"
@@ -151,13 +152,19 @@ const reviewCount = computed(() => {
   return reviews.value.length;
 });
 
+// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
+const getImageUrl = (src) => {
+  console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
+  return `http://localhost:8080/uploads/${src}`;
+};
+
 const loadProduct = async () => {
   loading.value = true;
   try {
     const productId = route.params.id;
     const data = await getProductDetail(productId);
     product.value = data;
-    currentImage.value = data.image;
+    currentImage.value = getImageUrl(data.image);
 
     // 加载评价数据
     try {

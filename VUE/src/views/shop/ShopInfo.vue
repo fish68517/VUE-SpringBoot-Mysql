@@ -42,7 +42,7 @@
         <div class="form-group">
           <label for="logo">店铺Logo</label>
           <div class="logo-upload">
-            <img v-if="formData.logo" :src="formData.logo" alt="店铺Logo" class="logo-preview" />
+            <img v-if="formData.logo" :src="getImageUrl(formData.logo)" alt="店铺Logo" class="logo-preview" />
             <input
               id="logo"
               type="file"
@@ -110,6 +110,13 @@ const formData = ref({
   contact: "",
   logo: ""
 });
+
+
+// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
+const getImageUrl = (src) => {
+  console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
+  return `http://localhost:8080/uploads/${src}`;
+};
 
 const getStatusText = (status) => {
   const statusMap = {

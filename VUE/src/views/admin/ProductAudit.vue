@@ -23,7 +23,7 @@
           <template #default="{ row }">
             <img
               v-if="row.image"
-              :src="row.image"
+              :src="getImageUrl(row.image)"
               alt="商品图片"
               style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"
             />
@@ -33,12 +33,12 @@
         <el-table-column prop="name" label="商品名称" width="150" show-overflow-tooltip />
         <el-table-column label="店铺" width="120">
           <template #default="{ row }">
-            {{ row.shop?.name || "-" }}
+            {{ row.shopName || "-" }}
           </template>
         </el-table-column>
         <el-table-column label="分类" width="100">
           <template #default="{ row }">
-            {{ row.category?.name || "-" }}
+            {{ row.categoryName || "-" }}
           </template>
         </el-table-column>
         <el-table-column prop="price" label="价格" width="100">
@@ -65,6 +65,7 @@
              <el-button v-if="row.status !== 1" type="danger" size="small" @click="handleRejectDialog(row)">拒绝</el-button>
   
             <el-button
+              v-if="false"
               type="info"
               size="small"
               @click="handleViewProduct(row)"
@@ -164,6 +165,13 @@ const rejectDialogVisible = ref(false);
 const selectedProduct = ref(null);
 const rejectReason = ref("");
 const rejectingProductId = ref(null);
+
+// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
+const getImageUrl = (src) => {
+  console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
+  return `http://localhost:8080/uploads/${src}`;
+};
+
 
 const fetchProductList = async () => {
   loading.value = true;
