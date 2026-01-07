@@ -44,7 +44,7 @@ const goToDetail = () => {
 
 // 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
 const getImageUrl = (src) => {
-  console.log("图片路径：" + src);
+  console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
   return `http://localhost:8080/uploads/${src}`;
 };
 
