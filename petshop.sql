@@ -11,7 +11,7 @@
  Target Server Version : 80036 (8.0.36)
  File Encoding         : 65001
 
- Date: 28/12/2025 21:40:48
+ Date: 08/01/2026 16:21:15
 */
 
 SET NAMES utf8mb4;
@@ -283,15 +283,15 @@ CREATE TABLE `pet`  (
 -- ----------------------------
 -- Records of pet
 -- ----------------------------
-INSERT INTO `pet` VALUES (1, 4, '旺财', '中华田园犬', 3, '公', 'https://api.example.com/pets/dog1.jpg', '2025-11-23 10:54:12');
-INSERT INTO `pet` VALUES (2, 4, '咪咪', '英国短毛猫', 2, '母', 'https://api.example.com/pets/cat1.jpg', '2025-11-23 10:54:12');
-INSERT INTO `pet` VALUES (3, 5, '可乐', '金毛', 4, '公', 'https://api.example.com/pets/dog2.jpg', '2025-11-23 10:54:12');
-INSERT INTO `pet` VALUES (4, 6, '汤圆', '布偶猫', 1, '母', 'https://api.example.com/pets/cat2.jpg', '2025-11-23 10:54:12');
-INSERT INTO `pet` VALUES (5, 7, '杰瑞', '仓鼠', 1, '公', 'https://api.example.com/pets/hamster.jpg', '2025-11-23 10:54:12');
-INSERT INTO `pet` VALUES (6, 5, '奥斯卡', '哈士奇', 2, '公', 'https://api.example.com/pets/husky.jpg', '2025-11-23 10:54:12');
-INSERT INTO `pet` VALUES (8, 5, '中华土狗', '狗', 1, '公', '', '2025-11-23 18:31:42');
-INSERT INTO `pet` VALUES (9, 5, '000', '猫', 0, '公', '', '2025-11-23 18:32:22');
-INSERT INTO `pet` VALUES (10, 5, '55252', '鸟', 1, '公', '', '2025-11-23 23:53:37');
+INSERT INTO `pet` VALUES (1, 4, '旺财', '中华田园犬', 3, '公', 'pets/dog1.jpg', '2025-11-23 10:54:12');
+INSERT INTO `pet` VALUES (2, 4, '咪咪', '英国短毛猫', 2, '母', 'pets/cat1.jpg', '2025-11-23 10:54:12');
+INSERT INTO `pet` VALUES (3, 5, '可乐', '金毛', 4, '公', 'pets/dog1.jpg', '2025-11-23 10:54:12');
+INSERT INTO `pet` VALUES (4, 6, '汤圆', '布偶猫', 1, '母', 'pets/dog1.jpg', '2025-11-23 10:54:12');
+INSERT INTO `pet` VALUES (5, 7, '杰瑞', '仓鼠', 1, '公', 'pets/cat1.jpg', '2025-11-23 10:54:12');
+INSERT INTO `pet` VALUES (6, 5, '奥斯卡', '哈士奇', 2, '公', 'pets/cat1.jpg', '2025-11-23 10:54:12');
+INSERT INTO `pet` VALUES (8, 5, '中华土狗', '狗', 1, '公', 'pets/cat1.jpg', '2025-11-23 18:31:42');
+INSERT INTO `pet` VALUES (9, 5, '000', '猫', 0, '公', 'pets/cat1.jpg', '2025-11-23 18:32:22');
+INSERT INTO `pet` VALUES (10, 5, '55252', '鸟', 1, '公', 'pets/cat1.jpg', '2025-11-23 23:53:37');
 
 -- ----------------------------
 -- Table structure for post_like
@@ -348,14 +348,14 @@ CREATE TABLE `product`  (
 -- ----------------------------
 -- Records of product
 -- ----------------------------
-INSERT INTO `product` VALUES (1, 1, 4, '皇家小型犬成犬粮 2kg', '专为小型犬设计，营养均衡，亮毛护肤。', 128.00, 100, 'https://api.example.com/products/p1.jpg', '[\"p1_1.jpg\", \"p1_2.jpg\"]', 1, 50, '2025-11-23 10:54:13', '2025-11-23 10:54:13');
-INSERT INTO `product` VALUES (2, 1, 5, '渴望六种鱼猫粮 1.8kg', '加拿大进口，高蛋白无谷配方。', 380.00, 50, 'https://api.example.com/products/p2.jpg', '[\"p2_1.jpg\"]', 1, 120, '2025-11-23 10:54:13', '2025-11-23 10:54:13');
-INSERT INTO `product` VALUES (3, 2, 3, '宠物冻干鸡胸肉 500g', '纯肉制作，无添加，猫狗通用。', 45.00, 200, 'https://api.example.com/products/p3.jpg', '[\"p3_1.jpg\"]', 2, 300, '2025-11-23 10:54:13', '2025-11-23 22:12:02');
-INSERT INTO `product` VALUES (4, 2, 6, '巅峰主食罐头 85g', '新西兰进口，98%含肉量。', 28.00, 500, 'https://api.example.com/products/p4.jpg', '[\"p4_1.jpg\"]', 1, 80, '2025-11-23 10:54:13', '2025-11-23 10:54:13');
-INSERT INTO `product` VALUES (5, 3, 4, '伯纳天纯鸭肉梨狗粮 15kg', '去泪痕配方，大包装更实惠。', 450.00, 18, 'https://api.example.com/products/p5.jpg', '[\"p5_1.jpg\"]', 1, 15, '2025-11-23 10:54:13', '2025-11-23 19:02:53');
-INSERT INTO `product` VALUES (6, 3, 5, '网易严选全价猫粮 2kg', '性价比之选，添加益生菌。', 88.00, 150, 'https://api.example.com/products/p6.jpg', '[\"p6_1.jpg\"]', 1, 200, '2025-11-23 10:54:13', '2025-11-23 10:54:13');
-INSERT INTO `product` VALUES (7, 1, 1, '5555', '00000000000000000', 10.00, 1000, '', '[]', 2, 0, '2025-11-23 23:32:29', '2025-11-23 23:32:29');
-INSERT INTO `product` VALUES (8, 1, 2, '00000', '00000', 10.00, 100, '', '[]', 2, 0, '2025-11-23 23:55:43', '2025-11-23 23:55:43');
+INSERT INTO `product` VALUES (1, 1, 4, '皇家小型犬成犬粮 2kg', '专为小型犬设计，营养均衡，亮毛护肤。', 128.00, 100, 'products/p1.jpg', '[\"p1_1.jpg\", \"p1_2.jpg\"]', 1, 50, '2025-11-23 10:54:13', '2026-01-07 09:05:53');
+INSERT INTO `product` VALUES (2, 1, 5, '渴望六种鱼猫粮 1.8kg', '加拿大进口，高蛋白无谷配方。', 380.00, 50, 'products/p2.jpg', '[\"p2_1.jpg\"]', 1, 120, '2025-11-23 10:54:13', '2026-01-07 09:24:13');
+INSERT INTO `product` VALUES (3, 2, 3, '宠物冻干鸡胸肉 500g', '纯肉制作，无添加，猫狗通用。', 45.00, 200, 'products/p1.jpg', '[\"p3_1.jpg\"]', 2, 300, '2025-11-23 10:54:13', '2026-01-07 09:24:37');
+INSERT INTO `product` VALUES (4, 2, 6, '巅峰主食罐头 85g', '新西兰进口，98%含肉量。', 28.00, 500, 'products/p2.jpg', '[\"p4_1.jpg\"]', 1, 80, '2025-11-23 10:54:13', '2026-01-07 09:24:41');
+INSERT INTO `product` VALUES (5, 3, 4, '伯纳天纯鸭肉梨狗粮 15kg', '去泪痕配方，大包装更实惠。', 450.00, 18, 'products/p2.jpg', '[\"p5_1.jpg\"]', 1, 15, '2025-11-23 10:54:13', '2026-01-07 09:24:42');
+INSERT INTO `product` VALUES (6, 3, 5, '网易严选全价猫粮 2kg', '性价比之选，添加益生菌。', 88.00, 150, 'products/p1.jpg', '[\"p6_1.jpg\"]', 1, 200, '2025-11-23 10:54:13', '2026-01-07 09:24:48');
+INSERT INTO `product` VALUES (7, 1, 1, '5555', '00000000000000000', 10.00, 1000, 'products/p1.jpg', '[]', 2, 0, '2025-11-23 23:32:29', '2026-01-07 09:47:45');
+INSERT INTO `product` VALUES (8, 1, 2, '00000', '00000', 10.00, 100, 'products/p1.jpg', '[]', 2, 0, '2025-11-23 23:55:43', '2026-01-07 09:47:46');
 
 -- ----------------------------
 -- Table structure for review
@@ -411,9 +411,9 @@ CREATE TABLE `shop`  (
 -- ----------------------------
 -- Records of shop
 -- ----------------------------
-INSERT INTO `shop` VALUES (1, 2, '快乐宠屋旗舰店000', '专注猫狗粮，品质保证，给爱宠最好的呵护。', 'https://api.example.com/shops/logo1.jpg', '021-12345678', 1, '2025-11-23 10:54:12', '2025-11-23 23:55:56');
-INSERT INTO `shop` VALUES (2, 3, '星光萌宠生活馆', '进口宠物零食、玩具、清洁用品一站式购物。', 'https://api.example.com/shops/logo2.jpg', '020-87654321', 1, '2025-11-23 10:54:12', '2025-11-23 10:54:12');
-INSERT INTO `shop` VALUES (3, 3, '星落自营店', '官方自营，品质无忧，极速发货。', 'https://api.example.com/shops/logo_official.jpg', '400-8888888', 1, '2025-11-23 10:54:12', '2025-11-23 22:20:39');
+INSERT INTO `shop` VALUES (1, 2, '快乐宠屋旗舰店000', '专注猫狗粮，品质保证，给爱宠最好的呵护。', 'shops/logo1.jpg', '021-12345678', 1, '2025-11-23 10:54:12', '2026-01-07 09:37:24');
+INSERT INTO `shop` VALUES (2, 3, '星光萌宠生活馆', '进口宠物零食、玩具、清洁用品一站式购物。', 'shops/logo2.jpg', '020-87654321', 1, '2025-11-23 10:54:12', '2026-01-07 09:37:29');
+INSERT INTO `shop` VALUES (3, 3, '星落自营店', '官方自营，品质无忧，极速发货。', 'shops/logo_official.jpg', '400-8888888', 1, '2025-11-23 10:54:12', '2026-01-07 09:37:36');
 
 -- ----------------------------
 -- Table structure for user
