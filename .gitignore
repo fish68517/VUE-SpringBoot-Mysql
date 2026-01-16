@@ -1,0 +1,118 @@
+# ===================== 【通用/编辑器配置】跨模块通用忽略项 =====================
+# 系统隐藏文件（Mac/Windows）
+.DS_Store
+Thumbs.db
+# IDE 配置目录（Android Studio/IDEA/Vscode）
+.idea/
+.vscode/
+.vs/
+# IDE 临时文件
+*.iml
+*.suo
+*.user
+*.swp
+*.swo
+# 本地日志文件（所有模块的日志）
+*.log
+log/
+logs/
+
+# ===================== 【Android 模块】专属忽略项 =====================
+# Android 构建产物
+Android/build/
+Android/*/build/
+Android/out/
+Android/bin/
+Android/obj/
+# Android 本地配置（SDK 路径等）
+Android/local.properties
+# Android 打包产物（易超100M，按需忽略）
+Android/*.apk
+Android/*.aab
+Android/*.apks
+# Android 第三方依赖/临时文件
+Android/libs/*.jar  # 若需提交依赖可注释
+Android/.gradle/
+
+# ===================== 【SpringBoot 模块】专属忽略项 =====================
+# Maven/Gradle 构建产物
+SpringBoot/target/
+SpringBoot/.mvn/
+SpringBoot/gradle/
+SpringBoot/build/
+# Maven/Gradle 执行脚本（若无需跨平台提交）
+SpringBoot/mvnw
+SpringBoot/mvnw.cmd
+SpringBoot/gradlew
+SpringBoot/gradlew.bat
+# SpringBoot 本地配置（开发环境/数据库密码等）
+SpringBoot/src/main/resources/application-dev.yml
+SpringBoot/src/main/resources/application-local.yml
+SpringBoot/src/main/resources/application-test.yml
+# SpringBoot 本地数据库/缓存文件
+SpringBoot/*.db
+SpringBoot/*.sql  # 若需提交初始化脚本可注释
+SpringBoot/tmp/
+# SpringBoot 日志/监控临时文件
+SpringBoot/nohup.out
+SpringBoot/pid.file
+
+# ===================== 【Vue 模块】专属忽略项 =====================
+# Vue 依赖（体积大，无需提交，通过 package.json 安装）
+VUE/node_modules/
+# Vue 构建产物（打包后的静态文件）
+VUE/dist/
+VUE/build/
+# Vue 本地环境配置（敏感/本地专属）
+VUE/.env.local
+VUE/.env.development.local
+VUE/.env.production.local
+# Vue 包管理错误日志
+VUE/npm-debug.log*
+VUE/yarn-error.log*
+VUE/pnpm-debug.log*
+# Vue 临时文件
+VUE/.tmp/
+VUE/.cache/
+# Vue 可选忽略：包管理锁文件（若需统一版本可注释）
+# VUE/package-lock.json
+# VUE/yarn.lock
+
+# ===================== 【大文件/压缩包】应对 GitHub 100M 限制 =====================
+# 通用压缩包（所有模块的大压缩包）
+*.rar
+*.zip
+*.7z
+*.tar.gz
+*.gz
+*.bz2
+# 大媒体/镜像文件
+*.mp4
+*.mov
+*.avi
+*.iso
+*.img
+*.mp3
+*.wav
+# 数据库备份文件（易超100M）
+*.sql.gz
+*.bak
+*.dump
+
+# ===================== 【毕设项目专属】本地/临时文件 =====================
+# 本地测试用的数据库文件
+*.mysql
+*.sqlite
+*.db
+# 毕设文档/临时草稿（若需提交可注释）
+*.docx
+*.pdf
+*.xlsx
+# 交付/归档用压缩包
+交付/
+归档/
+# 本地脚本/批处理（仅本地运行）
+*.bat
+*.sh
+!SpringBoot/mvnw  # 若需保留启动脚本可加!取消忽略
+!SpringBoot/gradlew
