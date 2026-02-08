@@ -1,10 +1,7 @@
 package com.postgraduate.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Comment entity representing a user's comment or discussion post about a school.
@@ -19,19 +16,22 @@ import lombok.NoArgsConstructor;
         @Index(name = "idx_status", columnList = "status"),
         @Index(name = "idx_deleted", columnList = "deleted")
 })
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class Comment extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column(name = "school_id", nullable = false)
     private Long schoolId;
 
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(nullable = true)
+    @Column(name = "parent_id")
     private Long parentId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -41,14 +41,17 @@ public class Comment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CommentStatus status;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id", insertable = false, updatable = false)
     private School school;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
     private Comment parentComment;

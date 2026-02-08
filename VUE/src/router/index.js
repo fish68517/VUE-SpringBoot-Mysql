@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import authService from '../services/authService'
 import MainLayout from '../components/MainLayout.vue'
+import AdminLayout from '../components/AdminLayout.vue' // [新增] 引入管理员布局
+
+// 页面组件引入
 import Login from '../pages/Login.vue'
 import Register from '../pages/Register.vue'
 import Dashboard from '../pages/Dashboard.vue'
@@ -11,6 +14,8 @@ import Favorites from '../pages/Favorites.vue'
 import Announcements from '../pages/Announcements.vue'
 import FeedbackSubmit from '../pages/FeedbackSubmit.vue'
 import FeedbackHistory from '../pages/FeedbackHistory.vue'
+
+// 管理员页面组件
 import AdminUsers from '../pages/AdminUsers.vue'
 import AdminSchools from '../pages/AdminSchools.vue'
 import AdminAnnouncements from '../pages/AdminAnnouncements.vue'
@@ -33,6 +38,8 @@ const routes = [
     component: Register,
     meta: { requiresAuth: false, title: 'Register' }
   },
+  
+  // 普通用户路由 (使用 MainLayout)
   {
     path: '/app',
     component: MainLayout,
@@ -42,7 +49,7 @@ const routes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: Dashboard,
-        meta: { requiredRole: 'USER', title: 'Dashboard' }
+        meta: { title: 'Dashboard' } // 用户也可以访问，或者您可以移除这里
       },
       {
         path: 'profile',
@@ -85,33 +92,50 @@ const routes = [
         name: 'FeedbackHistory',
         component: FeedbackHistory,
         meta: { requiredRole: 'USER', title: 'Feedback History' }
-      },
-      {
-        path: 'admin/users',
-        name: 'AdminUsers',
-        component: AdminUsers,
-        meta: { requiredRole: 'ADMIN', title: 'User Management' }
-      },
-      {
-        path: 'admin/schools',
-        name: 'AdminSchools',
-        component: AdminSchools,
-        meta: { requiredRole: 'ADMIN', title: 'School Management' }
-      },
-      {
-        path: 'admin/announcements',
-        name: 'AdminAnnouncements',
-        component: AdminAnnouncements,
-        meta: { requiredRole: 'ADMIN', title: 'Announcement Management' }
-      },
-      {
-        path: 'admin/feedback',
-        name: 'AdminFeedback',
-        component: AdminFeedback,
-        meta: { requiredRole: 'ADMIN', title: 'Feedback Management' }
       }
     ]
   },
+
+  // [新增] 管理员路由 (使用 AdminLayout)
+  {
+    path: '/admin',
+    component: AdminLayout,
+    meta: { requiresAuth: true, requiredRole: 'ADMIN' }, // 整个 /admin 路径都需要 ADMIN 权限
+    children: [
+      {
+        path: 'dashboard',
+        name: 'AdminDashboard',
+        // 如果您没有专门的 AdminDashboard.vue，可以暂时重定向到 users 或者复用 Dashboard
+        // 这里建议您可以先重定向到 users
+        redirect: '/admin/users' 
+      },
+      {
+        path: 'users',
+        name: 'AdminUsers',
+        component: AdminUsers,
+        meta: { title: '用户管理' }
+      },
+      {
+        path: 'schools',
+        name: 'AdminSchools',
+        component: AdminSchools,
+        meta: { title: '学校管理' }
+      },
+      {
+        path: 'announcements',
+        name: 'AdminAnnouncements',
+        component: AdminAnnouncements,
+        meta: { title: '公告管理' }
+      },
+      {
+        path: 'feedback',
+        name: 'AdminFeedback',
+        component: AdminFeedback,
+        meta: { title: '反馈处理' }
+      }
+    ]
+  },
+
   {
     path: '/:pathMatch(.*)*',
     redirect: '/login'
@@ -123,48 +147,45 @@ const router = createRouter({
   routes
 })
 
-/**
- * Global navigation guard to handle authentication and authorization
- * Checks if user is authenticated and has required role for the route
- */
+// ... (Router Guard 代码保持不变) ...
 router.beforeEach((to, _from, next) => {
   const isAuthenticated = authService.isAuthenticated()
   const userRole = authService.getUserRole()
   const requiresAuth = to.meta.requiresAuth
   const requiredRole = to.meta.requiredRole
 
-  // If route requires authentication
   if (requiresAuth) {
     if (!isAuthenticated) {
-      // Redirect unauthenticated users to login
       next('/login')
       return
     }
-
-    // If route requires a specific role
+    // 权限检查
     if (requiredRole && userRole !== requiredRole) {
-      // Redirect users without required role to dashboard
-      next('/app/dashboard')
+      // 如果是管理员访问用户页面，或者用户访问管理员页面，做重定向处理
+      if (userRole === 'ADMIN') {
+        next('/admin/users') // 管理员默认去这里
+      } else {
+        next('/app/dashboard') // 用户默认去这里
+      }
       return
     }
   }
 
-  // If user is authenticated and trying to access login/register
+  // 已登录用户访问登录页处理
   if ((to.path === '/login' || to.path === '/register') && isAuthenticated) {
-    // Redirect authenticated users to dashboard
-    next('/app/dashboard')
+    if (userRole === 'ADMIN') {
+      next('/admin/users')
+    } else {
+      next('/app/dashboard')
+    }
     return
   }
 
-  // Allow navigation
   next()
 })
 
-/**
- * After navigation hook to update page title
- */
 router.afterEach((to) => {
-  document.title = to.meta.title ? `${to.meta.title} - Postgraduate School Selection` : 'Postgraduate School Selection'
+  document.title = to.meta.title ? `${to.meta.title} - 考研择校系统` : '考研择校系统'
 })
 
 export default router

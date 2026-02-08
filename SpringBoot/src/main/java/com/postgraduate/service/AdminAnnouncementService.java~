@@ -80,6 +80,7 @@ public class AdminAnnouncementService {
                 .content(request.getContent())
                 .status(status)
                 .sortOrder(request.getSortOrder())
+                .deleted(false)
                 .build();
 
         // Save to database

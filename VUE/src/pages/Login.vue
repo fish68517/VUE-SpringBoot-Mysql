@@ -103,16 +103,36 @@ export default {
 
       try {
         const response = await authService.login(this.form.username, this.form.password)
-        const { token, id, username, role } = response.data
+        
+        // --- 修改开始 ---
+        // 这里的 response.data 包含了 code, message, data
+        const responseBody = response.data 
+        
+        // 真正的用户数据在 response.data.data 里面
+        const { token, user } = responseBody.data
+        
+        // 检查 user 对象是否存在，以防万一
+        if (token && user) {
+          authService.setToken(token)
+          // 注意：后端返回的 user 对象里包含了 id, username, role
+          authService.setUser(user) 
+          
+          this.message.success = '登录成功！正在跳转...'
+          setTimeout(() => {
+            // 根据角色跳转到不同的布局
+            if (user.role === 'ADMIN') {
+              this.$router.push('/admin/users') // 管理员跳到新的后台
+            } else {
+              this.$router.push('/app/dashboard') // 普通用户跳到前台
+            }
+          }, 1000)
+        } else {
+          throw new Error('Invalid response format')
+        }
+        // --- 修改结束 ---
 
-        authService.setToken(token)
-        authService.setUser({ id, username, role })
-
-        this.message.success = 'Login successful! Redirecting...'
-        setTimeout(() => {
-          this.$router.push('/app/dashboard')
-        }, 1000)
       } catch (error) {
+        console.error(error) // 方便调试
         this.message.error = error.response?.data?.message || 'Login failed. Please try again.'
       } finally {
         this.loading = false

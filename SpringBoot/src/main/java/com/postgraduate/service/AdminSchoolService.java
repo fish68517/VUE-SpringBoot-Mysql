@@ -59,7 +59,6 @@ public class AdminSchoolService {
                 .tier(request.getTier())
                 .website(request.getWebsite())
                 .intro(request.getIntro())
-                .deleted(false)
                 .build();
 
         // Save to database
@@ -188,7 +187,7 @@ public class AdminSchoolService {
                 .schoolId(schoolId)
                 .name(request.getName())
                 .direction(request.getDirection())
-                .deleted(false)
+
                 .build();
 
         // Save to database
@@ -236,7 +235,7 @@ public class AdminSchoolService {
                 .majorId(request.getMajorId())
                 .subjectName(request.getSubjectName())
                 .subjectCode(request.getSubjectCode())
-                .deleted(false)
+
                 .build();
 
         // Save to database

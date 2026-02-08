@@ -51,7 +51,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getUsernameFromToken(String token) {
+/*    public String getUsernameFromToken(String token) {
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -73,6 +73,34 @@ public class JwtTokenProvider {
             log.error("Invalid JWT token: {}", ex.getMessage());
         }
         return false;
+    }*/
+
+
+    public String getUsernameFromToken(String token) {
+        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+
+        Claims claims = Jwts.parser()
+                .verifyWith(key)     // 0.12.x 推荐
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claims.getSubject();
     }
+
+    public boolean validateToken(String token) {
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+            Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token);
+            return true;
+        } catch (Exception ex) {
+            log.error("Invalid JWT token: {}", ex.getMessage());
+            return false;
+        }
+    }
+
 
 }

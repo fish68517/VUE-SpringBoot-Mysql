@@ -25,7 +25,8 @@ import java.time.LocalDateTime;
 @Builder
 public class Feedback extends BaseEntity {
 
-    @Column(nullable = false)
+    // ✅ 显式指定列名，避免 userId 与 user_id 的映射冲突
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Column(nullable = false, length = 50)

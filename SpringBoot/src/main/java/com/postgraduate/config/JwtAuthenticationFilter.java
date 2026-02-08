@@ -57,4 +57,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
+    @Override
+    protected boolean shouldNotFilter(jakarta.servlet.http.HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        // ✅ 预检请求不走 JWT
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
+        // ✅ 放行认证相关接口
+        return path.startsWith("/api/auth/")
+                || path.startsWith("/auth/")
+                || path.equals("/error");
+    }
+
+
 }

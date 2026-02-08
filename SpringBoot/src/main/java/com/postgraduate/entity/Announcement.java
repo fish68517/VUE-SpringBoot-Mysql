@@ -34,10 +34,12 @@ public class Announcement extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private AnnouncementStatus status;
 
-    @Column(nullable = false)
+    // ✅ 关键修复：明确列名为 sort_order，匹配 index 的 columnList
+    @Column(name = "sort_order", nullable = false)
     private Integer sortOrder;
 
-    @Column(nullable = true)
+    // ✅ 建议也显式指定，避免 publishAt/publish_at 混乱
+    @Column(name = "publish_at")
     private LocalDateTime publishAt;
 
     public enum AnnouncementStatus {

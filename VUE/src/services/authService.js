@@ -73,6 +73,9 @@ const authService = {
     localStorage.removeItem('user')
     // Clear authorization header
     delete apiClient.defaults.headers.common['Authorization']
+    // Clear sessionStorage in case it's being used
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('user')
   },
 
   /**
@@ -140,6 +143,16 @@ const authService = {
    */
   isUser() {
     return this.getUserRole() === 'USER'
+  },
+
+  /**
+   * Ensure that user is logged out if the token is invalid or expired
+   */
+  clearInvalidToken() {
+    const token = this.getToken()
+    if (!token) {
+      this.logout()
+    }
   }
 }
 

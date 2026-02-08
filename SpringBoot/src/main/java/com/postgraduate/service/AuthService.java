@@ -65,7 +65,7 @@ public class AuthService {
                 .passwordHash(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(User.UserRole.USER)
                 .status(User.UserStatus.ENABLED)
-                .deleted(false)
+
                 .build();
 
         user = userRepository.save(user);

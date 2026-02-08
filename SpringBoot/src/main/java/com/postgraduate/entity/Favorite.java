@@ -25,10 +25,11 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Favorite extends BaseEntity {
 
-    @Column(nullable = false)
+    // ✅ 显式指定列名，避免 schoolId/userId 与 school_id/user_id 的映射冲突
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(name = "school_id", nullable = false)
     private Long schoolId;
 
     @ManyToOne(fetch = FetchType.LAZY)
