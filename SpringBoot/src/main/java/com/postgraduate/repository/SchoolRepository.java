@@ -67,4 +67,6 @@ public interface SchoolRepository extends JpaRepository<School, Long>, JpaSpecif
      * @return List of all non-deleted schools
      */
     List<School> findByDeletedFalse();
+
+
 }

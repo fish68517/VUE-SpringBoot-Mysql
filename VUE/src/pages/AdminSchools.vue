@@ -1,19 +1,19 @@
 <template>
   <div class="admin-schools-container">
     <div class="header-section">
-      <h1>School Management</h1>
-      <p class="subtitle">Manage schools, majors, and exam subjects</p>
+      <h1>学校管理</h1>
+      <p class="subtitle">管理学校、专业与考试科目</p>
     </div>
 
     <!-- Loading State -->
     <div v-if="loading" class="loading">
-      <p>Loading schools...</p>
+      <p>正在加载学校列表...</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
-      <button class="btn-retry" @click="loadSchools">Retry</button>
+      <button class="btn-retry" @click="loadSchools">重试</button>
     </div>
 
     <!-- Main Content -->
@@ -21,15 +21,15 @@
       <!-- Add School Button -->
       <div class="action-bar">
         <button class="btn-add-school" @click="openCreateSchoolModal">
-          + Add New School
+          + 新增学校
         </button>
       </div>
 
       <!-- Empty State -->
       <div v-if="schoolList.length === 0" class="empty-state">
         <div class="empty-icon">🏫</div>
-        <h2>No Schools Found</h2>
-        <p>Click "Add New School" to create your first school.</p>
+        <h2>暂无学校数据</h2>
+        <p>点击“新增学校”创建你的第一所学校。</p>
       </div>
 
       <!-- Schools List -->
@@ -44,11 +44,11 @@
               </p>
             </div>
             <div class="school-actions">
-              <button class="btn-action btn-edit" @click="openEditSchoolModal(school)" title="Edit school">
-                Edit
+              <button class="btn-action btn-edit" @click="openEditSchoolModal(school)" title="编辑学校">
+                编辑
               </button>
-              <button class="btn-action btn-delete" @click="handleDeleteSchool(school)" title="Delete school">
-                Delete
+              <button class="btn-action btn-delete" @click="handleDeleteSchool(school)" title="删除学校">
+                删除
               </button>
             </div>
           </div>
@@ -57,17 +57,17 @@
             <p class="intro">{{ school.intro }}</p>
             <div v-if="school.website" class="website">
               <a :href="school.website" target="_blank" rel="noopener noreferrer">
-                Visit Website →
+                访问官网 →
               </a>
             </div>
           </div>
 
           <div class="school-footer">
             <button class="btn-manage" @click="openMajorsModal(school)">
-              Manage Majors
+              管理专业
             </button>
             <button class="btn-manage" @click="openSubjectsModal(school)">
-              Manage Exam Subjects
+              管理考试科目
             </button>
           </div>
         </div>
@@ -80,11 +80,11 @@
           :disabled="currentPage === 0"
           @click="handlePreviousPage"
         >
-          Previous
+          上一页
         </button>
 
         <div class="page-info">
-          Page {{ currentPage + 1 }} of {{ totalPages }}
+          第 {{ currentPage + 1 }} 页 / 共 {{ totalPages }} 页
         </div>
 
         <button
@@ -92,7 +92,7 @@
           :disabled="currentPage >= totalPages - 1"
           @click="handleNextPage"
         >
-          Next
+          下一页
         </button>
       </div>
     </div>
@@ -101,62 +101,62 @@
     <div v-if="showSchoolModal" class="modal-overlay" @click="closeSchoolModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>{{ editingSchool ? 'Edit School' : 'Create New School' }}</h2>
+          <h2>{{ editingSchool ? '编辑学校' : '新增学校' }}</h2>
           <button class="btn-close" @click="closeSchoolModal">×</button>
         </div>
 
         <form @submit.prevent="handleSaveSchool" class="school-form">
           <div class="form-group">
-            <label for="school-name">School Name *</label>
+            <label for="school-name">学校名称 *</label>
             <input
               id="school-name"
               v-model="schoolForm.name"
               type="text"
-              placeholder="Enter school name"
+              placeholder="请输入学校名称"
               required
             >
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="school-city">City *</label>
+              <label for="school-city">城市 *</label>
               <input
                 id="school-city"
                 v-model="schoolForm.city"
                 type="text"
-                placeholder="Enter city"
+                placeholder="请输入城市"
                 required
               >
             </div>
 
             <div class="form-group">
-              <label for="school-tier">Tier *</label>
+              <label for="school-tier">层次 *</label>
               <select id="school-tier" v-model="schoolForm.tier" required>
-                <option value="">Select tier</option>
+                <option value="">请选择层次</option>
                 <option value="985">985</option>
                 <option value="211">211</option>
-                <option value="DOUBLE_NON">Double-Non</option>
-                <option value="OTHER">Other</option>
+                <option value="DOUBLE_NON">双非</option>
+                <option value="OTHER">其他</option>
               </select>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="school-website">Website</label>
+            <label for="school-website">官网（可选）</label>
             <input
               id="school-website"
               v-model="schoolForm.website"
               type="url"
-              placeholder="https://example.com"
+              placeholder="例如：https://example.com"
             >
           </div>
 
           <div class="form-group">
-            <label for="school-intro">Introduction *</label>
+            <label for="school-intro">简介 *</label>
             <textarea
               id="school-intro"
               v-model="schoolForm.intro"
-              placeholder="Enter school introduction"
+              placeholder="请输入学校简介"
               rows="4"
               required
             ></textarea>
@@ -164,10 +164,10 @@
 
           <div class="form-actions">
             <button type="button" class="btn-cancel" @click="closeSchoolModal">
-              Cancel
+              取消
             </button>
             <button type="submit" class="btn-submit" :disabled="schoolFormLoading">
-              {{ schoolFormLoading ? 'Saving...' : 'Save School' }}
+              {{ schoolFormLoading ? '正在保存...' : '保存学校' }}
             </button>
           </div>
         </form>
@@ -178,30 +178,30 @@
     <div v-if="showMajorsModal" class="modal-overlay" @click="closeMajorsModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>Manage Majors - {{ selectedSchool?.name }}</h2>
+          <h2>管理专业 - {{ selectedSchool?.name }}</h2>
           <button class="btn-close" @click="closeMajorsModal">×</button>
         </div>
 
         <form @submit.prevent="handleAddMajor" class="major-form">
           <div class="form-row">
             <div class="form-group">
-              <label for="major-name">Major Name *</label>
+              <label for="major-name">专业名称 *</label>
               <input
                 id="major-name"
                 v-model="majorForm.name"
                 type="text"
-                placeholder="Enter major name"
+                placeholder="请输入专业名称"
                 required
               >
             </div>
 
             <div class="form-group">
-              <label for="major-direction">Direction *</label>
+              <label for="major-direction">方向 *</label>
               <input
                 id="major-direction"
                 v-model="majorForm.direction"
                 type="text"
-                placeholder="Enter direction"
+                placeholder="请输入方向"
                 required
               >
             </div>
@@ -209,14 +209,14 @@
 
           <div class="form-actions">
             <button type="submit" class="btn-submit" :disabled="majorFormLoading">
-              {{ majorFormLoading ? 'Adding...' : 'Add Major' }}
+              {{ majorFormLoading ? '正在添加...' : '添加专业' }}
             </button>
           </div>
         </form>
 
         <div class="modal-footer">
           <button class="btn-cancel" @click="closeMajorsModal">
-            Close
+            关闭
           </button>
         </div>
       </div>
@@ -226,53 +226,53 @@
     <div v-if="showSubjectsModal" class="modal-overlay" @click="closeSubjectsModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>Manage Exam Subjects - {{ selectedSchool?.name }}</h2>
+          <h2>管理考试科目 - {{ selectedSchool?.name }}</h2>
           <button class="btn-close" @click="closeSubjectsModal">×</button>
         </div>
 
         <form @submit.prevent="handleAddSubject" class="subject-form">
           <div class="form-group">
-            <label for="subject-name">Subject Name *</label>
+            <label for="subject-name">科目名称 *</label>
             <input
               id="subject-name"
               v-model="subjectForm.subjectName"
               type="text"
-              placeholder="Enter subject name"
+              placeholder="请输入科目名称"
               required
             >
           </div>
 
           <div class="form-group">
-            <label for="subject-code">Subject Code *</label>
+            <label for="subject-code">科目代码 *</label>
             <input
               id="subject-code"
               v-model="subjectForm.subjectCode"
               type="text"
-              placeholder="Enter subject code"
+              placeholder="请输入科目代码"
               required
             >
           </div>
 
           <div class="form-group">
-            <label for="subject-major">Major (Optional)</label>
+            <label for="subject-major">专业ID（可选）</label>
             <input
               id="subject-major"
               v-model="subjectForm.majorId"
               type="number"
-              placeholder="Enter major ID (optional)"
+              placeholder="请输入专业ID（可不填）"
             >
           </div>
 
           <div class="form-actions">
             <button type="submit" class="btn-submit" :disabled="subjectFormLoading">
-              {{ subjectFormLoading ? 'Adding...' : 'Add Subject' }}
+              {{ subjectFormLoading ? '正在添加...' : '添加科目' }}
             </button>
           </div>
         </form>
 
         <div class="modal-footer">
           <button class="btn-cancel" @click="closeSubjectsModal">
-            Close
+            关闭
           </button>
         </div>
       </div>
@@ -305,7 +305,7 @@ export default {
       error: '',
       successMessage: '',
       errorMessage: '',
-      
+
       // School modal
       showSchoolModal: false,
       editingSchool: null,
@@ -354,7 +354,7 @@ export default {
         this.totalPages = data.totalPages || 0
         this.currentPage = data.number || 0
       } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to load schools. Please try again.'
+        this.error = error.response?.data?.message || '加载学校列表失败，请重试。'
         this.schoolList = []
       } finally {
         this.loading = false
@@ -419,10 +419,10 @@ export default {
       try {
         if (this.editingSchool) {
           await adminService.updateSchool(this.editingSchool.id, this.schoolForm)
-          this.successMessage = 'School updated successfully'
+          this.successMessage = '学校更新成功'
         } else {
           await adminService.createSchool(this.schoolForm)
-          this.successMessage = 'School created successfully'
+          this.successMessage = '学校创建成功'
         }
 
         this.closeSchoolModal()
@@ -432,7 +432,7 @@ export default {
           this.successMessage = ''
         }, 3000)
       } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'Failed to save school'
+        this.errorMessage = error.response?.data?.message || '保存学校失败'
         setTimeout(() => {
           this.errorMessage = ''
         }, 3000)
@@ -442,7 +442,7 @@ export default {
     },
 
     async handleDeleteSchool(school) {
-      if (!confirm(`Are you sure you want to delete "${school.name}"?`)) {
+      if (!confirm(`确认要删除“${school.name}”吗？`)) {
         return
       }
 
@@ -451,14 +451,14 @@ export default {
 
       try {
         await adminService.deleteSchool(school.id)
-        this.successMessage = 'School deleted successfully'
+        this.successMessage = '学校删除成功'
         await this.loadSchools()
 
         setTimeout(() => {
           this.successMessage = ''
         }, 3000)
       } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'Failed to delete school'
+        this.errorMessage = error.response?.data?.message || '删除学校失败'
         setTimeout(() => {
           this.errorMessage = ''
         }, 3000)
@@ -490,7 +490,7 @@ export default {
 
       try {
         await adminService.createMajor(this.selectedSchool.id, this.majorForm)
-        this.successMessage = 'Major added successfully'
+        this.successMessage = '专业添加成功'
         this.majorForm = {
           name: '',
           direction: ''
@@ -500,7 +500,7 @@ export default {
           this.successMessage = ''
         }, 3000)
       } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'Failed to add major'
+        this.errorMessage = error.response?.data?.message || '添加专业失败'
         setTimeout(() => {
           this.errorMessage = ''
         }, 3000)
@@ -544,7 +544,7 @@ export default {
         }
 
         await adminService.createExamSubject(this.selectedSchool.id, subjectData)
-        this.successMessage = 'Exam subject added successfully'
+        this.successMessage = '考试科目添加成功'
         this.subjectForm = {
           subjectName: '',
           subjectCode: '',
@@ -555,7 +555,7 @@ export default {
           this.successMessage = ''
         }, 3000)
       } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'Failed to add exam subject'
+        this.errorMessage = error.response?.data?.message || '添加考试科目失败'
         setTimeout(() => {
           this.errorMessage = ''
         }, 3000)
@@ -566,6 +566,9 @@ export default {
   }
 }
 </script>
+
+
+
 
 <style scoped>
 .admin-schools-container {

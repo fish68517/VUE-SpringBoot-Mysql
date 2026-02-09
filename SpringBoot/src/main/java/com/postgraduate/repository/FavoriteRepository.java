@@ -65,8 +65,9 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     long countBySchoolIdAndDeletedFalse(Long schoolId);
 
     // 在现有的 Repository 中添加
-        @Query("SELECT p FROM Favorite f JOIN UserProfile p ON f.userId = p.userId WHERE f.schoolId = :schoolId")
-        List<UserProfile> findUserProfilesBySchoolId(@Param("schoolId") Long schoolId);
+     // 联表查询：找到收藏了指定学校的所有用户的画像信息
+    @Query("SELECT p FROM UserProfile p WHERE p.userId IN (SELECT f.userId FROM Favorite f WHERE f.schoolId = :schoolId)")
+    List<UserProfile> findUserProfilesBySchoolId(@Param("schoolId") Long schoolId);
 
         @Query("SELECT COUNT(f) FROM Favorite f WHERE f.schoolId = :schoolId")
         Long countBySchoolId(@Param("schoolId") Long schoolId);

@@ -1,19 +1,19 @@
 <template>
   <div class="admin-announcements-container">
     <div class="header-section">
-      <h1>Announcement Management</h1>
-      <p class="subtitle">Create, edit, and manage system announcements</p>
+      <h1>公告管理</h1>
+      <p class="subtitle">创建、编辑和管理系统公告</p>
     </div>
 
     <!-- Loading State -->
     <div v-if="loading" class="loading">
-      <p>Loading announcements...</p>
+      <p>正在加载公告...</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
-      <button class="btn-retry" @click="loadAnnouncements">Retry</button>
+      <button class="btn-retry" @click="loadAnnouncements">重试</button>
     </div>
 
     <!-- Main Content -->
@@ -94,7 +94,7 @@
     <div v-if="showAnnouncementModal" class="modal-overlay" @click="closeAnnouncementModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>{{ editingAnnouncement ? 'Edit Announcement' : 'Create New Announcement' }}</h2>
+          <h2>{{ editingAnnouncement ? '编辑公告' : '创建新公告' }}</h2>
           <button class="btn-close" @click="closeAnnouncementModal">×</button>
         </div>
 
@@ -112,28 +112,28 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label for="announcement-status">Status *</label>
+              <label for="announcement-status">状态 *</label>
               <select id="announcement-status" v-model="announcementForm.status" required>
-                <option value="">Select status</option>
-                <option value="DRAFT">Draft</option>
-                <option value="PUBLISHED">Published</option>
+                <option value="">选择状态</option>
+                <option value="DRAFT">草稿</option>
+                <option value="PUBLISHED">已发布</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="announcement-sort-order">Sort Order *</label>
+              <label for="announcement-sort-order">排序 *</label>
               <input
                 id="announcement-sort-order"
                 v-model.number="announcementForm.sortOrder"
                 type="number"
-                placeholder="Enter sort order"
+                placeholder="请输入排序"
                 required
               >
             </div>
           </div>
 
           <div class="form-group">
-            <label for="announcement-content">Content *</label>
+            <label for="announcement-content">内容 *</label>
             <div class="editor-toolbar">
               <button type="button" class="toolbar-btn" @click="insertMarkdown('**', '**')" title="Bold">
                 <strong>B</strong>
@@ -155,12 +155,12 @@
               id="announcement-content"
               ref="contentEditor"
               v-model="announcementForm.content"
-              placeholder="Enter announcement content (supports markdown)"
+              placeholder="请输入公告内容（支持Markdown）"
               rows="8"
               required
             ></textarea>
             <div class="editor-hint">
-              💡 Tip: You can use markdown formatting like **bold**, *italic*, - bullet points, # headings
+              💡 提示：您可以使用Markdown格式，例如**粗体**、*斜体*、- 项目符号、# 标题
             </div>
           </div>
 

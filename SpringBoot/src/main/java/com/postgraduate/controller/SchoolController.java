@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.postgraduate.dto.SchoolStatsDTO; // 新增
+import com.postgraduate.service.StatisticsService; // 新增
+
 import java.util.List;
 
 /**
@@ -29,6 +32,11 @@ public class SchoolController {
 
     @Autowired
     private SchoolService schoolService;
+
+    @Autowired
+    private StatisticsService statisticsService; // 注入统计服务
+
+    
 
     /**
      * Search schools with optional filters and pagination.
@@ -99,5 +107,14 @@ public class SchoolController {
         List<ExamSubjectDTO> subjects = schoolService.getSchoolExamSubjects(id);
         return ResponseEntity.ok(ApiResponse.success("School exam subjects retrieved successfully", subjects));
     }
+
+
+    // --- 新增接口开始 ---
+    @GetMapping("/{id}/stats")
+    public ApiResponse<SchoolStatsDTO> getSchoolStats(@PathVariable Long id) {
+        SchoolStatsDTO stats = statisticsService.getSchoolStats(id);
+        return ApiResponse.success("Fetched school statistics", stats);
+    }
+    // --- 新增接口结束 ---
 
 }

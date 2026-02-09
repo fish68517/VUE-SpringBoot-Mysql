@@ -17,6 +17,8 @@ import com.postgraduate.repository.MajorRepository;
 import com.postgraduate.repository.SchoolRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -269,5 +271,19 @@ public class AdminSchoolService {
             throw new ValidationException("Subject name cannot be empty");
         }
     }
+
+
+
+    public Page<SchoolDTO> getSchools(Pageable pageable) {
+        // 这里根据你的实体/软删除字段改一下
+        // 方案A：如果没有软删除字段，就直接 findAll(pageable)
+        // return schoolRepository.findAll(pageable).map(this::toDto);
+
+        // 方案B：如果你有 deleted 字段（推荐）
+        return schoolRepository.findByDeletedFalse(pageable)
+                .map(SchoolDTO::fromEntity);
+
+    }
+
 
 }

@@ -1,19 +1,19 @@
 <template>
   <div class="admin-feedback-container">
     <div class="header-section">
-      <h1>Feedback Management</h1>
-      <p class="subtitle">Review and respond to user feedback</p>
+      <h1>反馈管理</h1>
+      <p class="subtitle">审核和回复用户反馈</p>
     </div>
 
     <!-- Loading State -->
     <div v-if="loading" class="loading">
-      <p>Loading feedback...</p>
+      <p>正在加载反馈...</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
-      <button class="btn-retry" @click="loadFeedback">Retry</button>
+      <button class="btn-retry" @click="loadFeedback">重试</button>
     </div>
 
     <!-- Empty State -->
@@ -31,34 +31,34 @@
           <input
             v-model="searchKeyword"
             type="text"
-            placeholder="Search by content or user..."
+            placeholder="按内容或用户搜索..."
             @keyup.enter="handleSearch"
           >
-          <button class="btn-search" @click="handleSearch">Search</button>
+          <button class="btn-search" @click="handleSearch">搜索</button>
         </div>
 
         <div class="filter-box">
           <select v-model="statusFilter" @change="handleFilterChange">
             <option value="">All Status</option>
             <option value="NEW">New</option>
-            <option value="PROCESSING">Processing</option>
-            <option value="DONE">Done</option>
+            <option value="PROCESSING">处理中</option>
+            <option value="DONE">已完成</option>
           </select>
         </div>
 
         <div class="filter-box">
           <select v-model="typeFilter" @change="handleFilterChange">
             <option value="">All Types</option>
-            <option value="BUG">Bug Report</option>
-            <option value="SUGGESTION">Suggestion</option>
-            <option value="DATA_ERROR">Data Error</option>
+            <option value="BUG">Bug 报告</option>
+            <option value="SUGGESTION">建议</option>
+            <option value="DATA_ERROR">数据错误</option>
           </select>
         </div>
       </div>
 
       <!-- Results Info -->
       <div class="results-info">
-        <p>Total feedback: {{ totalElements }} (Page {{ currentPage + 1 }} of {{ totalPages }})</p>
+        <p>反馈总数: {{ totalElements }} (第 {{ currentPage + 1 }} 页 / 共 {{ totalPages }} 页)</p>
       </div>
 
       <!-- Feedback Cards -->
@@ -75,7 +75,7 @@
                 </span>
               </div>
               <div class="user-info">
-                <span class="user-id">User ID: {{ feedback.userId }}</span>
+                <span class="user-id">用户 ID: {{ feedback.userId }}</span>
                 <span class="feedback-date">{{ formatDate(feedback.createdAt) }}</span>
               </div>
             </div>
@@ -83,12 +83,12 @@
 
           <div class="card-content">
             <div class="feedback-text">
-              <h3>Feedback Content</h3>
+              <h3>反馈内容</h3>
               <p>{{ feedback.content }}</p>
             </div>
 
             <div v-if="feedback.adminReply" class="admin-reply-display">
-              <h3>Your Reply</h3>
+              <h3>您的回复</h3>
               <p>{{ feedback.adminReply }}</p>
               <div class="reply-date">
                 Replied: {{ formatDate(feedback.repliedAt) }}
@@ -102,7 +102,7 @@
               @click="openReplyModal(feedback)"
               :disabled="actionLoading === feedback.id"
             >
-              {{ feedback.adminReply ? 'Edit Reply' : 'Reply' }}
+              {{ feedback.adminReply ? '编辑回复' : '回复' }}
             </button>
           </div>
         </div>

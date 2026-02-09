@@ -1,67 +1,67 @@
 <template>
   <div class="admin-users-container">
     <div class="header-section">
-      <h1>User Management</h1>
-      <p class="subtitle">Manage user accounts and permissions</p>
+      <h1>用户管理</h1>
+      <p class="subtitle">管理用户账号与权限</p>
     </div>
 
-    <!-- Loading State -->
+    <!-- 加载状态 -->
     <div v-if="loading" class="loading">
-      <p>Loading users...</p>
+      <p>正在加载用户列表...</p>
     </div>
 
-    <!-- Error State -->
+    <!-- 错误状态 -->
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
-      <button class="btn-retry" @click="loadUsers">Retry</button>
+      <button class="btn-retry" @click="loadUsers">重试</button>
     </div>
 
-    <!-- Empty State -->
+    <!-- 空状态 -->
     <div v-else-if="userList.length === 0" class="empty-state">
       <div class="empty-icon">👥</div>
-      <h2>No Users Found</h2>
-      <p>No users match your search criteria.</p>
+      <h2>未找到用户</h2>
+      <p>没有符合当前搜索条件的用户。</p>
     </div>
 
-    <!-- Users Content -->
+    <!-- 用户内容 -->
     <div v-else class="users-content">
-      <!-- Filter and Search Section -->
+      <!-- 过滤与搜索 -->
       <div class="filter-section">
         <div class="search-box">
           <input
             v-model="searchKeyword"
             type="text"
-            placeholder="Search by username..."
+            placeholder="按用户名搜索..."
             @keyup.enter="handleSearch"
           >
-          <button class="btn-search" @click="handleSearch">Search</button>
+          <button class="btn-search" @click="handleSearch">搜索</button>
         </div>
 
         <div class="filter-box">
           <select v-model="statusFilter" @change="handleFilterChange">
-            <option value="">All Status</option>
-            <option value="ENABLED">Enabled</option>
-            <option value="DISABLED">Disabled</option>
+            <option value="">全部状态</option>
+            <option value="ENABLED">启用</option>
+            <option value="DISABLED">禁用</option>
           </select>
         </div>
       </div>
 
-      <!-- Results Info -->
+      <!-- 结果信息 -->
       <div class="results-info">
-        <p>Total users: {{ totalElements }} (Page {{ currentPage + 1 }} of {{ totalPages }})</p>
+        <p>用户总数：{{ totalElements }}（第 {{ currentPage + 1 }} / {{ totalPages }} 页）</p>
       </div>
 
-      <!-- Users Table -->
+      <!-- 用户表格 -->
       <div class="users-table-wrapper">
         <table class="users-table">
           <thead>
             <tr>
               <th>ID</th>
-              <th>Username</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Created At</th>
-              <th>Actions</th>
+              <th>用户名</th>
+              <th>角色</th>
+              <th>状态</th>
+              <th>创建时间</th>
+              <th>操作</th>
             </tr>
           </thead>
           <tbody>
@@ -82,19 +82,20 @@
               <td class="actions-cell">
                 <button
                   class="btn-action btn-toggle-status"
-                  :title="user.status === 'ENABLED' ? 'Disable user' : 'Enable user'"
+                  :title="user.status === 'ENABLED' ? '禁用用户' : '启用用户'"
                   @click="handleToggleStatus(user)"
                   :disabled="actionLoading === user.id"
                 >
-                  {{ user.status === 'ENABLED' ? 'Disable' : 'Enable' }}
+                  {{ user.status === 'ENABLED' ? '禁用' : '启用' }}
                 </button>
                 <button
+                v-if="false"
                   class="btn-action btn-reset-password"
-                  title="Reset user password"
+                  title="重置用户密码"
                   @click="handleResetPassword(user)"
                   :disabled="actionLoading === user.id"
                 >
-                  Reset Password
+                  重置密码
                 </button>
               </td>
             </tr>
@@ -102,18 +103,18 @@
         </table>
       </div>
 
-      <!-- Pagination -->
+      <!-- 分页 -->
       <div v-if="totalPages > 1" class="pagination">
         <button
           class="btn-pagination"
           :disabled="currentPage === 0"
           @click="handlePreviousPage"
         >
-          Previous
+          上一页
         </button>
 
         <div class="page-info">
-          Page {{ currentPage + 1 }} of {{ totalPages }}
+          第 {{ currentPage + 1 }} / {{ totalPages }} 页
         </div>
 
         <button
@@ -121,17 +122,17 @@
           :disabled="currentPage >= totalPages - 1"
           @click="handleNextPage"
         >
-          Next
+          下一页
         </button>
       </div>
     </div>
 
-    <!-- Success Message -->
+    <!-- 成功提示 -->
     <div v-if="successMessage" class="success-message">
       {{ successMessage }}
     </div>
 
-    <!-- Error Toast -->
+    <!-- 错误提示 -->
     <div v-if="errorMessage" class="error-toast">
       {{ errorMessage }}
     </div>
@@ -180,7 +181,7 @@ export default {
         this.totalPages = data.totalPages || 0
         this.currentPage = data.number || 0
       } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to load users. Please try again.'
+        this.error = error.response?.data?.message || '加载用户列表失败，请稍后重试。'
         this.userList = []
       } finally {
         this.loading = false
@@ -213,7 +214,7 @@ export default {
 
     async handleToggleStatus(user) {
       const newStatus = user.status === 'ENABLED' ? 'DISABLED' : 'ENABLED'
-      const confirmMessage = `Are you sure you want to ${newStatus === 'ENABLED' ? 'enable' : 'disable'} this user?`
+      const confirmMessage = `确认要${newStatus === 'ENABLED' ? '启用' : '禁用'}该用户吗？`
 
       if (!confirm(confirmMessage)) {
         return
@@ -226,12 +227,12 @@ export default {
       try {
         await adminService.updateUserStatus(user.id, newStatus)
         user.status = newStatus
-        this.successMessage = `User status updated to ${newStatus}`
+        this.successMessage = `用户状态已更新为：${newStatus === 'ENABLED' ? '启用' : '禁用'}`
         setTimeout(() => {
           this.successMessage = ''
         }, 3000)
       } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'Failed to update user status'
+        this.errorMessage = error.response?.data?.message || '更新用户状态失败'
         setTimeout(() => {
           this.errorMessage = ''
         }, 3000)
@@ -241,7 +242,7 @@ export default {
     },
 
     async handleResetPassword(user) {
-      const confirmMessage = `Are you sure you want to reset the password for ${user.username}?`
+      const confirmMessage = `确认要重置用户「${user.username}」的密码吗？`
 
       if (!confirm(confirmMessage)) {
         return
@@ -255,12 +256,12 @@ export default {
         const response = await adminService.resetUserPassword(user.id)
         const tempPassword = response.data.data.tempPassword
 
-        this.successMessage = `Password reset successful. Temporary password: ${tempPassword}`
+        this.successMessage = `密码重置成功，临时密码：${tempPassword}`
         setTimeout(() => {
           this.successMessage = ''
         }, 5000)
       } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'Failed to reset password'
+        this.errorMessage = error.response?.data?.message || '重置密码失败'
         setTimeout(() => {
           this.errorMessage = ''
         }, 3000)
@@ -272,10 +273,11 @@ export default {
     formatDate(dateString) {
       if (!dateString) return ''
       const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', {
+      // 改为中文格式（大陆习惯）
+      return date.toLocaleString('zh-CN', {
         year: 'numeric',
-        month: 'short',
-        day: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
         hour: '2-digit',
         minute: '2-digit'
       })
@@ -283,6 +285,9 @@ export default {
   }
 }
 </script>
+
+
+
 
 <style scoped>
 .admin-users-container {
