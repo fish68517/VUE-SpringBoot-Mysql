@@ -1,7 +1,7 @@
 <template>
   <div class="school-search-container">
     <div class="search-section">
-      <h1>Search Schools</h1>
+      <h1>院校列表</h1>
       
       <!-- Filter Form -->
       <div class="filter-box">
@@ -9,23 +9,24 @@
           <div class="filter-row">
             <!-- Region Filter -->
             <div class="filter-group">
-              <label for="city">Region</label>
-              <select id="city" v-model="filters.city">
-                <option value="">All Regions</option>
-                <option value="Nanjing">Nanjing</option>
-                <option value="Suzhou">Suzhou</option>
-                <option value="Wuxi">Wuxi</option>
-                <option value="Changzhou">Changzhou</option>
-                <option value="Zhenjiang">Zhenjiang</option>
-                <option value="Yangzhou">Yangzhou</option>
-                <option value="Taizhou">Taizhou</option>
-                <option value="Nantong">Nantong</option>
-                <option value="Yancheng">Yancheng</option>
-                <option value="Lianyungang">Lianyungang</option>
-                <option value="Huai'an">Huai'an</option>
-                <option value="Xuzhou">Xuzhou</option>
-              </select>
-            </div>
+          <label for="city">地区</label>
+          <select id="city" v-model="filters.city">
+            <option value="">全部地区</option>
+            <option value="南京">南京</option>
+            <option value="苏州">苏州</option>
+            <option value="无锡">无锡</option>
+            <option value="常州">常州</option>
+            <option value="镇江">镇江</option>
+            <option value="扬州">扬州</option>
+            <option value="泰州">泰州</option>
+            <option value="南通">南通</option>
+            <option value="盐城">盐城</option>
+            <option value="连云港">连云港</option>
+            <option value="淮安">淮安</option>
+            <option value="徐州">徐州</option>
+          </select>
+        </div>
+
 
             <!-- School Tier Filter -->
             <div class="filter-group">
@@ -40,7 +41,7 @@
             </div>
 
             <!-- Expected Score Range -->
-            <div class="filter-group">
+            <div class="filter-group" v-if="false">
               <label for="expectedScoreMin">Min Score</label>
               <input
                 id="expectedScoreMin"
@@ -52,7 +53,7 @@
               >
             </div>
 
-            <div class="filter-group">
+            <div class="filter-group" v-if="false">
               <label for="expectedScoreMax">Max Score</label>
               <input
                 id="expectedScoreMax"
@@ -65,7 +66,7 @@
             </div>
 
             <!-- Major Filter -->
-            <div class="filter-group">
+            <div class="filter-group" v-if="false">
               <label for="major">Major</label>
               <input
                 id="major"
@@ -137,11 +138,9 @@
               <p>{{ truncateText(school.intro, 150) }}</p>
             </div>
 
-            <div class="school-actions">
-              <router-link :to="`/school/${school.id}`" class="btn-detail">
-                View Details
-              </router-link>
-            </div>
+            <router-link :to="{ name: 'SchoolDetail', params: { id: school.id } }" class="btn-detail">
+            查看详情
+            </router-link>
           </div>
         </div>
 

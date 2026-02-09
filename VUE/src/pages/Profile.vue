@@ -1,28 +1,28 @@
 <template>
   <div class="profile-container">
     <div class="profile-box">
-      <h1>My Profile</h1>
+      <h1>我的资料</h1>
       <form @submit.prevent="handleSubmit">
-        <!-- Undergraduate Tier -->
+        <!-- 本科层次 -->
         <div class="form-group">
-          <label for="undergradTier">Undergraduate Tier</label>
+          <label for="undergradTier">本科层次</label>
           <select
             id="undergradTier"
             v-model="form.undergradTier"
             @blur="validateUndergradTier"
           >
-            <option value="">Select your undergraduate tier</option>
+            <option value="">请选择你的本科层次</option>
             <option value="985">985</option>
             <option value="211">211</option>
-            <option value="DOUBLE_NON">Double-Non</option>
-            <option value="OTHER">Other</option>
+            <option value="DOUBLE_NON">双非</option>
+            <option value="OTHER">其他</option>
           </select>
           <span v-if="errors.undergradTier" class="error">{{ errors.undergradTier }}</span>
         </div>
 
         <!-- GPA -->
         <div class="form-group">
-          <label for="gpa">GPA</label>
+          <label for="gpa">GPA（绩点）</label>
           <input
             id="gpa"
             v-model.number="form.gpa"
@@ -30,88 +30,88 @@
             step="0.01"
             min="0"
             max="5"
-            placeholder="Enter your GPA (0-5.0)"
+            placeholder="请输入 GPA（0-5.0）"
             @blur="validateGpa"
           >
           <span v-if="errors.gpa" class="error">{{ errors.gpa }}</span>
         </div>
 
-        <!-- GPA Scale -->
+        <!-- GPA 制度 -->
         <div class="form-group">
-          <label for="gpaScale">GPA Scale</label>
+          <label for="gpaScale">GPA 制度</label>
           <input
             id="gpaScale"
             v-model="form.gpaScale"
             type="text"
-            placeholder="e.g., 4.0, 5.0"
+            placeholder="例如：4.0、5.0"
             @blur="validateGpaScale"
           >
           <span v-if="errors.gpaScale" class="error">{{ errors.gpaScale }}</span>
         </div>
 
-        <!-- CET-4 Score -->
+        <!-- 四级成绩 -->
         <div class="form-group">
-          <label for="cet4Score">CET-4 Score</label>
+          <label for="cet4Score">英语四级成绩</label>
           <input
             id="cet4Score"
             v-model.number="form.cet4Score"
             type="number"
             min="0"
             max="710"
-            placeholder="Enter your CET-4 score (0-710)"
+            placeholder="请输入四级成绩（0-710）"
             @blur="validateCet4Score"
           >
           <span v-if="errors.cet4Score" class="error">{{ errors.cet4Score }}</span>
         </div>
 
-        <!-- CET-6 Score -->
+        <!-- 六级成绩 -->
         <div class="form-group">
-          <label for="cet6Score">CET-6 Score</label>
+          <label for="cet6Score">英语六级成绩</label>
           <input
             id="cet6Score"
             v-model.number="form.cet6Score"
             type="number"
             min="0"
             max="710"
-            placeholder="Enter your CET-6 score (0-710)"
+            placeholder="请输入六级成绩（0-710）"
             @blur="validateCet6Score"
           >
           <span v-if="errors.cet6Score" class="error">{{ errors.cet6Score }}</span>
         </div>
 
-        <!-- Target Score -->
+        <!-- 目标分数 -->
         <div class="form-group">
-          <label for="targetScore">Target Score</label>
+          <label for="targetScore">目标分数</label>
           <input
             id="targetScore"
             v-model.number="form.targetScore"
             type="number"
             min="0"
             max="500"
-            placeholder="Enter your target score (0-500)"
+            placeholder="请输入目标分数（0-500）"
             @blur="validateTargetScore"
           >
           <span v-if="errors.targetScore" class="error">{{ errors.targetScore }}</span>
         </div>
 
-        <!-- Other Scores -->
+        <!-- 其他信息 -->
         <div class="form-group">
-          <label for="otherScores">Other Scores (Optional)</label>
+          <label for="otherScores">其他成绩/信息（可选）</label>
           <textarea
             id="otherScores"
             v-model="form.otherScores"
-            placeholder="Enter any other relevant scores or information"
+            placeholder="可填写其他相关成绩或补充说明"
             rows="4"
           ></textarea>
           <span v-if="errors.otherScores" class="error">{{ errors.otherScores }}</span>
         </div>
 
-        <!-- Submit Button -->
+        <!-- 提交按钮 -->
         <button type="submit" class="btn-submit" :disabled="loading">
-          {{ loading ? 'Saving...' : 'Save Profile' }}
+          {{ loading ? '正在保存...' : '保存资料' }}
         </button>
 
-        <!-- Messages -->
+        <!-- 提示信息 -->
         <div v-if="message.error" class="message error-message">
           {{ message.error }}
         </div>
@@ -163,7 +163,7 @@ export default {
       try {
         const response = await userService.getUserProfile()
         const profile = response.data.data
-        
+
         this.form = {
           undergradTier: profile.undergradTier || '',
           gpa: profile.gpa ? parseFloat(profile.gpa) : null,
@@ -174,12 +174,12 @@ export default {
           otherScores: profile.otherScores || ''
         }
       } catch (error) {
-        this.message.error = error.response?.data?.message || 'Failed to load profile'
+        this.message.error = error.response?.data?.message || '加载个人资料失败'
       }
     },
     validateUndergradTier() {
       if (this.form.undergradTier && !['985', '211', 'DOUBLE_NON', 'OTHER'].includes(this.form.undergradTier)) {
-        this.errors.undergradTier = 'Invalid undergraduate tier'
+        this.errors.undergradTier = '本科层次不合法'
       } else {
         this.errors.undergradTier = ''
       }
@@ -187,7 +187,7 @@ export default {
     validateGpa() {
       if (this.form.gpa !== null && this.form.gpa !== '') {
         if (this.form.gpa < 0 || this.form.gpa > 5.0) {
-          this.errors.gpa = 'GPA must be between 0 and 5.0'
+          this.errors.gpa = 'GPA 必须在 0 到 5.0 之间'
         } else {
           this.errors.gpa = ''
         }
@@ -196,16 +196,13 @@ export default {
       }
     },
     validateGpaScale() {
-      if (this.form.gpaScale && this.form.gpaScale.trim().length === 0) {
-        this.errors.gpaScale = ''
-      } else {
-        this.errors.gpaScale = ''
-      }
+      // 这里本来就没有校验逻辑，保持为空即可
+      this.errors.gpaScale = ''
     },
     validateCet4Score() {
       if (this.form.cet4Score !== null && this.form.cet4Score !== '') {
         if (this.form.cet4Score < 0 || this.form.cet4Score > 710) {
-          this.errors.cet4Score = 'CET-4 score must be between 0 and 710'
+          this.errors.cet4Score = '四级成绩必须在 0 到 710 之间'
         } else {
           this.errors.cet4Score = ''
         }
@@ -216,7 +213,7 @@ export default {
     validateCet6Score() {
       if (this.form.cet6Score !== null && this.form.cet6Score !== '') {
         if (this.form.cet6Score < 0 || this.form.cet6Score > 710) {
-          this.errors.cet6Score = 'CET-6 score must be between 0 and 710'
+          this.errors.cet6Score = '六级成绩必须在 0 到 710 之间'
         } else {
           this.errors.cet6Score = ''
         }
@@ -227,7 +224,7 @@ export default {
     validateTargetScore() {
       if (this.form.targetScore !== null && this.form.targetScore !== '') {
         if (this.form.targetScore < 0 || this.form.targetScore > 500) {
-          this.errors.targetScore = 'Target score must be between 0 and 500'
+          this.errors.targetScore = '目标分数必须在 0 到 500 之间'
         } else {
           this.errors.targetScore = ''
         }
@@ -239,7 +236,7 @@ export default {
       this.errors.otherScores = ''
     },
     async handleSubmit() {
-      // Validate all fields
+      // 校验所有字段
       this.validateUndergradTier()
       this.validateGpa()
       this.validateGpaScale()
@@ -248,7 +245,7 @@ export default {
       this.validateTargetScore()
       this.validateOtherScores()
 
-      // Check if there are any errors
+      // 是否存在错误
       const hasErrors = Object.values(this.errors).some(error => error !== '')
       if (hasErrors) {
         return
@@ -259,7 +256,7 @@ export default {
       this.message.success = ''
 
       try {
-        // Prepare data for submission
+        // 提交数据
         const profileData = {
           undergradTier: this.form.undergradTier || null,
           gpa: this.form.gpa !== null ? this.form.gpa : null,
@@ -271,9 +268,9 @@ export default {
         }
 
         const response = await userService.updateUserProfile(profileData)
-        this.message.success = 'Profile updated successfully!'
-        
-        // Update form with response data
+        this.message.success = '个人资料更新成功！'
+
+        // 用返回结果回填表单
         const updatedProfile = response.data.data
         this.form = {
           undergradTier: updatedProfile.undergradTier || '',
@@ -285,7 +282,7 @@ export default {
           otherScores: updatedProfile.otherScores || ''
         }
       } catch (error) {
-        this.message.error = error.response?.data?.message || 'Failed to update profile. Please try again.'
+        this.message.error = error.response?.data?.message || '更新个人资料失败，请稍后重试。'
       } finally {
         this.loading = false
       }
@@ -293,6 +290,9 @@ export default {
   }
 }
 </script>
+
+
+
 
 <style scoped>
 .profile-container {

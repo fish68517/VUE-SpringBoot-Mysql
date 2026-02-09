@@ -1,44 +1,44 @@
 <template>
   <div class="feedback-submit-container">
     <div class="feedback-box">
-      <h1>Submit Feedback</h1>
-      <p class="subtitle">Help us improve the system by sharing your feedback</p>
+      <h1>提交反馈</h1>
+      <p class="subtitle">欢迎提出意见与建议，帮助我们持续改进系统</p>
 
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
-          <label for="type">Feedback Type *</label>
+          <label for="type">反馈类型 *</label>
           <select
             id="type"
             v-model="form.type"
             required
             @blur="validateType"
           >
-            <option value="">-- Select a type --</option>
-            <option value="BUG">Bug Report</option>
-            <option value="SUGGESTION">Suggestion</option>
-            <option value="DATA_ERROR">Data Error</option>
+            <option value="">-- 请选择类型 --</option>
+            <option value="BUG">问题反馈</option>
+            <option value="SUGGESTION">功能建议</option>
+            <option value="DATA_ERROR">数据错误</option>
           </select>
           <span v-if="errors.type" class="error">{{ errors.type }}</span>
         </div>
 
         <div class="form-group">
-          <label for="content">Feedback Content *</label>
+          <label for="content">反馈内容 *</label>
           <textarea
             id="content"
             v-model="form.content"
-            placeholder="Please describe your feedback in detail..."
+            placeholder="请详细描述你的问题/建议（越具体越好）..."
             rows="8"
             required
             @blur="validateContent"
           ></textarea>
           <span v-if="errors.content" class="error">{{ errors.content }}</span>
           <div class="char-count">
-            {{ form.content.length }} / 2000 characters
+            {{ form.content.length }} / 2000 字符
           </div>
         </div>
 
         <button type="submit" class="btn-submit" :disabled="loading">
-          {{ loading ? 'Submitting...' : 'Submit Feedback' }}
+          {{ loading ? '正在提交...' : '提交反馈' }}
         </button>
 
         <div v-if="message.error" class="message error-message">
@@ -50,11 +50,11 @@
       </form>
 
       <div class="feedback-info">
-        <h3>Feedback Types</h3>
+        <h3>反馈类型说明</h3>
         <ul>
-          <li><strong>Bug Report:</strong> Report technical issues or errors you encounter</li>
-          <li><strong>Suggestion:</strong> Share ideas to improve the system</li>
-          <li><strong>Data Error:</strong> Report incorrect or outdated school information</li>
+          <li><strong>问题反馈：</strong>提交你在使用过程中遇到的功能问题或报错</li>
+          <li><strong>功能建议：</strong>提出对系统功能、交互或体验的改进建议</li>
+          <li><strong>数据错误：</strong>反馈院校信息存在错误、缺失或已过时的情况</li>
         </ul>
       </div>
     </div>
@@ -86,18 +86,18 @@ export default {
   methods: {
     validateType() {
       if (!this.form.type) {
-        this.errors.type = 'Please select a feedback type'
+        this.errors.type = '请选择反馈类型'
       } else {
         this.errors.type = ''
       }
     },
     validateContent() {
       if (!this.form.content) {
-        this.errors.content = 'Feedback content is required'
+        this.errors.content = '请填写反馈内容'
       } else if (this.form.content.trim().length < 10) {
-        this.errors.content = 'Feedback content must be at least 10 characters'
+        this.errors.content = '反馈内容至少需要 10 个字符'
       } else if (this.form.content.length > 2000) {
-        this.errors.content = 'Feedback content must not exceed 2000 characters'
+        this.errors.content = '反馈内容不能超过 2000 个字符'
       } else {
         this.errors.content = ''
       }
@@ -117,7 +117,7 @@ export default {
       try {
         await feedbackService.submitFeedback(this.form.type, this.form.content)
 
-        this.message.success = 'Feedback submitted successfully! Thank you for your input.'
+        this.message.success = '反馈提交成功！感谢你的反馈与支持。'
         this.form.type = ''
         this.form.content = ''
 
@@ -125,7 +125,7 @@ export default {
           this.$router.push('/feedback-history')
         }, 2000)
       } catch (error) {
-        this.message.error = error.response?.data?.message || 'Failed to submit feedback. Please try again.'
+        this.message.error = error.response?.data?.message || '提交反馈失败，请稍后重试。'
       } finally {
         this.loading = false
       }
@@ -133,6 +133,9 @@ export default {
   }
 }
 </script>
+
+
+
 
 <style scoped>
 .feedback-submit-container {

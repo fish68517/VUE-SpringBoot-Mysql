@@ -1,8 +1,10 @@
 package com.postgraduate.service;
 
 import com.postgraduate.dto.FavoriteStatsDTO;
+import com.postgraduate.dto.SchoolStatsDTO;
 import com.postgraduate.entity.Favorite;
 import com.postgraduate.entity.UserProfile;
+import com.postgraduate.repository.FavoriteRepository;
 import com.postgraduate.repository.UserProfileRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,5 +126,50 @@ public class StatisticsCalculator {
 
         log.debug("CET-4 bucket distribution: {}", distribution);
         return distribution;
+    }
+
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    public SchoolStatsDTO getSchoolStats(Long schoolId) {
+        List<UserProfile> profiles = favoriteRepository.findUserProfilesBySchoolId(schoolId);
+        long total = profiles.size();
+        
+        SchoolStatsDTO stats = new SchoolStatsDTO();
+        stats.setTotalFavorites(total);
+
+        if (total == 0) {
+            return stats; // 返回空数据
+        }
+
+        // 1. 统计本科层次占比
+        Map<String, Long> tierCounts = profiles.stream()
+            .collect(Collectors.groupingBy(
+                p -> p.getUndergradTier() != null ? p.getUndergradTier() : "UNKNOWN", 
+                Collectors.counting()
+            ));
+            
+        // 转换为百分比
+        Map<String, Double> tierDist = new HashMap<>();
+        tierCounts.forEach((k, v) -> tierDist.put(k, (double) v / total));
+        stats.setTierDistribution(tierDist);
+
+        // 2. 统计四级分数段占比
+        Map<String, Long> cet4Counts = profiles.stream()
+            .collect(Collectors.groupingBy(p -> {
+                Integer score = p.getCet4Score();
+                if (score == null) return "未填写";
+                if (score < 425) return "< 425";
+                if (score >= 425 && score < 500) return "425-500";
+                if (score >= 500 && score < 600) return "500-600";
+                return "> 600";
+            }, Collectors.counting()));
+
+        Map<String, Double> cet4Dist = new HashMap<>();
+        cet4Counts.forEach((k, v) -> cet4Dist.put(k, (double) v / total));
+        stats.setCet4Distribution(cet4Dist);
+
+        return stats;
     }
 }

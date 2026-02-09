@@ -16,28 +16,28 @@
           <ul class="nav-links">
             <!-- User Navigation -->
             <li v-if="isUser" class="nav-item">
-              <router-link to="/dashboard" class="nav-link" :class="{ active: isActive('/dashboard') }">
-                Dashboard
+              <router-link to="/app/dashboard" class="nav-link" :class="{ active: isActive('/dashboard') }">
+                首页
               </router-link>
             </li>
             <li v-if="isUser" class="nav-item">
-              <router-link to="/schools" class="nav-link" :class="{ active: isActive('/schools') }">
-                Search Schools
+              <router-link to="/app/schools" class="nav-link" :class="{ active: isActive('/schools') }">
+                院校列表
               </router-link>
             </li>
             <li v-if="isUser" class="nav-item">
-              <router-link to="/favorites" class="nav-link" :class="{ active: isActive('/favorites') }">
-                My Favorites
+              <router-link to="/app/favorites" class="nav-link" :class="{ active: isActive('/favorites') }">
+                我的收藏
               </router-link>
             </li>
             <li v-if="isUser" class="nav-item">
-              <router-link to="/announcements" class="nav-link" :class="{ active: isActive('/announcements') }">
-                Announcements
+              <router-link to="/app/announcements" class="nav-link" :class="{ active: isActive('/announcements') }">
+                通知公告
               </router-link>
             </li>
             <li v-if="isUser" class="nav-item">
-              <router-link to="/feedback" class="nav-link" :class="{ active: isActive('/feedback') }">
-                Feedback
+              <router-link to="/app/feedback" class="nav-link" :class="{ active: isActive('/feedback') }">
+                意见反馈
               </router-link>
             </li>
 
@@ -50,22 +50,22 @@
               <ul v-if="showAdminMenu" class="dropdown-menu">
                 <li>
                   <router-link to="/admin/users" class="dropdown-link" :class="{ active: isActive('/admin/users') }">
-                    User Management
+                    用户管理
                   </router-link>
                 </li>
                 <li>
                   <router-link to="/admin/schools" class="dropdown-link" :class="{ active: isActive('/admin/schools') }">
-                    School Management
+                    院校管理
                   </router-link>
                 </li>
                 <li>
                   <router-link to="/admin/announcements" class="dropdown-link" :class="{ active: isActive('/admin/announcements') }">
-                    Announcements
+                    通知公告
                   </router-link>
                 </li>
                 <li>
                   <router-link to="/admin/feedback" class="dropdown-link" :class="{ active: isActive('/admin/feedback') }">
-                    Feedback Management
+                    意见反馈
                   </router-link>
                 </li>
               </ul>
@@ -84,13 +84,13 @@
             <ul v-if="showUserMenu" class="user-dropdown">
               <li>
                 <router-link to="/profile" class="user-dropdown-link" :class="{ active: isActive('/profile') }">
-                  My Profile
+                  我的资料
                 </router-link>
               </li>
               <li class="divider"></li>
               <li>
                 <a href="#" class="user-dropdown-link logout-link" @click.prevent="handleLogout">
-                  Logout
+                  退出登录
                 </a>
               </li>
             </ul>

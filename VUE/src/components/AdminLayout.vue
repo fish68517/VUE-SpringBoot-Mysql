@@ -35,11 +35,7 @@
         </router-link>
       </nav>
 
-      <div class="sidebar-footer">
-        <router-link to="/app/dashboard" class="back-link">
-          ← 返回前台
-        </router-link>
-      </div>
+
     </aside>
 
     <div class="main-wrapper">

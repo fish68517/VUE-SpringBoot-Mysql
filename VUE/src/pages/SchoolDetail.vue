@@ -1,21 +1,21 @@
 <template>
   <div class="school-detail-container">
-    <!-- Loading State -->
+    <!-- 加载状态 -->
     <div v-if="loading" class="loading">
-      <p>Loading school details...</p>
+      <p>正在加载院校详情...</p>
     </div>
 
-    <!-- Error State -->
+    <!-- 错误状态 -->
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
-      <router-link to="/schools" class="btn-back">Back to Search</router-link>
+      <router-link to="/app/schools" class="btn-back">返回搜索</router-link>
     </div>
 
-    <!-- School Detail Content -->
+    <!-- 院校详情内容 -->
     <div v-else-if="school" class="detail-content">
-      <!-- Header Section -->
+      <!-- 头部区域 -->
       <div class="header-section">
-        <router-link to="/schools" class="btn-back">← Back to Search</router-link>
+        <router-link to="/app/schools" class="btn-back">← 返回搜索</router-link>
         
         <div class="school-header">
           <div class="header-info">
@@ -35,70 +35,70 @@
               @click="toggleFavorite"
               :disabled="favoriteLoading"
             >
-              {{ isFavorited ? '★ Favorited' : '☆ Add to Favorites' }}
+              {{ isFavorited ? '★ 已收藏' : '☆ 加入收藏' }}
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Main Content Grid -->
+      <!-- 主体内容网格 -->
       <div class="main-grid">
-        <!-- Left Column: School Info -->
+        <!-- 左侧：院校信息 -->
         <div class="left-column">
-          <!-- Introduction Section -->
+          <!-- 简介 -->
           <section class="section">
-            <h2>Introduction</h2>
+            <h2>院校简介</h2>
             <div class="intro-text">
-              {{ school.intro || 'No introduction available' }}
+              {{ school.intro || '暂无简介' }}
             </div>
             <div v-if="school.website" class="website-link">
               <a :href="school.website" target="_blank" rel="noopener noreferrer">
-                Visit Official Website →
+                访问官网 →
               </a>
             </div>
           </section>
 
-          <!-- Exam Subjects Section -->
+          <!-- 考试科目 -->
           <section class="section">
-            <h2>Exam Subjects</h2>
+            <h2>考试科目</h2>
             <div v-if="examSubjects.length > 0" class="subjects-list">
               <div v-for="subject in examSubjects" :key="subject.id" class="subject-item">
                 <div class="subject-name">{{ subject.subjectName }}</div>
-                <div class="subject-code">Code: {{ subject.subjectCode }}</div>
+                <div class="subject-code">代码：{{ subject.subjectCode }}</div>
               </div>
             </div>
             <div v-else class="no-data">
-              No exam subjects available
+              暂无考试科目
             </div>
           </section>
 
-          <!-- Requirements Section -->
+          <!-- 复试要求 -->
           <section class="section">
-            <h2>Reexamination Requirements</h2>
+            <h2>复试要求</h2>
             <div v-if="requirements.length > 0" class="requirements-list">
               <div v-for="req in requirements" :key="req.id" class="requirement-item">
                 <div class="requirement-content" v-html="formatRequirement(req.content)"></div>
               </div>
             </div>
             <div v-else class="no-data">
-              No requirements available
+              暂无复试要求
             </div>
           </section>
         </div>
 
-        <!-- Right Column: Statistics and Comments -->
+        <!-- 右侧：统计与评论 -->
         <div class="right-column">
-          <!-- Favorite Statistics Section -->
+          <!-- 收藏统计 -->
           <section class="section stats-section">
-            <h2>Favorite Statistics</h2>
+            <h2>收藏统计</h2>
             <div v-if="favoriteStats" class="stats-content">
               <div class="stat-item">
-                <div class="stat-label">Total Favorites</div>
+                <div class="stat-label">收藏总数</div>
                 <div class="stat-value">{{ favoriteStats.totalFavorites }}</div>
               </div>
 
               <div v-if="favoriteStats.undergradTierDistribution" class="stat-group">
-                <div class="stat-group-title">Undergraduate Tier Distribution</div>
+                <div class="stat-group-title">本科层次分布</div>
                 <div class="distribution-bars">
                   <div
                     v-for="(count, tier) in favoriteStats.undergradTierDistribution"
@@ -112,13 +112,13 @@
                         :style="{ width: calculatePercentage(count, favoriteStats.totalFavorites) + '%' }"
                       ></div>
                     </div>
-                    <div class="distribution-value">{{ count }} ({{ calculatePercentage(count, favoriteStats.totalFavorites) }}%)</div>
+                    <div class="distribution-value">{{ count }}（{{ calculatePercentage(count, favoriteStats.totalFavorites) }}%）</div>
                   </div>
                 </div>
               </div>
 
               <div v-if="favoriteStats.cet4BucketDistribution" class="stat-group">
-                <div class="stat-group-title">CET-4 Score Distribution</div>
+                <div class="stat-group-title">四级成绩分布</div>
                 <div class="distribution-bars">
                   <div
                     v-for="(count, bucket) in favoriteStats.cet4BucketDistribution"
@@ -132,17 +132,17 @@
                         :style="{ width: calculatePercentage(count, favoriteStats.totalFavorites) + '%' }"
                       ></div>
                     </div>
-                    <div class="distribution-value">{{ count }} ({{ calculatePercentage(count, favoriteStats.totalFavorites) }}%)</div>
+                    <div class="distribution-value">{{ count }}（{{ calculatePercentage(count, favoriteStats.totalFavorites) }}%）</div>
                   </div>
                 </div>
               </div>
             </div>
             <div v-else class="no-data">
-              No statistics available yet
+              暂无统计数据
             </div>
           </section>
 
-          <!-- Comments Section -->
+          <!-- 评论区 -->
           <section class="section comments-section">
             <Comments :schoolId="schoolId" :pageSize="20" />
           </section>
@@ -187,27 +187,27 @@ export default {
       this.error = ''
 
       try {
-        // Load school details
+        // 加载院校详情
         const schoolResponse = await schoolService.getSchoolDetail(this.schoolId)
         this.school = schoolResponse.data.data
 
-        // Load exam subjects
+        // 加载考试科目
         const subjectsResponse = await schoolService.getSchoolExamSubjects(this.schoolId)
         this.examSubjects = subjectsResponse.data.data || []
 
-        // Load requirements
+        // 加载复试要求
         const requirementsResponse = await schoolService.getSchoolRequirements(this.schoolId)
         this.requirements = requirementsResponse.data.data || []
 
-        // Load favorite statistics
+        // 加载收藏统计
         const statsResponse = await schoolService.getSchoolFavoriteStats(this.schoolId)
         this.favoriteStats = statsResponse.data.data
 
-        // Check if school is favorited
+        // 检查是否已收藏
         this.checkFavoriteStatus()
       } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to load school details. Please try again.'
-        console.error('Error loading school detail:', error)
+        this.error = error.response?.data?.message || '加载院校详情失败，请稍后重试。'
+        console.error('加载院校详情出错：', error)
       } finally {
         this.loading = false
       }
@@ -225,19 +225,19 @@ export default {
           this.isFavorited = true
         }
 
-        // Reload statistics after favorite status changes
+        // 收藏状态变化后刷新统计
         const statsResponse = await schoolService.getSchoolFavoriteStats(this.schoolId)
         this.favoriteStats = statsResponse.data.data
       } catch (error) {
-        console.error('Error toggling favorite:', error)
+        console.error('切换收藏状态出错：', error)
       } finally {
         this.favoriteLoading = false
       }
     },
 
     checkFavoriteStatus() {
-      // This would typically check if the current user has favorited this school
-      // For now, we'll assume it's not favorited on initial load
+      // 通常这里应检查“当前用户是否已收藏该院校”
+      // 目前先默认初始未收藏
       this.isFavorited = false
     },
 
@@ -250,8 +250,8 @@ export default {
       const tierMap = {
         '985': '985',
         '211': '211',
-        'DOUBLE_NON': 'Double-Non',
-        'OTHER': 'Other'
+        'DOUBLE_NON': '双非',
+        'OTHER': '其他'
       }
       return tierMap[tier] || tier
     },
@@ -259,10 +259,10 @@ export default {
     formatDate(dateString) {
       if (!dateString) return ''
       const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', {
+      return date.toLocaleDateString('zh-CN', {
         year: 'numeric',
-        month: 'short',
-        day: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
         hour: '2-digit',
         minute: '2-digit'
       })
@@ -270,12 +270,14 @@ export default {
 
     formatRequirement(content) {
       if (!content) return ''
-      // Replace line breaks with <br> tags
+      // 将换行替换为 <br> 标签
       return content.replace(/\n/g, '<br>')
     }
   }
 }
 </script>
+
+
 
 <style scoped>
 .school-detail-container {

@@ -1,52 +1,52 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-header">
-      <h1>Dashboard</h1>
+      <h1>仪表盘</h1>
       <div class="header-info">
-        <p>Welcome back, {{ user?.username }}!</p>
+        <p>欢迎回来，{{ user?.username }}！</p>
       </div>
     </div>
     <div class="dashboard-content">
       <div class="dashboard-grid">
         <div class="dashboard-card">
-          <h2>Quick Links</h2>
+          <h2>快捷入口</h2>
           <ul class="quick-links">
             <li>
               <router-link to="/app/schools" class="quick-link">
-                🔍 Search Schools
+                🔍 搜索院校
               </router-link>
             </li>
             <li>
               <router-link to="/app/favorites" class="quick-link">
-                ⭐ My Favorites
+                ⭐ 我的收藏
               </router-link>
             </li>
             <li>
               <router-link to="/app/profile" class="quick-link">
-                👤 My Profile
+                👤 个人资料
               </router-link>
             </li>
             <li>
               <router-link to="/app/announcements" class="quick-link">
-                📢 Announcements
+                📢 公告通知
               </router-link>
             </li>
             <li>
               <router-link to="/app/feedback" class="quick-link">
-                💬 Send Feedback
+                💬 提交反馈
               </router-link>
             </li>
           </ul>
         </div>
 
         <div class="dashboard-card">
-          <h2>Your Profile</h2>
+          <h2>我的资料</h2>
           <div class="profile-summary">
-            <p><strong>User ID:</strong> {{ user?.id }}</p>
-            <p><strong>Role:</strong> <span class="role-badge">{{ user?.role }}</span></p>
-            <p><strong>Status:</strong> <span class="status-badge">Active</span></p>
+            <p><strong>用户 ID：</strong> {{ user?.id }}</p>
+            <p><strong>角色：</strong> <span class="role-badge">{{ user?.role }}</span></p>
+            <p><strong>状态：</strong> <span class="status-badge">正常</span></p>
             <router-link to="/app/profile" class="btn-edit-profile">
-              Edit Profile
+              编辑资料
             </router-link>
           </div>
         </div>
@@ -70,12 +70,12 @@ export default {
   },
   methods: {
     /**
-     * Load current user data from auth service
+     * 从认证服务加载当前用户信息
      */
     loadUserData() {
       this.user = authService.getUser()
       if (!this.user) {
-        // If no user data, redirect to login
+        // 如果没有用户信息，则跳转到登录页
         this.$router.push('/login')
       }
     }

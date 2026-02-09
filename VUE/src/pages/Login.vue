@@ -1,15 +1,15 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <h1>Login</h1>
+      <h1>登录</h1>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">用户名</label>
           <input
             id="username"
             v-model="form.username"
             type="text"
-            placeholder="Enter your username"
+            placeholder="请输入用户名"
             required
             @blur="validateUsername"
           >
@@ -17,12 +17,12 @@
         </div>
 
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">密码</label>
           <input
             id="password"
             v-model="form.password"
             type="password"
-            placeholder="Enter your password"
+            placeholder="请输入密码"
             required
             @blur="validatePassword"
           >
@@ -30,7 +30,7 @@
         </div>
 
         <button type="submit" class="btn-submit" :disabled="loading">
-          {{ loading ? 'Logging in...' : 'Login' }}
+          {{ loading ? '正在登录...' : '登录' }}
         </button>
 
         <div v-if="message.error" class="message error-message">
@@ -42,7 +42,7 @@
       </form>
 
       <div class="register-link">
-        <p>Don't have an account? <router-link to="/register">Register here</router-link></p>
+        <p>还没有账号？<router-link to="/register">点这里注册</router-link></p>
       </div>
     </div>
   </div>
@@ -73,18 +73,18 @@ export default {
   methods: {
     validateUsername() {
       if (!this.form.username) {
-        this.errors.username = 'Username is required'
+        this.errors.username = '请输入用户名'
       } else if (this.form.username.length < 3) {
-        this.errors.username = 'Username must be at least 3 characters'
+        this.errors.username = '用户名长度至少为 3 个字符'
       } else {
         this.errors.username = ''
       }
     },
     validatePassword() {
       if (!this.form.password) {
-        this.errors.password = 'Password is required'
+        this.errors.password = '请输入密码'
       } else if (this.form.password.length < 6) {
-        this.errors.password = 'Password must be at least 6 characters'
+        this.errors.password = '密码长度至少为 6 个字符'
       } else {
         this.errors.password = ''
       }
@@ -103,20 +103,20 @@ export default {
 
       try {
         const response = await authService.login(this.form.username, this.form.password)
-        
+
         // --- 修改开始 ---
         // 这里的 response.data 包含了 code, message, data
-        const responseBody = response.data 
-        
+        const responseBody = response.data
+
         // 真正的用户数据在 response.data.data 里面
         const { token, user } = responseBody.data
-        
+
         // 检查 user 对象是否存在，以防万一
         if (token && user) {
           authService.setToken(token)
           // 注意：后端返回的 user 对象里包含了 id, username, role
-          authService.setUser(user) 
-          
+          authService.setUser(user)
+
           this.message.success = '登录成功！正在跳转...'
           setTimeout(() => {
             // 根据角色跳转到不同的布局
@@ -127,13 +127,13 @@ export default {
             }
           }, 1000)
         } else {
-          throw new Error('Invalid response format')
+          throw new Error('响应格式不正确')
         }
         // --- 修改结束 ---
 
       } catch (error) {
         console.error(error) // 方便调试
-        this.message.error = error.response?.data?.message || 'Login failed. Please try again.'
+        this.message.error = error.response?.data?.message || '登录失败，请稍后重试。'
       } finally {
         this.loading = false
       }
@@ -141,6 +141,9 @@ export default {
   }
 }
 </script>
+
+
+
 
 <style scoped>
 .login-container {

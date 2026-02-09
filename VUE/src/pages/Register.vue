@@ -1,15 +1,15 @@
 <template>
   <div class="register-container">
     <div class="register-box">
-      <h1>Register</h1>
+      <h1>注册</h1>
       <form @submit.prevent="handleRegister">
         <div class="form-group">
-          <label for="username">Username</label>
+          <label for="username">用户名</label>
           <input
             id="username"
             v-model="form.username"
             type="text"
-            placeholder="Enter your username"
+            placeholder="请输入用户名"
             required
             @blur="validateUsername"
           >
@@ -17,12 +17,12 @@
         </div>
 
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">密码</label>
           <input
             id="password"
             v-model="form.password"
             type="password"
-            placeholder="Enter your password"
+            placeholder="请输入密码"
             required
             @blur="validatePassword"
           >
@@ -40,12 +40,12 @@
         </div>
 
         <div class="form-group">
-          <label for="confirmPassword">Confirm Password</label>
+          <label for="confirmPassword">确认密码</label>
           <input
             id="confirmPassword"
             v-model="form.confirmPassword"
             type="password"
-            placeholder="Confirm your password"
+            placeholder="请再次输入密码"
             required
             @blur="validateConfirmPassword"
           >
@@ -53,7 +53,7 @@
         </div>
 
         <button type="submit" class="btn-submit" :disabled="loading">
-          {{ loading ? 'Registering...' : 'Register' }}
+          {{ loading ? '正在注册...' : '注册' }}
         </button>
 
         <div v-if="message.error" class="message error-message">
@@ -65,7 +65,7 @@
       </form>
 
       <div class="login-link">
-        <p>Already have an account? <router-link to="/login">Login here</router-link></p>
+        <p>已有账号？<router-link to="/login">点这里登录</router-link></p>
       </div>
     </div>
   </div>
@@ -99,7 +99,7 @@ export default {
     passwordStrength() {
       const password = this.form.password
       let strength = 0
-      let text = 'Weak'
+      let text = '弱'
       let className = 'weak'
 
       if (password.length >= 8) strength += 25
@@ -109,10 +109,10 @@ export default {
       if (/[!@#$%^&*]/.test(password)) strength += 12.5
 
       if (strength >= 75) {
-        text = 'Strong'
+        text = '强'
         className = 'strong'
       } else if (strength >= 50) {
-        text = 'Medium'
+        text = '中'
         className = 'medium'
       }
 
@@ -126,29 +126,29 @@ export default {
   methods: {
     validateUsername() {
       if (!this.form.username) {
-        this.errors.username = 'Username is required'
+        this.errors.username = '请输入用户名'
       } else if (this.form.username.length < 3) {
-        this.errors.username = 'Username must be at least 3 characters'
+        this.errors.username = '用户名长度至少为 3 个字符'
       } else if (this.form.username.length > 20) {
-        this.errors.username = 'Username must not exceed 20 characters'
+        this.errors.username = '用户名长度不能超过 20 个字符'
       } else {
         this.errors.username = ''
       }
     },
     validatePassword() {
       if (!this.form.password) {
-        this.errors.password = 'Password is required'
+        this.errors.password = '请输入密码'
       } else if (this.form.password.length < 6) {
-        this.errors.password = 'Password must be at least 6 characters'
+        this.errors.password = '密码长度至少为 6 个字符'
       } else {
         this.errors.password = ''
       }
     },
     validateConfirmPassword() {
       if (!this.form.confirmPassword) {
-        this.errors.confirmPassword = 'Please confirm your password'
+        this.errors.confirmPassword = '请再次输入密码'
       } else if (this.form.password !== this.form.confirmPassword) {
-        this.errors.confirmPassword = 'Passwords do not match'
+        this.errors.confirmPassword = '两次输入的密码不一致'
       } else {
         this.errors.confirmPassword = ''
       }
@@ -170,15 +170,15 @@ export default {
         const response = await authService.register(this.form.username, this.form.password)
         const { token, id, username, role } = response.data
 
-        authService.setToken(token)
-        authService.setUser({ id, username, role })
+        // authService.setToken(token)
+        // authService.setUser({ id, username, role })
 
-        this.message.success = 'Registration successful! Redirecting...'
+        this.message.success = '注册成功！正在跳转...'
         setTimeout(() => {
-          this.$router.push('/app/dashboard')
+          this.$router.push('/login')
         }, 1000)
       } catch (error) {
-        this.message.error = error.response?.data?.message || 'Registration failed. Please try again.'
+        this.message.error = error.response?.data?.message || '注册失败，请稍后重试。'
       } finally {
         this.loading = false
       }
@@ -186,6 +186,8 @@ export default {
   }
 }
 </script>
+
+
 
 <style scoped>
 .register-container {

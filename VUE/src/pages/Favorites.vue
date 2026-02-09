@@ -1,39 +1,41 @@
 <template>
   <div class="favorites-container">
     <div class="header-section">
-      <h1>My Favorite Schools</h1>
-      <p class="subtitle">Manage your favorite schools for postgraduate entrance exam</p>
+      <h1>我的收藏院校</h1>
+      <p class="subtitle">管理你的考研目标院校收藏</p>
     </div>
 
-    <!-- Loading State -->
+    <!-- 加载状态 -->
     <div v-if="loading" class="loading">
-      <p>Loading your favorites...</p>
+      <p>正在加载收藏列表...</p>
     </div>
 
-    <!-- Error State -->
+    <!-- 错误状态 -->
     <div v-else-if="error" class="error-message">
       <p>{{ error }}</p>
-      <button class="btn-retry" @click="loadFavorites">Retry</button>
+      <button class="btn-retry" @click="loadFavorites">重试</button>
     </div>
 
-    <!-- Empty State -->
+    <!-- 空状态 -->
     <div v-else-if="favorites.length === 0" class="empty-state">
       <div class="empty-icon">♡</div>
-      <h2>No Favorite Schools Yet</h2>
-      <p>Start adding schools to your favorites to keep track of your target schools.</p>
-      <router-link to="/schools" class="btn-search">
-        Search Schools
+      <h2>你还没有收藏任何院校</h2>
+      <p>去搜索并收藏院校，方便随时追踪你的目标院校。</p>
+      <router-link to="/app/schools" class="btn-search">
+        搜索院校
       </router-link>
     </div>
 
-    <!-- Favorites List -->
+    <!-- 收藏列表 -->
     <div v-else class="favorites-content">
-      <!-- Results Info -->
+      <!-- 结果信息 -->
       <div class="results-info">
-        <p>You have {{ totalElements }} favorite school{{ totalElements !== 1 ? 's' : '' }} (Page {{ currentPage + 1 }} of {{ totalPages }})</p>
+        <p>
+          你共收藏了 {{ totalElements }} 所院校（第 {{ currentPage + 1 }} / {{ totalPages }} 页）
+        </p>
       </div>
 
-      <!-- Favorite Cards -->
+      <!-- 收藏卡片 -->
       <div class="favorite-cards">
         <div v-for="school in favorites" :key="school.id" class="favorite-card">
           <div class="card-header">
@@ -47,15 +49,15 @@
               </div>
             </div>
             <div class="card-actions">
-              <router-link :to="`/school/${school.id}`" class="btn-view">
-                View Details
+              <router-link :to="`/app/school/${school.id}`" class="btn-view">
+                查看详情
               </router-link>
               <button
                 class="btn-remove"
                 @click="removeFavorite(school.id)"
                 :disabled="removingId === school.id"
               >
-                {{ removingId === school.id ? 'Removing...' : 'Remove' }}
+                {{ removingId === school.id ? '正在取消...' : '取消收藏' }}
               </button>
             </div>
           </div>
@@ -66,29 +68,30 @@
             </div>
             <div v-if="school.website" class="website-link">
               <a :href="school.website" target="_blank" rel="noopener noreferrer">
-                Visit Official Website →
+                访问官网 →
               </a>
             </div>
           </div>
 
           <div class="card-footer">
-            <span class="added-date">Added: {{ formatDate(school.createdAt) }}</span>
+            <span class="added-date">收藏时间：{{ formatDate(school.favoritedAt) }}</span>
+
           </div>
         </div>
       </div>
 
-      <!-- Pagination -->
+      <!-- 分页 -->
       <div v-if="totalPages > 1" class="pagination">
         <button
           class="btn-pagination"
           :disabled="currentPage === 0"
           @click="handlePreviousPage"
         >
-          Previous
+          上一页
         </button>
 
         <div class="page-info">
-          Page {{ currentPage + 1 }} of {{ totalPages }}
+          第 {{ currentPage + 1 }} / {{ totalPages }} 页
         </div>
 
         <button
@@ -96,7 +99,7 @@
           :disabled="currentPage >= totalPages - 1"
           @click="handleNextPage"
         >
-          Next
+          下一页
         </button>
       </div>
     </div>
@@ -131,17 +134,33 @@ export default {
         const response = await schoolService.getUserFavorites(this.currentPage, 20)
         const data = response.data.data
 
-        this.favorites = data.content || []
+        // ✅ 把 favorite 结构转换成页面需要的 school 结构
+        const favoritesContent = data.content || []
+
+        this.favorites = favoritesContent
+          .map(fav => ({
+            // school 信息（用于展示）
+            ...(fav.school || {}),
+            // ✅ 保留 favoriteId 方便取消收藏（后面用得到）
+            favoriteId: fav.id,
+            // ✅ 收藏时间用 fav.createdAt（不是 school.createdAt）
+            favoritedAt: fav.createdAt,
+            // ✅ schoolId 保留（如果需要）
+            schoolId: fav.schoolId
+          }))
+          .filter(s => s.id) // 防止 school 为空导致渲染出错
+
         this.totalElements = data.totalElements || 0
         this.totalPages = data.totalPages || 0
         this.currentPage = data.number || 0
       } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to load favorites. Please try again.'
+        this.error = error.response?.data?.message || '加载收藏列表失败，请稍后重试。'
         this.favorites = []
       } finally {
         this.loading = false
       }
     },
+
 
     async handleNextPage() {
       if (this.currentPage < this.totalPages - 1) {
@@ -158,39 +177,49 @@ export default {
     },
 
     async loadPage() {
-      this.loading = true
-      this.error = ''
+        this.loading = true
+        this.error = ''
 
-      try {
-        const response = await schoolService.getUserFavorites(this.currentPage, 20)
-        const data = response.data.data
+        try {
+          const response = await schoolService.getUserFavorites(this.currentPage, 20)
+          const data = response.data.data
 
-        this.favorites = data.content || []
-        this.currentPage = data.number || 0
-      } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to load favorites. Please try again.'
-        this.favorites = []
-      } finally {
-        this.loading = false
-      }
+          const favoritesContent = data.content || []
+          this.favorites = favoritesContent
+            .map(fav => ({
+              ...(fav.school || {}),
+              favoriteId: fav.id,
+              favoritedAt: fav.createdAt,
+              schoolId: fav.schoolId
+            }))
+            .filter(s => s.id)
+
+          this.currentPage = data.number || 0
+        } catch (error) {
+          this.error = error.response?.data?.message || '加载收藏列表失败，请稍后重试。'
+          this.favorites = []
+        } finally {
+          this.loading = false
+        }
     },
+
 
     async removeFavorite(schoolId) {
       this.removingId = schoolId
 
       try {
         await schoolService.removeFavorite(schoolId)
-        // Remove the school from the list
+        // 从列表移除该院校
         this.favorites = this.favorites.filter(school => school.id !== schoolId)
         this.totalElements--
 
-        // If current page is now empty and not the first page, go to previous page
+        // 当前页删空且不是第一页，则返回上一页
         if (this.favorites.length === 0 && this.currentPage > 0) {
           this.currentPage--
           await this.loadPage()
         }
       } catch (error) {
-        this.error = error.response?.data?.message || 'Failed to remove favorite. Please try again.'
+        this.error = error.response?.data?.message || '取消收藏失败，请稍后重试。'
       } finally {
         this.removingId = null
       }
@@ -199,10 +228,10 @@ export default {
     formatDate(dateString) {
       if (!dateString) return ''
       const date = new Date(dateString)
-      return date.toLocaleDateString('en-US', {
+      return date.toLocaleDateString('zh-CN', {
         year: 'numeric',
-        month: 'short',
-        day: 'numeric'
+        month: '2-digit',
+        day: '2-digit'
       })
     },
 
@@ -214,6 +243,11 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* 样式无需翻译，保留原样 */
+</style>
+
 
 <style scoped>
 .favorites-container {
