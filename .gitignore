@@ -1,0 +1,143 @@
+########################################
+# OS / 通用
+########################################
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+########################################
+# Logs
+########################################
+*.log
+logs/
+log/
+*.tmp
+*.swp
+*.swo
+
+########################################
+# Secrets / Local env (防止泄露)
+########################################
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+*secret*
+*password*
+
+########################################
+# Git / Kiro
+########################################
+# .git/ 永远不用写，Git本身不会提交
+.kiro/
+
+########################################
+# IDE: IntelliJ IDEA / Android Studio
+########################################
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+########################################
+# IDE: VSCode
+########################################
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+########################################
+# IDE: Eclipse
+########################################
+.project
+.classpath
+.settings/
+
+########################################
+# Android / Gradle
+########################################
+# Gradle 缓存与构建输出
+.gradle/
+**/build/
+# 本地配置（机器相关）
+local.properties
+# Android Studio 生成目录
+.cxx/
+.externalNativeBuild/
+captures/
+# Kotlin/Java 编译缓存
+*.apk
+*.ap_
+*.aab
+
+########################################
+# Java / SpringBoot / Maven / Gradle
+########################################
+# Maven
+**/target/
+# Gradle（如果 SpringBoot 也用 Gradle）
+**/.gradle/
+# 运行日志/临时文件
+**/logs/
+# SpringBoot 外部化配置（如含账号密码）
+**/application-local.yml
+**/application-local.yaml
+**/application-dev.yml
+**/application-dev.yaml
+**/application-prod.yml
+**/application-prod.yaml
+
+########################################
+# Node / Vue
+########################################
+node_modules/
+dist/
+dist-ssr/
+.cache/
+.vite/
+.vitepress/cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+# 本地环境变量
+VUE/.env
+VUE/.env.*
+# 如果你的前端在别的目录也同理
+**/.env
+**/.env.*
+
+########################################
+# Python（若 doc 或脚本用到）
+########################################
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+########################################
+# Database dumps / exports (按需)
+########################################
+# 如果你经常导出数据库dump但不想提交
+*.sql
+*.dump
+*.bak
+*.sqlite
+*.db
+
+########################################
+# 文档编译产物（如果 doc 里会生成）
+########################################
+
