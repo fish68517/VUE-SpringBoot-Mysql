@@ -20,8 +20,16 @@ public class Comment {
     @Column(nullable = false)
     private Long userId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
+
     @Column(nullable = false)
     private Long patternId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pattern_id", insertable = false, updatable = false)
+    private Pattern pattern;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;

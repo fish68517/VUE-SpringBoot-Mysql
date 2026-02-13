@@ -198,4 +198,43 @@ public class UserController {
             return ApiResponse.error(500, "获取收藏列表失败: " + e.getMessage());
         }
     }
+
+    /**
+     * 记录用户操作
+     * 需求: 46.1
+     */
+    @PostMapping("/operations")
+    public ApiResponse<?> recordOperation(@RequestBody Map<String, Object> request) {
+        try {
+            String operationType = (String) request.get("operationType");
+            String targetType = (String) request.get("targetType");
+            Long targetId = request.get("targetId") != null ? 
+                ((Number) request.get("targetId")).longValue() : null;
+            String details = (String) request.get("details");
+
+            // Get userId from request header or session
+            String userIdStr = request.get("userId") != null ? 
+                request.get("userId").toString() : null;
+            
+            if (userIdStr == null) {
+                return ApiResponse.error(400, "用户ID不能为空");
+            }
+
+            Long userId = Long.parseLong(userIdStr);
+
+            if (operationType == null || operationType.trim().isEmpty()) {
+                return ApiResponse.error(400, "操作类型不能为空");
+            }
+
+            OperationLog log = operationLogService.recordOperation(
+                userId, operationType, targetType, targetId, details
+            );
+
+            return ApiResponse.success("操作记录成功", log);
+        } catch (NumberFormatException e) {
+            return ApiResponse.error(400, "用户ID格式错误");
+        } catch (Exception e) {
+            return ApiResponse.error(500, "记录操作失败: " + e.getMessage());
+        }
+    }
 }

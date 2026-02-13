@@ -2,11 +2,16 @@ package com.naxi.controller;
 
 import com.naxi.common.ApiResponse;
 import com.naxi.entity.AdminAuditLog;
+import com.naxi.entity.CreativeWork;
 import com.naxi.entity.Permission;
+import com.naxi.entity.Pattern;
 import com.naxi.entity.Role;
 import com.naxi.entity.SystemLog;
 import com.naxi.entity.SystemSetting;
 import com.naxi.entity.User;
+import com.naxi.repository.CreativeWorkRepository;
+import com.naxi.repository.PatternRepository;
+import com.naxi.repository.UserRepository;
 import com.naxi.service.SystemService;
 import com.naxi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +32,50 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PatternRepository patternRepository;
+
+    @Autowired
+    private CreativeWorkRepository creativeWorkRepository;
+
+    /**
+     * 获取仪表板统计数据
+     * 需求: 36.1
+     */
+    @GetMapping("/dashboard/statistics")
+    public ApiResponse<?> getDashboardStatistics() {
+        try {
+            Map<String, Object> statistics = new HashMap<>();
+            
+            // 获取用户总数
+            long totalUsers = userRepository.count();
+            statistics.put("totalUsers", totalUsers);
+            
+            // 获取纹样总数
+            long totalPatterns = patternRepository.count();
+            statistics.put("totalPatterns", totalPatterns);
+            
+            // 获取原创作品总数
+            long totalWorks = creativeWorkRepository.count();
+            statistics.put("totalWorks", totalWorks);
+            
+            // 获取待审核作品数
+            long pendingWorks = creativeWorkRepository.countByStatus(CreativeWork.WorkStatus.PENDING);
+            statistics.put("pendingWorks", pendingWorks);
+            
+            // 获取已审核通过的作品数
+            long approvedWorks = creativeWorkRepository.countByStatus(CreativeWork.WorkStatus.APPROVED);
+            statistics.put("approvedWorks", approvedWorks);
+            
+            return ApiResponse.success("获取仪表板统计数据成功", statistics);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "获取仪表板统计数据失败: " + e.getMessage());
+        }
+    }
 
     /**
      * 获取系统日志
@@ -82,23 +131,56 @@ public class AdminController {
     /**
      * 更新系统参数
      * 需求: 24.1
+     * 支持单个参数更新或批量参数更新
      */
     @PutMapping("/settings")
-    public ApiResponse<?> updateSystemSettings(@RequestBody Map<String, String> request) {
+    public ApiResponse<?> updateSystemSettings(@RequestBody Object requestBody) {
         try {
-            String settingKey = request.get("settingKey");
-            String settingValue = request.get("settingValue");
-            String description = request.get("description");
+            List<SystemSetting> updatedSettings = new java.util.ArrayList<>();
 
-            if (settingKey == null || settingKey.trim().isEmpty()) {
-                return ApiResponse.error(400, "参数key不能为空");
-            }
-            if (settingValue == null || settingValue.trim().isEmpty()) {
-                return ApiResponse.error(400, "参数值不能为空");
+            // 处理数组形式的批量更新
+            if (requestBody instanceof java.util.List) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, String>> settingsList = (List<Map<String, String>>) requestBody;
+                
+                for (Map<String, String> setting : settingsList) {
+                    String settingKey = setting.get("settingKey");
+                    String settingValue = setting.get("settingValue");
+                    String description = setting.get("description");
+
+                    if (settingKey == null || settingKey.trim().isEmpty()) {
+                        return ApiResponse.error(400, "参数key不能为空");
+                    }
+                    if (settingValue == null || settingValue.trim().isEmpty()) {
+                        return ApiResponse.error(400, "参数值不能为空");
+                    }
+
+                    SystemSetting updatedSetting = systemService.updateSystemSetting(settingKey, settingValue, description);
+                    updatedSettings.add(updatedSetting);
+                }
+            } 
+            // 处理单个参数更新
+            else if (requestBody instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, String> request = (Map<String, String>) requestBody;
+                String settingKey = request.get("settingKey");
+                String settingValue = request.get("settingValue");
+                String description = request.get("description");
+
+                if (settingKey == null || settingKey.trim().isEmpty()) {
+                    return ApiResponse.error(400, "参数key不能为空");
+                }
+                if (settingValue == null || settingValue.trim().isEmpty()) {
+                    return ApiResponse.error(400, "参数值不能为空");
+                }
+
+                SystemSetting updatedSetting = systemService.updateSystemSetting(settingKey, settingValue, description);
+                updatedSettings.add(updatedSetting);
+            } else {
+                return ApiResponse.error(400, "请求体格式不正确");
             }
 
-            SystemSetting updatedSetting = systemService.updateSystemSetting(settingKey, settingValue, description);
-            return ApiResponse.success("更新系统参数成功", updatedSetting);
+            return ApiResponse.success("更新系统参数成功", updatedSettings);
         } catch (Exception e) {
             return ApiResponse.error(500, "更新系统参数失败: " + e.getMessage());
         }

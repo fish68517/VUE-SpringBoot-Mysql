@@ -115,12 +115,12 @@
 
     <!-- Comments Section -->
     <div v-if="pattern" class="comments-section">
-      <CommentList :patternId="pattern.id" />
+      <CommentList :patternId="pattern.id" :patternName="pattern.name" />
     </div>
 
     <!-- Questions Section -->
     <div v-if="pattern" class="questions-section">
-      <QuestionList :patternId="pattern.id" />
+      <QuestionList :patternId="pattern.id" :patternName="pattern.name" />
     </div>
   </div>
 </template>
@@ -130,6 +130,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../store'
 import { patternAPI, collectionAPI } from '../services/api'
+import { operationLogService } from '../services/operationLog'
 import { ElMessage } from 'element-plus'
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
@@ -157,6 +158,11 @@ const fetchPattern = async () => {
     const patternId = route.params.id
     const response = await patternAPI.getPattern(patternId)
     pattern.value = response.data || response
+    
+    // Record view operation
+    if (isLoggedIn.value && pattern.value) {
+      operationLogService.recordView(pattern.value.id, pattern.value.name)
+    }
     
     // Check if collected
     if (isLoggedIn.value) {
@@ -200,6 +206,9 @@ const toggleCollection = async () => {
         isCollected.value = false
         pattern.value.collectionCount = Math.max(0, (pattern.value.collectionCount || 1) - 1)
         ElMessage.success('已取消收藏')
+        
+        // Record collection operation
+        operationLogService.recordCollection(pattern.value.id, pattern.value.name, 'remove')
       }
     } else {
       // Add collection
@@ -209,6 +218,9 @@ const toggleCollection = async () => {
       isCollected.value = true
       pattern.value.collectionCount = (pattern.value.collectionCount || 0) + 1
       ElMessage.success('收藏成功')
+      
+      // Record collection operation
+      operationLogService.recordCollection(pattern.value.id, pattern.value.name, 'add')
     }
   } catch (error) {
     console.error('Failed to toggle collection:', error)
@@ -237,6 +249,11 @@ const downloadPattern = async () => {
     // Update download count
     pattern.value.downloadCount = (pattern.value.downloadCount || 0) + 1
     ElMessage.success('下载开始')
+    
+    // Record download operation
+    if (isLoggedIn.value) {
+      operationLogService.recordDownload(pattern.value.id, pattern.value.name)
+    }
   } catch (error) {
     console.error('Failed to download pattern:', error)
     ElMessage.error('下载失败，请重试')
@@ -548,27 +565,163 @@ onMounted(() => {
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 1199px) {
   .detail-container {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
+    padding: 1.5rem 1rem;
   }
 
-  .detail-sidebar {
-    display: none;
+  .image-section {
+    padding: 1.5rem;
+  }
+
+  .pattern-image {
+    max-height: 450px;
+  }
+
+  .info-section {
+    padding: 1.5rem;
+  }
+
+  .basic-info h1 {
+    font-size: 1.8rem;
+  }
+
+  .section h2 {
+    font-size: 1.2rem;
+  }
+
+  .quick-stats {
+    padding: 1.25rem;
+  }
+
+  .stat-value {
+    font-size: 1.6rem;
   }
 }
 
-@media (max-width: 768px) {
-  .pattern-detail {
-    padding: 0;
+@media (max-width: 991px) {
+  .detail-container {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    padding: 1.25rem 1rem;
+  }
+
+  .detail-sidebar {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .login-prompt {
+    flex: 1;
+  }
+
+  .quick-stats {
+    flex: 1;
   }
 
   .back-nav {
     padding: 0.75rem;
   }
 
+  .back-btn {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  .image-section {
+    padding: 1.25rem;
+  }
+
+  .pattern-image {
+    max-height: 400px;
+    margin-bottom: 1.25rem;
+  }
+
+  .image-actions {
+    gap: 0.75rem;
+  }
+
+  .collect-btn,
+  .download-btn {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .info-section {
+    padding: 1.25rem;
+  }
+
+  .basic-info {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .basic-info h1 {
+    font-size: 1.6rem;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .meta-info {
+    gap: 1.25rem;
+  }
+
+  .stats {
+    gap: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .section {
+    margin-bottom: 1.5rem;
+  }
+
+  .section h2 {
+    font-size: 1.15rem;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .section .content {
+    font-size: 0.95rem;
+  }
+
+  .quick-stats {
+    padding: 1.25rem;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .pattern-detail {
+    padding: 0;
+  }
+
+  .back-nav {
+    padding: 0.5rem;
+  }
+
+  .back-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
   .detail-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
     padding: 1rem;
+  }
+
+  .detail-sidebar {
+    flex-direction: column;
     gap: 1rem;
   }
 
@@ -583,113 +736,92 @@ onMounted(() => {
 
   .image-actions {
     gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   .collect-btn,
   .download-btn {
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
+    flex: 1;
+    min-width: 120px;
   }
 
   .info-section {
     padding: 1rem;
   }
 
+  .basic-info {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+  }
+
   .basic-info h1 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    margin: 0 0 0.6rem 0;
   }
 
   .meta-info {
-    gap: 1rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
-  .stats {
-    gap: 1rem;
+  .category {
+    padding: 0.35rem 0.7rem;
     font-size: 0.85rem;
   }
 
+  .stats {
+    gap: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .stats span {
+    gap: 0.2rem;
+  }
+
+  .section {
+    margin-bottom: 1.25rem;
+  }
+
   .section h2 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    margin: 0 0 0.6rem 0;
   }
 
   .section .content {
-    font-size: 0.95rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .back-nav {
-    padding: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
   }
 
-  .back-btn {
-    padding: 0.4rem 0.8rem;
+  .login-prompt {
+    padding: 1.25rem;
+  }
+
+  .login-prompt p {
+    margin: 0 0 0.75rem 0;
     font-size: 0.9rem;
   }
 
-  .detail-container {
-    padding: 0.75rem;
+  .login-link {
+    padding: 0.6rem 1.25rem;
+    font-size: 0.9rem;
   }
 
-  .image-section {
-    padding: 0.75rem;
-  }
-
-  .pattern-image {
-    max-height: 200px;
-  }
-
-  .image-actions {
-    flex-direction: column;
-  }
-
-  .collect-btn,
-  .download-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .info-section {
-    padding: 0.75rem;
-  }
-
-  .basic-info h1 {
-    font-size: 1.3rem;
-  }
-
-  .meta-info {
-    flex-direction: column;
-    align-items: flex-start;
+  .quick-stats {
+    padding: 1.25rem;
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
   }
 
-  .stats {
-    flex-direction: column;
-    align-items: flex-start;
+  .stat-value {
+    font-size: 1.4rem;
   }
 
-  .section h2 {
-    font-size: 1rem;
+  .stat-label {
+    font-size: 0.8rem;
   }
-}
 
-/* Comments Section */
-.comments-section {
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 0 1rem 2rem 1rem;
-}
-
-/* Questions Section */
-.questions-section {
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 0 1rem 2rem 1rem;
-}
-
-@media (max-width: 768px) {
   .comments-section {
     padding: 0 0.75rem 1.5rem 0.75rem;
   }
@@ -699,7 +831,122 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 479px) {
+  .back-nav {
+    padding: 0.4rem;
+  }
+
+  .back-btn {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  .detail-container {
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .image-section {
+    padding: 0.75rem;
+  }
+
+  .pattern-image {
+    max-height: 200px;
+    margin-bottom: 0.75rem;
+  }
+
+  .image-actions {
+    gap: 0.4rem;
+  }
+
+  .collect-btn,
+  .download-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+    min-width: 100px;
+  }
+
+  .collect-btn .icon,
+  .download-btn .icon {
+    font-size: 1rem;
+  }
+
+  .info-section {
+    padding: 0.75rem;
+  }
+
+  .basic-info {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .basic-info h1 {
+    font-size: 1.2rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .meta-info {
+    gap: 0.5rem;
+  }
+
+  .category {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .stats {
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats span {
+    gap: 0.2rem;
+  }
+
+  .section {
+    margin-bottom: 1rem;
+  }
+
+  .section h2 {
+    font-size: 0.95rem;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .section .content {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .login-prompt {
+    padding: 1rem;
+  }
+
+  .login-prompt p {
+    margin: 0 0 0.6rem 0;
+    font-size: 0.85rem;
+  }
+
+  .login-link {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .quick-stats {
+    padding: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+
   .comments-section {
     padding: 0 0.5rem 1rem 0.5rem;
   }

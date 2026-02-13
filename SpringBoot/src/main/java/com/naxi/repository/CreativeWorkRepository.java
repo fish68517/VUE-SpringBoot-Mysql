@@ -22,4 +22,9 @@ public interface CreativeWorkRepository extends JpaRepository<CreativeWork, Long
      * 按用户ID和状态查询原创作品
      */
     Page<CreativeWork> findByUserIdAndStatus(Long userId, CreativeWork.WorkStatus status, Pageable pageable);
+
+    /**
+     * 按状态统计原创作品数量
+     */
+    long countByStatus(CreativeWork.WorkStatus status);
 }

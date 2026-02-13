@@ -480,13 +480,48 @@ onMounted(() => {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1199px) {
   .carousel {
-    height: 250px;
+    height: 350px;
+  }
+
+  .carousel-overlay h2 {
+    font-size: 1.5rem;
+  }
+
+  .carousel-overlay p {
+    font-size: 0.95rem;
+  }
+
+  .slogans {
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+
+  .nav-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  .intro-content h2 {
+    font-size: 1.8rem;
+  }
+
+  .intro-content h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 991px) {
+  .carousel-section {
+    padding: 1.5rem 0;
+  }
+
+  .carousel {
+    height: 300px;
   }
 
   .carousel-overlay {
-    padding: 1rem;
+    padding: 1.5rem;
   }
 
   .carousel-overlay h2 {
@@ -498,34 +533,340 @@ onMounted(() => {
   }
 
   .carousel-btn {
+    padding: 0.75rem;
+    font-size: 1.3rem;
+  }
+
+  .slogans {
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .slogan {
+    padding: 1.25rem;
+  }
+
+  .slogan h3 {
+    font-size: 1.2rem;
+  }
+
+  .slogan p {
+    font-size: 0.9rem;
+  }
+
+  .navigation-section {
+    padding: 2.5rem 1rem;
+  }
+
+  .navigation-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .nav-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .nav-card {
+    padding: 1.5rem;
+  }
+
+  .nav-icon {
+    font-size: 2.2rem;
+  }
+
+  .nav-card h3 {
+    font-size: 1rem;
+  }
+
+  .nav-card p {
+    font-size: 0.85rem;
+  }
+
+  .intro-section {
+    padding: 2.5rem 1rem;
+  }
+
+  .intro-content h2 {
+    font-size: 1.7rem;
+  }
+
+  .intro-content h3 {
+    font-size: 1.15rem;
+  }
+
+  .intro-content > p {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .carousel-section {
+    padding: 1rem 0;
+  }
+
+  .carousel {
+    height: 220px;
+  }
+
+  .carousel-overlay {
+    padding: 1rem;
+  }
+
+  .carousel-overlay h2 {
+    font-size: 1.1rem;
+    margin: 0 0 0.3rem 0;
+  }
+
+  .carousel-overlay p {
+    font-size: 0.8rem;
+  }
+
+  .carousel-btn {
     padding: 0.5rem;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+  }
+
+  .carousel-indicators {
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+
+  .carousel-indicators span {
+    width: 10px;
+    height: 10px;
   }
 
   .slogans {
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
   }
 
   .slogan {
     padding: 1rem;
   }
 
-  .nav-grid {
-    grid-template-columns: 1fr;
+  .slogan h3 {
+    font-size: 1.05rem;
+    margin: 0 0 0.4rem 0;
+  }
+
+  .slogan p {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .navigation-section {
+    padding: 2rem 1rem;
   }
 
   .navigation-section h2 {
     font-size: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .nav-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+
+  .nav-card {
+    padding: 1.25rem;
+  }
+
+  .nav-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .nav-card h3 {
+    font-size: 0.95rem;
+    margin: 0 0 0.4rem 0;
+  }
+
+  .nav-card p {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .intro-section {
+    padding: 2rem 1rem;
   }
 
   .intro-content h2 {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .intro-content > p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
   }
 
   .intro-content h3 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .features li {
+    padding: 0.6rem 0;
+    padding-left: 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .guide {
+    padding-left: 1.5rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .guide li {
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .carousel-section {
+    padding: 0.75rem 0;
+  }
+
+  .carousel-container {
+    padding: 0 0.5rem;
+  }
+
+  .carousel {
+    height: 180px;
+  }
+
+  .carousel-overlay {
+    padding: 0.75rem;
+  }
+
+  .carousel-overlay h2 {
+    font-size: 1rem;
+    margin: 0 0 0.2rem 0;
+  }
+
+  .carousel-overlay p {
+    font-size: 0.75rem;
+  }
+
+  .carousel-btn {
+    padding: 0.4rem;
+    font-size: 1rem;
+  }
+
+  .carousel-btn.prev {
+    left: 0.5rem;
+  }
+
+  .carousel-btn.next {
+    right: 0.5rem;
+  }
+
+  .carousel-indicators {
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+  }
+
+  .carousel-indicators span {
+    width: 8px;
+    height: 8px;
+  }
+
+  .slogans {
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding: 0 0.5rem;
+  }
+
+  .slogan {
+    padding: 0.75rem;
+  }
+
+  .slogan h3 {
+    font-size: 0.95rem;
+    margin: 0 0 0.3rem 0;
+  }
+
+  .slogan p {
+    font-size: 0.8rem;
+    margin: 0;
+  }
+
+  .navigation-section {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .navigation-section h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+
+  .nav-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .nav-card {
+    padding: 1rem;
+  }
+
+  .nav-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-card h3 {
+    font-size: 0.9rem;
+    margin: 0 0 0.3rem 0;
+  }
+
+  .nav-card p {
+    font-size: 0.75rem;
+    margin: 0;
+  }
+
+  .intro-section {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .intro-content h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .intro-content > p {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .intro-content h3 {
+    font-size: 0.95rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .features li {
+    padding: 0.5rem 0;
+    padding-left: 1.25rem;
+    font-size: 0.85rem;
+  }
+
+  .features li:before {
+    font-size: 1rem;
+  }
+
+  .guide {
+    padding-left: 1.25rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .guide li {
+    margin-bottom: 0.5rem;
   }
 }
 </style>

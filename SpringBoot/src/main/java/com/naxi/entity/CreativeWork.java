@@ -20,6 +20,10 @@ public class CreativeWork {
     @Column(nullable = false)
     private Long userId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
+
     @Column(nullable = false)
     private String title;
 

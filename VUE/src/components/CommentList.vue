@@ -99,12 +99,17 @@
 import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '../store'
 import { commentAPI } from '../services/api'
+import { operationLogService } from '../services/operationLog'
 import { ElMessage } from 'element-plus'
 
 const props = defineProps({
   patternId: {
     type: Number,
     required: true
+  },
+  patternName: {
+    type: String,
+    default: '纹样'
   }
 })
 
@@ -164,6 +169,10 @@ const submitComment = async () => {
     ElMessage.success('评论发布成功')
     newComment.value = ''
     currentPage.value = 0
+    
+    // Record comment operation
+    operationLogService.recordComment(props.patternId, props.patternName)
+    
     await fetchComments()
   } catch (error) {
     console.error('Failed to submit comment:', error)

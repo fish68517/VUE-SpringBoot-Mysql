@@ -81,8 +81,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { patternAPI } from '../services/api'
+import { operationLogService } from '../services/operationLog'
 import PatternCard from '../components/PatternCard.vue'
-import { ElMessage, ElSkeleton } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 // Categories
 const categories = [
@@ -166,6 +167,10 @@ const fetchPatterns = async () => {
         params.category = selectedCategory.value
       }
       response = await patternAPI.searchPatterns(searchKeyword.value, params)
+      
+      // Record search operation
+      const resultCount = response && response.content ? response.content.length : 0
+      operationLogService.recordSearch(searchKeyword.value, resultCount)
     } else {
       // Otherwise use regular getPatterns API
       if (selectedCategory.value) {
@@ -432,48 +437,130 @@ onMounted(() => {
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-  .pattern-library {
-    padding: 1rem;
-  }
-
+@media (max-width: 1199px) {
   .library-header h1 {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
   }
 
   .library-header p {
     font-size: 1rem;
   }
 
+  .patterns-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 991px) {
+  .pattern-library {
+    padding: 1.5rem 1rem;
+  }
+
+  .library-header h1 {
+    font-size: 2rem;
+    margin: 0 0 0.4rem 0;
+  }
+
+  .library-header p {
+    font-size: 0.95rem;
+  }
+
   .category-nav {
-    gap: 0.5rem;
+    gap: 0.75rem;
     margin-bottom: 1.5rem;
   }
 
   .category-btn {
-    padding: 0.5rem 1rem;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .filters-section {
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .search-group {
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .search-input {
+    min-width: 180px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  .search-btn,
+  .clear-btn {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .filter-group {
+    gap: 0.75rem;
+  }
+
+  .filter-group select {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.95rem;
+  }
+
+  .patterns-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .pattern-library {
+    padding: 1rem;
+  }
+
+  .library-header h1 {
+    font-size: 1.6rem;
+    margin: 0 0 0.3rem 0;
+  }
+
+  .library-header p {
     font-size: 0.9rem;
+  }
+
+  .category-nav {
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .category-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
   }
 
   .filters-section {
     padding: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
   .search-group {
     flex-direction: column;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
   }
 
   .search-input {
     width: 100%;
     min-width: unset;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.9rem;
   }
 
   .search-btn,
   .clear-btn {
     width: 100%;
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
   }
 
   .filter-group {
@@ -482,42 +569,103 @@ onMounted(() => {
     gap: 0.5rem;
   }
 
+  .filter-group label {
+    font-size: 0.9rem;
+  }
+
   .filter-group select {
     width: 100%;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.9rem;
   }
 
   .patterns-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .no-data {
+    padding: 2rem 1rem;
+    font-size: 1rem;
   }
 
   .pagination-container {
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
   }
 }
 
-@media (max-width: 480px) {
-  .library-header h1 {
-    font-size: 1.5rem;
+@media (max-width: 479px) {
+  .pattern-library {
+    padding: 0.75rem;
   }
 
-  .patterns-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 0.75rem;
+  .library-header h1 {
+    font-size: 1.3rem;
+    margin: 0 0 0.2rem 0;
+  }
+
+  .library-header p {
+    font-size: 0.8rem;
   }
 
   .category-nav {
-    gap: 0.25rem;
+    gap: 0.3rem;
+    margin-bottom: 1rem;
   }
 
   .category-btn {
     padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .filters-section {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .search-group {
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
   }
 
   .search-input {
+    padding: 0.5rem 0.75rem;
     font-size: 16px;
+  }
+
+  .search-btn,
+  .clear-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .filter-group {
+    gap: 0.4rem;
+  }
+
+  .filter-group label {
+    font-size: 0.8rem;
+  }
+
+  .filter-group select {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .patterns-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .no-data {
+    padding: 1.5rem 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .pagination-container {
+    margin-top: 1rem;
   }
 }
 </style>

@@ -55,6 +55,7 @@
 .section h3 {
   margin-bottom: 1rem;
   color: #ffd700;
+  font-size: 1.1rem;
 }
 
 .section ul {
@@ -64,6 +65,11 @@
 
 .section ul li {
   margin-bottom: 0.5rem;
+}
+
+.section p {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
 }
 
 .section a {
@@ -81,11 +87,106 @@
   padding-top: 1rem;
   border-top: 1px solid #555;
   color: #999;
+  font-size: 0.9rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1199px) {
+  .footer {
+    padding: 1.75rem 0;
+  }
+
+  .footer-content {
+    gap: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .section h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .section p,
+  .section ul li {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 991px) {
+  .footer {
+    padding: 1.5rem 0;
+  }
+
+  .footer-content {
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section h3 {
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .section p,
+  .section ul li {
+    font-size: 0.9rem;
+  }
+
+  .footer-bottom {
+    padding-top: 0.9rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .footer {
+    padding: 1.25rem 0;
+  }
+
   .footer-content {
     grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .section p,
+  .section ul li {
+    font-size: 0.85rem;
+  }
+
+  .footer-bottom {
+    padding-top: 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .footer {
+    padding: 1rem 0;
+  }
+
+  .footer-content {
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .section h3 {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .section p,
+  .section ul li {
+    font-size: 0.8rem;
+  }
+
+  .footer-bottom {
+    padding-top: 0.6rem;
+    font-size: 0.75rem;
   }
 }
 </style>

@@ -40,8 +40,9 @@ export const userAPI = {
   getUser: (id) => api.get(`/users/${id}`),
   updateUser: (id, data) => api.put(`/users/${id}`, data),
   changePassword: (id, data) => api.put(`/users/${id}/password`, data),
-  getHistory: (id) => api.get(`/users/${id}/history`),
-  getCollections: (id) => api.get(`/users/${id}/collections`)
+  getHistory: (id, params) => api.get(`/users/${id}/history`, { params }),
+  getCollections: (id) => api.get(`/users/${id}/collections`),
+  recordOperation: (data) => api.post('/users/operations', data)
 }
 
 // Pattern APIs
@@ -88,6 +89,7 @@ export const workAPI = {
 
 // Admin APIs
 export const adminAPI = {
+  getDashboardStatistics: () => api.get('/admin/dashboard/statistics'),
   getLogs: (params) => api.get('/admin/logs', { params }),
   getSettings: () => api.get('/admin/settings'),
   updateSettings: (data) => api.put('/admin/settings', data),
