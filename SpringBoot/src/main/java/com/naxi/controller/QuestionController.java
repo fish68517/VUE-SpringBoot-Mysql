@@ -6,6 +6,7 @@ import com.naxi.entity.Question;
 import com.naxi.entity.User;
 import com.naxi.service.PatternService;
 import com.naxi.service.QuestionService;
+import com.naxi.service.SystemService;
 import com.naxi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,18 @@ public class QuestionController {
 
     @Autowired
     private PatternService patternService;
+
+    @Autowired
+    private SystemService systemService;
+
+    /**
+     * 获取当前管理员ID（从请求头或session中获取）
+     * 实际应用中应该从认证信息中获取
+     */
+    private Long getCurrentAdminId() {
+        // 这里简化处理，实际应该从认证信息中获取
+        return 1L; // 默认返回1，实际应该从认证系统获取
+    }
 
     /**
      * 发布提问
@@ -151,6 +164,16 @@ public class QuestionController {
 
             boolean deleted = questionService.deleteQuestion(id);
             if (deleted) {
+                // 记录管理员操作日志
+                Long adminId = getCurrentAdminId();
+                systemService.recordAdminAuditLog(
+                    adminId,
+                    "DELETE",
+                    "Question",
+                    id,
+                    "删除提问: " + question.getTitle() + "，用户ID: " + question.getUserId()
+                );
+
                 return ApiResponse.success("删除提问成功");
             } else {
                 return ApiResponse.error(500, "删除提问失败");

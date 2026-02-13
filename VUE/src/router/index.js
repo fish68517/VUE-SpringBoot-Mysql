@@ -92,17 +92,25 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, next) => {
+router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   const token = localStorage.getItem('token')
   
+  // Check if route requires authentication
   if (to.meta.requiresAuth && !token) {
-    next('/login')
-  } else if (to.meta.requiresAdmin && token) {
+    // Redirect to login with return URL
+    next({
+      path: '/login',
+      query: { redirect: to.fullPath }
+    })
+  } 
+  // Check if route requires admin role
+  else if (to.meta.requiresAdmin && token) {
     // Check if user is admin - this will be validated on the backend
     // For now, we allow the route and let the backend handle authorization
     next()
-  } else {
+  } 
+  else {
     next()
   }
 })

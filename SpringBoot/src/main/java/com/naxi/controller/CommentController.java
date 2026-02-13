@@ -6,6 +6,7 @@ import com.naxi.entity.Pattern;
 import com.naxi.entity.User;
 import com.naxi.service.CommentService;
 import com.naxi.service.PatternService;
+import com.naxi.service.SystemService;
 import com.naxi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,18 @@ public class CommentController {
 
     @Autowired
     private PatternService patternService;
+
+    @Autowired
+    private SystemService systemService;
+
+    /**
+     * 获取当前管理员ID（从请求头或session中获取）
+     * 实际应用中应该从认证信息中获取
+     */
+    private Long getCurrentAdminId() {
+        // 这里简化处理，实际应该从认证信息中获取
+        return 1L; // 默认返回1，实际应该从认证系统获取
+    }
 
     /**
      * 发布评论
@@ -146,6 +159,16 @@ public class CommentController {
 
             boolean deleted = commentService.deleteComment(id);
             if (deleted) {
+                // 记录管理员操作日志
+                Long adminId = getCurrentAdminId();
+                systemService.recordAdminAuditLog(
+                    adminId,
+                    "DELETE",
+                    "Comment",
+                    id,
+                    "删除评论，用户ID: " + comment.getUserId() + "，纹样ID: " + comment.getPatternId()
+                );
+
                 return ApiResponse.success("删除评论成功");
             } else {
                 return ApiResponse.error(500, "删除评论失败");

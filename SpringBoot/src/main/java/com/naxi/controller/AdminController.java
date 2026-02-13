@@ -43,6 +43,16 @@ public class AdminController {
     private CreativeWorkRepository creativeWorkRepository;
 
     /**
+     * 获取当前管理员ID（从请求头或session中获取）
+     * 实际应用中应该从认证信息中获取
+     */
+    private Long getCurrentAdminId() {
+        // 这里简化处理，实际应该从认证信息中获取
+        // 可以从请求头、JWT token或session中获取
+        return 1L; // 默认返回1，实际应该从认证系统获取
+    }
+
+    /**
      * 获取仪表板统计数据
      * 需求: 36.1
      */
@@ -180,6 +190,16 @@ public class AdminController {
                 return ApiResponse.error(400, "请求体格式不正确");
             }
 
+            // 记录管理员操作日志
+            Long adminId = getCurrentAdminId();
+            systemService.recordAdminAuditLog(
+                adminId,
+                "UPDATE",
+                "SystemSetting",
+                null,
+                "更新系统参数，共更新 " + updatedSettings.size() + " 个参数"
+            );
+
             return ApiResponse.success("更新系统参数成功", updatedSettings);
         } catch (Exception e) {
             return ApiResponse.error(500, "更新系统参数失败: " + e.getMessage());
@@ -237,6 +257,16 @@ public class AdminController {
             } else {
                 return ApiResponse.error(400, "无效的状态值");
             }
+
+            // 记录管理员操作日志
+            Long adminId = getCurrentAdminId();
+            systemService.recordAdminAuditLog(
+                adminId,
+                "UPDATE",
+                "User",
+                id,
+                "更新用户状态为: " + status
+            );
 
             return ApiResponse.success("更新用户状态成功", user);
         } catch (IllegalArgumentException e) {
@@ -302,6 +332,17 @@ public class AdminController {
             }
 
             Role createdRole = systemService.createRole(roleName, description);
+
+            // 记录管理员操作日志
+            Long adminId = getCurrentAdminId();
+            systemService.recordAdminAuditLog(
+                adminId,
+                "CREATE",
+                "Role",
+                createdRole.getId(),
+                "创建角色: " + roleName
+            );
+
             return ApiResponse.success("创建角色成功", createdRole);
         } catch (IllegalArgumentException e) {
             return ApiResponse.error(400, e.getMessage());
@@ -329,6 +370,16 @@ public class AdminController {
             // 返回更新后的角色和权限信息
             Role role = systemService.getRoleById(id);
             List<Permission> permissions = systemService.getRolePermissions(id);
+
+            // 记录管理员操作日志
+            Long adminId = getCurrentAdminId();
+            systemService.recordAdminAuditLog(
+                adminId,
+                "UPDATE",
+                "Role",
+                id,
+                "更新角色权限，共分配 " + permissionNames.size() + " 个权限"
+            );
 
             Map<String, Object> response = new HashMap<>();
             response.put("role", role);

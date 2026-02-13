@@ -10,9 +10,18 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue'
 import Header from './components/Header.vue'
 import Footer from './components/Footer.vue'
 import Loading from './components/Loading.vue'
+import { useAuth } from './composables/useAuth'
+
+const { restoreSession } = useAuth()
+
+// Restore session from localStorage on app initialization
+onMounted(() => {
+  restoreSession()
+})
 </script>
 
 <style scoped>

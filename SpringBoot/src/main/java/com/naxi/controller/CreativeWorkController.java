@@ -3,6 +3,7 @@ package com.naxi.controller;
 import com.naxi.common.ApiResponse;
 import com.naxi.entity.CreativeWork;
 import com.naxi.service.CreativeWorkService;
+import com.naxi.service.SystemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,18 @@ import org.springframework.web.bind.annotation.*;
 public class CreativeWorkController {
     @Autowired
     private CreativeWorkService creativeWorkService;
+
+    @Autowired
+    private SystemService systemService;
+
+    /**
+     * 获取当前管理员ID（从请求头或session中获取）
+     * 实际应用中应该从认证信息中获取
+     */
+    private Long getCurrentAdminId() {
+        // 这里简化处理，实际应该从认证信息中获取
+        return 1L; // 默认返回1，实际应该从认证系统获取
+    }
 
     /**
      * 上传原创作品
@@ -121,6 +134,17 @@ public class CreativeWorkController {
             if (reviewedWork == null) {
                 return ApiResponse.error(3301, "作品不存在");
             }
+
+            // 记录管理员操作日志
+            Long adminId = getCurrentAdminId();
+            systemService.recordAdminAuditLog(
+                adminId,
+                "REVIEW",
+                "CreativeWork",
+                id,
+                "审核作品: " + reviewedWork.getTitle() + "，状态: " + status
+            );
+
             return ApiResponse.success("审核成功", reviewedWork);
         } catch (IllegalArgumentException e) {
             return ApiResponse.error(400, e.getMessage());

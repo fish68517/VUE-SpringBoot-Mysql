@@ -322,9 +322,16 @@ const loadHistory = async () => {
   historyLoading.value = true
   try {
     const userId = userStore.user?.id
-    const response = await userAPI.getHistory(userId)
+    const response = await userAPI.getHistory(userId, { page: 0, size: 20 })
     if (response.code === 200) {
-      history.value = response.data || []
+      // Handle both paginated and direct array responses
+      if (response.data && response.data.content) {
+        history.value = response.data.content
+      } else if (Array.isArray(response.data)) {
+        history.value = response.data
+      } else {
+        history.value = []
+      }
     }
   } catch (error) {
     console.error('Failed to load history:', error)
@@ -392,7 +399,7 @@ const handleUpdateProfile = async () => {
 
     if (response.code === 200) {
       currentUser.value = response.data
-      userStore.setUser(response.data)
+      userStore.updateUser(response.data)
       ElMessage.success('资料更新成功')
     } else {
       ElMessage.error(response.message || '更新失败')

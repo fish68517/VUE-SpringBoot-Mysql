@@ -42,7 +42,7 @@ const userStore = useUserStore()
 const mobileMenuOpen = ref(false)
 
 const isLoggedIn = computed(() => userStore.isLoggedIn)
-const isAdmin = computed(() => userStore.user?.role === 'admin')
+const isAdmin = computed(() => userStore.isAdmin)
 
 const logout = () => {
   userStore.logout()

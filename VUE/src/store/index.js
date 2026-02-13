@@ -2,13 +2,28 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useUserStore = defineStore('user', () => {
-  const user = ref(null)
-  const token = ref(localStorage.getItem('token') || null)
+  // Initialize from localStorage
+  const storedUser = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
+  const storedToken = localStorage.getItem('token') || null
 
-  const isLoggedIn = computed(() => !!token.value)
+  const user = ref(storedUser)
+  const token = ref(storedToken)
 
+  // Computed properties
+  const isLoggedIn = computed(() => !!token.value && !!user.value)
+  
+  const isAdmin = computed(() => {
+    return user.value?.role === 'admin' || user.value?.roleId === 1
+  })
+
+  // Methods
   const setUser = (userData) => {
     user.value = userData
+    if (userData) {
+      localStorage.setItem('user', JSON.stringify(userData))
+    } else {
+      localStorage.removeItem('user')
+    }
   }
 
   const setToken = (newToken) => {
@@ -24,15 +39,23 @@ export const useUserStore = defineStore('user', () => {
     user.value = null
     token.value = null
     localStorage.removeItem('token')
+    localStorage.removeItem('user')
+  }
+
+  const updateUser = (userData) => {
+    user.value = { ...user.value, ...userData }
+    localStorage.setItem('user', JSON.stringify(user.value))
   }
 
   return {
     user,
     token,
     isLoggedIn,
+    isAdmin,
     setUser,
     setToken,
-    logout
+    logout,
+    updateUser
   }
 })
 

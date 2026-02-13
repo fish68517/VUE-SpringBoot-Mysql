@@ -165,6 +165,11 @@ const handleRegister = async () => {
 
     if (response.code === 200) {
       ElMessage.success('注册成功，请登录')
+      // Clear form
+      form.username = ''
+      form.email = ''
+      form.password = ''
+      form.confirmPassword = ''
       // Redirect to login page after 1.5 seconds
       setTimeout(() => {
         router.push('/login')

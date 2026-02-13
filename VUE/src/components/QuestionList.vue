@@ -106,12 +106,17 @@
 import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '../store'
 import { questionAPI } from '../services/api'
+import { operationLogService } from '../services/operationLog'
 import { ElMessage } from 'element-plus'
 
 const props = defineProps({
   patternId: {
     type: Number,
     required: true
+  },
+  patternName: {
+    type: String,
+    default: '纹样'
   }
 })
 
@@ -179,6 +184,10 @@ const submitQuestion = async () => {
     newQuestionTitle.value = ''
     newQuestionContent.value = ''
     currentPage.value = 0
+    
+    // Record question operation
+    operationLogService.recordQuestion(props.patternId, props.patternName)
+    
     await fetchQuestions()
   } catch (error) {
     console.error('Failed to submit question:', error)
