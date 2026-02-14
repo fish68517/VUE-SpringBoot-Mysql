@@ -1,0 +1,295 @@
+/* 主题和颜色工具类 */
+
+/* 科技蓝主题 - 主色调 */
+.theme-primary {
+  color: var(--primary-color);
+}
+
+.bg-theme-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.border-theme-primary {
+  border-color: var(--primary-color);
+}
+
+/* 科技蓝主题 - 浅色 */
+.theme-primary-light {
+  color: var(--primary-light);
+}
+
+.bg-theme-primary-light {
+  background-color: var(--primary-light);
+  color: white;
+}
+
+/* 科技蓝主题 - 深色 */
+.theme-primary-dark {
+  color: var(--primary-dark);
+}
+
+.bg-theme-primary-dark {
+  background-color: var(--primary-dark);
+  color: white;
+}
+
+/* 次要色 */
+.theme-secondary {
+  color: var(--secondary-color);
+}
+
+.bg-theme-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+/* 强调色 */
+.theme-accent {
+  color: var(--accent-color);
+}
+
+.bg-theme-accent {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+/* 成功色 */
+.theme-success {
+  color: var(--success-color);
+}
+
+.bg-theme-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+/* 警告色 */
+.theme-warning {
+  color: var(--warning-color);
+}
+
+.bg-theme-warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+/* 错误色 */
+.theme-error {
+  color: var(--error-color);
+}
+
+.bg-theme-error {
+  background-color: var(--error-color);
+  color: white;
+}
+
+/* 信息色 */
+.theme-info {
+  color: var(--info-color);
+}
+
+.bg-theme-info {
+  background-color: var(--info-color);
+  color: white;
+}
+
+/* 文本颜色 */
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-light {
+  color: var(--text-light);
+}
+
+.text-white {
+  color: white;
+}
+
+/* 背景颜色 */
+.bg-primary {
+  background-color: var(--bg-primary);
+}
+
+.bg-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.bg-tertiary {
+  background-color: var(--bg-tertiary);
+}
+
+.bg-white {
+  background-color: white;
+}
+
+/* 渐变背景 */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+  color: white;
+}
+
+.bg-gradient-accent {
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-color) 100%);
+  color: white;
+}
+
+/* 阴影变体 */
+.shadow-none {
+  box-shadow: none !important;
+}
+
+.shadow-sm {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.shadow-md {
+  box-shadow: var(--shadow-md) !important;
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* 圆角变体 */
+.rounded-none {
+  border-radius: 0 !important;
+}
+
+.rounded-sm {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+.rounded-md {
+  border-radius: var(--border-radius-md) !important;
+}
+
+.rounded-lg {
+  border-radius: var(--border-radius-lg) !important;
+}
+
+.rounded-full {
+  border-radius: 9999px !important;
+}
+
+/* 透明度 */
+.opacity-0 {
+  opacity: 0;
+}
+
+.opacity-25 {
+  opacity: 0.25;
+}
+
+.opacity-50 {
+  opacity: 0.5;
+}
+
+.opacity-75 {
+  opacity: 0.75;
+}
+
+.opacity-100 {
+  opacity: 1;
+}
+
+/* 过渡效果 */
+.transition-all {
+  transition: all 0.3s ease;
+}
+
+.transition-colors {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.transition-transform {
+  transition: transform 0.3s ease;
+}
+
+.transition-opacity {
+  transition: opacity 0.3s ease;
+}
+
+/* 变换效果 */
+.scale-hover:hover {
+  transform: scale(1.05);
+}
+
+.scale-sm-hover:hover {
+  transform: scale(1.02);
+}
+
+.translate-y-hover:hover {
+  transform: translateY(-4px);
+}
+
+.translate-y-sm-hover:hover {
+  transform: translateY(-2px);
+}
+
+/* 光标 */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-default {
+  cursor: default;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+.cursor-text {
+  cursor: text;
+}
+
+/* 用户选择 */
+.user-select-none {
+  user-select: none;
+}
+
+.user-select-all {
+  user-select: all;
+}
+
+.user-select-auto {
+  user-select: auto;
+}
+
+/* 指针事件 */
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.pointer-events-auto {
+  pointer-events: auto;
+}
+
+/* 可见性 */
+.visible {
+  visibility: visible;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .bg-gradient-primary,
+  .bg-gradient-secondary,
+  .bg-gradient-accent {
+    background-size: 200% 200%;
+  }
+}
