@@ -3,7 +3,7 @@
     <!-- 返回按钮 -->
     <router-link to="/artworks" class="back-link">← 返回作品列表</router-link>
 
-    <!-- 加载状态 -->
+    <!-- 加载状态 000-->
     <div v-if="isLoading" class="loading-container">
       <div class="spinner"></div>
       <p>加载作品详情中...</p>
