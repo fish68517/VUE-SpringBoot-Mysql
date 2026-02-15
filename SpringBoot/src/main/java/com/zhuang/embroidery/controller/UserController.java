@@ -45,6 +45,7 @@ public class UserController {
     public ApiResponse<UserResponse> register(@RequestBody UserRegisterRequest request) {
         log.info("用户注册请求: username={}", request.getUsername());
 
+        request.setConfirmPassword(request.getPassword());
         try {
             UserResponse userResponse = userService.register(request);
             log.info("用户注册成功: userId={}", userResponse.getId());
