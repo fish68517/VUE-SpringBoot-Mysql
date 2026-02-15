@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -33,7 +33,7 @@ public class Feedback {
     /**
      * 用户ID
      */
-    @Column(nullable = false)
+    @Column(nullable = false,name = "user_id")
     private Long userId;
 
     /**
@@ -57,13 +57,13 @@ public class Feedback {
     /**
      * 创建时间
      */
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false,name = "created_at")
     private LocalDateTime createdAt;
 
     /**
      * 更新时间
      */
-    @Column(nullable = false)
+    @Column(nullable = false,name = "updated_at")
     private LocalDateTime updatedAt;
 
     /**

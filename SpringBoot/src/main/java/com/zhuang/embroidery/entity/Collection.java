@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -34,13 +34,13 @@ public class Collection {
     /**
      * 用户ID
      */
-    @Column(nullable = false)
+    @Column(name="user_id", nullable=false)
     private Long userId;
 
     /**
      * 作品ID
      */
-    @Column(nullable = false)
+    @Column(name="artwork_id", nullable=false)
     private Long artworkId;
 
     /**

@@ -41,7 +41,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { AdminSystemService } from '../services/AdminSystemService'
+import  AdminSystemService  from '../services/AdminSystemService'
 
 const router = useRouter()
 const contactEmail = ref('contact@zhuang-embroidery.com')

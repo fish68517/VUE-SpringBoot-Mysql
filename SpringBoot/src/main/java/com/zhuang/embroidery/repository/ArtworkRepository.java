@@ -44,13 +44,13 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
      */
     Page<Artwork> findByCategoryAndStatus(String category, String status, Pageable pageable);
 
-    /**
+/*    *//**
      * 查询所有已批准的作品（分页）
      *
      * @param pageable 分页信息
      * @return 作品分页列表
-     */
-    Page<Artwork> findByStatus(String status, Pageable pageable);
+     *//*
+    Page<Artwork> findByStatus(String status, Pageable pageable);*/
 
     /**
      * 根据创作者查询作品列表

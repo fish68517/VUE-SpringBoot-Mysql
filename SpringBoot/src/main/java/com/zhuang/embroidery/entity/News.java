@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -49,7 +49,7 @@ public class News {
     /**
      * 创建时间
      */
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false,name = "created_at")
     private LocalDateTime createdAt;
 
     /**

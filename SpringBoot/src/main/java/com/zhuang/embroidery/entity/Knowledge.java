@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -62,13 +62,13 @@ public class Knowledge {
     /**
      * 创建时间
      */
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, name = "created_at")
     private LocalDateTime createdAt;
 
     /**
      * 更新时间
      */
-    @Column(nullable = false)
+    @Column(nullable = false,name = "updated_at")
     private LocalDateTime updatedAt;
 
     /**

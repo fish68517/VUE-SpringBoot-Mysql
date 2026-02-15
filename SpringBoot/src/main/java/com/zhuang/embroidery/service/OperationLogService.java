@@ -63,14 +63,16 @@ public class OperationLogService {
     public void recordOperationLog(Long userId, String action, String targetType, Long targetId) {
         log.info("记录操作日志: userId={}, action={}, targetType={}, targetId={}", userId, action, targetType, targetId);
 
-        OperationLog log = OperationLog.builder()
+
+        OperationLog logInfo = OperationLog.builder()
                 .userId(userId)
                 .action(action)
                 .targetType(targetType)
                 .targetId(targetId)
                 .build();
 
-        operationLogRepository.save(log);
+        operationLogRepository.save(logInfo);
+
         log.info("操作日志记录成功");
     }
 

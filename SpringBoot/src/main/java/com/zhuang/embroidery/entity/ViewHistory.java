@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -33,13 +33,13 @@ public class ViewHistory {
     /**
      * 用户ID
      */
-    @Column(nullable = false)
+    @Column(nullable = false,name = "user_id")
     private Long userId;
 
     /**
      * 内容类型：artwork/knowledge
      */
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50,name = "content_type")
     private String contentType;
 
     /**
@@ -51,7 +51,7 @@ public class ViewHistory {
     /**
      * 浏览时间
      */
-    @Column(nullable = false)
+    @Column(nullable = false,name = "viewed_at")
     private LocalDateTime viewedAt;
 
     /**

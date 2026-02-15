@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -44,7 +44,7 @@ public class Topic {
     /**
      * 是否置顶
      */
-    @Column(nullable = false)
+    @Column(nullable = false,name = "is_pinned")
     private Boolean isPinned;
 
     /**
@@ -56,7 +56,7 @@ public class Topic {
     /**
      * 创建时间
      */
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false,name = "created_at")
     private LocalDateTime createdAt;
 
     /**

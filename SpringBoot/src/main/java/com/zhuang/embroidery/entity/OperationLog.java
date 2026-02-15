@@ -1,11 +1,12 @@
 package com.zhuang.embroidery.entity;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+
 import java.time.LocalDateTime;
 
 /**
@@ -57,7 +58,7 @@ public class OperationLog {
     /**
      * 操作时间
      */
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false,name = "created_at")
     private LocalDateTime createdAt;
 
     /**

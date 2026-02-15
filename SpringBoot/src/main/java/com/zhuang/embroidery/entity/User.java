@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 /**
@@ -32,7 +32,7 @@ public class User {
     /**
      * 用户名（唯一）
      */
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(nullable = false, unique = true, length = 50,name = "username")
     private String username;
 
     /**
