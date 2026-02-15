@@ -21,12 +21,6 @@ const AdminSystem = () => import('../pages/admin/AdminSystem.vue')
 // 前台路由
 const frontendRoutes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home,
-    meta: { requiresAuth: false, title: '首页' },
-  },
-  {
     path: '/artworks',
     name: 'Artworks',
     component: Artworks,
@@ -72,6 +66,8 @@ const authRoutes = [
     component: Login,
     meta: { requiresAuth: false, title: '登录' },
   },
+  { path: '/', redirect: '/login' },
+   { path: '/home', name: 'Home', component: Home, meta: { requiresAuth: false, title: '首页' } },
   {
     path: '/register',
     name: 'Register',
@@ -131,20 +127,6 @@ router.beforeEach((to, from, next) => {
       name: 'Login',
       query: { redirect: to.fullPath },
     })
-    return
-  }
-
-  // 检查是否需要管理员权限
-  if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    // 需要管理员权限但不是管理员，重定向到首页
-    console.warn('权限不足：需要管理员权限')
-    next({ name: 'Home' })
-    return
-  }
-
-  // 如果已登录且访问登录/注册页，重定向到首页
-  if (authStore.isLoggedIn && (to.name === 'Login' || to.name === 'Register')) {
-    next({ name: 'Home' })
     return
   }
 
