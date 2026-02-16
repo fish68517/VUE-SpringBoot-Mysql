@@ -1,0 +1,63 @@
+# 编辑器相关
+.kiro/
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Java/SpringBoot 相关
+SpringBoot/target/
+SpringBoot/.mvn/
+SpringBoot/mvnw
+SpringBoot/mvnw.cmd
+SpringBoot/logs/
+SpringBoot/*.iml
+SpringBoot/out/
+SpringBoot/build/
+SpringBoot/.gradle/
+SpringBoot/gradle/
+SpringBoot/gradlew
+SpringBoot/gradlew.bat
+
+# Vue 相关
+VUE/node_modules/
+VUE/dist/
+VUE/.env
+VUE/.env.local
+VUE/.env.development.local
+VUE/.env.test.local
+VUE/.env.production.local
+VUE/npm-debug.log*
+VUE/yarn-debug.log*
+VUE/yarn-error.log*
+VUE/pnpm-debug.log*
+VUE/.pnpm-debug.log
+VUE/coverage/
+VUE/.pnpm-store/
+VUE/.nuxt/
+VUE/.vercel
+VUE/dist-ssr/
+VUE/playwright-report/
+VUE/test-results/
+
+# Android 相关
+*.apk
+*.ap_
+*.dex
+*.class
+bin/
+gen/
+out/
+release/
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+captures/
+output.json
+
+# 文档/其他
+doc/temp/
+doc/*.log
