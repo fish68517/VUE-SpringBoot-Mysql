@@ -5,10 +5,20 @@ import com.zhuang.embroidery.dto.NewsResponse;
 import com.zhuang.embroidery.dto.NewsUpdateRequest;
 import com.zhuang.embroidery.entity.News;
 import com.zhuang.embroidery.repository.NewsRepository;
+import com.zhuang.embroidery.util.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 资讯业务逻辑服务
@@ -128,5 +138,34 @@ public class NewsService {
         if (request.getTitle() != null && request.getTitle().length() > 255) {
             throw new IllegalArgumentException("资讯标题长度不能超过255个字符");
         }
+    }
+
+    /**
+     * 获取资讯分页列表
+     */
+    public Map<String, Object> getNewsPage(Integer pageNum, Integer pageSize) {
+        // 1. 验证和格式化分页参数 (借用你的 PageUtil)
+        PageUtil pageUtil = PageUtil.validate(pageNum, pageSize);
+
+        // 2. 创建 JPA 的 Pageable 对象 (注意：JPA 的页码是从 0 开始的)
+        // 我们默认按创建时间倒序排列
+        Pageable pageable = PageRequest.of(pageUtil.getPageNum() - 1, pageUtil.getPageSize(), Sort.by("id").descending());
+
+        // 3. 执行分页查询
+        Page<News> newsPage = newsRepository.findAll(pageable);
+
+        // 4. 将实体列表转换为 DTO 响应列表
+        List<NewsResponse> responseList = newsPage.getContent().stream()
+                .map(NewsResponse::fromNews)
+                .collect(Collectors.toList());
+
+        // 5. 组装返回结果
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", responseList);
+        result.put("total", newsPage.getTotalElements());
+        result.put("pageNum", pageUtil.getPageNum());
+        result.put("pageSize", pageUtil.getPageSize());
+
+        return result;
     }
 }

@@ -98,7 +98,7 @@ const { error } = useToast()
 const loadCategories = async () => {
   try {
     const response = await ArtworkService.getCategories()
-    categories.value = response.data || []
+    categories.value = response || []
   } catch (err) {
     console.error('Failed to load categories:', err)
   }
@@ -119,9 +119,10 @@ const loadArtworks = async () => {
     }
 
     const response = await ArtworkService.getArtworks(params)
-    const data = response.data
+    console.log('Loaded artworks:', response)
+    const data = response
 
-    artworks.value = data.content || []
+    artworks.value = data.items || []
     totalPages.value = data.totalPages || 1
     totalItems.value = data.total || 0
   } catch (err) {

@@ -5,10 +5,20 @@ import com.zhuang.embroidery.dto.ActivityResponse;
 import com.zhuang.embroidery.dto.ActivityUpdateRequest;
 import com.zhuang.embroidery.entity.Activity;
 import com.zhuang.embroidery.repository.ActivityRepository;
+import com.zhuang.embroidery.util.PageUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 活动业务逻辑服务
@@ -136,5 +146,20 @@ public class ActivityService {
         if (request.getTitle() != null && request.getTitle().length() > 255) {
             throw new IllegalArgumentException("活动标题长度不能超过255个字符");
         }
+    }
+
+
+    public Map<String, Object> getActivityPage(Integer pageNum, Integer pageSize) {
+        PageUtil pageUtil = PageUtil.validate(pageNum, pageSize);
+        Pageable pageable = PageRequest.of(pageUtil.getPageNum() - 1, pageUtil.getPageSize(), Sort.by("id").descending());
+        Page<Activity> page = activityRepository.findAll(pageable);
+        List<ActivityResponse> list = page.getContent().stream()
+                .map(ActivityResponse::fromActivity) // 假设你有这个转换方法
+                .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", list);
+        result.put("total", page.getTotalElements());
+        return result;
     }
 }

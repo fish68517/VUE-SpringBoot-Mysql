@@ -1,11 +1,6 @@
 package com.zhuang.embroidery.controller;
 
-import com.zhuang.embroidery.dto.ApiResponse;
-import com.zhuang.embroidery.dto.VoteCreateRequest;
-import com.zhuang.embroidery.dto.VoteListResponse;
-import com.zhuang.embroidery.dto.VoteResponse;
-import com.zhuang.embroidery.dto.VoteStatisticsResponse;
-import com.zhuang.embroidery.dto.VoteSubmitRequest;
+import com.zhuang.embroidery.dto.*;
 import com.zhuang.embroidery.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +80,35 @@ public class VoteController {
             voteService.submitVote(request);
             log.info("投票提交成功: voteId={}, userId={}", request.getVoteId(), request.getUserId());
             return ApiResponse.success();
+        } catch (IllegalArgumentException e) {
+            log.warn("提交投票失败: {}", e.getMessage());
+            return ApiResponse.badRequest(e.getMessage());
+        } catch (Exception e) {
+            log.error("提交投票异常", e);
+            return ApiResponse.serverError("提交投票失败");
+        }
+    }
+
+    @PostMapping("/{voteId}/vote")
+    public ApiResponse<Void> submitVoteOption(
+            @PathVariable("voteId") Long voteId,
+            @RequestBody VoteOptionRequest request) {
+
+        log.info("提交投票选项: voteId={}, userId={}, selectedOption={}",
+                voteId, request.getUserId(), request.getSelectedOption());
+
+        try {
+            // 这里调用你的 service 方法，将路径中的 voteId 和 请求体的数据一起传过去
+            // 具体的方法签名取决于你 VoteService 是怎么写的，例如：
+            VoteSubmitRequest voteSubmitRequest = new VoteSubmitRequest();
+            voteSubmitRequest.setVoteId(voteId);
+            voteSubmitRequest.setUserId(request.getUserId());
+            voteSubmitRequest.setSelectedOption(request.getSelectedOption());
+            voteService.submitVote(voteSubmitRequest);
+
+            log.info("投票提交成功: voteId={}, userId={}", voteId, request.getUserId());
+            return ApiResponse.success();
+
         } catch (IllegalArgumentException e) {
             log.warn("提交投票失败: {}", e.getMessage());
             return ApiResponse.badRequest(e.getMessage());

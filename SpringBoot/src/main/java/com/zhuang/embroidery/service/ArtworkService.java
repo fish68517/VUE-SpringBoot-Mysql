@@ -12,10 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -320,6 +323,21 @@ public class ArtworkService {
         if (request.getTitle() != null && request.getTitle().length() > 255) {
             throw new IllegalArgumentException("作品名称长度不能超过255个字符");
         }
+    }
+
+
+    public Map<String, Object> getArtworkPage(Integer pageNum, Integer pageSize) {
+        PageUtil pageUtil = PageUtil.validate(pageNum, pageSize);
+        Pageable pageable = PageRequest.of(pageUtil.getPageNum() - 1, pageUtil.getPageSize(), Sort.by("id").descending());
+        Page<Artwork> page = artworkRepository.findAll(pageable);
+        List<ArtworkResponse> list = page.getContent().stream()
+                .map(ArtworkResponse::fromArtwork) // 假设你有这个转换方法
+                .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("list", list);
+        result.put("total", page.getTotalElements());
+        return result;
     }
 
 }

@@ -559,8 +559,8 @@ const loadComments = async () => {
       pageSize: commentPageSize.value
     }
     const response = await AdminInteractionService.getComments(params)
-    if (response && response.comments) {
-      comments.value = response.comments || []
+    if (response && response.items) {
+      comments.value = response.items || []
       commentTotalItems.value = response.total || 0
     }
   } catch (error) {
@@ -623,8 +623,8 @@ const loadTopics = async () => {
       pageSize: topicPageSize.value
     }
     const response = await AdminInteractionService.getTopics(params)
-    if (response && response.topics) {
-      topics.value = response.topics || []
+    if (response && response.items) {
+      topics.value = response.items || []
       topicTotalItems.value = response.total || 0
     }
   } catch (error) {
@@ -687,8 +687,8 @@ const loadVotes = async () => {
       pageSize: votePageSize.value
     }
     const response = await AdminInteractionService.getVotes?.(params)
-    if (response && response.votes) {
-      votes.value = response.votes || []
+    if (response && response.items) {
+      votes.value = response.items || []
       voteTotalItems.value = response.total || 0
     }
   } catch (error) {
@@ -726,8 +726,8 @@ const loadFeedback = async () => {
       pageSize: feedbackPageSize.value
     }
     const response = await AdminInteractionService.getFeedback(params)
-    if (response && response.feedback) {
-      feedbackList.value = response.feedback || []
+    if (response && response.items) {
+      feedbackList.value = response.items || []
       feedbackTotalItems.value = response.total || 0
     }
   } catch (error) {

@@ -1,12 +1,7 @@
 package com.zhuang.embroidery.controller;
 
-import com.zhuang.embroidery.dto.ApiResponse;
-import com.zhuang.embroidery.dto.CollectionListResponse;
-import com.zhuang.embroidery.dto.UserLoginRequest;
-import com.zhuang.embroidery.dto.UserRegisterRequest;
-import com.zhuang.embroidery.dto.UserResponse;
-import com.zhuang.embroidery.dto.UserUpdateRequest;
-import com.zhuang.embroidery.dto.ViewHistoryListResponse;
+import com.zhuang.embroidery.dto.*;
+import com.zhuang.embroidery.service.ArtworkService;
 import com.zhuang.embroidery.service.CollectionService;
 import com.zhuang.embroidery.service.UserService;
 import com.zhuang.embroidery.service.ViewHistoryService;
@@ -22,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * 用户相关 API 控制器
  */
@@ -34,6 +31,8 @@ public class UserController {
     private final UserService userService;
     private final CollectionService collectionService;
     private final ViewHistoryService viewHistoryService;
+
+    private final ArtworkService artworkService;
 
     /**
      * 用户注册
@@ -146,6 +145,12 @@ public class UserController {
 
         try {
             CollectionListResponse response = collectionService.getUserCollections(userId, pageNum, pageSize);
+            List<CollectionResponse>  responseItems = response.getItems();
+            for (CollectionResponse item : responseItems) {
+                Long artworkId = item.getArtworkId();
+                ArtworkResponse artworkResponse = artworkService.getArtworkDetail(artworkId);
+                item.setArtworkResponse(artworkResponse);
+            }
             log.info("成功获取用户收藏列表: userId={}, total={}", userId, response.getTotal());
             return ApiResponse.success(response);
         } catch (IllegalArgumentException e) {

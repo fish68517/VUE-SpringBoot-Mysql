@@ -4,9 +4,9 @@
       <h1>壮族刺绣</h1>
     </div>
     <nav class="nav-menu">
-      <div class="nav-section">
+      <div class="nav-section" v-if="!authStore.isAdmin">
         <h3 class="section-title">前台</h3>
-        <router-link to="/" class="nav-item" :class="{ active: isActive('/') }">
+        <router-link to="/home" class="nav-item" :class="{ active: isActive('/home') }">
           <span class="icon">🏠</span>
           <span>首页</span>
         </router-link>
@@ -78,7 +78,7 @@ const isActive = (path) => {
 
 const handleLogout = () => {
   authStore.logout()
-  router.push({ name: 'Home' })
+  router.push({ name: 'Login' })
 }
 </script>
 

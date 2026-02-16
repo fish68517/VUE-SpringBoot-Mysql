@@ -1,6 +1,5 @@
 <template>
   <div class="home-page">
-    <!-- 轮播展示区 -->
     <section class="carousel-section">
       <div class="carousel-container">
         <div class="carousel-wrapper">
@@ -19,7 +18,6 @@
           </div>
         </div>
 
-        <!-- 轮播控制按钮 -->
         <button class="carousel-btn-prev" @click="prevCarousel" aria-label="上一张">
           ❮
         </button>
@@ -27,7 +25,6 @@
           ❯
         </button>
 
-        <!-- 轮播指示点 -->
         <div class="carousel-indicators">
           <button
             v-for="(_, index) in carousels"
@@ -41,7 +38,6 @@
       </div>
     </section>
 
-    <!-- 核心功能导航 -->
     <section class="features-section">
       <div class="section-header">
         <h2>核心功能</h2>
@@ -63,7 +59,6 @@
       </div>
     </section>
 
-    <!-- 最新活动公告区 -->
     <section class="announcements-section">
       <div class="section-header">
         <h2>最新动态</h2>
@@ -86,7 +81,6 @@
       </div>
     </section>
 
-    <!-- 平台数据统计区 -->
     <section class="statistics-section">
       <div class="section-header">
         <h2>平台数据</h2>
@@ -117,7 +111,7 @@
         <div class="stat-card">
           <div class="stat-icon">👁️</div>
           <div class="stat-content">
-            <div class="stat-value">{{ formatNumber(statistics.totalViews || 0) }}</div>
+            <div class="stat-value">{{ formatNumber(statistics.totalVisits || 0) }}</div>
             <div class="stat-label">总浏览量</div>
           </div>
         </div>
@@ -141,9 +135,12 @@ const carouselInterval = ref(null)
 const { showToast } = useToast()
 
 // 加载首页数据
+// 加载首页数据
+// 修改 Home.vue 中的 loadHomeData 函数
 const loadHomeData = async () => {
   try {
-    // 并行加载所有数据
+    console.log('--- 开始请求首页数据 ---')
+    // 并行请求所有数据
     const [carouselRes, featuresRes, announcementsRes, statisticsRes] = await Promise.all([
       HomeService.getCarousel(),
       HomeService.getFeatures(),
@@ -151,22 +148,35 @@ const loadHomeData = async () => {
       HomeService.getStatistics(),
     ])
 
-    carousels.value = carouselRes.data || []
-    features.value = featuresRes.data || []
-    announcements.value = announcementsRes.data || []
-    statistics.value = statisticsRes.data || {}
+    // 因为你的 src/services/api.js 拦截器中已经写了：
+    
+    // 所以这里的 res 直接就是后端返回的那个数组或对象，没有任何包装！
+
+    // 打印出来确认一下：
+    console.log('1. 轮播图:', carouselRes)
+    console.log('2. 核心功能:', featuresRes)
+    console.log('3. 最新动态:', announcementsRes)
+    console.log('4. 统计数据:', statisticsRes)
+
+    // 直接赋值！使用 || 提供后备空值防止模板报错
+    carousels.value = carouselRes || []
+    features.value = featuresRes || []
+    announcements.value = announcementsRes || []
+    statistics.value = statisticsRes || {}
+
   } catch (error) {
-    console.error('Failed to load home data:', error)
+    console.error('加载首页数据失败，错误信息:', error)
     showToast('加载首页数据失败', 'error')
   }
 }
-
 // 轮播控制
 const nextCarousel = () => {
+  if (carousels.value.length === 0) return;
   currentCarouselIndex.value = (currentCarouselIndex.value + 1) % carousels.value.length
 }
 
 const prevCarousel = () => {
+  if (carousels.value.length === 0) return;
   currentCarouselIndex.value =
     (currentCarouselIndex.value - 1 + carousels.value.length) % carousels.value.length
 }
@@ -188,10 +198,11 @@ const stopAutoCarousel = () => {
 
 // 格式化日期
 const formatDate = (dateString) => {
+  if (!dateString) return '';
   const date = new Date(dateString)
   const now = new Date()
   const diffTime = Math.abs(now - date)
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
   if (diffDays === 0) {
     return '今天'
@@ -206,6 +217,7 @@ const formatDate = (dateString) => {
 
 // 格式化数字
 const formatNumber = (num) => {
+  if (!num) return '0';
   if (num >= 1000000) {
     return (num / 1000000).toFixed(1) + 'M'
   } else if (num >= 1000) {
@@ -214,8 +226,8 @@ const formatNumber = (num) => {
   return num.toString()
 }
 
-onMounted(() => {
-  loadHomeData()
+onMounted(async () => {
+  await loadHomeData()
   startAutoCarousel()
 })
 
@@ -225,6 +237,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 保持你原有的 CSS 样式不变 */
 .home-page {
   display: flex;
   flex-direction: column;

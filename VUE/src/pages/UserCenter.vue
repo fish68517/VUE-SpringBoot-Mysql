@@ -3,7 +3,7 @@
     <div class="user-center-container">
       <!-- 用户信息卡片 -->
       <div class="user-header">
-        <div class="user-avatar">
+        <div class="user-avatar" v-if="false">
           <img :src="userInfo.avatar || defaultAvatar" :alt="userInfo.username" />
         </div>
         <div class="user-details">
@@ -67,7 +67,7 @@
                 />
               </div>
 
-              <div class="form-group">
+              <div class="form-group" v-if="false">
                 <label for="avatar" class="form-label">头像 URL</label>
                 <input
                   id="avatar"
@@ -89,13 +89,13 @@
             <div class="section-title">我的收藏</div>
             <div v-if="collections.length > 0" class="collections-list">
               <div v-for="item in collections" :key="item.id" class="collection-item">
-                <img :src="item.artwork.imageUrl" :alt="item.artwork.title" class="collection-image" />
+                <img :src="item.artworkResponse.imageUrl" :alt="item.artworkResponse.title" class="collection-image" />
                 <div class="collection-info">
-                  <h3>{{ item.artwork.title }}</h3>
-                  <p class="collection-category">{{ item.artwork.category }}</p>
+                  <h3>{{ item.artworkResponse.title }}</h3>
+                  <p class="collection-category">{{ item.artworkResponse.category }}</p>
                   <p class="collection-date">收藏于 {{ formatDate(item.collectedAt) }}</p>
                 </div>
-                <router-link :to="`/artworks/${item.artwork.id}`" class="view-btn">查看作品</router-link>
+                <router-link :to="`/artworks/${item.artworkResponse.id}`" class="view-btn">查看作品</router-link>
               </div>
             </div>
             <div v-else class="empty-state">
@@ -191,16 +191,21 @@ import { useAuthStore } from '../stores/authStore'
 import { useToast } from '../utils/useToast'
 import Pagination from '../components/Pagination.vue'
 
+// import defaultAvatarImg from '../../res/defaultAvatar.png' 
+
+// 2. 将引入的图片对象赋值给你的变量
+// const defaultAvatar = defaultAvatarImg
+
 const authStore = useAuthStore()
 const { success, error } = useToast()
 
-const defaultAvatar = 'https://via.placeholder.com/120?text=User'
+// const defaultAvatar = 'https://via.placeholder.com/120?text=User'
 
 const activeTab = ref('profile')
 const tabs = [
   { id: 'profile', label: '个人信息' },
   { id: 'collections', label: '我的收藏' },
-  { id: 'history', label: '浏览历史' },
+  // { id: 'history', label: '浏览历史' },
   { id: 'feedback', label: '提交反馈' },
 ]
 
@@ -242,8 +247,8 @@ const isSubmittingFeedback = ref(false)
 const loadUserInfo = async () => {
   try {
     const response = await UserService.getUserInfo(authStore.user.id)
-    userInfo.value = response.data
-    profileForm.value = { ...response.data }
+    userInfo.value = response
+    profileForm.value = { ...response }
   } catch (err) {
     error('加载用户信息失败')
   }
@@ -256,7 +261,7 @@ const loadCollections = async () => {
       page: collectionsPage.value,
       pageSize: 10,
     })
-    collections.value = response.data || []
+    collections.value = response.items || []
   } catch (err) {
     error('加载收藏列表失败')
   }
@@ -269,7 +274,7 @@ const loadViewHistory = async () => {
       page: historyPage.value,
       pageSize: 10,
     })
-    viewHistory.value = response.data || []
+    viewHistory.value = response.items || []
   } catch (err) {
     error('加载浏览历史失败')
   }
@@ -298,7 +303,7 @@ const handleUpdateProfile = async () => {
 
     success('个人信息已更新')
   } catch (err) {
-    error(err.response?.data?.message || '更新个人信息失败')
+    error(err.response?.message || '更新个人信息失败')
   } finally {
     isUpdatingProfile.value = false
   }
@@ -325,7 +330,7 @@ const handleSubmitFeedback = async () => {
       content: '',
     }
   } catch (err) {
-    error(err.response?.data?.message || '提交反馈失败')
+    error(err.response?.message || '提交反馈失败')
   } finally {
     isSubmittingFeedback.value = false
   }

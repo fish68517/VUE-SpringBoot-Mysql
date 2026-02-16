@@ -117,7 +117,7 @@ const handleRegister = async () => {
     success('注册成功，请登录')
     router.push({ name: 'Login' })
   } catch (err) {
-    error(err.response?.data?.message || '注册失败，请稍后重试')
+    error(err.response?.message || '注册失败，请稍后重试')
   } finally {
     isLoading.value = false
   }
@@ -136,14 +136,15 @@ const handleRegister = async () => {
 
 .register-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 800px;
 }
 
 .register-card {
-  background: white;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-lg);
-  padding: var(--spacing-2xl);
+   background: white;
+  /* 卡片整体留白：让内容别贴边 */
+  padding: 36px 40px !important;   /* 关键：增大内边距 */
+  border-radius: 14px;
+  box-sizing: border-box;
 }
 
 .register-title {

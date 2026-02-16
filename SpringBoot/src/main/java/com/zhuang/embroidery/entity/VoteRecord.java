@@ -14,7 +14,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "vote_record", indexes = {
     @Index(name = "idx_vote_id", columnList = "vote_id"),
-    @Index(name = "idx_user_id", columnList = "user_id")
+    @Index(name = "idx_user_id", columnList = "user_id"),
+        @Index(name = "idx_selected_option", columnList = "selected_option")
 }, uniqueConstraints = {
     @UniqueConstraint(name = "unique_vote_user", columnNames = {"vote_id", "user_id"})
 })
@@ -46,7 +47,7 @@ public class VoteRecord {
     /**
      * 选择的选项
      */
-    @Column(length = 255)
+    @Column(length = 255, nullable = false,name = "selected_option")
     private String selectedOption;
 
     /**

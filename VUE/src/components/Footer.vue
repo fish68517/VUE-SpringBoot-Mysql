@@ -9,7 +9,7 @@
       <div class="footer-section">
         <h3>快速链接</h3>
         <ul>
-          <li><router-link to="/">首页</router-link></li>
+          <li><router-link to="/home">首页</router-link></li>
           <li><router-link to="/artworks">作品展示</router-link></li>
           <li><router-link to="/knowledge">知识科普</router-link></li>
           <li><router-link to="/community">互动交流</router-link></li>
@@ -50,9 +50,9 @@ const contactPhone = ref('0876-1234567')
 onMounted(async () => {
   try {
     const response = await AdminSystemService.getSettings()
-    if (response.data) {
-      contactEmail.value = response.data.contactEmail || contactEmail.value
-      contactPhone.value = response.data.contactPhone || contactPhone.value
+    if (response) {
+      contactEmail.value = response.contactEmail || contactEmail.value
+      contactPhone.value = response.contactPhone || contactPhone.value
     }
   } catch (error) {
     console.error('Failed to load system settings:', error)

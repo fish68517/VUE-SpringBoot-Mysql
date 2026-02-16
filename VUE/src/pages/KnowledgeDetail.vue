@@ -44,7 +44,7 @@
       </div>
 
       <!-- 相关知识推荐 -->
-      <div class="related-section">
+      <div class="related-section" v-if="false">
         <h2>相关知识推荐</h2>
         <div v-if="relatedArticles.length > 0" class="related-list">
           <router-link
@@ -94,7 +94,7 @@ const loadKnowledgeDetail = async () => {
   try {
     const knowledgeId = route.params.id
     const response = await KnowledgeService.getKnowledgeDetail(knowledgeId)
-    article.value = response.data
+    article.value = response
 
     // 记录浏览
     const userId = authStore.user?.id
@@ -119,7 +119,7 @@ const loadRelatedArticles = async (category, currentId) => {
       pageSize: 3,
     })
     // 过滤掉当前文章
-    relatedArticles.value = (response.data.items || []).filter(
+    relatedArticles.value = (response.items || []).filter(
       (article) => article.id !== currentId
     )
   } catch (err) {

@@ -34,4 +34,8 @@ export default {
   uncollectArtwork(id, userId) {
     return apiClient.delete(`/artworks/${id}/collect`, { params: { userId } })
   },
+  // 获取收藏状态
+  getCollectStatus(id, userId) {
+    return apiClient.get(`/artworks/${id}/collect`, { params: { userId } })
+  },
 }

@@ -11,6 +11,11 @@ export default {
     return apiClient.get(`/votes/${id}`)
   },
 
+  // 获取投票统计信息
+  getVoteStatistics(id) {
+    return apiClient.get(`/votes/${id}/statistics`)
+  },
+
   // 提交投票
   submitVote(id, voteData) {
     return apiClient.post(`/votes/${id}/vote`, voteData)

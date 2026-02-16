@@ -192,4 +192,38 @@ public class ArtworkController {
         }
     }
 
+    // return apiClient.get(`/artworks/${id}/collect`, { params: { userId } }) 根据前端接口设计，获取用户是否收藏了该作品
+        /**
+        * 获取用户是否收藏了该作品
+        *
+        * @param id 作品ID
+        * @param userId 用户ID
+        * @return 是否收藏响应
+        */
+    @GetMapping("/{id}/collect")
+    public ApiResponse<Boolean> isCollected(
+            @PathVariable Long id,
+            @RequestParam Long userId) {
+        log.info("获取用户是否收藏了该作品: id={}, userId={}", id, userId);
+
+        try {
+            // 验证参数
+            if (userId == null || userId <= 0) {
+                log.warn("用户ID无效: userId={}", userId);
+                return ApiResponse.badRequest("用户ID不能为空或小于等于0");
+            }
+
+            boolean isCollected = collectionService.isArtworkCollected(userId, id);
+            log.info("获取收藏状态成功: id={}, userId={}, isCollected={}", id, userId, isCollected);
+            return ApiResponse.success(isCollected);
+        } catch (IllegalArgumentException e) {
+            log.warn("获取收藏状态失败: {}", e.getMessage());
+            return ApiResponse.badRequest(e.getMessage());
+        } catch (Exception e) {
+            log.error("获取收藏状态异常", e);
+            return ApiResponse.serverError("获取收藏状态失败");
+        }
+    }
+
+
 }

@@ -523,8 +523,8 @@ const loadArtworks = async () => {
       pageSize: artworkPageSize.value
     }
     const response = await AdminResourceService.getArtworks?.(params)
-    if (response && response.artworks) {
-      artworks.value = response.artworks || []
+    if (response && response.list) {
+      artworks.value = response.list || []
       artworkTotalItems.value = response.total || 0
     }
   } catch (error) {
@@ -675,8 +675,8 @@ const loadNews = async () => {
       pageSize: newsPageSize.value
     }
     const response = await AdminResourceService.getNews?.(params)
-    if (response && response.news) {
-      newsList.value = response.news || []
+    if (response && response.list) {
+      newsList.value = response.list || []
       newsTotalItems.value = response.total || 0
     }
   } catch (error) {
@@ -755,8 +755,8 @@ const loadActivities = async () => {
       pageSize: activityPageSize.value
     }
     const response = await AdminResourceService.getActivities?.(params)
-    if (response && response.activities) {
-      activities.value = response.activities || []
+    if (response && response.list) {
+      activities.value = response.list || []
       activityTotalItems.value = response.total || 0
     }
   } catch (error) {

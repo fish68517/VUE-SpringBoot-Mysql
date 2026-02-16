@@ -43,7 +43,7 @@
           ></textarea>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" v-if="false">
           <label>Logo URL *</label>
           <input
             v-model="settingsFormData.logo"
@@ -83,7 +83,7 @@
     </div>
 
     <!-- 数据备份标签页 -->
-    <div v-if="activeTab === 'backup'" class="tab-content">
+    <div v-if="false" class="tab-content">
       <div class="section-header">
         <h2>数据备份和恢复</h2>
       </div>
@@ -189,14 +189,14 @@
           <div class="stat-card">
             <div class="stat-icon">⭐</div>
             <div class="stat-content">
-              <div class="stat-label">收藏总数</div>
-              <div class="stat-value">{{ statistics.totalCollections || 0 }}</div>
+              <div class="stat-label">投票总数</div>
+              <div class="stat-value">{{ statistics.totalVotes || 0 }}</div>
             </div>
           </div>
         </div>
 
         <!-- 详细统计表格 -->
-        <div class="detailed-stats">
+        <div class="detailed-stats" v-if="false">
           <h3>详细统计数据</h3>
           <div class="table-container">
             <table class="stats-table">
@@ -286,7 +286,7 @@ import Toast from '../../components/Toast.vue'
 // 标签页
 const tabs = [
   { id: 'settings', label: '网站设置' },
-  { id: 'backup', label: '数据备份' },
+  // { id: 'backup', label: '数据备份' },
   { id: 'statistics', label: '统计分析' }
 ]
 
@@ -320,7 +320,7 @@ const statistics = ref({
   totalArtworks: 0,
   totalKnowledge: 0,
   totalComments: 0,
-  totalCollections: 0,
+  totalVotes: 0,
   todayNewUsers: 0,
   todayVisits: 0,
   weekNewArtworks: 0,
@@ -348,13 +348,13 @@ const calculatePercentage = (value, total) => {
 const loadSettings = async () => {
   try {
     const response = await AdminSystemService.getSettings()
-    if (response && response.data) {
+    if (response && response) {
       settingsFormData.value = {
-        siteName: response.data.siteName || '',
-        siteDescription: response.data.siteDescription || '',
-        logo: response.data.logo || '',
-        contactEmail: response.data.contactEmail || '',
-        contactPhone: response.data.contactPhone || ''
+        siteName: response.siteName || '',
+        siteDescription: response.siteDescription || '',
+        logo: response.logo || '',
+        contactEmail: response.contactEmail || '',
+        contactPhone: response.contactPhone || ''
       }
     }
   } catch (error) {
@@ -455,20 +455,20 @@ const loadStatistics = async () => {
   isLoadingStats.value = true
   try {
     const response = await AdminSystemService.getStatistics()
-    if (response && response.data) {
+    if (response && response) {
       statistics.value = {
-        totalUsers: response.data.totalUsers || 0,
-        totalVisits: response.data.totalVisits || 0,
-        totalArtworks: response.data.totalArtworks || 0,
-        totalKnowledge: response.data.totalKnowledge || 0,
-        totalComments: response.data.totalComments || 0,
-        totalCollections: response.data.totalCollections || 0,
-        todayNewUsers: response.data.todayNewUsers || 0,
-        todayVisits: response.data.todayVisits || 0,
-        weekNewArtworks: response.data.weekNewArtworks || 0,
-        monthNewKnowledge: response.data.monthNewKnowledge || 0,
-        avgDailyVisits: response.data.avgDailyVisits || 0,
-        activeUsers: response.data.activeUsers || 0
+        totalUsers: response.totalUsers || 0,
+        totalVisits: response.totalVisits || 0,
+        totalArtworks: response.totalArtworks || 0,
+        totalKnowledge: response.totalKnowledge || 0,
+        totalComments: response.totalComments || 0,
+        totalVotes: response.totalVotes || 0,
+        todayNewUsers: response.todayNewUsers || 0,
+        todayVisits: response.todayVisits || 0,
+        weekNewArtworks: response.weekNewArtworks || 0,
+        monthNewKnowledge: response.monthNewKnowledge || 0,
+        avgDailyVisits: response.avgDailyVisits || 0,
+        activeUsers: response.activeUsers || 0
       }
       lastUpdateTime.value = formatDate(new Date())
     }

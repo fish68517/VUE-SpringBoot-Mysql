@@ -1,5 +1,6 @@
 package com.zhuang.embroidery.dto;
 
+import com.zhuang.embroidery.entity.Artwork;
 import com.zhuang.embroidery.entity.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +32,8 @@ public class CollectionResponse {
      * 作品ID
      */
     private Long artworkId;
+
+    private ArtworkResponse artworkResponse;
 
     /**
      * 收藏时间

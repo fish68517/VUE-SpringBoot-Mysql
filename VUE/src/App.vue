@@ -9,7 +9,7 @@
       </main>
 
       <!-- 登录/注册页不显示页脚 -->
-      <Footer v-if="showLayout" />
+      <!-- <Footer v-if="showLayout" /> -->
     </div>
 
     <Toast ref="toastRef" />

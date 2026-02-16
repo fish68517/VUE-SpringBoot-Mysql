@@ -278,8 +278,8 @@ const loadTopics = async () => {
       pageNum: topicCurrentPage.value,
       pageSize: 10,
     })
-    const data = response.data
-    topics.value = data.content || []
+    const data = response
+    topics.value = data.items || []
     topicTotalPages.value = data.totalPages || 1
     topicTotalItems.value = data.total || 0
   } catch (err) {
@@ -298,8 +298,8 @@ const loadVotes = async () => {
       pageNum: voteCurrentPage.value,
       pageSize: 10,
     })
-    const data = response.data
-    votes.value = data.content || []
+    const data = response
+    votes.value = data.items || []
     voteTotalPages.value = data.totalPages || 1
     voteTotalItems.value = data.total || 0
   } catch (err) {
@@ -325,7 +325,7 @@ const loadTopicComments = async (topicId) => {
       pageNum: 1,
       pageSize: 20,
     })
-    topicComments.value = response.data.content || []
+    topicComments.value = response.items || []
   } catch (err) {
     console.error('Failed to load topic comments:', err)
   }
@@ -369,10 +369,14 @@ const selectVote = async (vote) => {
 }
 
 // 加载投票统计
+// {"code":200,"message":"操作成功","data":{"id":1,"title":"你最喜欢的壮族刺绣代表性图腾是哪一个？",
+// "description":"我们将根据投票结果，选取最高票的图腾推出文创周边。",
+// "options":["太阳纹","青蛙纹","八角星纹","花蝶纹"],"status":"active","createdAt":"2026-02-15T16:28:43","endAt":"2027-01-01T07:59:59",
+// "statistics":{"太阳纹":2,"八角星纹":1,"青蛙纹":1,"花蝶纹":0},"totalVotes":4}}
 const loadVoteStats = async (voteId) => {
   try {
-    const response = await VoteService.getVoteDetail(voteId)
-    const vote = response.data
+    const response = await VoteService.getVoteStatistics(voteId)
+    const vote = response
 
     // 计算投票统计
     const stats = {}
@@ -380,7 +384,7 @@ const loadVoteStats = async (voteId) => {
 
     if (vote.options && Array.isArray(vote.options)) {
       vote.options.forEach((option) => {
-        const count = vote.voteResults?.[option] || 0
+        const count = vote.statistics?.[option] || 0
         const percentage = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0
         stats[option] = { count, percentage }
       })

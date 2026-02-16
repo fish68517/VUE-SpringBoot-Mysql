@@ -145,7 +145,7 @@ const loadArtworkDetail = async () => {
   try {
     const artworkId = route.params.id
     const response = await ArtworkService.getArtworkDetail(artworkId)
-    artwork.value = response.data
+    artwork.value = response
 
     // 记录浏览
     const userId = authStore.user?.id
@@ -153,6 +153,9 @@ const loadArtworkDetail = async () => {
 
     // 加载评论
     await loadComments(artworkId)
+    //  检差是否已收藏
+    isCollected.value = await ArtworkService.getCollectStatus(artworkId, userId)
+
   } catch (err) {
     console.error('Failed to load artwork detail:', err)
     error('加载作品详情失败')
@@ -169,7 +172,7 @@ const loadComments = async (artworkId) => {
       pageNum: 1,
       pageSize: 20,
     })
-    comments.value = response.data.content || []
+    comments.value = response.items || []
   } catch (err) {
     console.error('Failed to load comments:', err)
   }
@@ -203,6 +206,8 @@ const submitComment = async () => {
     isSubmittingComment.value = false
   }
 }
+
+
 
 // 切换收藏状态
 const toggleCollect = async () => {
@@ -252,6 +257,7 @@ const formatDate = (dateString) => {
 
 onMounted(() => {
   loadArtworkDetail()
+  
 })
 </script>
 

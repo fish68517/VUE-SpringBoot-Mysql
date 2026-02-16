@@ -93,7 +93,7 @@ const { error } = useToast()
 const loadCategories = async () => {
   try {
     const response = await KnowledgeService.getCategories()
-    categories.value = response.data || []
+    categories.value = response || []
   } catch (err) {
     console.error('Failed to load categories:', err)
   }
@@ -114,7 +114,7 @@ const loadKnowledge = async () => {
     }
 
     const response = await KnowledgeService.getKnowledge(params)
-    const data = response.data
+    const data = response
 
     knowledge.value = data.items || []
     totalPages.value = data.totalPages || 1

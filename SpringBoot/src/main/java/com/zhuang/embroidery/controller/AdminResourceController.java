@@ -15,13 +15,9 @@ import com.zhuang.embroidery.service.ArtworkService;
 import com.zhuang.embroidery.service.NewsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * 后台资源管理 API 控制器
@@ -324,6 +320,61 @@ public class AdminResourceController {
         } catch (Exception e) {
             log.error("活动删除异常", e);
             return ApiResponse.serverError("活动删除失败");
+        }
+    }
+
+
+
+
+
+    /**
+     * 获取资讯分页列表
+     */
+    @GetMapping("/news")
+    public ApiResponse<Map<String, Object>> getNewsList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        log.info("查询资讯列表: pageNum={}, pageSize={}", pageNum, pageSize);
+        try {
+            Map<String, Object> pageData = newsService.getNewsPage(pageNum, pageSize);
+            return ApiResponse.success(pageData);
+        } catch (Exception e) {
+            log.error("查询资讯列表异常", e);
+            return ApiResponse.serverError("获取列表失败");
+        }
+    }
+
+    /**
+     * 获取活动分页列表
+     */
+    @GetMapping("/activities")
+    public ApiResponse<Map<String, Object>> getActivityList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        log.info("查询活动列表: pageNum={}, pageSize={}", pageNum, pageSize);
+        try {
+            Map<String, Object> pageData = activityService.getActivityPage(pageNum, pageSize);
+            return ApiResponse.success(pageData);
+        } catch (Exception e) {
+            log.error("查询活动列表异常", e);
+            return ApiResponse.serverError("获取列表失败");
+        }
+    }
+
+    /**
+     * 获取作品分页列表
+     */
+    @GetMapping("/artworks")
+    public ApiResponse<Map<String, Object>> getArtworkList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        log.info("查询作品列表: pageNum={}, pageSize={}", pageNum, pageSize);
+        try {
+            Map<String, Object> pageData = artworkService.getArtworkPage(pageNum, pageSize);
+            return ApiResponse.success(pageData);
+        } catch (Exception e) {
+            log.error("查询作品列表异常", e);
+            return ApiResponse.serverError("获取列表失败");
         }
     }
 }

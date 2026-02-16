@@ -175,7 +175,14 @@ public class VoteService {
         // 验证用户未投过票
         if (voteRecordRepository.findByVoteIdAndUserId(request.getVoteId(), request.getUserId()).isPresent()) {
             log.warn("用户已投过票: voteId={}, userId={}", request.getVoteId(), request.getUserId());
-            throw new IllegalArgumentException("用户已投过票");
+            // 投过票就更新
+              /*  VoteRecord record = voteRecordRepository.findByVoteIdAndUserId(request.getVoteId(), request.getUserId()).get();
+                record.setSelectedOption(request.getSelectedOption());
+                record.setVoteId(request.getVoteId());*/
+                voteRecordRepository.updateSelectedOptionByVoteIdAndUserId(request.getVoteId(), request.getUserId(), request.getSelectedOption());
+                log.info("用户投票更新成功: voteId={}, userId={}", request.getVoteId(), request.getUserId());
+                return;
+
         }
 
         // 验证选项有效

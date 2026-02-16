@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 后台互动管理 API 控制器
  */
 @RestController
-@RequestMapping("/api/admin/interactions")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Slf4j
 public class AdminInteractionController {
