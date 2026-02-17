@@ -17,18 +17,21 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    // 1. 设置为只读副本：通过映射 user_id 列，但禁止 JPA 通过此字段写入
+    @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
+    // 2. 负责实际写入：这个关联对象负责维护数据库中的 user_id 值
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
+    // 3. 同样的处理方式
+    @Column(name = "pattern_id", insertable = false, updatable = false)
     private Long patternId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pattern_id", insertable = false, updatable = false)
+    @JoinColumn(name = "pattern_id")
     private Pattern pattern;
 
     @Column(nullable = false, columnDefinition = "TEXT")

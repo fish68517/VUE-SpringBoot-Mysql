@@ -1,9 +1,0 @@
-com\medical\internship\controller\StatisticsControllerTest.class
-com\medical\internship\controller\PostControllerTest.class
-com\medical\internship\controller\NotificationControllerTest.class
-com\medical\internship\service\ApplicationServiceTest.class
-com\medical\internship\controller\UserControllerTest.class
-com\medical\internship\service\UserServiceTest.class
-com\medical\internship\controller\ApplicationControllerTest.class
-com\medical\internship\service\NotificationServiceTest.class
-com\medical\internship\service\InternshipServiceTest.class
