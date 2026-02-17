@@ -1,8 +1,8 @@
 <template>
   <div class="admin-users">
-    <Header />
+    
     <div class="admin-container">
-      <AdminMenu />
+      
       <div class="users-content">
         <h1>用户管理</h1>
 
@@ -20,7 +20,7 @@
             />
             <select v-model="filterStatus">
               <option value="">全部状态</option>
-              <option value="active">活跃</option>
+              <option value="ACTIVE">活跃</option>
               <option value="disabled">禁用</option>
             </select>
             <button @click="handleSearch" class="btn btn-secondary">搜索</button>
@@ -54,8 +54,8 @@
                   <td>{{ user.email }}</td>
                   <td>{{ user.nickname || '-' }}</td>
                   <td>
-                    <span :class="['status-badge', user.status === 'active' ? 'status-active' : 'status-disabled']">
-                      {{ user.status === 'active' ? '活跃' : '禁用' }}
+                    <span :class="['status-badge', user.status === 'ACTIVE' ? 'status-active' : 'status-disabled']">
+                      {{ user.status === 'ACTIVE' ? '活跃' : '禁用' }}
                     </span>
                   </td>
                   <td>{{ formatDate(user.createdAt) }}</td>
@@ -67,7 +67,7 @@
                       详情
                     </button>
                     <button
-                      v-if="user.status === 'active'"
+                      v-if="user.status === 'ACTIVE'"
                       @click="handleDisableUser(user.id)"
                       class="btn btn-small btn-warning"
                     >
@@ -144,8 +144,8 @@
                   <div class="info-item">
                     <label>状态</label>
                     <p>
-                      <span :class="['status-badge', selectedUser.status === 'active' ? 'status-active' : 'status-disabled']">
-                        {{ selectedUser.status === 'active' ? '活跃' : '禁用' }}
+                      <span :class="['status-badge', selectedUser.status === 'ACTIVE' ? 'status-active' : 'status-disabled']">
+                        {{ selectedUser.status === 'ACTIVE' ? '活跃' : '禁用' }}
                       </span>
                     </p>
                   </div>
@@ -189,16 +189,14 @@
         </div>
       </div>
     </div>
-    <Footer />
+    
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { adminAPI, userAPI } from '../services/api'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
-import AdminMenu from '../components/AdminMenu.vue'
+
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // State
@@ -355,7 +353,7 @@ const handleEnableUser = async (userId) => {
       cancelButtonText: '取消',
       type: 'info'
     })
-    const response = await adminAPI.updateUserStatus(userId, { status: 'active' })
+    const response = await adminAPI.updateUserStatus(userId, { status: 'ACTIVE' })
     if (response.code === 200) {
       ElMessage.success('用户已启用')
       loadUsers()

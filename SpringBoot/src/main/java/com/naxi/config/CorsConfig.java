@@ -6,6 +6,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Collections;
+
 @Configuration
 public class CorsConfig {
 
@@ -14,27 +16,25 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        // 允许的源
-        config.addAllowedOrigin("http://localhost:5173");
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("http://localhost:8080");
+        // 1. 使用 setAllowedOriginPatterns 而不是 addAllowedOrigin
+        // 这能更好地兼容 setAllowCredentials(true)，并支持通配符
+        config.setAllowedOriginPatterns(Collections.singletonList("*"));
 
-        // 允许的HTTP方法
-        config.addAllowedMethod("GET");
-        config.addAllowedMethod("POST");
-        config.addAllowedMethod("PUT");
-        config.addAllowedMethod("DELETE");
-        config.addAllowedMethod("OPTIONS");
+        // 2. 允许所有的 HTTP 方法
+        config.addAllowedMethod("*");
 
-        // 允许的请求头
+        // 3. 允许所有的请求头
         config.addAllowedHeader("*");
 
-        // 是否允许发送Cookie
+        // 4. 必须允许发送 Cookie (如果你前端有登录态需求)
         config.setAllowCredentials(true);
 
-        // 预检请求的缓存时间（秒）
+        // 5. 暴露哪些头信息给前端（例如 Authorization）
+        config.addExposedHeader("*");
+
         config.setMaxAge(3600L);
 
+        // 针对所有路径生效
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }

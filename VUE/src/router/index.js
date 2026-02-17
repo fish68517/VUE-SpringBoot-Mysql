@@ -4,13 +4,19 @@ import { useUserStore } from '../store'
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('../pages/Home.vue')
+    // name: 'Home',
+    redirect: '/login' // 强制重定向到登录页
+    // component: () => import('../pages/Home.vue')
   },
   {
     path: '/patterns',
     name: 'PatternLibrary',
     component: () => import('../pages/PatternLibrary.vue')
+  },
+    {
+    path: '/home',
+    name: 'Home',
+    component: () => import('../pages/Home.vue')
   },
   {
     path: '/patterns/:id',
@@ -92,25 +98,34 @@ const router = createRouter({
   routes
 })
 
+// src/router/index.js
+
 router.beforeEach((to, from, next) => {
-  const userStore = useUserStore()
   const token = localStorage.getItem('token')
-  
-  // Check if route requires authentication
-  if (to.meta.requiresAuth && !token) {
-    // Redirect to login with return URL
-    next({
-      path: '/login',
-      query: { redirect: to.fullPath }
-    })
-  } 
-  // Check if route requires admin role
-  else if (to.meta.requiresAdmin && token) {
-    // Check if user is admin - this will be validated on the backend
-    // For now, we allow the route and let the backend handle authorization
-    next()
-  } 
-  else {
+  const userInfo = JSON.parse(localStorage.getItem('user') || '{}')
+
+  // 如果访问根路径且已登录，按角色分流
+  if (to.path === '/' && token) {
+    if (userInfo.roleId === 1 || userInfo.roleId === 2) {
+      return next('/admin')
+    }
+    return next('/home') // 默认去 Home.vue
+  }
+
+  // 如果访问的是根路径且未登录，强制去登录页 (你之前的要求)
+  if (to.path === '/' && !token) {
+    return next('/login')
+  }
+
+  // 权限守卫：只有管理员能进 /admin 开头的页面
+  if (to.meta.requiresAdmin) {
+    if (token && (userInfo.roleId === 1 || userInfo.roleId === 2)) {
+      next()
+    } else {
+      ElMessage.warning('权限不足，无法进入管理后台')
+      next('/')
+    }
+  } else {
     next()
   }
 })

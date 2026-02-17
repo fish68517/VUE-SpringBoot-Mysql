@@ -17,8 +17,9 @@
 
 <style scoped>
 .admin-menu {
-  background-color: #f5f5f5;
+  background-color: #2b9ada;
   padding: 1rem;
+  width: 200px;
   border-radius: 4px;
 }
 

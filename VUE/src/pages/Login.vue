@@ -108,6 +108,7 @@ const handleLogin = async () => {
       const user = response.data
       
       // Store user info and token in store
+      console.log('登录成功，用户信息：', JSON.stringify(user))
       userStore.setUser(user)
       // Generate a simple token (in real app, backend would return JWT)
       const token = `token_${user.id}_${Date.now()}`
@@ -115,11 +116,16 @@ const handleLogin = async () => {
 
       ElMessage.success('登录成功')
       
-      // Redirect to previous page or home
-      const redirectPath = route.query.redirect || '/'
-      setTimeout(() => {
-        router.push(redirectPath)
-      }, 500)
+      // 3. 根据 roleId 执行条件跳转
+      const roleId = response.data.roleId
+      
+      if (roleId === 1 || roleId === 2) {
+        // 管理员跳转到后台首页
+        router.push('/admin')
+      } else {
+        // 普通用户跳转到前台首页 (Home.vue)
+        router.push('/home')
+      }
     } else {
       ElMessage.error(response.message || '登录失败')
     }

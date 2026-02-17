@@ -1,5 +1,6 @@
 package com.naxi.service;
 
+import com.naxi.common.BusinessException;
 import com.naxi.entity.CreativeWork;
 import com.naxi.entity.User;
 import com.naxi.repository.CreativeWorkRepository;
@@ -20,11 +21,33 @@ public class CreativeWorkService {
     @Autowired
     private UserRepository userRepository;
 
+
+    // src/main/java/com/naxi/service/CreativeWorkService.java
+
+    public CreativeWork saveWork(CreativeWork work) {
+        // 修复核心逻辑：
+        // 即使前端传了 userId，也必须将对应的 User 实体对象注入到 work 中
+        if (work.getUserId() != null) {
+            User user = userRepository.findById(work.getUserId())
+                    .orElseThrow(() -> new BusinessException("用户不存在，无法关联作品"));
+            work.setUser(user); // 这一步解决了 not-null property 报错
+        }
+
+        // 设置其他必要字段
+        work.setStatus(CreativeWork.WorkStatus.PENDING);
+        work.setCreatedAt(LocalDateTime.now());
+        work.setUpdatedAt(LocalDateTime.now());
+
+        return creativeWorkRepository.save(work);
+    }
+
+
     /**
      * 上传原创作品
      */
     public CreativeWork uploadCreativeWork(CreativeWork creativeWork) {
         // 验证用户是否存在
+        System.out.println("上传作品时的 userId: " + creativeWork.getUserId());
         Optional<User> user = userRepository.findById(creativeWork.getUserId());
         if (!user.isPresent()) {
             throw new IllegalArgumentException("用户不存在");
@@ -36,6 +59,7 @@ public class CreativeWorkService {
         creativeWork.setCreatedAt(LocalDateTime.now());
         creativeWork.setUpdatedAt(LocalDateTime.now());
 
+        creativeWork.setUser(user.get()); // 关联 User 实体对象
         return creativeWorkRepository.save(creativeWork);
     }
 

@@ -1,8 +1,8 @@
 <template>
   <div class="admin-patterns">
-    <Header />
+  
     <div class="admin-container">
-      <AdminMenu />
+      
       <div class="patterns-content">
         <h1>纹样管理</h1>
 
@@ -54,22 +54,42 @@
               <label>应用场景</label>
               <textarea
                 v-model="uploadForm.applicationScenarios"
-                placeholder="输入纹样的应用场景"
+                placeholder="输入纹样的应用场景(传统服饰/现代设计/文创产品/其他)"
                 rows="3"
               ></textarea>
             </div>
 
             <div class="form-group">
-              <label>图片URL *</label>
-              <input
-                v-model="uploadForm.imageUrl"
-                type="text"
-                placeholder="输入图片URL"
-                required
-              />
+                  <label>图片 *</label>
+
+                  <!-- 选择文件后自动上传 -->
+                  <input
+                    type="file"
+                    accept="image/*"
+                    @change="handleUploadImage"
+                    :disabled="imageUploading"
+                
+                  />
+
+                  <small v-if="imageUploading">图片上传中，请稍候...</small>
+
+                  <!-- 上传成功后回填的URL（只读） -->
+                  <input
+                    v-model="uploadForm.imageUrl"
+                    type="text"
+                    placeholder="上传后自动生成图片URL"
+                    readonly
+                    required
+                  />
+
+                  <!-- 简单预览（可选） -->
+                  <div v-if="uploadForm.imageUrl" style="margin-top:8px;">
+                    <img :src="uploadForm.imageUrl" alt="预览" style="max-width: 240px; border-radius: 6px;" />
+                  </div>
             </div>
 
-            <div class="form-group">
+
+            <div class="form-group" v-if="false">
               <label>下载URL</label>
               <input
                 v-model="uploadForm.downloadUrl"
@@ -78,9 +98,10 @@
               />
             </div>
 
-            <button type="submit" class="btn btn-primary" :disabled="uploading">
-              {{ uploading ? '上传中...' : '上传纹样' }}
+            <button type="submit" :disabled="uploading || imageUploading">
+              {{ uploading ? '上传中...' : '提交' }}
             </button>
+
           </form>
         </div>
 
@@ -122,7 +143,6 @@
                   <th>名称</th>
                   <th>分类</th>
                   <th>浏览量</th>
-                  <th>下载量</th>
                   <th>收藏量</th>
                   <th>创建时间</th>
                   <th>操作</th>
@@ -134,8 +154,8 @@
                   <td>{{ pattern.name }}</td>
                   <td>{{ pattern.category }}</td>
                   <td>{{ pattern.viewCount }}</td>
-                  <td>{{ pattern.downloadCount }}</td>
                   <td>{{ pattern.collectionCount }}</td>
+                
                   <td>{{ formatDate(pattern.createdAt) }}</td>
                   <td class="actions">
                     <button
@@ -234,12 +254,12 @@
                 <label>应用场景</label>
                 <textarea
                   v-model="editForm.applicationScenarios"
-                  placeholder="输入纹样的应用场景"
-                  rows="3"
+                  placeholder="传统服饰/现代设计/文创产品/其他"
+                  rows="30"
                 ></textarea>
               </div>
 
-              <div class="form-group">
+              <div class="form-group" v-if="false">
                 <label>图片URL *</label>
                 <input
                   v-model="editForm.imageUrl"
@@ -249,7 +269,7 @@
                 />
               </div>
 
-              <div class="form-group">
+              <div class="form-group" v-if="false">
                 <label>下载URL</label>
                 <input
                   v-model="editForm.downloadUrl"
@@ -275,16 +295,14 @@
         </div>
       </div>
     </div>
-    <Footer />
+    
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { patternAPI } from '../services/api'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
-import AdminMenu from '../components/AdminMenu.vue'
+
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // State
@@ -298,6 +316,50 @@ const totalPages = ref(1)
 const searchKeyword = ref('')
 const filterCategory = ref('')
 const showEditModal = ref(false)
+
+// 图片上传状态
+const imageUploading = ref(false)
+
+// 上传图片到后端 /api/common/upload，成功后回填 uploadForm.imageUrl
+const handleUploadImage = async (e) => {
+  const file = e.target.files && e.target.files[0]
+  if (!file) return
+
+
+  imageUploading.value = true
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    console.log('formData：', formData)
+    const resp = await fetch('/api/common/upload', {
+      method: 'POST',
+      body: formData
+    })
+
+    if (!resp.ok) {
+      throw new Error(`上传失败，HTTP ${resp.status}`)
+    }
+
+    const data = await resp.json()
+    // 后端返回 { url: "/images/xxx.png" }
+    if (!data.url) {
+      throw new Error('后端未返回图片 url')
+    }
+
+    uploadForm.value.imageUrl = data.url
+    ElMessage.success('图片上传成功')
+  } catch (err) {
+    ElMessage.error('图片上传失败：' + (err.message || err))
+    uploadForm.value.imageUrl = ''
+  } finally {
+    imageUploading.value = false
+    // 允许同一张图片重复选择时也触发 change
+    e.target.value = ''
+  }
+}
+
+
 
 // Upload form
 const uploadForm = ref({
@@ -381,6 +443,17 @@ const handleSearch = async () => {
 
 // Upload pattern
 const handleUpload = async () => {
+  if (!uploadForm.value.imageUrl) {
+    ElMessage.error('请先上传图片')
+    return
+  }
+  if (imageUploading.value) {
+    ElMessage.warning('图片正在上传，请稍候再提交')
+    return
+  }
+
+
+  console.log('上传表单数据：', uploadForm.value)
   uploading.value = true
   try {
     const response = await patternAPI.createPattern(uploadForm.value)

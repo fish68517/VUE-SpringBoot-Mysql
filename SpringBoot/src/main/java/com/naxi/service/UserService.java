@@ -41,6 +41,8 @@ public class UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
+      user.setRoleId(1L);
+
         return userRepository.save(user);
     }
 

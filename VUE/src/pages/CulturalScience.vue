@@ -295,8 +295,8 @@ const fetchPatterns = async () => {
     }
 
     // Handle paginated response
-    if (response && response.content) {
-      patterns.value = response.content
+    if (response && response.data.content) {
+      patterns.value = response.data.content
       totalItems.value = response.totalElements
     } else if (Array.isArray(response)) {
       patterns.value = response
@@ -329,9 +329,9 @@ const fetchCases = async () => {
     const response = await patternAPI.getPatterns(params)
 
     // Transform patterns into cases by extracting application scenarios
-    if (response && response.content) {
+    if (response && response.data.content) {
       const casesData = []
-      response.content.forEach(pattern => {
+      response.data.content.forEach(pattern => {
         if (pattern.applicationScenarios) {
           const scenarios = pattern.applicationScenarios.split('、').map(s => s.trim())
           scenarios.forEach(scenario => {

@@ -31,7 +31,7 @@
         <button @click="performSearch" class="search-btn">搜索</button>
         <button v-if="isSearching" @click="clearSearch" class="clear-btn">清除搜索</button>
       </div>
-      <div class="filter-group">
+      <div class="filter-group" v-if="false">
         <label>应用场景：</label>
         <select v-model="selectedScenario" @change="applyFilters">
           <option value="">全部场景</option>
@@ -169,7 +169,7 @@ const fetchPatterns = async () => {
       response = await patternAPI.searchPatterns(searchKeyword.value, params)
       
       // Record search operation
-      const resultCount = response && response.content ? response.content.length : 0
+      const resultCount = response && response.data.content ? response.data.content.length : 0
       operationLogService.recordSearch(searchKeyword.value, resultCount)
     } else {
       // Otherwise use regular getPatterns API
@@ -180,8 +180,8 @@ const fetchPatterns = async () => {
     }
     
     // Handle paginated response
-    if (response && response.content) {
-      patterns.value = response.content
+    if (response && response.data.content) {
+      patterns.value = response.data.content
       totalItems.value = response.totalElements
     } else if (Array.isArray(response)) {
       patterns.value = response

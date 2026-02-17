@@ -24,6 +24,13 @@ spring:
       allowed-headers: '*'
       allow-credentials: true
 
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+
 server:
   port: 8080
   servlet:
@@ -35,3 +42,10 @@ logging:
     com.naxi: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# src/main/resources/application.yml
+
+
+jackson:
+  serialization:
+    fail-on-empty-beans: false

@@ -19,6 +19,7 @@ export const useUserStore = defineStore('user', () => {
   // Methods
   const setUser = (userData) => {
     user.value = userData
+    console.log('setUser called with:', JSON.stringify(userData))
     if (userData) {
       localStorage.setItem('user', JSON.stringify(userData))
     } else {
@@ -47,12 +48,22 @@ export const useUserStore = defineStore('user', () => {
     localStorage.setItem('user', JSON.stringify(user.value))
   }
 
+  // getUser
+  const getUser = () => {
+    const userData = localStorage.getItem('user')
+    console.log('获取 userData', JSON.stringify(userData))
+    if (userData) {
+      user.value = JSON.parse(userData)
+    }
+  }
+
   return {
     user,
     token,
     isLoggedIn,
     isAdmin,
     setUser,
+    getUser,
     setToken,
     logout,
     updateUser

@@ -1,8 +1,8 @@
 <template>
   <div class="admin-logs">
-    <Header />
+    
     <div class="admin-container">
-      <AdminMenu />
+      
       <div class="logs-content">
         <h1>日志管理</h1>
 
@@ -145,16 +145,15 @@
         </div>
       </div>
     </div>
-    <Footer />
+    
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { adminAPI } from '../services/api'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
-import AdminMenu from '../components/AdminMenu.vue'
+
+
 import { ElMessage } from 'element-plus'
 
 // State

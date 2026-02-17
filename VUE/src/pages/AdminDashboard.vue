@@ -1,8 +1,8 @@
 <template>
   <div class="admin-dashboard">
-    <Header />
+
     <div class="admin-container">
-      <AdminMenu />
+      
       <div class="dashboard-content">
         <h1>后台仪表板</h1>
         
@@ -86,16 +86,15 @@
         </div>
       </div>
     </div>
-    <Footer />
+    
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { adminAPI } from '../services/api'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
-import AdminMenu from '../components/AdminMenu.vue'
+
+
 import { ElMessage } from 'element-plus'
 
 const statistics = ref({

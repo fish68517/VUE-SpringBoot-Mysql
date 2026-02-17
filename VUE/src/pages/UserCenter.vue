@@ -43,7 +43,7 @@
             <div class="info-item">
               <label>账号状态</label>
               <p :class="['status', currentUser?.status]">
-                {{ currentUser?.status === 'active' ? '正常' : '已禁用' }}
+                {{ currentUser?.status === 'ACTIVE' ? '正常' : '已禁用' }}
               </p>
             </div>
           </div>
@@ -232,9 +232,9 @@ const passwordErrors = reactive({
 const navItems = [
   { id: 'account', label: '账号信息' },
   { id: 'profile', label: '编辑资料' },
-  { id: 'password', label: '修改密码' },
-  { id: 'collections', label: '我的收藏' },
-  { id: 'history', label: '操作历史' }
+  // { id: 'password', label: '修改密码' }
+  // { id: 'collections', label: '我的收藏' }
+  // { id: 'history', label: '操作历史' }
 ]
 
 // Computed

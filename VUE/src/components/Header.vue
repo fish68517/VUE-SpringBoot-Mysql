@@ -14,7 +14,7 @@
 
       <!-- Navigation -->
       <nav class="nav" :class="{ 'mobile-open': mobileMenuOpen }">
-        <router-link to="/" @click="mobileMenuOpen = false">首页</router-link>
+        <router-link to="/home" @click="mobileMenuOpen = false">首页</router-link>
         <router-link to="/patterns" @click="mobileMenuOpen = false">资源库</router-link>
         <router-link to="/science" @click="mobileMenuOpen = false">科普</router-link>
         <router-link to="/works" @click="mobileMenuOpen = false">原创作品</router-link>

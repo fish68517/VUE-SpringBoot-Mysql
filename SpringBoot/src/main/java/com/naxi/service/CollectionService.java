@@ -98,4 +98,9 @@ public class CollectionService {
         Optional<Collection> collection = collectionRepository.findById(collectionId);
         return collection.orElse(null);
     }
+
+
+    public Collection getCollectionByUserIdAndPatternId(Long userId, Long patternId) {
+        return collectionRepository.findByUserIdAndPatternId(userId, patternId);
+    }
 }

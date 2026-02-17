@@ -1,5 +1,6 @@
 package com.naxi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,13 +18,13 @@ public class CreativeWork {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 1. 设置为只读副本：通过映射 user_id 列，但禁止 JPA 通过此字段写入
     @Column(name = "user_id", insertable = false, updatable = false)
-    private Long userId;
+    private Long userId; // 仅供前端读取使用
 
     // 2. 负责实际写入：这个关联对象负责维护数据库中的 user_id 值
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false) // 这里要求 user 对象不能为空
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User user;
 
     @Column(nullable = false)

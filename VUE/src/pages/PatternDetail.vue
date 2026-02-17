@@ -1,7 +1,6 @@
 <template>
   <div class="pattern-detail">
-    <!-- Header -->
-    <Header />
+   
 
     <!-- Back Navigation -->
     <div class="back-nav">
@@ -65,7 +64,7 @@
           </div>
 
           <!-- Application Scenarios -->
-          <div class="section">
+          <div class="section" v-if="false">
             <h2>应用场景</h2>
             <p class="content">{{ pattern.applicationScenarios || '暂无信息' }}</p>
           </div>
@@ -110,8 +109,7 @@
       <button @click="goBack" class="back-btn">返回列表</button>
     </div>
 
-    <!-- Footer -->
-    <Footer />
+   
 
     <!-- Comments Section -->
     <div v-if="pattern" class="comments-section">
@@ -139,14 +137,17 @@ import QuestionList from '../components/QuestionList.vue'
 
 const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
+
 
 // State
 const pattern = ref(null)
+const userData = ref(null)
 const loading = ref(false)
 const isCollected = ref(false)
 const collectingLoading = ref(false)
 const downloadLoading = ref(false)
+
+const userStore = useUserStore()
 
 // Computed
 const isLoggedIn = computed(() => userStore.isLoggedIn)
@@ -177,11 +178,18 @@ const fetchPattern = async () => {
 }
 
 const checkIfCollected = async () => {
+
+   // 直接解析，如果不满足条件则默认为空对象
+  const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = userInfo.id;
   try {
     const collections = await collectionAPI.getCollections({
-      patternId: pattern.value.id
+      patternId: pattern.value.id,
+      userId: userId
     })
-    isCollected.value = collections && collections.length > 0
+    console.log("收藏列表：" + JSON.stringify(collections));
+    isCollected.value = collections && collections.data.length > 0
+    console.log("收藏状态：" + isCollected.value);
   } catch (error) {
     console.error('Failed to check collection status:', error)
   }
@@ -193,16 +201,30 @@ const toggleCollection = async () => {
     router.push('/login')
     return
   }
+ 
 
+  // 直接解析，如果不满足条件则默认为空对象
+  const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
+  const userId = userInfo.id;
+
+  if (!userId) {
+    ElMessage.warning('请先登录');
+    return;
+  }
+
+   // 将 const 改为 let
+  // 打印开始收藏
+  console.log('开始收藏。。。。。', JSON.stringify(userData))
   collectingLoading.value = true
   try {
     if (isCollected.value) {
       // Delete collection
       const collections = await collectionAPI.getCollections({
-        patternId: pattern.value.id
+        patternId: pattern.value.id,
+        userId: userId
       })
-      if (collections && collections.length > 0) {
-        await collectionAPI.deleteCollection(collections[0].id)
+      if (collections && collections.data.length > 0) {
+        await collectionAPI.deleteCollection(collections.data[0].id)
         isCollected.value = false
         pattern.value.collectionCount = Math.max(0, (pattern.value.collectionCount || 1) - 1)
         ElMessage.success('已取消收藏')
@@ -213,7 +235,8 @@ const toggleCollection = async () => {
     } else {
       // Add collection
       await collectionAPI.addCollection({
-        patternId: pattern.value.id
+        patternId: pattern.value.id,
+        userId: userId
       })
       isCollected.value = true
       pattern.value.collectionCount = (pattern.value.collectionCount || 0) + 1

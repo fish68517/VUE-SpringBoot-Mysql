@@ -20,4 +20,9 @@ public class BusinessException extends RuntimeException {
         super(errorCode.getMessage(), cause);
         this.errorCode = errorCode;
     }
+
+    public BusinessException(String errMessage) {
+        	super(errMessage);
+            this.errorCode = ErrorCode.USER_NOT_FOUND;
+    }
 }

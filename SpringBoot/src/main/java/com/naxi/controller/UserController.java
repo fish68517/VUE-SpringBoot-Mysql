@@ -50,6 +50,7 @@ public class UserController {
                 return ApiResponse.error(400, "密码不能为空");
             }
 
+
             User registeredUser = userService.register(username, email, password);
             return ApiResponse.success("注册成功", registeredUser);
         } catch (IllegalArgumentException e) {

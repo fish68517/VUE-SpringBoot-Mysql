@@ -1,8 +1,8 @@
 <template>
   <div class="admin-permissions">
-    <Header />
+    
     <div class="admin-container">
-      <AdminMenu />
+      
       <div class="permissions-content">
         <h1>权限管理</h1>
 
@@ -211,16 +211,14 @@
         </div>
       </div>
     </div>
-    <Footer />
+    
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { adminAPI } from '../services/api'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
-import AdminMenu from '../components/AdminMenu.vue'
+
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // Role management state

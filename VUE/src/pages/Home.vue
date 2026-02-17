@@ -153,28 +153,21 @@ const currentSlide = ref(0)
 
 // Fetch carousel patterns from API
 const fetchCarouselPatterns = async () => {
-  try {
+  try {1
     const response = await patternAPI.getPatterns({ 
       page: 0, 
       size: 4 
     })
     
-    // Handle both direct array and paginated response
-    if (Array.isArray(response)) {
-      carouselPatterns.value = response
-    } else if (response.data && Array.isArray(response.data)) {
-      carouselPatterns.value = response.data
-    } else if (response.content && Array.isArray(response.content)) {
-      carouselPatterns.value = response.content
-    }
-    
-    if (carouselPatterns.value.length === 0) {
-      ElMessage.warning('暂无纹样数据')
+    if (response.code === 200) {
+      // 修正：指向 res.data.content 数组
+      carouselPatterns.value = response.data.content || [] 
     }
   } catch (error) {
-    console.error('Failed to fetch carousel patterns:', error)
-    ElMessage.error('加载纹样数据失败')
+    console.error('获取轮播图失败:', error)
+    carouselPatterns.value = [] // 出错时重置为空数组
   }
+
 }
 
 // Carousel navigation

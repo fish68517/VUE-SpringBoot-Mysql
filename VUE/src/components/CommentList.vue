@@ -134,7 +134,7 @@ const fetchComments = async () => {
   loading.value = true
   try {
     const response = await commentAPI.getComments({
-      patternId: props.patternId,
+      workId: props.patternId,
       page: currentPage.value,
       size: pageSize.value
     })
@@ -162,7 +162,7 @@ const submitComment = async () => {
   try {
     await commentAPI.createComment({
       userId: userStore.user?.id,
-      patternId: props.patternId,
+      workId: props.patternId,
       content: newComment.value.trim()
     })
 

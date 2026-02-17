@@ -51,9 +51,12 @@ public class CommentController {
     public ApiResponse<?> publishComment(@RequestBody Map<String, Object> request) {
         try {
             Long userId = ((Number) request.get("userId")).longValue();
-            Long patternId = ((Number) request.get("patternId")).longValue();
+            Long patternId = ((Number) request.get("workId")).longValue();
             String content = (String) request.get("content");
 
+            System.out.println("发布评论时的 userId: " + userId);
+            System.out.println("发布评论时的 patternId: " + patternId);
+            System.out.println("发布评论时的 content: " + content);
             if (userId == null) {
                 return ApiResponse.error(400, "用户ID不能为空");
             }
@@ -76,7 +79,7 @@ public class CommentController {
                 return ApiResponse.error(2001, "纹样不存在");
             }
 
-            Comment comment = commentService.publishComment(userId, patternId, content);
+            Comment comment = commentService.publishComment(user,userId, patternId, content);
             return ApiResponse.success("评论发布成功", comment);
         } catch (Exception e) {
             return ApiResponse.error(500, "发布评论失败: " + e.getMessage());
@@ -89,22 +92,22 @@ public class CommentController {
      */
     @GetMapping
     public ApiResponse<?> getComments(
-            @RequestParam Long patternId,
+            @RequestParam Long workId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
-            if (patternId == null) {
+            if (workId == null) {
                 return ApiResponse.error(400, "纹样ID不能为空");
             }
 
             // 验证纹样是否存在
-            Pattern pattern = patternService.getPatternById(patternId);
+            Pattern pattern = patternService.getPatternById(workId);
             if (pattern == null) {
                 return ApiResponse.error(2001, "纹样不存在");
             }
 
             Pageable pageable = PageRequest.of(page, size);
-            Page<Comment> comments = commentService.getPatternComments(patternId, pageable);
+            Page<Comment> comments = commentService.getPatternComments(workId, pageable);
 
             // 构建响应数据，包含用户信息
             List<Map<String, Object>> response = new ArrayList<>();

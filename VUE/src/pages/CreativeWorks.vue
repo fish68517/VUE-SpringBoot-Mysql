@@ -251,6 +251,8 @@ import { ElMessage } from 'element-plus'
 import { workAPI, commentAPI } from '../services/api'
 import { useUserStore } from '../store'
 
+import axios from 'axios' // 1. 必须引入 axios
+
 const userStore = useUserStore()
 const imageInput = ref(null)
 
@@ -292,32 +294,42 @@ const triggerImageInput = () => {
   imageInput.value?.click()
 }
 
-const handleImageSelect = (event) => {
-  const file = event.target.files?.[0]
-  if (!file) return
+// src/pages/CreativeWorks.vue
 
-  // Validate file type
-  if (!file.type.startsWith('image/')) {
-    uploadErrors.image = '请选择图片文件'
-    return
-  }
+const handleImageSelect = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
 
-  // Validate file size (5MB)
+  // 校验文件大小和类型 (5MB)
   if (file.size > 5 * 1024 * 1024) {
-    uploadErrors.image = '图片大小不能超过 5MB'
-    return
+    uploadErrors.value.image = '图片大小不能超过 5MB';
+    return;
   }
 
-  uploadErrors.image = ''
-  selectedFile.value = file
+  const formData = new FormData();
+  formData.append('file', file);
 
-  // Create preview
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    imagePreview.value = e.target?.result || ''
+  try {
+    // 假设后端上传接口为 /api/common/upload
+    const res = await axios.post('/api/common/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+
+    console.log('上传成功：', res.data);
+    
+    // 3. 修复点：reactive 对象没有 .value！直接赋值
+    if (res != null ) {
+      uploadForm.imageUrl = res.data.url // 去掉 .value
+      imagePreview.value = URL.createObjectURL(file)
+      ElMessage.success('图片上传成功')
+    } else {
+      ElMessage.error(res.data.message || '上传失败')
+    }
+  } catch (error) {
+    console.error('图片上传失败:', error);
+    ElMessage.error('图片上传失败');
   }
-  reader.readAsDataURL(file)
-}
+};
 
 const removeImage = () => {
   imagePreview.value = ''
@@ -377,7 +389,7 @@ const handleUploadWork = async () => {
       userId: userId,
       title: uploadForm.title.trim(),
       description: uploadForm.description.trim(),
-      imageUrl: base64Image
+      imageUrl: uploadForm.imageUrl,
     })
 
     if (response.code === 200) {

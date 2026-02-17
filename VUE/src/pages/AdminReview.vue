@@ -1,8 +1,8 @@
 <template>
   <div class="admin-review">
-    <Header />
+    
     <div class="admin-container">
-      <AdminMenu />
+      
       <div class="review-content">
         <h1>内容审核</h1>
 
@@ -200,7 +200,7 @@
         </div>
       </div>
     </div>
-    <Footer />
+    
   </div>
 </template>
 
@@ -208,9 +208,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { workAPI, commentAPI } from '../services/api'
 import api from '../services/api'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
-import AdminMenu from '../components/AdminMenu.vue'
+
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 // State
