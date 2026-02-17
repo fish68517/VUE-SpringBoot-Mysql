@@ -1,13 +1,6 @@
 package com.zhuang.embroidery.controller;
 
-import com.zhuang.embroidery.dto.ApiResponse;
-import com.zhuang.embroidery.dto.CommentCreateRequest;
-import com.zhuang.embroidery.dto.CommentListResponse;
-import com.zhuang.embroidery.dto.CommentResponse;
-import com.zhuang.embroidery.dto.FeedbackListResponse;
-import com.zhuang.embroidery.dto.TopicListResponse;
-import com.zhuang.embroidery.dto.TopicResponse;
-import com.zhuang.embroidery.dto.VoteStatisticsResponse;
+import com.zhuang.embroidery.dto.*;
 import com.zhuang.embroidery.service.CommentService;
 import com.zhuang.embroidery.service.FeedbackService;
 import com.zhuang.embroidery.service.TopicService;
@@ -89,6 +82,31 @@ public class AdminInteractionController {
         } catch (Exception e) {
             log.error("评论删除异常", e);
             return ApiResponse.serverError("评论删除失败");
+        }
+    }
+
+
+    /**
+     * 处理反馈（将待处理标记为已处理）
+     *
+     * @param feedbackId 反馈ID
+     * @return 成功响应
+     */
+    @PostMapping("/feedback/{feedbackId}/process")
+    public ApiResponse<Void> processFeedback(@PathVariable Long feedbackId) {
+        log.info("处理用户反馈: feedbackId={}", feedbackId);
+
+        try {
+            // 调用 service 层的处理逻辑
+            feedbackService.processFeedback(feedbackId);
+            log.info("反馈处理成功: feedbackId={}", feedbackId);
+            return ApiResponse.success();
+        } catch (IllegalArgumentException e) {
+            log.warn("反馈处理失败: {}", e.getMessage());
+            return ApiResponse.badRequest(e.getMessage());
+        } catch (Exception e) {
+            log.error("反馈处理异常", e);
+            return ApiResponse.serverError("反馈处理失败");
         }
     }
 
@@ -220,6 +238,38 @@ public class AdminInteractionController {
     }
 
     // ==================== 反馈管理接口 ====================
+
+    //     GEThttp://localhost:8080/api/admin/votes?pageNum=1&pageSize=10
+
+
+
+    /**
+     * 获取投票列表 (分页)
+     *
+     * @param pageNum 页码（默认1）
+     * @param pageSize 每页数量（默认10）
+     * @return 投票列表响应
+     */
+    @GetMapping("/votes")
+    public ApiResponse<VoteListResponse> getVoteList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        log.info("获取投票列表: pageNum={}, pageSize={}", pageNum, pageSize);
+
+        try {
+            VoteListResponse response = voteService.getVoteList(pageNum, pageSize);
+            log.info("成功获取投票列表: total={}", response.getTotal());
+            return ApiResponse.success(response);
+        } catch (IllegalArgumentException e) {
+            log.warn("获取投票列表失败: {}", e.getMessage());
+            return ApiResponse.badRequest(e.getMessage());
+        } catch (Exception e) {
+            log.error("获取投票列表异常", e);
+            return ApiResponse.serverError("获取投票列表失败");
+        }
+    }
+
+
 
     /**
      * 获取反馈列表

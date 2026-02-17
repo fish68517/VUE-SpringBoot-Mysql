@@ -20,6 +20,11 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('userRole', userData.role || 'user')
   }
 
+  // getUser
+  const getUser = () => {
+    return user.value
+  }
+
   const logout = () => {
     user.value = null
     isLoggedIn.value = false
@@ -45,6 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAdmin,
     setUser,
     logout,
+    getUser,
     loadUserFromStorage,
   }
 })

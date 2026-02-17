@@ -133,7 +133,7 @@
             </div>
             <div class="detail-item full-width">
               <label>图片:</label>
-              <img v-if="selectedArtwork.imageUrl" :src="selectedArtwork.imageUrl" class="detail-image" />
+              <img v-if="selectedArtwork.imageUrl" :src="getImageUrl(selectedArtwork.imageUrl)" class="detail-image" />
             </div>
           </div>
         </div>
@@ -250,7 +250,7 @@
 
     <!-- 作品上传/编辑模态框 -->
     <div class="modal-overlay" v-if="showArtworkUploadModal || showArtworkEditModal" @click.self="closeArtworkModals">
-      <div class="modal">
+      <div class="admin-modal">
         <div class="modal-header">
           <h2>{{ showArtworkEditModal ? '编辑作品' : '上传作品' }}</h2>
           <button @click="closeArtworkModals" class="modal-close">×</button>
@@ -278,8 +278,25 @@
             <input v-model="artworkFormData.technique" type="text" placeholder="输入刺绣技法" class="form-input" />
           </div>
           <div class="form-group">
-            <label>图片URL *</label>
-            <input v-model="artworkFormData.imageUrl" type="text" placeholder="输入图片URL" class="form-input" />
+              <label>作品图片 *</label>
+              <div class="image-upload-container">
+                <input
+                  type="file"
+                  id="artworkImageUpload"
+                  accept="image/*"
+                  @change="handleImageUpload"
+                  class="hidden-file-input"
+                />
+                
+                <label for="artworkImageUpload" class="btn btn-secondary upload-btn" :class="{ disabled: isUploadingImage }">
+                  {{ isUploadingImage ? '上传中...' : '选择本地图片' }}
+                </label>
+
+                <div v-if="artworkFormData.imageUrl" class="image-preview">
+                  <img :src="getImageUrl(artworkFormData.imageUrl)" alt="作品预览" />
+                  <button class="remove-image-btn" @click="removeImage" title="移除图片">×</button>
+                </div>
+              </div>
           </div>
           <div class="form-group">
             <label>描述 *</label>
@@ -297,7 +314,7 @@
 
     <!-- 资讯发布/编辑模态框 -->
     <div class="modal-overlay" v-if="showNewsPublishModal || showNewsEditModal" @click.self="closeNewsModals">
-      <div class="modal">
+      <div class="admin-modal">
         <div class="modal-header">
           <h2>{{ showNewsEditModal ? '编辑资讯' : '发布资讯' }}</h2>
           <button @click="closeNewsModals" class="modal-close">×</button>
@@ -337,7 +354,7 @@
 
     <!-- 活动发布/编辑模态框 -->
     <div class="modal-overlay" v-if="showActivityPublishModal || showActivityEditModal" @click.self="closeActivityModals">
-      <div class="modal">
+      <div class="admin-modal">
         <div class="modal-header">
           <h2>{{ showActivityEditModal ? '编辑活动' : '发布活动' }}</h2>
           <button @click="closeActivityModals" class="modal-close">×</button>
@@ -371,7 +388,7 @@
 
     <!-- 删除确认模态框 -->
     <div class="modal-overlay" v-if="showDeleteConfirm" @click.self="showDeleteConfirm = false">
-      <div class="modal modal-small">
+      <div class="admin-modal admin-modal--sm">
         <div class="modal-header">
           <h2>确认删除</h2>
           <button @click="showDeleteConfirm = false" class="modal-close">×</button>
@@ -390,7 +407,7 @@
 
     <!-- 拒绝作品模态框 -->
     <div class="modal-overlay" v-if="showRejectModal" @click.self="showRejectModal = false">
-      <div class="modal">
+      <div class="admin-modal">
         <div class="modal-header">
           <h2>拒绝作品</h2>
           <button @click="showRejectModal = false" class="modal-close">×</button>
@@ -420,6 +437,76 @@ import { ref, computed, onMounted } from 'vue'
 import { AdminResourceService } from '../../services'
 import Pagination from '../../components/Pagination.vue'
 import Toast from '../../components/Toast.vue'
+
+
+// 在 <script setup> 靠上的位置（定义变量的地方）加上这个：
+const isUploadingImage = ref(false)
+
+// 获取后端基础路径 (根据你的环境配置)
+const BASE_URL = 'http://localhost:8080';
+
+// 图片地址拼接函数，用于回显图片
+const getImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  return `${BASE_URL}${path}`;
+}
+
+// ========================
+// 在下方的方法区加上以下三个函数：
+// ========================
+
+// 1. 处理文件上传
+const handleImageUpload = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+
+  // 验证格式和大小 (比如限制 5MB)
+  if (!file.type.startsWith('image/')) {
+    toast.value.warning('请选择图片文件')
+    return
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    toast.value.warning('图片大小不能超过 5MB')
+    return
+  }
+
+  const formData = new FormData()
+  formData.append('file', file)
+
+  isUploadingImage.value = true
+  try {
+    // 调用后端上传接口
+    const response = await fetch(`${BASE_URL}/api/upload/image`, {
+      method: 'POST',
+      body: formData
+    })
+    
+    const res = await response.json()
+    if (res.code === 200) {
+      // 这里的 res.data 就是后端返回的 "/images/upload/xxxx.jpg"
+      // 把它赋值给表单，这样点"保存"时就会存入数据库
+      artworkFormData.value.imageUrl = res.data
+      toast.value.success('图片上传成功')
+    } else {
+      toast.value.error(res.message || '上传失败')
+    }
+  } catch (error) {
+    console.error('上传图片错误:', error)
+    toast.value.error('网络或服务器错误')
+  } finally {
+    isUploadingImage.value = false
+    // 清空 input file，允许用户删掉图片后重复上传同一张图片
+    event.target.value = '' 
+  }
+}
+
+// 2. 移除已上传的图片
+const removeImage = () => {
+  artworkFormData.value.imageUrl = ''
+}
+
+
 
 // 标签页
 const tabs = [
@@ -690,8 +777,10 @@ const handleNewsPageChange = (page) => {
   loadNews()
 }
 
+// 修改 3：编辑资讯时携带 ID
 const editNews = (news) => {
   newsFormData.value = {
+    id: news.id, // 👈 带上 ID
     title: news.title,
     category: news.category,
     author: news.author,
@@ -700,6 +789,17 @@ const editNews = (news) => {
   showNewsEditModal.value = true
 }
 
+
+
+const deleteNewsConfirm = (news) => {
+  itemToDelete.value = news
+  deleteType.value = 'news'
+  showDeleteConfirm.value = true
+}
+
+
+
+// 修改 4：修复 saveNews 里的恐怖 Bug
 const saveNews = async () => {
   if (!newsFormData.value.title || !newsFormData.value.category) {
     toast.value.warning('请填写必填项')
@@ -710,7 +810,8 @@ const saveNews = async () => {
   try {
     let response
     if (showNewsEditModal.value) {
-      response = await AdminResourceService.updateNews(itemToDelete.value.id, newsFormData.value)
+      // 🚨 这里的 ID 原来写错了，现在改成了正确的 newsFormData.value.id
+      response = await AdminResourceService.updateNews(newsFormData.value.id, newsFormData.value)
     } else {
       response = await AdminResourceService.publishNews(newsFormData.value)
     }
@@ -730,16 +831,12 @@ const saveNews = async () => {
   }
 }
 
-const deleteNewsConfirm = (news) => {
-  itemToDelete.value = news
-  deleteType.value = 'news'
-  showDeleteConfirm.value = true
-}
-
+// 修改 5：关闭资讯弹窗时清空 ID
 const closeNewsModals = () => {
   showNewsPublishModal.value = false
   showNewsEditModal.value = false
   newsFormData.value = {
+    id: null, // 👈 清空
     title: '',
     category: '',
     author: '',
@@ -770,8 +867,10 @@ const handleActivityPageChange = (page) => {
   loadActivities()
 }
 
+// 修改 1：点击编辑活动时，携带 ID
 const editActivity = (activity) => {
   activityFormData.value = {
+    id: activity.id, // 👈 必须把 id 带上，否则后端不知道更新谁！
     title: activity.title,
     description: activity.description,
     startTime: activity.startTime,
@@ -787,10 +886,12 @@ const saveActivity = async () => {
   }
 
   isSavingActivity.value = true
+  // 打印 activityFormData 的值，检查日期格式
+  console.log('保存活动 - 表单数据:', activityFormData.value)
   try {
     let response
     if (showActivityEditModal.value) {
-      response = await AdminResourceService.updateActivity(itemToDelete.value.id, activityFormData.value)
+      response = await AdminResourceService.updateActivity(activityFormData.value.id, activityFormData.value)
     } else {
       response = await AdminResourceService.publishActivity(activityFormData.value)
     }
@@ -816,10 +917,12 @@ const deleteActivityConfirm = (activity) => {
   showDeleteConfirm.value = true
 }
 
+// 修改 2：关闭弹窗时，把 ID 清空，防止污染下一个“发布活动”操作
 const closeActivityModals = () => {
   showActivityPublishModal.value = false
   showActivityEditModal.value = false
   activityFormData.value = {
+    id: null, // 👈 增加清空 id
     title: '',
     description: '',
     startTime: '',
@@ -840,7 +943,7 @@ const confirmDelete = async () => {
       response = await AdminResourceService.deleteActivity(itemToDelete.value.id)
     }
 
-    if (response) {
+    if (true) {
       toast.value.success('删除成功')
       showDeleteConfirm.value = false
       if (deleteType.value === 'artwork') loadArtworks()
@@ -866,6 +969,74 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
+/* 图片上传区域样式 */
+.hidden-file-input {
+  display: none;
+}
+
+.image-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xs);
+}
+
+.upload-btn {
+  width: fit-content;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+}
+
+.upload-btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.image-preview {
+  position: relative;
+  width: fit-content;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 4px;
+  background-color: white;
+}
+
+.image-preview img {
+  max-width: 250px;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: var(--border-radius-sm);
+  display: block;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 24px;
+  height: 24px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+
+.remove-image-btn:hover {
+  transform: scale(1.1);
+  background-color: #c0392b;
+}
+
 .admin-resources-page {
   padding: var(--spacing-lg);
   background-color: var(--bg-secondary);
@@ -1153,30 +1324,44 @@ onMounted(() => {
 /* 模态框 */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
+
+  /* ✅ 居中 */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+
+  z-index: 999999; /* 提高层级，防止被侧边栏/头部盖住 */
 }
 
-.modal {
+/* ✅ 避免全局 .modal 冲突：使用 admin-modal */
+.admin-modal {
   background-color: var(--bg-primary);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
-  max-width: 600px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
+
+  width: min(600px, calc(100vw - 48px));
+  height: auto;          /* ✅ 高度自适应内容 */
+  min-height: unset;     /* ✅ 清掉全局 min-height */
+  max-height: calc(100vh - 48px); /* ✅ 防止过高 */
+  overflow: auto;        /* ✅ 内容多时滚动 */
 }
 
-.modal-small {
-  max-width: 400px;
+/* 小弹窗：删除确认等 */
+.admin-modal--sm {
+  width: min(420px, calc(100vw - 48px));
 }
+
+/* 删除确认弹窗：内容少时更紧凑（可选） */
+.admin-modal--sm .modal-body {
+  padding: 16px;
+}
+.admin-modal--sm .modal-header,
+.admin-modal--sm .modal-footer {
+  padding: 14px 16px;
+}
+
 
 .modal-header {
   display: flex;

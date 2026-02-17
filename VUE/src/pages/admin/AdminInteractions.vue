@@ -30,7 +30,7 @@
               <th>ID</th>
               <th>用户</th>
               <th>内容</th>
-              <th>目标类型</th>
+            
               <th>创建时间</th>
               <th>操作</th>
             </tr>
@@ -41,9 +41,9 @@
             </tr>
             <tr v-for="comment in comments" :key="comment.id" class="interaction-row">
               <td>{{ comment.id }}</td>
-              <td>{{ comment.userName || '匿名用户' }}</td>
+              <td>{{ comment.username || '匿名用户' }}</td>
               <td class="content-cell">{{ truncateText(comment.content, 50) }}</td>
-              <td>{{ comment.targetType || '-' }}</td>
+              
               <td>{{ formatDate(comment.createdAt) }}</td>
               <td class="action-cell">
                 <button @click="viewCommentDetail(comment)" class="btn-action btn-view" title="查看">
@@ -155,7 +155,7 @@
               <th>ID</th>
               <th>投票标题</th>
               <th>状态</th>
-              <th>参与人数</th>
+              
               <th>创建时间</th>
               <th>操作</th>
             </tr>
@@ -172,7 +172,7 @@
                   {{ vote.status === 'active' ? '进行中' : '已结束' }}
                 </span>
               </td>
-              <td>{{ vote.participantCount || 0 }}</td>
+              
               <td>{{ formatDate(vote.createdAt) }}</td>
               <td class="action-cell">
                 <button @click="viewVoteStats(vote)" class="btn-action btn-view" title="查看统计">
@@ -230,6 +230,16 @@
                 <button @click="viewFeedbackDetail(feedback)" class="btn-action btn-view" title="查看">
                   👁️
                 </button>
+
+
+                <button 
+                  v-if="feedback.status === 'pending'" 
+                  @click="processFeedback(feedback)" 
+                  class="btn-action btn-approve" 
+                  title="标记为已处理"
+                >
+                  ✅
+                </button>
               </td>
             </tr>
           </tbody>
@@ -247,7 +257,7 @@
 
     <!-- 评论详情模态框 -->
     <div class="modal-overlay" v-if="showCommentDetailModal" @click.self="showCommentDetailModal = false">
-      <div class="modal">
+      <div class="admin-modal">
         <div class="modal-header">
           <h2>评论详情</h2>
           <button @click="showCommentDetailModal = false" class="modal-close">×</button>
@@ -259,16 +269,13 @@
           </div>
           <div class="detail-item">
             <label>用户:</label>
-            <span>{{ selectedComment.userName || '匿名用户' }}</span>
+            <span>{{ selectedComment.username || '匿名用户' }}</span>
           </div>
           <div class="detail-item">
             <label>内容:</label>
             <span class="content-text">{{ selectedComment.content }}</span>
           </div>
-          <div class="detail-item">
-            <label>目标类型:</label>
-            <span>{{ selectedComment.targetType || '-' }}</span>
-          </div>
+       
           <div class="detail-item">
             <label>创建时间:</label>
             <span>{{ formatDate(selectedComment.createdAt) }}</span>
@@ -282,7 +289,7 @@
 
     <!-- 评论回复模态框 -->
     <div class="modal-overlay" v-if="showCommentReplyModal" @click.self="showCommentReplyModal = false">
-      <div class="modal">
+      <div class="admin-modal">
         <div class="modal-header">
           <h2>回复评论</h2>
           <button @click="showCommentReplyModal = false" class="modal-close">×</button>
@@ -313,7 +320,7 @@
 
     <!-- 话题详情模态框 -->
     <div class="modal-overlay" v-if="showTopicDetailModal" @click.self="showTopicDetailModal = false">
-      <div class="modal">
+      <div class="admin-modal">
         <div class="modal-header">
           <h2>话题详情</h2>
           <button @click="showTopicDetailModal = false" class="modal-close">×</button>
@@ -354,7 +361,7 @@
 
     <!-- 投票统计模态框 -->
     <div class="modal-overlay" v-if="showVoteStatsModal" @click.self="showVoteStatsModal = false">
-      <div class="modal modal-large">
+      <div class="admin-modal admin-modal--lg">
         <div class="modal-header">
           <h2>投票统计</h2>
           <button @click="showVoteStatsModal = false" class="modal-close">×</button>
@@ -362,42 +369,44 @@
         <div class="modal-body">
           <div class="detail-item">
             <label>投票标题:</label>
-            <span>{{ selectedVote.title }}</span>
+            <span>{{ voteStats.title }}</span>
           </div>
           <div class="detail-item">
             <label>投票描述:</label>
-            <span class="content-text">{{ selectedVote.description }}</span>
+            <span class="content-text">{{ voteStats.description }}</span>
           </div>
           <div class="detail-item">
             <label>状态:</label>
-            <span class="status-badge" :class="`status-${selectedVote.status}`">
-              {{ selectedVote.status === 'active' ? '进行中' : '已结束' }}
+            <span class="status-badge" :class="`status-${voteStats.status}`">
+              {{ voteStats.status === 'active' ? '进行中' : '已结束' }}
             </span>
           </div>
           <div class="detail-item">
             <label>参与人数:</label>
-            <span>{{ selectedVote.participantCount || 0 }}</span>
+            <span>{{ voteStats.totalVotes || 0 }}</span>
           </div>
 
           <!-- 投票选项统计 -->
           <div class="vote-stats-section" v-if="voteStats && voteStats.options">
             <h3>投票选项统计</h3>
-            <div v-for="option in voteStats.options" :key="option.id" class="vote-option-stat">
+            <div v-for="(option, index) in voteStats.options" :key="index" class="vote-option-stat">
               <div class="option-header">
-                <span class="option-name">{{ option.name }}</span>
-                <span class="option-count">{{ option.count }} 票</span>
+                <span class="option-name">{{ option }}</span>
+                <span class="option-count">{{ voteStats.statistics[option] || 0 }} 票</span>
               </div>
               <div class="option-bar">
                 <div
                   class="option-progress"
-                  :style="{ width: calculatePercentage(option.count, selectedVote.participantCount) + '%' }"
+                  :style="{ width: calculatePercentage(voteStats.statistics[option] || 0, voteStats.totalVotes) + '%' }"
                 ></div>
               </div>
               <span class="option-percentage">
-                {{ calculatePercentage(option.count, selectedVote.participantCount) }}%
+                {{ calculatePercentage(voteStats.statistics[option] || 0, voteStats.totalVotes) }}%
               </span>
             </div>
           </div>
+
+
         </div>
         <div class="modal-footer">
           <button @click="showVoteStatsModal = false" class="btn btn-secondary">关闭</button>
@@ -407,7 +416,7 @@
 
     <!-- 反馈详情模态框 -->
     <div class="modal-overlay" v-if="showFeedbackDetailModal" @click.self="showFeedbackDetailModal = false">
-      <div class="modal">
+      <div class="admin-modal">
         <div class="modal-header">
           <h2>反馈详情</h2>
           <button @click="showFeedbackDetailModal = false" class="modal-close">×</button>
@@ -444,7 +453,7 @@
 
     <!-- 删除确认模态框 -->
     <div class="modal-overlay" v-if="showDeleteConfirm" @click.self="showDeleteConfirm = false">
-      <div class="modal modal-small">
+      <div class="admin-modal admin-modal--sm">
         <div class="modal-header">
           <h2>确认删除</h2>
           <button @click="showDeleteConfirm = false" class="modal-close">×</button>
@@ -471,6 +480,45 @@ import { ref, computed, onMounted } from 'vue'
 import { AdminInteractionService } from '../../services'
 import Pagination from '../../components/Pagination.vue'
 import Toast from '../../components/Toast.vue'
+import { useAuthStore } from '../../stores/authStore'
+
+
+// ===== 反馈处理方法 =====
+
+// ... 保留原来的 loadFeedback, handleFeedbackPageChange, viewFeedbackDetail 等方法 ...
+
+// ✨ 新增：处理反馈的方法
+const processFeedback = async (feedback) => {
+  try {
+    // 调用后端处理接口
+    const response = await AdminInteractionService.processFeedback(feedback.id)
+    if (true) {
+      toast.value.success('反馈已成功标记为已处理！')
+      loadFeedback() // 重新加载列表，刷新状态
+    } else {
+      toast.value.error('处理失败')
+    }
+  } catch (error) {
+    console.error('处理反馈错误:', error)
+    toast.value.error('处理反馈失败')
+  }
+}
+
+
+const getVoteCount = (opt) => {
+  const stats = selectedVote.value?.statistics || {}
+  const n = stats[opt]
+  return Number.isFinite(Number(n)) ? Number(n) : 0
+}
+
+const getVotePercent = (opt) => {
+  const total = Number(selectedVote.value?.totalVotes ?? 0)
+  if (total <= 0) return 0
+  const count = getVoteCount(opt)
+  // 四舍五入到整数百分比；你也可以保留 1 位小数
+  return Math.round((count / total) * 100)
+}
+
 
 // 标签页
 const tabs = [
@@ -496,6 +544,9 @@ const isReplying = ref(false)
 const replyData = ref({
   content: ''
 })
+
+
+const authStore = useAuthStore()
 
 // ===== 话题管理状态 =====
 const topics = ref([])
@@ -590,6 +641,12 @@ const submitReply = async () => {
     toast.value.warning('请输入回复内容')
     return
   }
+  // 增加当前用户id
+
+  console.log('当前用户:', authStore.getUser()) // 调试输出
+  const userId = authStore.getUser().id
+  
+  replyData.value.userId = userId
 
   isReplying.value = true
   try {
@@ -706,6 +763,7 @@ const viewVoteStats = async (vote) => {
   selectedVote.value = vote
   try {
     const response = await AdminInteractionService.getVoteStats(vote.id)
+    console.log('viewVoteStats =', JSON.stringify(response))
     if (response) {
       voteStats.value = response
       showVoteStatsModal.value = true
@@ -757,7 +815,7 @@ const confirmDelete = async () => {
       response = await AdminInteractionService.deleteTopic(itemToDelete.value.id)
     }
 
-    if (response) {
+    if (true) {
       toast.value.success('删除成功')
       showDeleteConfirm.value = false
       if (deleteType.value === 'comment') loadComments()
@@ -1026,34 +1084,52 @@ coped>
 /* 模态框 */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
+
+  /* ✅ 居中 */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+
+  z-index: 999999; /* 提高层级，防止被侧边栏/头部盖住 */
 }
 
-.modal {
+/* ✅ 避免全局 .modal 冲突：使用 admin-modal */
+.admin-modal {
   background-color: var(--bg-primary);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
+
+  width: min(600px, calc(100vw - 48px));
+  height: auto;          /* ✅ 高度自适应内容 */
+  min-height: unset;     /* ✅ 清掉全局 min-height */
+  max-height: calc(100vh - 48px); /* ✅ 防止过高 */
+  overflow: auto;        /* ✅ 内容多时滚动 */
 }
 
-.modal-large {
-  max-width: 700px;
+/* 小弹窗：删除确认等 */
+.admin-modal--sm {
+  width: min(420px, calc(100vw - 48px));
 }
 
-.modal-small {
+/* 删除确认弹窗：内容少时更紧凑（可选） */
+.admin-modal--sm .modal-body {
+  padding: 16px;
+}
+.admin-modal--sm .modal-header,
+.admin-modal--sm .modal-footer {
+  padding: 14px 16px;
+}
+
+
+.admin-modal--lg {
+  width: min(700px, calc(100vw - 48px));
+}
+
+/* .admin-modal--sm {
   max-width: 400px;
-}
+} */
 
 .modal-header {
   display: flex;
@@ -1239,12 +1315,11 @@ coped>
     flex-direction: column;
   }
 
-  .modal {
-    max-width: 95%;
+    .admin-modal {
+    width: min(600px, calc(100vw - 24px));
   }
-
-  .modal-large {
-    max-width: 95%;
+  .admin-modal--lg {
+    width: min(700px, calc(100vw - 24px));
   }
 }
 </style>

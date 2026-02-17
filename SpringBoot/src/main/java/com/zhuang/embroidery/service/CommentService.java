@@ -31,7 +31,7 @@ public class CommentService {
     private final UserRepository userRepository;
 
     /**
-     * 获取评论列表（按作品或话题）
+     * 获取评论列表（支持按作品、话题筛选，或获取全站所有评论）
      *
      * @param artworkId 作品ID（可选）
      * @param topicId 话题ID（可选）
@@ -45,17 +45,20 @@ public class CommentService {
         // 验证分页参数
         PageUtil pageUtil = PageUtil.validate(pageNum, pageSize);
 
-        // 创建分页对象
+        // 创建分页对象 (注意 JPA 页码从 0 开始)
         Pageable pageable = PageRequest.of(pageUtil.getPageNum() - 1, pageUtil.getPageSize());
 
         // 查询评论
         Page<Comment> page;
         if (artworkId != null && artworkId > 0) {
+            // 如果传了作品 ID，只查该作品下的评论
             page = commentRepository.findByArtworkId(artworkId, pageable);
         } else if (topicId != null && topicId > 0) {
+            // 如果传了话题 ID，只查该话题下的评论
             page = commentRepository.findByTopicId(topicId, pageable);
         } else {
-            throw new IllegalArgumentException("作品ID或话题ID不能为空");
+            // 🌟 核心修改：如果都不传，不再抛出异常报错，而是直接查询数据库里所有的评论
+            page = commentRepository.findAll(pageable);
         }
 
         // 构建响应
@@ -63,7 +66,7 @@ public class CommentService {
                 .stream()
                 .map(comment -> {
                     String username = userRepository.findById(comment.getUserId())
-                            .map(User::getUsername)
+                            .map(User::getUsername) // 假设你的 User 实体有 getUsername 方法
                             .orElse("未知用户");
                     return CommentResponse.fromComment(comment, username);
                 })
@@ -145,7 +148,7 @@ public class CommentService {
      */
     @Transactional
     public CommentResponse replyComment(CommentCreateRequest request) {
-        log.info("回复评论: userId={}, parentId={}", request.getUserId(), request.getParentId());
+        log.info("回复评论000: userId={}, parentId={}", request.getUserId(), request.getParentId());
 
         // 验证参数
         if (request.getParentId() == null || request.getParentId() <= 0) {

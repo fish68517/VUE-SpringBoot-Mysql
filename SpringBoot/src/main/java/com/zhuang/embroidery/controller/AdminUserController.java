@@ -43,11 +43,13 @@ public class AdminUserController {
     @GetMapping
     public ApiResponse<UserListResponse> getUserList(
             @RequestParam(defaultValue = "1") Integer pageNum,
-            @RequestParam(defaultValue = "10") Integer pageSize) {
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String role    ) {
         log.info("获取用户列表: pageNum={}, pageSize={}", pageNum, pageSize);
 
         try {
-            UserListResponse response = userService.getUserList(pageNum, pageSize);
+            UserListResponse response = userService.getUserList(pageNum, pageSize,keyword,role);
             log.info("成功获取用户列表: total={}", response.getTotal());
             return ApiResponse.success(response);
         } catch (IllegalArgumentException e) {

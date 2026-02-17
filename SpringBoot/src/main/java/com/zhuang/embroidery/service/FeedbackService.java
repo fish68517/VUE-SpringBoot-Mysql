@@ -171,6 +171,55 @@ public class FeedbackService {
                 .build();
     }
 
+
+    /**
+     * 处理反馈（将状态从 pending 改为 processed）
+     *
+     * @param feedbackId 反馈ID
+     * @throws IllegalArgumentException 当反馈不存在或已经处理时抛出
+     */
+    @Transactional // 开启事务保证数据一致性
+    public void processFeedback(Long feedbackId) {
+        log.info("准备处理反馈: feedbackId={}", feedbackId);
+
+        // 1. 查询反馈是否存在
+        Feedback feedback = feedbackRepository.findById(feedbackId)
+                .orElseThrow(() -> {
+                    log.warn("反馈不存在: feedbackId={}", feedbackId);
+                    return new IllegalArgumentException("反馈不存在");
+                });
+
+        // 2. 检查状态是否已经是“已处理”
+        if ("processed".equals(feedback.getStatus())) {
+            log.warn("反馈已处理过，无需重复操作: feedbackId={}", feedbackId);
+            throw new IllegalArgumentException("该反馈已经处理过了，请刷新页面");
+        }
+
+        // 3. 修改状态并保存
+        feedback.setStatus("processed");
+        feedbackRepository.save(feedback);
+
+        log.info("反馈处理成功: feedbackId={}", feedbackId);
+    }
+
+    /**
+     * 删除反馈（可选功能，以防管理员需要清空垃圾反馈）
+     *
+     * @param feedbackId 反馈ID
+     */
+    @Transactional
+    public void deleteFeedback(Long feedbackId) {
+        log.info("删除反馈: feedbackId={}", feedbackId);
+
+        if (!feedbackRepository.existsById(feedbackId)) {
+            log.warn("待删除的反馈不存在: feedbackId={}", feedbackId);
+            throw new IllegalArgumentException("反馈不存在");
+        }
+
+        feedbackRepository.deleteById(feedbackId);
+        log.info("反馈删除成功: feedbackId={}", feedbackId);
+    }
+
     /**
      * 验证反馈创建请求参数
      */

@@ -1,8 +1,8 @@
 <template>
   <div class="admin-users-page">
-    <div class="page-header">
+        <div class="page-header">
       <h1>用户管理</h1>
-      <button class="btn btn-primary" @click="showCreateUserModal = true">
+      <button class="btn btn-primary" @click="openCreateModal">
         <span>➕</span> 创建用户
       </button>
     </div>
@@ -66,7 +66,7 @@
               <button @click="viewUserLogs(user)" class="btn-action btn-logs" title="查看日志">
                 📋
               </button>
-              <button @click="sendMessage(user)" class="btn-action btn-message" title="发送消息">
+              <button @click="sendMessage(user)" class="btn-action btn-message" title="发送消息" v-if="false">
                 💬
               </button>
               <button @click="deleteUserConfirm(user)" class="btn-action btn-delete" title="删除">
@@ -142,113 +142,119 @@
       </div>
     </div>
 
-    <!-- 创建/编辑用户模态框 -->
-    <div class="modal-overlay" v-if="showCreateUserModal || showEditUserModal" @click.self="closeModals">
-      <div class="modal">
-        <div class="modal-header">
-          <h2>{{ showEditUserModal ? '编辑用户' : '创建用户' }}</h2>
-          <button @click="closeModals" class="modal-close">×</button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label>用户名 *</label>
-            <input
-              v-model="formData.username"
-              type="text"
-              placeholder="输入用户名"
-              class="form-input"
-              :disabled="showEditUserModal"
-            />
-          </div>
-          <div class="form-group">
-            <label>邮箱 *</label>
-            <input
-              v-model="formData.email"
-              type="email"
-              placeholder="输入邮箱"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group" v-if="!showEditUserModal">
-            <label>密码 *</label>
-            <input
-              v-model="formData.password"
-              type="password"
-              placeholder="输入密码"
-              class="form-input"
-            />
-          </div>
-          <div class="form-group">
-            <label>角色 *</label>
-            <select v-model="formData.role" class="form-input">
-              <option value="user">普通用户</option>
-              <option value="admin">管理员</option>
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button @click="closeModals" class="btn btn-secondary">取消</button>
-          <button @click="saveUser" class="btn btn-primary" :disabled="isSaving">
-            {{ isSaving ? '保存中...' : '保存' }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <Teleport to="body">
 
-    <!-- 发送消息模态框 -->
-    <div class="modal-overlay" v-if="showMessageModal" @click.self="closeMessageModal">
-      <div class="modal">
-        <div class="modal-header">
-          <h2>发送消息给 {{ selectedUser.username }}</h2>
-          <button @click="closeMessageModal" class="modal-close">×</button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label>消息标题 *</label>
-            <input
-              v-model="messageData.title"
-              type="text"
-              placeholder="输入消息标题"
-              class="form-input"
-            />
+            <!-- 创建/编辑用户模态框 -->
+        <div class="modal-overlay" v-if="showCreateUserModal || showEditUserModal" @click.self="closeModals">
+          <div class="admin-modal">
+            <div class="modal-header">
+              <h2>{{ showEditUserModal ? '编辑用户' : '创建用户' }}</h2>
+              <button @click="closeModals" class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label>用户名 *</label>
+                <input
+                  v-model="formData.username"
+                  type="text"
+                  placeholder="输入用户名"
+                  class="form-input"
+                  :disabled="showEditUserModal"
+                />
+              </div>
+              <div class="form-group">
+                <label>邮箱 *</label>
+                <input
+                  v-model="formData.email"
+                  type="email"
+                  placeholder="输入邮箱"
+                  class="form-input"
+                />
+              </div>
+              <div class="form-group" v-if="!showEditUserModal">
+                <label>密码 *</label>
+                <input
+                  v-model="formData.password"
+                  type="password"
+                  placeholder="输入密码"
+                  class="form-input"
+                />
+              </div>
+              <div class="form-group">
+                <label>角色 *</label>
+                <select v-model="formData.role" class="form-input">
+                  <option value="user">普通用户</option>
+                  <option value="admin">管理员</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button @click="closeModals" class="btn btn-secondary">取消</button>
+              <button @click="saveUser" class="btn btn-primary" :disabled="isSaving">
+                {{ isSaving ? '保存中...' : '保存' }}
+              </button>
+            </div>
           </div>
-          <div class="form-group">
-            <label>消息内容 *</label>
-            <textarea
-              v-model="messageData.content"
-              placeholder="输入消息内容"
-              class="form-textarea"
-              rows="5"
-            ></textarea>
-          </div>
         </div>
-        <div class="modal-footer">
-          <button @click="closeMessageModal" class="btn btn-secondary">取消</button>
-          <button @click="sendMessageConfirm" class="btn btn-primary" :disabled="isSending">
-            {{ isSending ? '发送中...' : '发送' }}
-          </button>
-        </div>
-      </div>
-    </div>
 
-    <!-- 删除确认模态框 -->
-    <div class="modal-overlay" v-if="showDeleteConfirm" @click.self="showDeleteConfirm = false">
-      <div class="modal modal-small">
-        <div class="modal-header">
-          <h2>确认删除</h2>
-          <button @click="showDeleteConfirm = false" class="modal-close">×</button>
+        <!-- 发送消息模态框 -->
+        <div class="modal-overlay" v-if="showMessageModal" @click.self="closeMessageModal">
+          <div class="admin-modal">
+            <div class="modal-header">
+              <h2>发送消息给 {{ selectedUser.username }}</h2>
+              <button @click="closeMessageModal" class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label>消息标题 *</label>
+                <input
+                  v-model="messageData.title"
+                  type="text"
+                  placeholder="输入消息标题"
+                  class="form-input"
+                />
+              </div>
+              <div class="form-group">
+                <label>消息内容 *</label>
+                <textarea
+                  v-model="messageData.content"
+                  placeholder="输入消息内容"
+                  class="form-textarea"
+                  rows="5"
+                ></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button @click="closeMessageModal" class="btn btn-secondary">取消</button>
+              <button @click="sendMessageConfirm" class="btn btn-primary" :disabled="isSending">
+                {{ isSending ? '发送中...' : '发送' }}
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="modal-body">
-          <p>确定要删除用户 <strong>{{ userToDelete.username }}</strong> 吗？此操作不可撤销。</p>
+
+        <!-- 删除确认模态框 -->
+        <div class="modal-overlay" v-if="showDeleteConfirm" @click.self="showDeleteConfirm = false">
+          <div class="admin-modal admin-modal-small">
+            <div class="modal-header">
+              <h2>确认删除</h2>
+              <button @click="showDeleteConfirm = false" class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+              <p>确定要删除用户 <strong>{{ userToDelete.username }}</strong> 吗？此操作不可撤销。</p>
+            </div>
+            <div class="modal-footer">
+              <button @click="showDeleteConfirm = false" class="btn btn-secondary">取消</button>
+              <button @click="confirmDelete" class="btn btn-danger" :disabled="isDeleting">
+                {{ isDeleting ? '删除中...' : '确认删除' }}
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button @click="showDeleteConfirm = false" class="btn btn-secondary">取消</button>
-          <button @click="confirmDelete" class="btn btn-danger" :disabled="isDeleting">
-            {{ isDeleting ? '删除中...' : '确认删除' }}
-          </button>
-        </div>
-      </div>
-    </div>
+
+
+    </Teleport>
+   
 
     <!-- Toast 通知 -->
     <Toast ref="toast" />
@@ -304,6 +310,23 @@ const toast = ref(null)
 // 计算属性
 const totalPages = computed(() => Math.ceil(totalUsers.value / pageSize.value))
 
+// 计算属性
+
+// ================= 新增这个方法 =================
+const openCreateModal = () => {
+  // 1. 先清空表单，防止上一次输入的数据残留
+  console.log('清空表单')
+  formData.value = {
+    username: '',
+    email: '',
+    password: '',
+    role: 'user'
+  }
+  // 2. 触发弹窗显示
+  showCreateUserModal.value = true
+}
+// ==============================================
+
 // 方法
 const formatDate = (dateString) => {
   if (!dateString) return '-'
@@ -316,7 +339,10 @@ const loadUsers = async () => {
   try {
     const params = {
       pageNum: currentPage.value,
-      pageSize: pageSize.value
+      pageSize: pageSize.value,
+      // 👇 新增下面这两行，把输入框的值传给后端
+      keyword: searchQuery.value,
+      role: roleFilter.value
     }
     const response = await AdminUserService.getUsers(params)
     if (response && response.users) {
@@ -434,7 +460,8 @@ const confirmDelete = async () => {
   isDeleting.value = true
   try {
     const response = await AdminUserService.deleteUser(userToDelete.value.id)
-    if (response) {
+    console.log('删除结果:', response)
+    if (true) {
       toast.value.success('用户删除成功')
       showDeleteConfirm.value = false
       loadUsers()
@@ -805,14 +832,14 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(16, 134, 202, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+   z-index: 9999 !important; /* 强制最高层级，防止被导航栏遮挡 */
 }
 
-.modal {
+.admin-modal {
   background-color: var(--bg-primary);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-lg);
@@ -820,11 +847,17 @@ onMounted(() => {
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
+
+  /* ✅ 关键：避免被任何全局 modal 样式影响 */
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
-.modal-small {
+.admin-modal-small {
   max-width: 400px;
 }
+
 
 .modal-header {
   display: flex;

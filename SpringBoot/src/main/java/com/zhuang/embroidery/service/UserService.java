@@ -180,7 +180,7 @@ public class UserService {
         }
 
         userRepository.deleteById(userId);
-        log.info("用户删除成功: userId={}", userId);
+        log.info("用户删除成功bbbbbb: userId={}", userId);
     }
 
     /**
@@ -238,11 +238,16 @@ public class UserService {
      * @param pageSize 每页数量
      * @return 用户列表响应
      */
-    public UserListResponse getUserList(Integer pageNum, Integer pageSize) {
-        log.info("获取用户列表: pageNum={}, pageSize={}", pageNum, pageSize);
+    /**
+     * 获取用户列表（管理员）- 支持搜索和筛选
+     */
+    public UserListResponse getUserList(Integer pageNum, Integer pageSize, String keyword, String role) {
+        log.info("获取用户列表: pageNum={}, pageSize={}, keyword={}, role={}", pageNum, pageSize, keyword, role);
 
         Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
-        Page<User> page = userRepository.findAll(pageable);
+
+        // 👇 修改这里，调用带有条件查询的方法
+        Page<User> page = userRepository.searchUsers(keyword, role, pageable);
 
         UserListResponse response = UserListResponse.builder()
                 .users(page.getContent().stream()

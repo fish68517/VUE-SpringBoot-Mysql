@@ -77,6 +77,7 @@ const isActive = (path) => {
 }
 
 const handleLogout = () => {
+  console.log('Logging out user:', authStore.getUser()) // 调试输出
   authStore.logout()
   router.push({ name: 'Login' })
 }

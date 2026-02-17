@@ -41,12 +41,17 @@ export default {
 
   // 获取投票统计
   getVoteStats(id) {
-    return apiClient.get(`/admin/votes/${id}/stats`)
+    return apiClient.get(`/admin/votes/${id}/statistics`)
   },
 
   // ===== 反馈处理 =====
   // 获取反馈列表
   getFeedback(params) {
     return apiClient.get('/admin/feedback', { params })
+  },
+
+  // 处理反馈
+  processFeedback(id, handleData) {
+    return apiClient.post(`/admin/feedback/${id}/process`, handleData)
   },
 }
