@@ -131,7 +131,7 @@ env/
 # Database dumps / exports (按需)
 ########################################
 # 如果你经常导出数据库dump但不想提交
-*.sql
+
 *.dump
 *.bak
 *.sqlite
