@@ -41,3 +41,9 @@ export const submitEvaluation = (internshipId, data) => {
 export const getEvaluations = (internshipId, params) => {
   return instance.get(`/internships/${internshipId}/evaluations`, { params })
 }
+/**
+ * 手动添加实习记录
+ */
+export const createInternship = (data) => {
+  return instance.post('/internships', data)
+}

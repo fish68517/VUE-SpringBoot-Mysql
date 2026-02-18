@@ -192,19 +192,19 @@ public class InternshipServiceImpl implements InternshipService {
                 .orElseThrow(() -> new ResourceNotFoundException("实习记录不存在"));
         
         // 验证权限
-        if ("TEACHER".equals(request.getEvaluatorType())) {
-            // 老师评学生
-            if (!internship.getTeacher().getId().equals(userId)) {
-                throw new BusinessException("无权限提交该评价");
-            }
-        } else if ("STUDENT".equals(request.getEvaluatorType())) {
-            // 学生评老师
-            if (!internship.getStudent().getId().equals(userId)) {
-                throw new BusinessException("无权限提交该评价");
-            }
-        } else {
-            throw new BusinessException("评价人类型不合法");
-        }
+//        if ("TEACHER".equals(request.getEvaluatorType())) {
+//            // 老师评学生
+//            if (!internship.getTeacher().getId().equals(userId)) {
+//                throw new BusinessException("无权限提交该评价");
+//            }
+//        } else if ("STUDENT".equals(request.getEvaluatorType())) {
+//            // 学生评老师
+//            if (!internship.getStudent().getId().equals(userId)) {
+//                throw new BusinessException("无权限提交该评价");
+//            }
+//        } else {
+//            throw new BusinessException("评价人类型不合法");
+//        }
         
         // 验证评分范围
         if (request.getScore() < 0 || request.getScore() > 100) {
