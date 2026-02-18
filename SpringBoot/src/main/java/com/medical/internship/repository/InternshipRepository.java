@@ -37,4 +37,7 @@ public interface InternshipRepository extends JpaRepository<Internship, Long> {
      * 根据申请ID查询实习记录
      */
     Optional<Internship> findByApplicationId(Long applicationId);
+
+    // 检查该申请是否已经创建过实习记录
+    boolean existsByApplicationId(Long applicationId);
 }

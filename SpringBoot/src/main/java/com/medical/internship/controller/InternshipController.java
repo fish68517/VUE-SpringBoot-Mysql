@@ -20,6 +20,19 @@ import java.util.List;
 public class InternshipController {
     
     private final InternshipService internshipService;
+
+
+
+    /**
+     * 手动创建实习记录（学生发起）
+     * POST /api/internships
+     */
+    @PostMapping
+    public ApiResponse<String> createInternship(@RequestBody @Valid InternshipCreateRequest request) {
+        System.out.println("收到手动创建实习请求: {}"+ request);
+        internshipService.createInternship(request);
+        return ApiResponse.success("实习记录添加成功", null);
+    }
     
     /**
      * 获取实习记录列表

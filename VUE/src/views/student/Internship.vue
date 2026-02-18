@@ -251,6 +251,10 @@ import {
   createInternship
 } from '@/api/internship'
 
+// 👇 新增：引入申请和岗位相关的 API
+import { getApplications } from '@/api/application'
+import { getPostDetail } from '@/api/post'
+
 // 角色判断
 const userStore = useUserStore()
 const isStudent = computed(() => userStore.user?.role === 'STUDENT')
@@ -281,22 +285,87 @@ const resetAddForm = () => {
   }
 }
 
-// 加载下拉框静态测试数据
+// // 加载下拉框静态测试数据
+// const loadOptions = async () => {
+//   try {
+//     applicationOptions.value = [
+//       { id: 1, postTitle: '心内科实习生', hospitalName: '广东省人民医院' },
+//       { id: 2, postTitle: '普外科实习生', hospitalName: '广州市第一人民医院' }
+//     ]
+//     postOptions.value = [
+//       { id: 1, title: '心内科实习生', department: '心血管内科' },
+//       { id: 2, title: '普外科实习生', department: '普外科' }
+//     ]
+//     teacherOptions.value = [
+//       { id: 6, username: 'teacher_zhang' } 
+//     ]
+//   } catch (error) {
+//     console.error("加载下拉框数据失败", error)
+//   }
+// }
+
+// 👇 重写：动态加载下拉框业务数据
 const loadOptions = async () => {
   try {
-    applicationOptions.value = [
-      { id: 1, postTitle: '心内科实习生', hospitalName: '广东省人民医院' },
-      { id: 2, postTitle: '普外科实习生', hospitalName: '广州市第一人民医院' }
-    ]
-    postOptions.value = [
-      { id: 1, title: '心内科实习生', department: '心血管内科' },
-      { id: 2, title: '普外科实习生', department: '普外科' }
-    ]
+    // 1. 获取当前登录学生的所有申请记录
+    // (后端 SessionInterceptor 已经自动拦截并提取了当前登录学生的 ID，前端无需传参)
+    const appsRes = await getApplications()
+    const myApplications = appsRes.data || []
+    
+    const loadedAppOptions = []
+    const loadedPostOptions = []
+    const postIdSet = new Set() // 配合集合去重，避免同一个岗位请求多次
+
+    for (const app of myApplications) {
+      // 业务逻辑优化：通常只有医院审批通过(APPROVED)的申请，才能去创建实习记录
+      if (app.hospitalStatus === 'APPROVED') {
+        // 组装 关联申请 下拉框数据
+        loadedAppOptions.push({
+          id: app.id,
+          postTitle: app.postTitle || (app.post && app.post.title),
+          hospitalName: app.hospitalName || (app.post && app.post.hospital && app.post.hospital.name)
+        })
+
+        // 提取 post_id
+        const postId = app.post ? app.post.id : null
+
+        // 2. 根据取出的 post_id 查询 post表
+        if (postId && !postIdSet.has(postId)) {
+          postIdSet.add(postId) // 记录已查询过的 postId，避免重复发送网络请求
+          
+          // 调用 api/post.js 的接口获取岗位详情
+          const postRes = await getPostDetail(postId)
+          const postData = postRes.data
+          
+          if (postData) {
+            loadedPostOptions.push({
+              id: postData.id,
+              title: postData.title,
+              department: postData.department
+            })
+          }
+        }
+      }
+    }
+
+    // 赋值给前端响应式变量以渲染下拉框
+    applicationOptions.value = loadedAppOptions
+    postOptions.value = loadedPostOptions
+
+    // 关于带教老师：如果你后端有按照医院ID查询老师的接口，可以在这里继续补充。
+    // 这里暂时保留我们数据库里初始化好的测试张老师数据供你跑通流程
     teacherOptions.value = [
       { id: 6, username: 'teacher_zhang' } 
     ]
+    
+    // 如果没有可用的申请，给出友好提示
+    if (loadedAppOptions.length === 0) {
+      ElMessage.warning('您暂无已通过审批的岗位申请，无法添加实习记录')
+    }
+
   } catch (error) {
     console.error("加载下拉框数据失败", error)
+    ElMessage.error("加载关联数据失败，请重试")
   }
 }
 

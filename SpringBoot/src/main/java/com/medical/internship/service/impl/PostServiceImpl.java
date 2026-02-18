@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("岗位不存在"));
         
         // 验证访问权限
-        validatePostAccess(post);
+        //validatePostAccess(post);
         
         return convertToResponse(post);
     }

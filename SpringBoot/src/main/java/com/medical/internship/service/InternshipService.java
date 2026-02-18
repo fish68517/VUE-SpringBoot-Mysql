@@ -43,4 +43,12 @@ public interface InternshipService {
      * 获取评价列表
      */
     List<EvaluationResponse> getEvaluationList(Long internshipId);
+
+    // ... 原有方法
+
+    /**
+     * 手动创建实习记录
+     * @param request 包含申请ID、岗位ID、老师ID、起止时间和状态的请求体
+     */
+    void createInternship(InternshipCreateRequest request);
 }

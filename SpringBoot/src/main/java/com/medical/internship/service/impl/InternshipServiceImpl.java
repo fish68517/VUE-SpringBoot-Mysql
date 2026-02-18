@@ -1,5 +1,6 @@
 package com.medical.internship.service.impl;
 
+import com.medical.internship.common.AccessDeniedException;
 import com.medical.internship.common.BusinessException;
 import com.medical.internship.common.ResourceNotFoundException;
 import com.medical.internship.common.SessionContext;
@@ -28,6 +29,11 @@ public class InternshipServiceImpl implements InternshipService {
     private final EvaluationRepository evaluationRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+
+    // 👇 如果你代码里还没有这三个，必须加上！
+    private final ApplicationRepository applicationRepository;
+    private final PostRepository postRepository;
+
     
     @Override
     public List<InternshipResponse> getInternshipList() {
@@ -240,7 +246,51 @@ public class InternshipServiceImpl implements InternshipService {
                 .map(this::convertEvaluationToResponse)
                 .collect(Collectors.toList());
     }
-    
+
+    /**
+     * 实现手动创建实习记录逻辑
+     */
+    @Override
+    public void createInternship(InternshipCreateRequest request) {
+        // 1. 从上下文中安全获取当前登录的学生ID
+        Long studentId = SessionContext.getCurrentUserId();
+        if (studentId == null) {
+            throw new AccessDeniedException("用户未登录或会话已过期");
+        }
+
+        // 2. 校验防重防刷：同一条申请不能对应多条实习记录
+        if (internshipRepository.existsByApplicationId(request.getApplicationId())) {
+            throw new BusinessException("该申请已关联实习记录，请勿重复添加！");
+        }
+
+        // 3. 从数据库拉取全部需要的实体记录 (如果查不到直接抛异常)
+        Application application = applicationRepository.findById(request.getApplicationId())
+                .orElseThrow(() -> new ResourceNotFoundException("未找到对应的申请记录"));
+
+        Post post = postRepository.findById(request.getPostId())
+                .orElseThrow(() -> new ResourceNotFoundException("未找到对应的岗位记录"));
+
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("未找到当前学生信息"));
+
+        User teacher = userRepository.findById(request.getTeacherId())
+                .orElseThrow(() -> new ResourceNotFoundException("未找到对应的带教老师信息"));
+
+        // 4. 组装 Internship 实体
+        Internship internship = new Internship();
+        internship.setApplication(application);
+        internship.setPost(post);
+        internship.setStudent(student);
+        internship.setTeacher(teacher);
+
+        internship.setStartDate(request.getStartDate());
+        internship.setEndDate(request.getEndDate());
+        internship.setStatus(request.getStatus());
+
+        // 5. 保存入库
+        internshipRepository.save(internship);
+    }
+
     /**
      * 验证用户是否有权限访问该实习记录
      */
