@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional  // <--- 加上这一行
 public class InternshipServiceImpl implements InternshipService {
     
     private final InternshipRepository internshipRepository;

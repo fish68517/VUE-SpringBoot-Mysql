@@ -72,4 +72,14 @@ public class PostController {
         PostResponse post = postService.updatePostStatus(id, request);
         return ResponseEntity.ok(ApiResponse.success("岗位状态更新成功", post));
     }
+
+    // /api/posts/hospital  增加这个接口
+    /**
+     * 获取医院的岗位列表（医院管理员）
+     */
+    @GetMapping("/hospital")
+    public ResponseEntity<ApiResponse<List<PostResponse>>> getHospitalPosts() {
+        List<PostResponse> posts = postService.getPostList();
+        return ResponseEntity.ok(ApiResponse.success(posts));
+    }
 }

@@ -2,14 +2,25 @@
   <div class="notifications-container">
     <div class="notifications-header">
       <h2>通知中心</h2>
-      <el-button 
-        v-if="unreadCount > 0" 
-        type="primary" 
-        size="small"
-        @click="markAllAsRead"
-      >
-        全部标记为已读
-      </el-button>
+      <div class="header-actions">
+        <el-button
+          v-if="isAdmin"
+          type="success"
+          size="small"
+          @click="createDialogVisible = true"
+        >
+          + 发布通知
+        </el-button>
+        
+        <el-button 
+          v-if="unreadCount > 0" 
+          type="primary" 
+          size="small"
+          @click="markAllAsRead"
+        >
+          全部标记为已读
+        </el-button>
+      </div>
     </div>
 
     <div v-if="loading" class="loading">
@@ -47,60 +58,86 @@
         </div>
       </div>
     </div>
+
+    <el-dialog v-model="createDialogVisible" title="发布系统通知" width="500px" @close="resetCreateForm">
+      <el-form :model="createForm" label-width="100px">
+        <el-form-item label="接收用户ID" required>
+          <el-input-number v-model="createForm.userId" :min="1" placeholder="请输入接收用户ID" style="width: 100%;" />
+        </el-form-item>
+        <el-form-item label="通知类型" required>
+          <el-select v-model="createForm.type" placeholder="请选择通知类型" style="width: 100%;">
+            <el-option label="系统通知 (SYSTEM_NOTICE)" value="SYSTEM_NOTICE" />
+            <el-option label="申请结果 (APPLICATION_RESULT)" value="APPLICATION_RESULT" />
+            <el-option label="任务提醒 (TASK_DEADLINE)" value="TASK_DEADLINE" />
+            <el-option label="周记打回 (WEEKLY_REJECTED)" value="WEEKLY_REJECTED" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="通知内容" required>
+          <el-input
+            v-model="createForm.content"
+            type="textarea"
+            rows="4"
+            placeholder="请输入通知详细内容"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="createDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitNotification" :loading="submitting">发布</el-button>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { getNotificationList, markNotificationAsRead } from '@/api/notification'
+import { useUserStore } from '@/stores/userStore'
+import { getNotificationList, markNotificationAsRead, createNotificationApi } from '@/api/notification'
+
+// 1. 获取用户信息和角色判断
+const userStore = useUserStore()
+const isAdmin = computed(() => userStore.user?.role === 'ADMIN')
 
 const notifications = ref([])
 const loading = ref(false)
+
+// 发布通知的表单状态
+const createDialogVisible = ref(false)
+const submitting = ref(false)
+const createForm = ref({
+  userId: null,
+  type: 'SYSTEM_NOTICE',
+  content: ''
+})
 
 const unreadCount = computed(() => {
   return notifications.value.filter(n => !n.isRead).length
 })
 
-// 获取通知类型的中文描述
 const getNotificationType = (type) => {
   const typeMap = {
     'APPLICATION_RESULT': '申请结果',
     'WEEKLY_REJECTED': '周记打回',
     'TASK_DEADLINE': '任务截止提醒',
+    'SYSTEM_NOTICE': '系统通知'
   }
   return typeMap[type] || type
 }
 
-// 格式化时间
 const formatTime = (dateTime) => {
   if (!dateTime) return ''
   const date = new Date(dateTime)
   const now = new Date()
   const diff = now - date
-
-  // 一分钟内
-  if (diff < 60000) {
-    return '刚刚'
-  }
-  // 一小时内
-  if (diff < 3600000) {
-    return Math.floor(diff / 60000) + '分钟前'
-  }
-  // 一天内
-  if (diff < 86400000) {
-    return Math.floor(diff / 3600000) + '小时前'
-  }
-  // 一周内
-  if (diff < 604800000) {
-    return Math.floor(diff / 86400000) + '天前'
-  }
-
-  // 显示具体日期
+  if (diff < 60000) return '刚刚'
+  if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前'
+  if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前'
+  if (diff < 604800000) return Math.floor(diff / 86400000) + '天前'
   return date.toLocaleDateString('zh-CN')
 }
 
-// 加载通知列表
 const loadNotifications = async () => {
   loading.value = true
   try {
@@ -108,13 +145,11 @@ const loadNotifications = async () => {
     notifications.value = response.data || []
   } catch (error) {
     ElMessage.error('加载通知失败')
-    console.error(error)
   } finally {
     loading.value = false
   }
 }
 
-// 标记单个通知为已读
 const handleMarkAsRead = async (notificationId) => {
   try {
     await markNotificationAsRead(notificationId)
@@ -125,24 +160,52 @@ const handleMarkAsRead = async (notificationId) => {
     ElMessage.success('已标记为已读')
   } catch (error) {
     ElMessage.error('标记失败')
-    console.error(error)
   }
 }
 
-// 全部标记为已读
 const markAllAsRead = async () => {
   const unreadNotifications = notifications.value.filter(n => !n.isRead)
   try {
-    await Promise.all(
-      unreadNotifications.map(n => markNotificationAsRead(n.id))
-    )
-    notifications.value.forEach(n => {
-      n.isRead = true
-    })
+    await Promise.all(unreadNotifications.map(n => markNotificationAsRead(n.id)))
+    notifications.value.forEach(n => n.isRead = true)
     ElMessage.success('已全部标记为已读')
   } catch (error) {
     ElMessage.error('标记失败')
-    console.error(error)
+  }
+}
+
+// 重置表单
+const resetCreateForm = () => {
+  createForm.value = {
+    userId: null,
+    type: 'SYSTEM_NOTICE',
+    content: ''
+  }
+}
+
+// 提交新通知 (仅管理员可用)
+const submitNotification = async () => {
+  if (!createForm.value.userId) {
+    ElMessage.warning('请输入接收通知的用户ID')
+    return
+  }
+  if (!createForm.value.content.trim()) {
+    ElMessage.warning('请输入通知内容')
+    return
+  }
+
+  submitting.value = true
+  try {
+    await createNotificationApi(createForm.value)
+    ElMessage.success('通知发布成功！')
+    createDialogVisible.value = false
+    resetCreateForm()
+    // 重新拉取最新列表
+    loadNotifications()
+  } catch (error) {
+    ElMessage.error('发布失败: ' + (error.response?.data?.message || error.message))
+  } finally {
+    submitting.value = false
   }
 }
 
@@ -152,88 +215,20 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.notifications-container {
-  padding: 20px;
-}
-
-.notifications-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.notifications-header h2 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.loading {
-  padding: 20px;
-}
-
-.empty-state {
-  padding: 40px 20px;
-  text-align: center;
-}
-
-.notifications-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.notification-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background-color: #f5f7fa;
-  border-left: 4px solid #dcdfe6;
-  border-radius: 4px;
-  transition: all 0.3s ease;
-}
-
-.notification-item:hover {
-  background-color: #f0f2f5;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.notification-item.unread {
-  background-color: #e6f7ff;
-  border-left-color: #409eff;
-}
-
-.notification-content {
-  flex: 1;
-}
-
-.notification-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.notification-type {
-  font-weight: 600;
-  color: #303133;
-  font-size: 14px;
-}
-
-.notification-time {
-  color: #909399;
-  font-size: 12px;
-}
-
-.notification-message {
-  color: #606266;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.notification-actions {
-  margin-left: 16px;
-  white-space: nowrap;
-}
+.notifications-container { padding: 20px; }
+.notifications-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.notifications-header h2 { margin: 0; font-size: 20px; }
+.header-actions { display: flex; gap: 10px; } /* 按钮组间距 */
+.loading { padding: 20px; }
+.empty-state { padding: 40px 20px; text-align: center; }
+.notifications-list { display: flex; flex-direction: column; gap: 12px; }
+.notification-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background-color: #f5f7fa; border-left: 4px solid #dcdfe6; border-radius: 4px; transition: all 0.3s ease; }
+.notification-item:hover { background-color: #f0f2f5; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+.notification-item.unread { background-color: #e6f7ff; border-left-color: #409eff; }
+.notification-content { flex: 1; }
+.notification-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.notification-type { font-weight: 600; color: #303133; font-size: 14px; }
+.notification-time { color: #909399; font-size: 12px; }
+.notification-message { color: #606266; font-size: 14px; line-height: 1.5; }
+.notification-actions { margin-left: 16px; white-space: nowrap; }
 </style>

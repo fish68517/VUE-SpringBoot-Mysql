@@ -77,7 +77,7 @@
           <label>实习周期（周）：</label>
           <el-input-number v-model="postForm.duration" :min="1" />
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="false">
           <label>面向学校：</label>
           <el-select 
             v-model="postForm.visibleSchools" 
@@ -164,7 +164,7 @@ const loadPosts = async () => {
   loading.value = true
   try {
     const response = await getHospitalPosts()
-    posts.value = response.data.data || []
+    posts.value = response.data || []
   } catch (error) {
     ElMessage.error('加载岗位列表失败: ' + (error.response?.data?.message || error.message))
   } finally {

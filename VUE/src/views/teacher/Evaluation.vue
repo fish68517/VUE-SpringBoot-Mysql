@@ -162,6 +162,7 @@ const submitEvaluation = async () => {
     await submitStudentEvaluation(selectedStudent.value.internshipId, {
       score: evaluationForm.value.score,
       comment: evaluationForm.value.comment,
+      evaluatorType: 'TEACHER',
     })
     ElMessage.success('评价提交成功')
     evaluationFormVisible.value = false

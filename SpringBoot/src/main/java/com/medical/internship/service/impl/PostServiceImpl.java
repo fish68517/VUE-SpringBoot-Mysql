@@ -42,7 +42,7 @@ public class PostServiceImpl implements PostService {
     public List<PostResponse> getPostList() {
         String userRole = SessionContext.getCurrentUserRole();
         Long userOrgId = SessionContext.getCurrentOrganizationId();
-        
+        System.out.println("用户角色: " + userRole + ", 组织ID: " + userOrgId);
         List<Post> posts = new ArrayList<>();
         
         // 系统管理员：查看所有已发布的岗位

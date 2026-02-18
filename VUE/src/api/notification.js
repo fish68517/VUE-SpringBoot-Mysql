@@ -13,3 +13,9 @@ export const getNotificationList = () => {
 export const markNotificationAsRead = (notificationId) => {
   return instance.put(`/notifications/${notificationId}/read`)
 }
+
+// src/api/notification.js 中补充以下代码
+export const createNotificationApi = (data) => {
+
+  return instance.post('/notifications', data)
+}

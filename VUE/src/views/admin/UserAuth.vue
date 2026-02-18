@@ -54,7 +54,7 @@ const loadPendingUsers = async () => {
   loading.value = true
   try {
     const response = await getPendingUsers()
-    pendingUsers.value = response.data.data || []
+    pendingUsers.value = response.data || []
   } catch (error) {
     ElMessage.error('加载待认证用户列表失败: ' + (error.response?.data?.message || error.message))
   } finally {

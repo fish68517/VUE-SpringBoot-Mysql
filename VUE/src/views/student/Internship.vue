@@ -8,9 +8,9 @@
       
       <el-table v-else :data="internships" stripe>
         <el-table-column prop="id" label="实习ID" width="80" />
-        <el-table-column prop="postTitle" label="岗位名称" />
-        <el-table-column prop="department" label="科室" />
-        <el-table-column prop="teacherName" label="带教老师" />
+        <el-table-column prop="post.title" label="岗位名称" />
+      <el-table-column prop="post.department" label="科室" />
+      <el-table-column prop="teacher.username" label="带教老师" />
         <el-table-column label="状态" width="100">
           <template #default="{ row }">
             <el-tag v-if="row.status === 'ONGOING'" type="success">进行中</el-tag>
@@ -34,13 +34,13 @@
         <!-- 基本信息 -->
         <el-descriptions :column="1" border class="detail-section">
           <el-descriptions-item label="岗位名称">
-            {{ selectedInternship.postTitle }}
+            {{ selectedInternship.post.title }}
           </el-descriptions-item>
           <el-descriptions-item label="科室">
-            {{ selectedInternship.department }}
+            {{ selectedInternship.post.department }}
           </el-descriptions-item>
           <el-descriptions-item label="带教老师">
-            {{ selectedInternship.teacherName }}
+            {{ selectedInternship.teacher.username }}
           </el-descriptions-item>
           <el-descriptions-item label="开始日期">
             {{ formatDate(selectedInternship.startDate) }}
@@ -138,7 +138,7 @@
       </el-form>
       <template #footer>
         <el-button @click="weeklyReportFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitWeeklyReport" :loading="weeklyReportLoading">
+        <el-button type="primary" @click="submitWeeklyReportHandler" :loading="weeklyReportLoading">
           提交
         </el-button>
       </template>
@@ -195,7 +195,7 @@
       </el-form>
       <template #footer>
         <el-button @click="evaluationFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="submitEvaluation" :loading="evaluationLoading">
+        <el-button type="primary" @click="submitEvaluationHandler" :loading="evaluationLoading">
           提交
         </el-button>
       </template>
@@ -407,8 +407,7 @@ const formatDate = (dateString) => {
 }
 
 // 绑定提交函数
-const submitWeeklyReport = submitWeeklyReportHandler
-const submitEvaluation = submitEvaluationHandler
+
 
 // 初始化
 onMounted(() => {

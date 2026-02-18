@@ -33,7 +33,7 @@ public class OrganizationController {
     @GetMapping
     public ApiResponse<List<OrganizationResponse>> getAllOrganizations() {
         log.info("获取所有组织");
-        verifyAdminRole();
+        // verifyAdminRole();
         List<OrganizationResponse> organizations = organizationService.getAllOrganizations();
         return ApiResponse.success(organizations);
     }

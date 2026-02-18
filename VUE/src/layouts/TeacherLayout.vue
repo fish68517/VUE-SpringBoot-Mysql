@@ -109,6 +109,7 @@ const handleCommand = (command) => {
 .sidebar {
   background-color: #f5f7fa;
   border-right: 1px solid #dcdfe6;
+  height: 1000px;
 }
 
 .main-content {

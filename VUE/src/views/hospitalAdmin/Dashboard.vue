@@ -90,7 +90,7 @@ const statistics = ref({
 const loadStatistics = async () => {
   try {
     const response = await getHospitalStatistics()
-    statistics.value = response.data.data || statistics.value
+    statistics.value = response.data || statistics.value
     await nextTick()
     renderCharts()
   } catch (error) {

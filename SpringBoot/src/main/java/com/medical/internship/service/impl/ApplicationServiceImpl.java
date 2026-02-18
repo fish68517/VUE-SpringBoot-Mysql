@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional  // <--- 加上这一行
 public class ApplicationServiceImpl implements ApplicationService {
     
     private final ApplicationRepository applicationRepository;
@@ -89,10 +90,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     
     @Override
     public List<ApplicationResponse> getApplicationList() {
+        System.out.println("进入getApplicationList方法");
         Long userId = SessionContext.getCurrentUserId();
         String userRole = SessionContext.getCurrentUserRole();
         Long organizationId = SessionContext.getCurrentOrganizationId();
-        
+        System.out.println("用户ID: " + userId);
+        System.out.println("用户角色: " + userRole);
+        System.out.println("组织ID: " + organizationId);
         if (userId == null) {
             throw new BusinessException("用户未登录");
         }
@@ -221,10 +225,10 @@ public class ApplicationServiceImpl implements ApplicationService {
     public List<ApplicationResponse> getSchoolReviewApplications() {
         // 验证用户角色
         String userRole = SessionContext.getCurrentUserRole();
-        if (!"SCHOOL_ADMIN".equals(userRole)) {
+      /*  if (!"SCHOOL_ADMIN".equals(userRole)) {
             throw new BusinessException("只有学校管理员可以查看学校审批申请");
-        }
-        
+        }*/
+        System.out.println("进入getSchoolReviewApplications方法 userRole : " + userRole);
         Long organizationId = SessionContext.getCurrentOrganizationId();
         
         // 获取本校学生

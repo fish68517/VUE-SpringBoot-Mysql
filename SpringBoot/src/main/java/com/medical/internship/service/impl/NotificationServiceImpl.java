@@ -32,6 +32,12 @@ public class NotificationServiceImpl implements NotificationService {
         }
         
         List<Notification> notifications = notificationRepository.findByUserId(userId);
+        List<Notification > allNo =  notificationRepository.findAll();
+        for (Notification notification:allNo){
+            if (notification.getType().equals("SYSTEM_NOTICE")) {
+                notifications.add(notification);
+            }
+        }
         return notifications.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -49,9 +55,9 @@ public class NotificationServiceImpl implements NotificationService {
                 .orElseThrow(() -> new ResourceNotFoundException("通知不存在"));
         
         // 验证权限 - 只能标记自己的通知
-        if (!notification.getUser().getId().equals(userId)) {
+      /*  if (!notification.getUser().getId().equals(userId)) {
             throw new BusinessException("无权限操作该通知");
-        }
+        }*/
         
         notification.setIsRead(true);
         Notification updatedNotification = notificationRepository.save(notification);

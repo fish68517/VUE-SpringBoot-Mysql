@@ -157,7 +157,7 @@ const loadApplications = async () => {
   loading.value = true
   try {
     const response = await getHospitalApplications()
-    applications.value = response.data.data || []
+    applications.value = response.data || []
   } catch (error) {
     ElMessage.error('加载申请列表失败: ' + (error.response?.data?.message || error.message))
   } finally {

@@ -39,6 +39,7 @@ public class ApplicationController {
      */
     @GetMapping
     public ResponseEntity<ApiResponse<List<ApplicationResponse>>> getApplicationList() {
+        System.out.println("进入ApplicationController.getApplicationList方法");
         List<ApplicationResponse> applications = applicationService.getApplicationList();
         return ResponseEntity.ok(ApiResponse.success(applications));
     }
@@ -72,6 +73,13 @@ public class ApplicationController {
             @Valid @RequestBody ApplicationReviewRequest request) {
         ApplicationResponse application = applicationService.hospitalReview(id, request);
         return ResponseEntity.ok(ApiResponse.success("医院审批完成", application));
+    }
+
+
+    @GetMapping("/hospital-review")
+    public ResponseEntity<ApiResponse<java.util.List<ApplicationResponse>>> hospitalReview2222() {
+        java.util.List<ApplicationResponse> application = applicationService.getApplicationList();
+        return ResponseEntity.ok(ApiResponse.success(application));
     }
     
     /**

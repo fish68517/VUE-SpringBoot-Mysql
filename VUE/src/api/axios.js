@@ -5,6 +5,7 @@ import { useUserStore } from '@/stores/userStore'
 const instance = axios.create({
   baseURL: '/api',
   timeout: 10000,
+  withCredentials: true // 👈 这一行极其重要！必须设置为 true 才能把 Session Cookie 传给后端
 })
 
 // 请求拦截器

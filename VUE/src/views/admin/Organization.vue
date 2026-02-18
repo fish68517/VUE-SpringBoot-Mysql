@@ -119,7 +119,7 @@ const loadOrganizations = async () => {
   loading.value = true
   try {
     const response = await getAllOrganizations()
-    organizations.value = response.data.data || []
+    organizations.value = response.data || []
   } catch (error) {
     ElMessage.error('加载组织列表失败: ' + (error.response?.data?.message || error.message))
   } finally {
@@ -176,7 +176,7 @@ const handleViewUsers = async (row) => {
   usersLoading.value = true
   try {
     const response = await getOrganizationUsers(row.id)
-    organizationUsers.value = response.data.data || []
+    organizationUsers.value = response.data || []
     usersDialogVisible.value = true
   } catch (error) {
     ElMessage.error('加载用户列表失败: ' + (error.response?.data?.message || error.message))

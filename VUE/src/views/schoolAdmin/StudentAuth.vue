@@ -49,7 +49,7 @@ const loadStudents = async () => {
   loading.value = true
   try {
     const response = await getPendingStudents()
-    students.value = response.data.data || []
+    students.value = response.data || []
   } catch (error) {
     ElMessage.error('加载学生列表失败: ' + (error.response?.data?.message || error.message))
   } finally {

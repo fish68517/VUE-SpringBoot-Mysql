@@ -12,6 +12,7 @@ import com.medical.internship.repository.PostRepository;
 import com.medical.internship.service.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Transactional  // <--- 加上这一行
 public class StatisticsServiceImpl implements StatisticsService {
     
     private final ApplicationRepository applicationRepository;

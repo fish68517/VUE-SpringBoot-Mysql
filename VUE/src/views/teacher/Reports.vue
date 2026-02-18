@@ -158,8 +158,8 @@ const submitReview = async () => {
   reviewLoading.value = true
   try {
     await reviewWeeklyReport(selectedReport.value.internshipId, selectedReport.value.id, {
-      score: reviewForm.value.score,
-      comment: reviewForm.value.comment,
+      teacherScore: reviewForm.value.score,
+      teacherComment: reviewForm.value.comment,
       status: reviewForm.value.action,
     })
     ElMessage.success('批阅完成')
