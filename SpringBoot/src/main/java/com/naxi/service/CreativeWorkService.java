@@ -71,6 +71,11 @@ public class CreativeWorkService {
         return creativeWorkRepository.findByStatus(CreativeWork.WorkStatus.APPROVED, pageable);
     }
 
+    // 获取所有作品
+    public Page<CreativeWork> getAllCreativeWorks(Pageable pageable) {
+        return creativeWorkRepository.findAll(pageable);
+    }
+
     /**
      * 获取用户的原创作品列表（分页）
      */

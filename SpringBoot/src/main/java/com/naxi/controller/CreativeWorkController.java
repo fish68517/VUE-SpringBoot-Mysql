@@ -66,6 +66,16 @@ public class CreativeWorkController {
         return ApiResponse.success(works);
     }
 
+
+    @GetMapping("/all")
+    public ApiResponse<?> getAllCreativeWorks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CreativeWork> works = creativeWorkService.getAllCreativeWorks(pageable);
+        return ApiResponse.success(works);
+    }
+
     /**
      * 获取作品详情
      * GET /api/works/{id}

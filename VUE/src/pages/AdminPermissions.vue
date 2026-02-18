@@ -4,10 +4,10 @@
     <div class="admin-container">
       
       <div class="permissions-content">
-        <h1>权限管理</h1>
+        <h1>操作管理</h1>
 
         <!-- 角色管理部分 -->
-        <div class="roles-section">
+        <div class="roles-section"  v-if="false">
           <h2>角色管理</h2>
 
           <!-- 创建角色表单 -->
@@ -431,7 +431,7 @@ onMounted(() => {
 .admin-container {
   display: flex;
   flex: 1;
-  max-width: 1400px;
+  max-width: 14000px;
   margin: 0 auto;
   width: 100%;
   gap: 2rem;

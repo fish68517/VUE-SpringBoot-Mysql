@@ -17,24 +17,24 @@
           <button
             :class="['tab-btn', { active: activeTab === 'comments' }]"
             @click="activeTab = 'comments'"
-          >
+            v-if="false">
             评论审核
           </button>
         </div>
 
         <!-- Works Review Section -->
         <div v-if="activeTab === 'works'" class="review-section">
-          <h2>待审核原创作品</h2>
+          <h2>原创作品</h2>
 
           <!-- Filter Bar -->
           <div class="filter-bar">
             <select v-model="workStatusFilter">
               <option value="">全部状态</option>
-              <option value="pending">待审核</option>
-              <option value="approved">已通过</option>
-              <option value="rejected">已拒绝</option>
+              <option value="PENDING">待审核</option>
+              <option value="APPROVED">已通过</option>
+              <option value="REJECTED">已拒绝</option>
             </select>
-            <button @click="loadPendingWorks" class="btn btn-secondary">刷新</button>
+            <button @click="loadALLWorks" class="btn btn-secondary">刷新</button>
           </div>
 
           <!-- Loading State -->
@@ -63,14 +63,14 @@
                   <p v-if="work.description" class="work-description">
                     <strong>描述:</strong> {{ work.description }}
                   </p>
-                  <p class="work-stats">
+                  <p class="work-stats" v-if="false">
                     <span>点赞: {{ work.likeCount }}</span>
                   </p>
                 </div>
               </div>
 
               <!-- Action Buttons -->
-              <div v-if="work.status === 'pending'" class="work-actions">
+              <div v-if="work.status === 'PENDING'" class="work-actions">
                 <button
                   @click="handleApproveWork(work.id)"
                   class="btn btn-success"
@@ -261,8 +261,44 @@ const loadPendingWorks = async () => {
   }
 }
 
+
+// Load pending works
+const loadALLWorks = async () => {
+  loadingWorks.value = true
+  try {
+    const params = {
+      page: worksCurrentPage.value,
+      size: worksPageSize.value
+    }
+    const response = await workAPI.getAllWorks(params)
+    if (response.code === 200) {
+      let workList = response.data.content || []
+      
+      // Apply status filter if selected
+      // 打印待审核作品列表
+      console.log('审核筛选值:', workStatusFilter.value)
+
+      if (workStatusFilter.value) {
+        workList = workList.filter(work => work.status === workStatusFilter.value)
+      }
+      
+      pendingWorks.value = workList
+      worksTotalPages.value = response.data.totalPages || 1
+    } else {
+      ElMessage.error(response.message || '获取待审核作品失败')
+    }
+  } catch (error) {
+    ElMessage.error('获取待审核作品失败: ' + error.message)
+  } finally {
+    loadingWorks.value = false
+  }
+}
+
 // Load comments
 const loadComments = async () => {
+  if(true) {
+    return
+  }
   loadingComments.value = true
   try {
     const params = {
@@ -284,10 +320,10 @@ const loadComments = async () => {
       comments.value = commentList
       commentsTotalPages.value = response.data.totalPages || 1
     } else {
-      ElMessage.error(response.message || '获取评论列表失败')
+      // ElMessage.error(response.message || '获取评论列表失败')
     }
   } catch (error) {
-    ElMessage.error('获取评论列表失败: ' + error.message)
+    // ElMessage.error('获取评论列表失败: ' + error.message)
   } finally {
     loadingComments.value = false
   }
@@ -381,9 +417,9 @@ const handleDeleteComment = async (commentId) => {
 // Get status label
 const getStatusLabel = (status) => {
   const labels = {
-    pending: '待审核',
-    approved: '已通过',
-    rejected: '已拒绝'
+    PENDING: '待审核',
+    APPROVED: '已通过',
+    REJECTED: '已拒绝'
   }
   return labels[status] || status
 }
@@ -422,7 +458,7 @@ onMounted(() => {
 .admin-container {
   display: flex;
   flex: 1;
-  max-width: 1400px;
+  max-width: 14000px;
   margin: 0 auto;
   width: 100%;
   gap: 2rem;

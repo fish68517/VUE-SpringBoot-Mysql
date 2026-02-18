@@ -44,6 +44,13 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 重要：清除浏览器默认边距，确保后台左右布局能铺满视口 */
+:global(html, body) {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 #app {
   display: flex;
   flex-direction: column;
@@ -54,13 +61,28 @@ onMounted(() => {
 .admin-container {
   display: flex;
   flex: 1;
-  height: 100vh; /* 撑满屏幕 */
-  overflow: hidden;
+  min-height: 100vh;     /* 侧边栏垂直铺满 */
+  background: #f5f7fa;   /* 让右侧内容区与侧边栏形成层次 */
 }
 
+/* 主内容区：减少左侧空隙，并保持可滚动 */
 .main-content {
   flex: 1;
-  overflow-y: auto; /* 内容区独立滚动 */
+  overflow-y: auto;
+  padding: 20px 24px;    /* 右侧内容与侧边栏间距变小 */
+  box-sizing: border-box;
 }
 
+/* 让路由页面默认占满宽度（避免被某些页面 container 居中导致左侧空白过大） */
+.main-content > * {
+  width: 100%;
+}
+
+/* 若页面内部有通用容器类名，可按需取消最大宽度（不影响组件本身） */
+:deep(.container),
+:deep(.page-container) {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
 </style>

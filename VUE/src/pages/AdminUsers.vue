@@ -406,7 +406,7 @@ onMounted(() => {
 .admin-container {
   display: flex;
   flex: 1;
-  max-width: 1400px;
+  max-width: 14000px;
   margin: 0 auto;
   width: 100%;
   gap: 2rem;

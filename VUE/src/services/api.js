@@ -81,6 +81,7 @@ export const questionAPI = {
 export const workAPI = {
   createWork: (data) => api.post('/works', data),
   getWorks: (params) => api.get('/works', { params }),
+  getAllWorks: (params) => api.get('/works/all', { params }),
   getWork: (id) => api.get(`/works/${id}`),
   deleteWork: (id) => api.delete(`/works/${id}`),
   getPendingWorks: (params) => api.get('/works/pending', { params }),

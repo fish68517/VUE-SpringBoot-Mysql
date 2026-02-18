@@ -68,7 +68,7 @@
               <span class="action-text">内容审核</span>
             </router-link>
 
-            <router-link to="/admin/logs" class="action-button">
+            <!-- <router-link to="/admin/logs" class="action-button">
               <span class="action-icon">📊</span>
               <span class="action-text">日志管理</span>
             </router-link>
@@ -76,7 +76,7 @@
             <router-link to="/admin/settings" class="action-button">
               <span class="action-icon">⚙️</span>
               <span class="action-text">参数设置</span>
-            </router-link>
+            </router-link> -->
 
             <router-link to="/admin/permissions" class="action-button">
               <span class="action-icon">🔐</span>
