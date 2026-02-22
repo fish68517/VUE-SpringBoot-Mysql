@@ -221,7 +221,7 @@ public class UserController {
             userService.deleteUser(id);
             
             LoggerUtil.info("删除用户成功，用户ID: {}", id);
-            return Result.success("用户删除成功");
+            return Result.success();
             
         } catch (IllegalArgumentException e) {
             LoggerUtil.warn("删除用户失败: {}", e.getMessage());
