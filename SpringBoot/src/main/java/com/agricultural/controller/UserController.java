@@ -1,8 +1,10 @@
 package com.agricultural.controller;
 
+import com.agricultural.dto.LoginResponse;
 import com.agricultural.dto.Result;
 import com.agricultural.entity.User;
 import com.agricultural.service.UserService;
+import com.agricultural.util.JwtUtil;
 import com.agricultural.util.LoggerUtil;
 import com.agricultural.util.StringUtil;
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private JwtUtil jwtUtil;
 
     /**
      * 用户注册接口
@@ -34,10 +39,10 @@ public class UserController {
      * @param phone 手机号
      * @param userType 用户类型 (FARMER, MERCHANT, ADMIN)
      * @param region 地区
-     * @return 注册成功的用户信息
+     * @return 注册成功的用户信息和JWT令牌
      */
     @PostMapping("/register")
-    public Result<User> register(
+    public Result<LoginResponse> register(
             @RequestParam @NotBlank(message = "用户名不能为空") String username,
             @RequestParam @NotBlank(message = "密码不能为空") String password,
             @RequestParam(required = false) String email,
@@ -67,8 +72,23 @@ public class UserController {
             // 调用业务层进行注册
             User registeredUser = userService.register(username, password, email, phone, userType, region);
             
+            // 生成JWT令牌
+            String token = jwtUtil.generateToken(registeredUser.getId(), registeredUser.getUsername(), registeredUser.getUserType().toString());
+            
+            // 构建登录响应
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .token(token)
+                    .tokenType("Bearer")
+                    .userId(registeredUser.getId())
+                    .username(registeredUser.getUsername())
+                    .userType(registeredUser.getUserType())
+                    .email(registeredUser.getEmail())
+                    .phone(registeredUser.getPhone())
+                    .region(registeredUser.getRegion())
+                    .build();
+            
             LoggerUtil.info("用户注册成功，用户ID: {}, 用户名: {}", registeredUser.getId(), username);
-            return Result.success("用户注册成功", registeredUser);
+            return Result.success("用户注册成功", loginResponse);
             
         } catch (IllegalArgumentException e) {
             LoggerUtil.warn("用户注册失败: {}", e.getMessage());
@@ -84,10 +104,10 @@ public class UserController {
      * 
      * @param username 用户名
      * @param password 密码
-     * @return 登录成功的用户信息
+     * @return 登录成功的用户信息和JWT令牌
      */
     @PostMapping("/login")
-    public Result<User> login(
+    public Result<LoginResponse> login(
             @RequestParam @NotBlank(message = "用户名不能为空") String username,
             @RequestParam @NotBlank(message = "密码不能为空") String password) {
         
@@ -108,8 +128,23 @@ public class UserController {
             // 调用业务层进行登录
             User loginUser = userService.login(username, password);
             
+            // 生成JWT令牌
+            String token = jwtUtil.generateToken(loginUser.getId(), loginUser.getUsername(), loginUser.getUserType().toString());
+            
+            // 构建登录响应
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .token(token)
+                    .tokenType("Bearer")
+                    .userId(loginUser.getId())
+                    .username(loginUser.getUsername())
+                    .userType(loginUser.getUserType())
+                    .email(loginUser.getEmail())
+                    .phone(loginUser.getPhone())
+                    .region(loginUser.getRegion())
+                    .build();
+            
             LoggerUtil.info("用户登录成功，用户ID: {}, 用户名: {}", loginUser.getId(), username);
-            return Result.success("用户登录成功", loginUser);
+            return Result.success("用户登录成功", loginResponse);
             
         } catch (IllegalArgumentException e) {
             LoggerUtil.warn("用户登录失败: {}", e.getMessage());
