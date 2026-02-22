@@ -1,0 +1,26 @@
+{
+  "name": "agricultural-platform-frontend",
+  "version": "1.0.0",
+  "description": "Vue 3 frontend for weather and agricultural products platform",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "vue": "^3.5.28",
+    "vue-router": "^4.4.5",
+    "pinia": "^2.2.6",
+    "axios": "^1.7.7",
+    "element-plus": "^2.8.8"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^5.4.11",
+    "eslint": "^9.15.0",
+    "eslint-plugin-vue": "^9.31.0",
+    "@vue/eslint-config-prettier": "^10.1.0"
+  }
+}

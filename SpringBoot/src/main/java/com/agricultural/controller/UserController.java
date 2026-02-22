@@ -3,9 +3,11 @@ package com.agricultural.controller;
 import com.agricultural.dto.LoginResponse;
 import com.agricultural.dto.Result;
 import com.agricultural.entity.User;
+import com.agricultural.security.RequirePermission;
 import com.agricultural.service.UserService;
 import com.agricultural.util.JwtUtil;
 import com.agricultural.util.LoggerUtil;
+import com.agricultural.util.PermissionUtil;
 import com.agricultural.util.StringUtil;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -162,6 +164,7 @@ public class UserController {
      * @return 用户信息
      */
     @GetMapping("/{id}")
+    @RequirePermission(requireAuth = true, description = "获取用户信息")
     public Result<User> getUserInfo(@PathVariable @NotNull(message = "用户ID不能为空") Long id) {
         
         LoggerUtil.info("收到获取用户信息请求，用户ID: {}", id);
@@ -171,6 +174,12 @@ public class UserController {
             if (id == null || id <= 0) {
                 LoggerUtil.warn("获取用户信息请求参数验证失败: 用户ID无效");
                 return Result.validationError("用户ID无效");
+            }
+            
+            // 权限检查：只有管理员或用户本人可以查看用户信息
+            if (!PermissionUtil.canAccessUser(id)) {
+                LoggerUtil.warn("用户权限不足，无法查看用户信息，用户ID: {}", id);
+                return Result.forbidden("权限不足，无法查看此用户信息");
             }
             
             // 调用业务层获取用户信息
@@ -198,6 +207,7 @@ public class UserController {
      * @return 更新后的用户信息
      */
     @PutMapping("/{id}")
+    @RequirePermission(requireAuth = true, description = "更新用户信息")
     public Result<User> updateUser(
             @PathVariable @NotNull(message = "用户ID不能为空") Long id,
             @RequestParam(required = false) String email,
@@ -211,6 +221,12 @@ public class UserController {
             if (id == null || id <= 0) {
                 LoggerUtil.warn("更新用户信息请求参数验证失败: 用户ID无效");
                 return Result.validationError("用户ID无效");
+            }
+            
+            // 权限检查：只有管理员或用户本人可以更新用户信息
+            if (!PermissionUtil.canAccessUser(id)) {
+                LoggerUtil.warn("用户权限不足，无法更新用户信息，用户ID: {}", id);
+                return Result.forbidden("权限不足，无法更新此用户信息");
             }
             
             // 检查是否至少提供了一个要更新的字段
@@ -241,6 +257,7 @@ public class UserController {
      * @return 删除结果
      */
     @DeleteMapping("/{id}")
+    @RequirePermission(roles = {"ADMIN"}, description = "删除用户")
     public Result<Void> deleteUser(@PathVariable @NotNull(message = "用户ID不能为空") Long id) {
         
         LoggerUtil.info("收到删除用户请求，用户ID: {}", id);
@@ -276,6 +293,7 @@ public class UserController {
      * @return 修改结果
      */
     @PostMapping("/{id}/change-password")
+    @RequirePermission(requireAuth = true, description = "修改用户密码")
     public Result<User> changePassword(
             @PathVariable @NotNull(message = "用户ID不能为空") Long id,
             @RequestParam @NotBlank(message = "旧密码不能为空") String oldPassword,
@@ -288,6 +306,12 @@ public class UserController {
             if (id == null || id <= 0) {
                 LoggerUtil.warn("修改密码请求参数验证失败: 用户ID无效");
                 return Result.validationError("用户ID无效");
+            }
+            
+            // 权限检查：只有管理员或用户本人可以修改密码
+            if (!PermissionUtil.canAccessUser(id)) {
+                LoggerUtil.warn("用户权限不足，无法修改用户密码，用户ID: {}", id);
+                return Result.forbidden("权限不足，无法修改此用户密码");
             }
             
             if (StringUtil.isBlank(oldPassword)) {

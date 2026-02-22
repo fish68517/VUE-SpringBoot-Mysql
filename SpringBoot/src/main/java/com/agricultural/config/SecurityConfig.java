@@ -120,11 +120,34 @@ public class SecurityConfig {
                         // 允许的公开端点
                         .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll()
-                        .requestMatchers("/api/weather/current").permitAll()
-                        .requestMatchers("/api/weather/forecast").permitAll()
-                        .requestMatchers("/api/weather/history").permitAll()
-                        .requestMatchers("/api/products").permitAll()
-                        .requestMatchers("/api/warnings").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/check/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/weather/current").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/weather/forecast").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/weather/history").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/warnings").permitAll()
+                        
+                        // 管理员专用端点
+                        .requestMatchers(HttpMethod.POST, "/api/users/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/weather/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/weather/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/weather/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/warnings/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/warnings/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/warnings/**").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/analytics/**").hasAnyRole("ADMIN")
+                        
+                        // 商家专用端点
+                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasAnyRole("MERCHANT", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyRole("MERCHANT", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyRole("MERCHANT", "ADMIN")
+                        
+                        // 农户和商家可以查看订单
+                        .requestMatchers(HttpMethod.GET, "/api/orders/**").hasAnyRole("FARMER", "MERCHANT", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/orders/**").hasAnyRole("FARMER", "MERCHANT", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/orders/**").hasAnyRole("FARMER", "MERCHANT", "ADMIN")
                         
                         // 其他所有请求需要认证
                         .anyRequest().authenticated()

@@ -16,6 +16,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
  * JWT认证过滤器
@@ -43,9 +46,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String userType = jwtUtil.getUserTypeFromToken(jwt);
                 
                 if (StringUtils.hasText(username)) {
+                    // 创建权限列表
+                    List<GrantedAuthority> authorities = new ArrayList<>();
+                    if (StringUtils.hasText(userType)) {
+                        authorities.add(new SimpleGrantedAuthority("ROLE_" + userType));
+                    }
+                    
                     // 创建认证令牌
                     UsernamePasswordAuthenticationToken authentication = 
-                            new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                            new UsernamePasswordAuthenticationToken(username, null, authorities);
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     
                     // 将用户信息存储在请求属性中
@@ -56,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // 设置安全上下文
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     
-                    log.debug("JWT令牌验证成功，用户: {}", username);
+                    log.debug("JWT令牌验证成功，用户: {}, 角色: {}", username, userType);
                 }
             }
         } catch (Exception e) {
