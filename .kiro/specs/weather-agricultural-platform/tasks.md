@@ -2,7 +2,12 @@
 
 ## 项目初始化与基础设置
 
-- [-] 1. 创建SpringBoot 3.x项目结构和配置
+- [x] 1. 创建SpringBoot 3.x项目结构和配置
+
+
+
+
+
 
 
   - 使用Maven创建SpringBoot 3.x项目
@@ -11,7 +16,12 @@
   - 创建项目的包结构：controller、service、repository、entity、dto、util、config
   - _需求: 1.1, 2.1, 3.1_
 
-- [ ] 2. 配置MySQL数据库和创建数据表
+- [x] 2. 配置MySQL数据库和创建数据表
+
+
+
+
+
   - 创建MySQL数据库和用户
   - 编写SQL脚本创建所有数据表（users、weather_data、warnings、agricultural_products、crops、recommendations、orders）
   - 为每张表添加5-6条中文模拟数据
