@@ -5,7 +5,7 @@ export const DEFAULT_RECIPE_IMAGE = '/images/default-recipe.jpg'
 
 
 // 定义常量
-const BASE_URL = 'http://192.168.8.111:8089';
+const BASE_URL = 'http://localhost:8089';
 const defaultImage = require('@/assets/image/pet/default.png'); // 引入默认图片
 const BASE_RESOURCE_URL = '/image/pet/'
 

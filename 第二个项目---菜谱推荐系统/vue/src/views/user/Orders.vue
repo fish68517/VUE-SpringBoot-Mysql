@@ -29,7 +29,7 @@
             <div class="item-info">
               <h4>{{ detail.recipe.name }}</h4>
               <p>数量：{{ detail.quantity }}</p>
-              <p>单价：¥{{ detail.price }}</p>
+            
             </div>
           </div>
         </div>
