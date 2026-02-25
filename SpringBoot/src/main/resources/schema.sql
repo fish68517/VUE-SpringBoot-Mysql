@@ -200,3 +200,62 @@ CREATE TABLE IF NOT EXISTS browsing_history (
     INDEX idx_user_id (user_id),
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='浏览历史表';
+
+-- 插入示例景点数据
+INSERT INTO attractions (name, description, location, ticket_price, opening_hours, image_url, is_guangzhou_special) VALUES
+('陈家祠', '陈家祠是广东现存规模最大、保存最完整的中国传统民居建筑群，是岭南建筑艺术的典范。', '广州市荔湾区中山七路', 10.00, '09:00-17:00', 'https://via.placeholder.com/300x200?text=陈家祠', true),
+('珠江夜游', '乘坐游船欣赏珠江两岸的夜景，感受广州的现代魅力。', '广州市越秀区珠江', 80.00, '19:00-22:00', 'https://via.placeholder.com/300x200?text=珠江夜游', true),
+('广州塔', '广州塔是中国第一高塔，可俯瞰整个广州城市风景。', '广州市海珠区阅江西路', 150.00, '09:00-23:00', 'https://via.placeholder.com/300x200?text=广州塔', true),
+('越秀公园', '越秀公园是广州最大的城市公园，有五羊雕像等著名景观。', '广州市越秀区解放北路', 5.00, '06:00-21:00', 'https://via.placeholder.com/300x200?text=越秀公园', true),
+('黄埔古港', '黄埔古港是广州对外贸易的重要港口，见证了广州的商业历史。', '广州市黄埔区黄埔东路', 20.00, '09:00-17:00', 'https://via.placeholder.com/300x200?text=黄埔古港', true),
+('南沙湿地公园', '南沙湿地公园是广州最大的湿地公园，有丰富的野生动物。', '广州市南沙区万顷沙镇', 30.00, '08:00-18:00', 'https://via.placeholder.com/300x200?text=南沙湿地', false),
+('白云山', '白云山是广州的城市绿肺，有多条登山步道和观景台。', '广州市白云区白云山', 5.00, '06:00-21:00', 'https://via.placeholder.com/300x200?text=白云山', false),
+('长隆野生动物园', '长隆野生动物园是中国最大的野生动物园，有众多珍稀动物。', '广州市番禺区大石镇', 250.00, '09:30-18:00', 'https://via.placeholder.com/300x200?text=长隆野生动物园', false);
+
+-- 插入示例标签数据
+INSERT INTO attraction_tags (attraction_id, tag_name) VALUES
+(1, '文化'),
+(1, '历史'),
+(2, '美食'),
+(2, '夜景'),
+(3, '现代'),
+(3, '建筑'),
+(4, '公园'),
+(4, '休闲'),
+(5, '历史'),
+(5, '文化'),
+(6, '自然'),
+(6, '生态'),
+(7, '自然'),
+(7, '休闲'),
+(8, '动物'),
+(8, '家庭');
+
+-- 插入示例酒店数据
+INSERT INTO hotels (name, location, description, image_url, rating) VALUES
+('广州白天鹅宾馆', '广州市越秀区环市东路', '五星级豪华酒店，位于珠江河畔，拥有优美的江景和完善的设施。', 'https://via.placeholder.com/300x200?text=白天鹅宾馆', 5.0),
+('广州香格里拉大酒店', '广州市越秀区中山一路', '五星级国际酒店，提供高端服务和舒适的住宿环境。', 'https://via.placeholder.com/300x200?text=香格里拉', 4.8),
+('广州花园酒店', '广州市越秀区中山一路', '四星级商务酒店，地理位置优越，靠近商业中心。', 'https://via.placeholder.com/300x200?text=花园酒店', 4.5),
+('广州长隆酒店', '广州市番禺区大石镇', '四星级主题酒店，靠近长隆野生动物园，适合家庭旅游。', 'https://via.placeholder.com/300x200?text=长隆酒店', 4.6),
+('广州南沙假日酒店', '广州市南沙区万顷沙镇', '三星级度假酒店，环境优美，靠近南沙湿地公园。', 'https://via.placeholder.com/300x200?text=南沙假日', 4.2),
+('广州天河城市酒店', '广州市天河区天河路', '四星级商务酒店，靠近购物中心和商业区。', 'https://via.placeholder.com/300x200?text=天河城市', 4.4);
+
+-- 插入示例酒店房间数据
+INSERT INTO hotel_rooms (hotel_id, room_type, price_per_night, quantity) VALUES
+(1, '豪华套房', 1500.00, 10),
+(1, '标准间', 800.00, 30),
+(1, '商务间', 600.00, 20),
+(2, '豪华套房', 1200.00, 8),
+(2, '标准间', 700.00, 25),
+(2, '经济间', 500.00, 15),
+(3, '标准间', 500.00, 40),
+(3, '商务间', 400.00, 30),
+(3, '经济间', 300.00, 20),
+(4, '家庭房', 800.00, 15),
+(4, '标准间', 600.00, 35),
+(4, '经济间', 400.00, 25),
+(5, '标准间', 400.00, 30),
+(5, '经济间', 250.00, 40),
+(6, '商务间', 450.00, 25),
+(6, '标准间', 350.00, 35),
+(6, '经济间', 250.00, 30);

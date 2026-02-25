@@ -21,21 +21,23 @@
       </el-row>
 
       <el-row :gutter="20">
-        <el-col :xs="24" :sm="12" :md="8" v-for="i in 6" :key="i">
-          <el-card class="hotel-card">
+        <el-col :xs="24" :sm="12" :md="8" v-for="hotel in hotels" :key="hotel.id">
+          <el-card class="hotel-card" @click="goToDetail(hotel.id)">
             <div class="hotel-image">
               <el-image 
-                src="https://via.placeholder.com/300x200" 
+                :src="hotel.imageUrl" 
                 fit="cover"
                 style="width: 100%; height: 200px"
               />
             </div>
-            <h3>酒店名称 {{ i }}</h3>
+            <h3>{{ hotel.name }}</h3>
             <div class="rating">
-              <el-rate v-model="rating" disabled size="small" />
+              <el-rate v-model="hotel.rating" disabled size="small" />
             </div>
-            <p class="location">📍 广州市</p>
-            <div class="price">¥{{ 200 + i * 50 }}/晚</div>
+            <p class="location">📍 {{ hotel.location }}</p>
+            <div class="price" v-if="hotel.rooms && hotel.rooms.length > 0">
+              ¥{{ Math.min(...hotel.rooms.map(r => r.pricePerNight)) }}/晚起
+            </div>
             <el-button type="primary" size="small" style="width: 100%">
               查看详情
             </el-button>
@@ -50,29 +52,65 @@
         :total="pagination.total"
         layout="total, sizes, prev, pager, next, jumper"
         style="margin-top: 20px; text-align: center"
+        @change="loadHotels"
       />
     </el-card>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+
+const router = useRouter()
 
 const searchForm = ref({
   keyword: ''
 })
 
-const rating = ref(4)
+const hotels = ref([])
 
 const pagination = ref({
   currentPage: 1,
   pageSize: 10,
-  total: 60
+  total: 0
 })
+
+const loadHotels = async () => {
+  try {
+    let url = 'http://localhost:8080/hotels/list?page=' + (pagination.value.currentPage - 1) + '&size=' + pagination.value.pageSize
+    
+    if (searchForm.value.keyword) {
+      url = 'http://localhost:8080/hotels/search?keyword=' + searchForm.value.keyword + '&page=' + (pagination.value.currentPage - 1) + '&size=' + pagination.value.pageSize
+    }
+    
+    const response = await fetch(url)
+    const data = await response.json()
+    
+    if (data.code === 0) {
+      hotels.value = data.data.hotels
+      pagination.value.total = data.data.total
+    } else {
+      ElMessage.error(data.message || '加载酒店列表失败')
+    }
+  } catch (error) {
+    ElMessage.error('加载酒店列表失败: ' + error.message)
+  }
+}
 
 const handleSearch = () => {
   pagination.value.currentPage = 1
+  loadHotels()
 }
+
+const goToDetail = (hotelId) => {
+  router.push({ name: 'HotelDetail', params: { id: hotelId } })
+}
+
+onMounted(() => {
+  loadHotels()
+})
 </script>
 
 <style scoped>
