@@ -61,7 +61,7 @@
 
             <!-- 操作按钮 -->
             <div class="actions">
-              <el-button type="primary" size="large" style="width: 100%; margin-bottom: 10px">
+              <el-button type="primary" size="large" style="width: 100%; margin-bottom: 10px" @click="goToBooking">
                 预订门票
               </el-button>
               <el-button
@@ -88,7 +88,22 @@
       <el-divider />
       <div class="comments-section">
         <h3>游客评价</h3>
-        <el-empty description="暂无评价" />
+        
+        <!-- 评价表单 -->
+        <CommentForm
+          v-if="currentUser"
+          :target-type="'attraction'"
+          :target-id="attraction.id"
+          :user-id="currentUser.id"
+          @comment-submitted="onCommentSubmitted"
+        />
+        
+        <!-- 评价列表 -->
+        <CommentList
+          :target-type="'attraction'"
+          :target-id="attraction.id"
+          :key="commentListKey"
+        />
       </div>
     </el-card>
 
@@ -102,6 +117,8 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import CommentForm from '@/components/CommentForm.vue'
+import CommentList from '@/components/CommentList.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -109,6 +126,8 @@ const route = useRoute()
 const attraction = ref(null)
 const isFavorited = ref(false)
 const loading = ref(false)
+const currentUser = ref(null)
+const commentListKey = ref(0)
 
 const API_BASE_URL = 'http://localhost:8080'
 
@@ -148,6 +167,19 @@ const goBack = () => {
 }
 
 /**
+ * 跳转到预订页面
+ */
+const goToBooking = () => {
+  const user = localStorage.getItem('user')
+  if (!user) {
+    ElMessage.error('请先登录')
+    router.push('/login')
+    return
+  }
+  router.push(`/attractions/${route.params.id}/booking`)
+}
+
+/**
  * 切换收藏状态
  */
 const toggleFavorite = () => {
@@ -156,9 +188,27 @@ const toggleFavorite = () => {
   ElMessage.success(message)
 }
 
+/**
+ * 处理评价提交
+ */
+const onCommentSubmitted = () => {
+  // 刷新评价列表
+  commentListKey.value++
+}
+
 // 页面加载时获取景点详情
 onMounted(() => {
   loadAttractionDetail()
+  
+  // 获取当前登录用户
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    try {
+      currentUser.value = JSON.parse(userStr)
+    } catch (error) {
+      console.error('解析用户信息失败:', error)
+    }
+  }
 })
 </script>
 

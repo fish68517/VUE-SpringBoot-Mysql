@@ -4,26 +4,31 @@
       <template #header>
         <div class="card-header">
           <span>我的订单</span>
+          <el-button type="primary" @click="loadOrders">刷新</el-button>
         </div>
       </template>
       
-      <el-table :data="orders" stripe>
-        <el-table-column prop="orderNumber" label="订单号" />
-        <el-table-column prop="type" label="订单类型" />
-        <el-table-column prop="totalPrice" label="总价" />
-        <el-table-column prop="status" label="状态">
+      <el-table :data="orders" stripe v-loading="loading">
+        <el-table-column prop="orderNumber" label="订单号" width="180" />
+        <el-table-column prop="orderType" label="订单类型" width="120">
           <template #default="{ row }">
-            <el-tag :type="getStatusType(row.status)">{{ row.status }}</el-tag>
+            {{ getOrderTypeLabel(row.orderType) }}
           </template>
         </el-table-column>
-        <el-table-column prop="createdAt" label="创建时间" />
-        <el-table-column label="操作">
+        <el-table-column prop="totalPrice" label="总价" width="100" />
+        <el-table-column prop="status" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="getStatusType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createdAt" label="创建时间" width="180" />
+        <el-table-column label="操作" width="200">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="handleViewDetail(row)">
               查看详情
             </el-button>
             <el-button 
-              v-if="row.status === '待确认'" 
+              v-if="row.status === 'pending'" 
               type="danger" 
               size="small"
               @click="handleCancel(row)"
@@ -41,44 +46,171 @@
         :total="pagination.total"
         layout="total, sizes, prev, pager, next, jumper"
         style="margin-top: 20px; text-align: center"
+        @current-change="loadOrders"
+        @size-change="loadOrders"
       />
     </el-card>
+
+    <!-- Order Detail Dialog -->
+    <el-dialog v-model="detailDialogVisible" title="订单详情" width="600px">
+      <div v-if="selectedOrder" class="order-detail">
+        <el-descriptions :column="1" border>
+          <el-descriptions-item label="订单号">{{ selectedOrder.orderNumber }}</el-descriptions-item>
+          <el-descriptions-item label="订单类型">{{ getOrderTypeLabel(selectedOrder.orderType) }}</el-descriptions-item>
+          <el-descriptions-item label="总价">¥{{ selectedOrder.totalPrice }}</el-descriptions-item>
+          <el-descriptions-item label="状态">
+            <el-tag :type="getStatusType(selectedOrder.status)">{{ getStatusLabel(selectedOrder.status) }}</el-tag>
+          </el-descriptions-item>
+          <el-descriptions-item label="创建时间">{{ selectedOrder.createdAt }}</el-descriptions-item>
+          <el-descriptions-item label="更新时间">{{ selectedOrder.updatedAt }}</el-descriptions-item>
+        </el-descriptions>
+
+        <div style="margin-top: 20px">
+          <h4>订单项目</h4>
+          <el-table :data="orderItems" stripe>
+            <el-table-column prop="itemType" label="项目类型" width="100">
+              <template #default="{ row }">
+                {{ getOrderTypeLabel(row.itemType) }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="quantity" label="数量" width="80" />
+            <el-table-column prop="unitPrice" label="单价" width="100" />
+            <el-table-column prop="subtotal" label="小计" width="100" />
+          </el-table>
+        </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import axios from 'axios'
 
-const router = useRouter()
+const API_BASE_URL = 'http://localhost:8080'
 
-const orders = ref([
-  { orderNumber: 'ORD001', type: '景点门票', totalPrice: 100, status: '已完成', createdAt: '2024-01-01' },
-  { orderNumber: 'ORD002', type: '酒店预订', totalPrice: 500, status: '待确认', createdAt: '2024-01-02' }
-])
+const orders = ref([])
+const selectedOrder = ref(null)
+const orderItems = ref([])
+const loading = ref(false)
+const detailDialogVisible = ref(false)
 
 const pagination = ref({
   currentPage: 1,
   pageSize: 10,
-  total: 2
+  total: 0
 })
+
+// Get user ID from localStorage
+const userId = localStorage.getItem('userId')
 
 const getStatusType = (status) => {
   const statusMap = {
-    '待确认': 'warning',
-    '已完成': 'success',
-    '已取消': 'danger'
+    'pending': 'warning',
+    'confirmed': 'info',
+    'completed': 'success',
+    'cancelled': 'danger'
   }
   return statusMap[status] || 'info'
 }
 
-const handleViewDetail = (row) => {
-  // Navigate to order detail
+const getStatusLabel = (status) => {
+  const statusMap = {
+    'pending': '待确认',
+    'confirmed': '已确认',
+    'completed': '已完成',
+    'cancelled': '已取消'
+  }
+  return statusMap[status] || status
+}
+
+const getOrderTypeLabel = (type) => {
+  const typeMap = {
+    'attraction': '景点门票',
+    'hotel': '酒店预订',
+    'product': '旅游商品'
+  }
+  return typeMap[type] || type
+}
+
+const loadOrders = async () => {
+  if (!userId) {
+    ElMessage.error('请先登录')
+    return
+  }
+
+  loading.value = true
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/orders/user/${userId}`,
+      {
+        params: {
+          page: pagination.value.currentPage - 1,
+          size: pagination.value.pageSize
+        }
+      }
+    )
+
+    if (response.data.code === 0) {
+      orders.value = response.data.data.orders
+      pagination.value.total = response.data.data.total
+    } else {
+      ElMessage.error(response.data.message || '获取订单列表失败')
+    }
+  } catch (error) {
+    ElMessage.error('获取订单列表失败: ' + error.message)
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleViewDetail = async (row) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/orders/${row.id}`)
+    
+    if (response.data.code === 0) {
+      selectedOrder.value = response.data.data
+      orderItems.value = response.data.data.items || []
+      detailDialogVisible.value = true
+    } else {
+      ElMessage.error(response.data.message || '获取订单详情失败')
+    }
+  } catch (error) {
+    ElMessage.error('获取订单详情失败: ' + error.message)
+  }
 }
 
 const handleCancel = (row) => {
-  // Cancel order
+  ElMessageBox.confirm(
+    '确定要取消此订单吗？',
+    '提示',
+    {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    }
+  ).then(async () => {
+    try {
+      const response = await axios.put(`${API_BASE_URL}/orders/${row.id}/cancel`)
+      
+      if (response.data.code === 0) {
+        ElMessage.success('订单已取消')
+        loadOrders()
+      } else {
+        ElMessage.error(response.data.message || '取消订单失败')
+      }
+    } catch (error) {
+      ElMessage.error('取消订单失败: ' + error.message)
+    }
+  }).catch(() => {
+    // User cancelled the action
+  })
 }
+
+onMounted(() => {
+  loadOrders()
+})
 </script>
 
 <style scoped>
@@ -87,7 +219,21 @@ const handleCancel = (row) => {
 }
 
 .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-weight: bold;
   color: #333;
+}
+
+.order-detail {
+  padding: 20px 0;
+}
+
+.order-detail h4 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: bold;
 }
 </style>

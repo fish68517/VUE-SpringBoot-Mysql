@@ -50,8 +50,8 @@
                 </el-table-column>
                 <el-table-column prop="quantity" label="可用房间" width="100" />
                 <el-table-column label="操作" width="100">
-                  <template #default="{ row }">
-                    <el-button type="primary" size="small" @click="bookRoom(row)">
+                  <template #default>
+                    <el-button type="primary" size="small" @click="bookRoom">
                       预订
                     </el-button>
                   </template>
@@ -61,6 +61,28 @@
           </div>
         </el-col>
       </el-row>
+      
+      <!-- 评价 -->
+      <el-divider />
+      <div class="comments-section">
+        <h3>游客评价</h3>
+        
+        <!-- 评价表单 -->
+        <CommentForm
+          v-if="currentUser"
+          :target-type="'hotel'"
+          :target-id="hotel.id"
+          :user-id="currentUser.id"
+          @comment-submitted="onCommentSubmitted"
+        />
+        
+        <!-- 评价列表 -->
+        <CommentList
+          :target-type="'hotel'"
+          :target-id="hotel.id"
+          :key="commentListKey"
+        />
+      </div>
     </el-card>
     
     <el-empty v-else description="酒店信息加载中..." />
@@ -71,11 +93,15 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import CommentForm from '@/components/CommentForm.vue'
+import CommentList from '@/components/CommentList.vue'
 
 const router = useRouter()
 const route = useRoute()
 
 const hotel = ref(null)
+const currentUser = ref(null)
+const commentListKey = ref(0)
 
 const loadHotelDetail = async () => {
   try {
@@ -97,12 +123,30 @@ const goBack = () => {
   router.back()
 }
 
-const bookRoom = (room) => {
-  ElMessage.info('预订功能将在订单模块中实现')
+const bookRoom = () => {
+  router.push(`/hotels/${route.params.id}/booking`)
+}
+
+/**
+ * 处理评价提交
+ */
+const onCommentSubmitted = () => {
+  // 刷新评价列表
+  commentListKey.value++
 }
 
 onMounted(() => {
   loadHotelDetail()
+  
+  // 获取当前登录用户
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    try {
+      currentUser.value = JSON.parse(userStr)
+    } catch (error) {
+      console.error('解析用户信息失败:', error)
+    }
+  }
 })
 </script>
 
@@ -164,5 +208,15 @@ onMounted(() => {
 .rooms-section h3 {
   margin-bottom: 15px;
   color: #333;
+}
+
+.comments-section {
+  margin: 20px 0;
+}
+
+.comments-section h3 {
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 16px;
 }
 </style>

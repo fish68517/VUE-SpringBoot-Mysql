@@ -7,9 +7,13 @@ import Register from '../views/auth/Register.vue'
 import Profile from '../views/tourist/Profile.vue'
 import Attractions from '../views/tourist/Attractions.vue'
 import AttractionDetail from '../views/tourist/AttractionDetail.vue'
+import AttractionBooking from '../views/tourist/AttractionBooking.vue'
 import Hotels from '../views/tourist/Hotels.vue'
 import HotelDetail from '../views/tourist/HotelDetail.vue'
+import HotelBooking from '../views/tourist/HotelBooking.vue'
 import Products from '../views/tourist/Products.vue'
+import ProductDetail from '../views/tourist/ProductDetail.vue'
+import ProductBooking from '../views/tourist/ProductBooking.vue'
 import Orders from '../views/tourist/Orders.vue'
 import Favorites from '../views/tourist/Favorites.vue'
 import Routes from '../views/tourist/Routes.vue'
@@ -64,6 +68,12 @@ const routes = [
     meta: { requiresAuth: false }
   },
   {
+    path: '/attractions/:id/booking',
+    name: 'AttractionBooking',
+    component: AttractionBooking,
+    meta: { requiresAuth: true, role: 'tourist' }
+  },
+  {
     path: '/hotels',
     name: 'Hotels',
     component: Hotels,
@@ -76,10 +86,28 @@ const routes = [
     meta: { requiresAuth: false }
   },
   {
+    path: '/hotels/:id/booking',
+    name: 'HotelBooking',
+    component: HotelBooking,
+    meta: { requiresAuth: true, role: 'tourist' }
+  },
+  {
     path: '/products',
     name: 'Products',
     component: Products,
     meta: { requiresAuth: false }
+  },
+  {
+    path: '/product/:id',
+    name: 'ProductDetail',
+    component: ProductDetail,
+    meta: { requiresAuth: false }
+  },
+  {
+    path: '/product/:id/booking',
+    name: 'ProductBooking',
+    component: ProductBooking,
+    meta: { requiresAuth: true, role: 'tourist' }
   },
   {
     path: '/orders',

@@ -259,3 +259,17 @@ INSERT INTO hotel_rooms (hotel_id, room_type, price_per_night, quantity) VALUES
 (6, '商务间', 450.00, 25),
 (6, '标准间', 350.00, 35),
 (6, '经济间', 250.00, 30);
+
+-- 插入示例旅游商品数据
+INSERT INTO products (name, description, price, stock, image_url, category, is_guangzhou_special) VALUES
+('广州特色茶叶', '正宗广州普洱茶，选用云南优质茶叶，经过传统工艺精心制作，香气浓郁，回甘悠长。', 128.00, 50, 'https://via.placeholder.com/300x200?text=茶叶', '美食', true),
+('陶瓷工艺品', '手工制作的陶瓷工艺品，采用传统广东陶瓷工艺，每件都是独一无二的艺术品。', 89.00, 30, 'https://via.placeholder.com/300x200?text=陶瓷', '手工艺品', true),
+('广州特色糕点', '传统广州糕点，包括蛋挞、老婆饼等，采用传统配方，口感酥脆，甜而不腻。', 45.00, 100, 'https://via.placeholder.com/300x200?text=糕点', '美食', true),
+('丝绸纪念品', '精美的丝绸纪念品，采用广东特色丝绸面料，设计精美，是旅游纪念的最佳选择。', 68.00, 40, 'https://via.placeholder.com/300x200?text=丝绸', '纪念品', true),
+('广州特色咸鱼', '传统腌制咸鱼，选用新鲜鱼类，采用传统腌制工艺，咸香适中，是家庭必备的美食。', 35.00, 60, 'https://via.placeholder.com/300x200?text=咸鱼', '美食', true),
+('手工扇子', '精美的手工扇子，采用竹子和丝绸制作，设计精美，是广州传统工艺的代表。', 55.00, 25, 'https://via.placeholder.com/300x200?text=扇子', '手工艺品', true),
+('广州特色酱料', '传统广州酱料，包括豆酱、虾酱等，采用传统配方，风味独特，是烹饪的好帮手。', 28.00, 80, 'https://via.placeholder.com/300x200?text=酱料', '美食', true),
+('木雕工艺品', '精美的木雕工艺品，采用传统木雕工艺，雕工精细，是收藏和送礼的佳品。', 120.00, 15, 'https://via.placeholder.com/300x200?text=木雕', '手工艺品', false),
+('广州特色蜜饯', '传统蜜饯，采用新鲜水果和蜂蜜制作，甜蜜可口，是旅游必买的特产。', 32.00, 70, 'https://via.placeholder.com/300x200?text=蜜饯', '美食', true),
+('景泰蓝工艺品', '精美的景泰蓝工艺品，采用传统景泰蓝工艺，色彩艳丽，是艺术品的典范。', 150.00, 10, 'https://via.placeholder.com/300x200?text=景泰蓝', '手工艺品', false);
+
