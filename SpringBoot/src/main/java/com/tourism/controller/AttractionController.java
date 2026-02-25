@@ -4,6 +4,7 @@ import com.tourism.common.ApiResponse;
 import com.tourism.entity.Attraction;
 import com.tourism.entity.AttractionTag;
 import com.tourism.service.AttractionService;
+import com.tourism.service.BrowsingHistoryService;
 import com.tourism.util.LoggerUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class AttractionController {
     
     @Autowired
     private AttractionService attractionService;
+    
+    @Autowired
+    private BrowsingHistoryService browsingHistoryService;
     
     /**
      * 获取景点列表端点（分页）
@@ -172,15 +176,28 @@ public class AttractionController {
     /**
      * 获取景点详情端点
      * @param id 景点ID
+     * @param userId 用户ID（可选，用于记录浏览历史）
      * @return API响应
      */
     @GetMapping("/{id}")
-    public ApiResponse<Map<String, Object>> getAttractionDetail(@PathVariable Long id) {
+    public ApiResponse<Map<String, Object>> getAttractionDetail(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long userId) {
         try {
             LoggerUtil.info(logger, "处理获取景点详情请求 - ID: " + id);
             
             Attraction attraction = attractionService.getAttractionDetail(id);
             Map<String, Object> response = buildAttractionResponse(attraction);
+            
+            // 如果提供了用户ID，记录浏览历史
+            if (userId != null && userId > 0) {
+                try {
+                    browsingHistoryService.recordBrowsingHistory(userId, "attraction", id);
+                } catch (Exception e) {
+                    LoggerUtil.warn(logger, "记录浏览历史失败: " + e.getMessage());
+                    // 不影响主流程，继续返回景点详情
+                }
+            }
             
             return ApiResponse.success(response);
         } catch (Exception e) {

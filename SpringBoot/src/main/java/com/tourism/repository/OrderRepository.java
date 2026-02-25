@@ -98,3 +98,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      */
     @Query("SELECT SUM(o.totalPrice) FROM Order o")
     BigDecimal sumTotalPrice();
+}

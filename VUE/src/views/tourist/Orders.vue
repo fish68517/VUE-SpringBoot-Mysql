@@ -236,4 +236,141 @@ onMounted(() => {
   font-size: 14px;
   font-weight: bold;
 }
+
+/* Tablet screens */
+@media (max-width: 1024px) {
+  .orders-container {
+    padding: 15px;
+  }
+
+  .card-header {
+    font-size: 14px;
+  }
+
+  .order-detail h4 {
+    font-size: 13px;
+  }
+}
+
+/* Tablet and smaller */
+@media (max-width: 768px) {
+  .orders-container {
+    padding: 12px;
+  }
+
+  .card-header {
+    font-size: 13px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .card-header :deep(.el-button) {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .order-detail {
+    padding: 15px 0;
+  }
+
+  .order-detail h4 {
+    font-size: 12px;
+    margin-top: 15px;
+    margin-bottom: 8px;
+  }
+
+  .order-detail :deep(.el-table) {
+    font-size: 12px;
+  }
+
+  .order-detail :deep(.el-descriptions) {
+    font-size: 12px;
+  }
+
+  .order-detail :deep(.el-descriptions-item__label) {
+    width: 80px;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 480px) {
+  .orders-container {
+    padding: 10px;
+  }
+
+  .card-header {
+    font-size: 12px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .card-header :deep(.el-button) {
+    width: 100%;
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .order-detail {
+    padding: 12px 0;
+  }
+
+  .order-detail h4 {
+    font-size: 11px;
+    margin-top: 12px;
+    margin-bottom: 6px;
+  }
+
+  .order-detail :deep(.el-table) {
+    font-size: 11px;
+  }
+
+  .order-detail :deep(.el-table th) {
+    padding: 8px 0;
+  }
+
+  .order-detail :deep(.el-table td) {
+    padding: 8px 0;
+  }
+
+  .order-detail :deep(.el-descriptions) {
+    font-size: 11px;
+  }
+
+  .order-detail :deep(.el-descriptions-item__label) {
+    width: 70px;
+  }
+
+  .order-detail :deep(.el-descriptions-item__content) {
+    word-break: break-all;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .orders-container {
+    padding: 8px;
+  }
+
+  .card-header {
+    font-size: 11px;
+  }
+
+  .order-detail h4 {
+    font-size: 10px;
+  }
+
+  .order-detail :deep(.el-table) {
+    font-size: 10px;
+  }
+
+  .order-detail :deep(.el-descriptions) {
+    font-size: 10px;
+  }
+
+  .order-detail :deep(.el-descriptions-item__label) {
+    width: 60px;
+  }
+}
 </style>

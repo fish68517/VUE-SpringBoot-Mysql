@@ -3,6 +3,7 @@ import client from './client'
 export const hotelApi = {
   getHotels: (params) => client.get('/hotels', { params }),
   getHotelDetail: (id) => client.get(`/hotels/${id}`),
+  getDetail: (id, userId) => client.get(`/hotels/${id}`, { params: { userId } }),
   createHotel: (data) => client.post('/hotels', data),
   updateHotel: (id, data) => client.put(`/hotels/${id}`, data),
   deleteHotel: (id) => client.delete(`/hotels/${id}`),

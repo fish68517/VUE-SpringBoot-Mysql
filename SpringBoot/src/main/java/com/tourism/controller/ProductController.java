@@ -3,6 +3,7 @@ package com.tourism.controller;
 import com.tourism.common.ApiResponse;
 import com.tourism.entity.Product;
 import com.tourism.service.ProductService;
+import com.tourism.service.BrowsingHistoryService;
 import com.tourism.util.LoggerUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class ProductController {
     
     @Autowired
     private ProductService productService;
+    
+    @Autowired
+    private BrowsingHistoryService browsingHistoryService;
     
     /**
      * 获取商品列表端点（分页）
@@ -171,15 +175,28 @@ public class ProductController {
     /**
      * 获取商品详情端点
      * @param id 商品ID
+     * @param userId 用户ID（可选，用于记录浏览历史）
      * @return API响应
      */
     @GetMapping("/{id}")
-    public ApiResponse<Map<String, Object>> getProductDetail(@PathVariable Long id) {
+    public ApiResponse<Map<String, Object>> getProductDetail(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long userId) {
         try {
             LoggerUtil.info(logger, "处理获取商品详情请求 - ID: " + id);
             
             Product product = productService.getProductDetail(id);
             Map<String, Object> response = buildProductResponse(product);
+            
+            // 如果提供了用户ID，记录浏览历史
+            if (userId != null && userId > 0) {
+                try {
+                    browsingHistoryService.recordBrowsingHistory(userId, "product", id);
+                } catch (Exception e) {
+                    LoggerUtil.warn(logger, "记录浏览历史失败: " + e.getMessage());
+                    // 不影响主流程，继续返回商品详情
+                }
+            }
             
             return ApiResponse.success(response);
         } catch (Exception e) {

@@ -300,6 +300,9 @@ public class OrderService {
         
         return savedOrder;
     }
+    
+    /**
+     * 根据订单号查询订单
      * @param orderNumber 订单号
      * @return 订单对象
      */

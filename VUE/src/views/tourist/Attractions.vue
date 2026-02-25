@@ -260,4 +260,126 @@ onMounted(() => {
   font-weight: bold;
   margin: 10px 0;
 }
+
+/* Tablet screens */
+@media (max-width: 1024px) {
+  .attractions-container {
+    padding: 15px;
+  }
+
+  .attraction-card h3 {
+    font-size: 15px;
+  }
+
+  .description {
+    font-size: 13px;
+  }
+
+  .price {
+    font-size: 16px;
+  }
+}
+
+/* Tablet and smaller */
+@media (max-width: 768px) {
+  .attractions-container {
+    padding: 12px;
+  }
+
+  .card-header {
+    font-size: 14px;
+  }
+
+  .attraction-card h3 {
+    font-size: 14px;
+    margin: 8px 0;
+  }
+
+  .tags {
+    margin: 6px 0;
+    gap: 3px;
+  }
+
+  .tags :deep(.el-tag) {
+    font-size: 11px;
+  }
+
+  .description {
+    font-size: 12px;
+    margin: 4px 0;
+  }
+
+  .price {
+    font-size: 15px;
+    margin: 8px 0;
+  }
+
+  .guangzhou-badge {
+    font-size: 11px;
+    padding: 3px 6px;
+    top: 6px;
+    right: 6px;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 480px) {
+  .attractions-container {
+    padding: 10px;
+  }
+
+  .card-header {
+    font-size: 13px;
+  }
+
+  .attraction-card h3 {
+    font-size: 13px;
+    margin: 6px 0;
+  }
+
+  .tags {
+    margin: 5px 0;
+    gap: 2px;
+  }
+
+  .tags :deep(.el-tag) {
+    font-size: 10px;
+  }
+
+  .description {
+    font-size: 11px;
+    margin: 3px 0;
+  }
+
+  .price {
+    font-size: 14px;
+    margin: 6px 0;
+  }
+
+  .guangzhou-badge {
+    font-size: 10px;
+    padding: 2px 5px;
+    top: 4px;
+    right: 4px;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .attractions-container {
+    padding: 8px;
+  }
+
+  .attraction-card h3 {
+    font-size: 12px;
+  }
+
+  .description {
+    font-size: 10px;
+  }
+
+  .price {
+    font-size: 13px;
+  }
+}
 </style>

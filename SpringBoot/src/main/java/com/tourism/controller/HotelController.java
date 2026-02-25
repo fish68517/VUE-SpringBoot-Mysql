@@ -4,6 +4,7 @@ import com.tourism.common.ApiResponse;
 import com.tourism.entity.Hotel;
 import com.tourism.entity.HotelRoom;
 import com.tourism.service.HotelService;
+import com.tourism.service.BrowsingHistoryService;
 import com.tourism.util.LoggerUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class HotelController {
     
     @Autowired
     private HotelService hotelService;
+    
+    @Autowired
+    private BrowsingHistoryService browsingHistoryService;
     
     /**
      * 获取酒店列表端点（分页）
@@ -138,15 +142,28 @@ public class HotelController {
     /**
      * 获取酒店详情端点
      * @param id 酒店ID
+     * @param userId 用户ID（可选，用于记录浏览历史）
      * @return API响应
      */
     @GetMapping("/{id}")
-    public ApiResponse<Map<String, Object>> getHotelDetail(@PathVariable Long id) {
+    public ApiResponse<Map<String, Object>> getHotelDetail(
+            @PathVariable Long id,
+            @RequestParam(required = false) Long userId) {
         try {
             LoggerUtil.info(logger, "处理获取酒店详情请求 - ID: " + id);
             
             Hotel hotel = hotelService.getHotelDetail(id);
             Map<String, Object> response = buildHotelResponse(hotel);
+            
+            // 如果提供了用户ID，记录浏览历史
+            if (userId != null && userId > 0) {
+                try {
+                    browsingHistoryService.recordBrowsingHistory(userId, "hotel", id);
+                } catch (Exception e) {
+                    LoggerUtil.warn(logger, "记录浏览历史失败: " + e.getMessage());
+                    // 不影响主流程，继续返回酒店详情
+                }
+            }
             
             return ApiResponse.success(response);
         } catch (Exception e) {

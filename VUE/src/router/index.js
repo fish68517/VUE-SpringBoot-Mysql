@@ -56,6 +56,12 @@ const routes = [
     meta: { requiresAuth: true, role: 'tourist' }
   },
   {
+    path: '/personal-center',
+    name: 'PersonalCenter',
+    component: Profile,
+    meta: { requiresAuth: true, role: 'tourist' }
+  },
+  {
     path: '/attractions',
     name: 'Attractions',
     component: Attractions,
@@ -179,7 +185,7 @@ const router = createRouter({
 })
 
 // Navigation guard for authentication
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const user = localStorage.getItem('user')
   const userInfo = user ? JSON.parse(user) : null
 

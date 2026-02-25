@@ -161,4 +161,94 @@ onMounted(() => {
   font-weight: bold;
   margin: 10px 0;
 }
+
+/* Tablet screens */
+@media (max-width: 1024px) {
+  .hotels-container {
+    padding: 15px;
+  }
+
+  .hotel-card h3 {
+    font-size: 15px;
+  }
+
+  .location {
+    font-size: 13px;
+  }
+
+  .price {
+    font-size: 16px;
+  }
+}
+
+/* Tablet and smaller */
+@media (max-width: 768px) {
+  .hotels-container {
+    padding: 12px;
+  }
+
+  .card-header {
+    font-size: 14px;
+  }
+
+  .hotel-card h3 {
+    font-size: 14px;
+    margin: 8px 0;
+  }
+
+  .location {
+    font-size: 12px;
+    margin: 4px 0;
+  }
+
+  .price {
+    font-size: 15px;
+    margin: 8px 0;
+  }
+}
+
+/* Mobile devices */
+@media (max-width: 480px) {
+  .hotels-container {
+    padding: 10px;
+  }
+
+  .card-header {
+    font-size: 13px;
+  }
+
+  .hotel-card h3 {
+    font-size: 13px;
+    margin: 6px 0;
+  }
+
+  .location {
+    font-size: 11px;
+    margin: 3px 0;
+  }
+
+  .price {
+    font-size: 14px;
+    margin: 6px 0;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .hotels-container {
+    padding: 8px;
+  }
+
+  .hotel-card h3 {
+    font-size: 12px;
+  }
+
+  .location {
+    font-size: 10px;
+  }
+
+  .price {
+    font-size: 13px;
+  }
+}
 </style>
