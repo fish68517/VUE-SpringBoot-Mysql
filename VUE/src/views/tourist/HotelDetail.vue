@@ -12,7 +12,7 @@
         <el-col :xs="24" :md="12">
           <div class="hotel-image">
             <el-image 
-              :src="hotel.imageUrl" 
+              :src="getFullImageUrl(hotel.imageUrl)" 
               fit="cover"
               style="width: 100%; height: 400px; border-radius: 4px"
             />
@@ -99,6 +99,16 @@ import CommentList from '@/components/CommentList.vue'
 const router = useRouter()
 const route = useRoute()
 
+
+// 拼接完整的图片 URL 供前端显示
+const getFullImageUrl = (url) => {
+  if (!url) return ''
+  // 如果已经是完整的网络图片地址（比如外链），直接返回
+  if (url.startsWith('http')) return url 
+  // 如果是相对路径（我们自己上传的），拼接上 Spring Boot 后端的地址
+  return `http://localhost:8080/api${url}`
+}
+
 const hotel = ref(null)
 const currentUser = ref(null)
 const commentListKey = ref(0)
@@ -106,7 +116,7 @@ const commentListKey = ref(0)
 const loadHotelDetail = async () => {
   try {
     const hotelId = route.params.id
-    const response = await fetch(`http://localhost:8080/hotels/${hotelId}`)
+    const response = await fetch(`http://localhost:8080/api/hotels/${hotelId}`)
     const data = await response.json()
     
     if (data.code === '0') {

@@ -27,6 +27,8 @@ import AdminComments from '../views/admin/Comments.vue'
 import AdminAnnouncements from '../views/admin/Announcements.vue'
 import AdminRoutes from '../views/admin/Routes.vue'
 
+import AdminProducts from '../views/admin/Products.vue'
+
 const routes = [
   // 1. 访问根目录直接重定向到登录页
   {
@@ -146,6 +148,12 @@ const routes = [
     path: '/admin/users',
     name: 'AdminUsers',
     component: AdminUsers,
+    meta: { requiresAuth: true, role: 'admin' }
+  },
+  {
+    path: '/admin/products',
+    name: 'AdminProducts',
+    component: AdminProducts,
     meta: { requiresAuth: true, role: 'admin' }
   },
   {

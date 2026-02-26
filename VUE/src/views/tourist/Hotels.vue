@@ -25,7 +25,7 @@
           <el-card class="hotel-card" @click="goToDetail(hotel.id)">
             <div class="hotel-image">
               <el-image 
-                :src="hotel.imageUrl" 
+                :src="getFullImageUrl(hotel.imageUrl)" 
                 fit="cover"
                 style="width: 100%; height: 200px"
               />
@@ -97,6 +97,16 @@ const loadHotels = async () => {
   } catch (error) {
     ElMessage.error('加载酒店列表失败: ' + error.message)
   }
+}
+
+
+// 拼接完整的图片 URL 供前端显示
+const getFullImageUrl = (url) => {
+  if (!url) return ''
+  // 如果已经是完整的网络图片地址（比如外链），直接返回
+  if (url.startsWith('http')) return url 
+  // 如果是相对路径（我们自己上传的），拼接上 Spring Boot 后端的地址
+  return `http://localhost:8080/api${url}`
 }
 
 const handleSearch = () => {

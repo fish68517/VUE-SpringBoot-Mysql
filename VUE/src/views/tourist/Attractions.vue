@@ -53,7 +53,7 @@
           <el-card class="attraction-card" @click="goToDetail(attraction.id)">
             <div class="attraction-image">
               <el-image 
-                :src="attraction.imageUrl || 'https://via.placeholder.com/300x200'" 
+                :src="getFullImageUrl(attraction.imageUrl) || 'https://via.placeholder.com/300x200'" 
                 fit="cover"
                 style="width: 100%; height: 200px"
               />
@@ -127,6 +127,16 @@ const attractions = ref([])
 const loading = ref(false)
 
 const API_BASE_URL = 'http://localhost:8080/api'
+
+
+// 拼接完整的图片 URL 供前端显示
+const getFullImageUrl = (url) => {
+  if (!url) return ''
+  // 如果已经是完整的网络图片地址（比如外链），直接返回
+  if (url.startsWith('http')) return url 
+  // 如果是相对路径（我们自己上传的），拼接上 Spring Boot 后端的地址
+  return `http://localhost:8080/api${url}`
+}
 
 /**
  * 加载景点列表

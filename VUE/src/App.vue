@@ -1,7 +1,9 @@
 <template>
   <div id="app" class="app-container">
     <el-container direction="vertical">
+      
       <top-navigation 
+        v-if="showTopNav"
         :is-logged-in="isLoggedIn"
         :username="userInfo.username"
         :user-role="userInfo.role"
@@ -23,18 +25,24 @@
 </template>
 
 <script setup>
-// 2. 修复状态：引入 watch 来监听路由变化
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+// 2. 这里增加导入 useRouter，用来在 App.vue 层面控制页面跳转
+import { useRoute, useRouter } from 'vue-router' 
 import TopNavigation from './components/TopNavigation.vue'
 import SidebarMenu from './components/SidebarMenu.vue'
 
 const route = useRoute()
+const router = useRouter() // 初始化 router
 
 const isLoggedIn = ref(false)
 const userInfo = ref({
   username: '',
   role: 'tourist'
+})
+
+// 3. 新增计算属性：判断是否显示顶部导航（如果以 /login 或 /register 开头则为 false）
+const showTopNav = computed(() => {
+  return !route.path.startsWith('/login') && !route.path.startsWith('/register')
 })
 
 const showSidebar = computed(() => {
@@ -67,10 +75,15 @@ watch(() => route.path, () => {
   checkAuthStatus()
 })
 
+// 4. 修改退出逻辑：在 App.vue 中集中清空缓存并跳转，解决跳转到 home 的 bug
 const logout = () => {
+  // 步骤 A：严格先清空本地存储和状态
   localStorage.removeItem('user')
   isLoggedIn.value = false
   userInfo.value = { username: '', role: 'tourist' }
+  
+  // 步骤 B：确保存储清空后，再统一执行跳转，路由守卫就不会拦截了！
+  router.push('/login')
 }
 </script>
 

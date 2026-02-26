@@ -39,17 +39,7 @@
                 <el-icon><user /></el-icon>
                 个人中心
               </el-dropdown-item>
-              <el-dropdown-item @click="handleProfile">
-                <el-icon><user /></el-icon>
-                个人资料
-              </el-dropdown-item>
-              <el-dropdown-item 
-                v-if="isAdmin"
-                @click="handleAdminPanel"
-              >
-                <el-icon><setting /></el-icon>
-                管理员面板
-              </el-dropdown-item>
+
               <el-dropdown-item divided @click="handleLogout">
                 <el-icon><switch-button /></el-icon> 退出登录
               </el-dropdown-item>

@@ -15,6 +15,21 @@
         <el-table-column prop="name" label="酒店名称" />
         <el-table-column prop="location" label="位置" />
         <el-table-column prop="rating" label="评分" width="80" />
+        
+        <el-table-column label="图片" width="100">
+          <template #default="{ row }">
+            <el-image 
+              v-if="row.imageUrl"
+              :src="getFullImageUrl(row.imageUrl)" 
+              style="width: 50px; height: 50px; border-radius: 4px;"
+              fit="cover"
+              :preview-src-list="[getFullImageUrl(row.imageUrl)]"
+              preview-teleported
+            />
+            <span v-else>无图</span>
+          </template>
+        </el-table-column>
+
         <el-table-column label="房间类型" width="200">
           <template #default="{ row }">
             <div class="rooms-cell">
@@ -58,7 +73,6 @@
       />
     </el-card>
 
-    <!-- 添加房间对话框 -->
     <el-dialog v-model="roomDialogVisible" title="添加房间" width="400px">
       <div v-if="selectedHotel">
         <p style="margin-bottom: 15px">酒店: {{ selectedHotel.name }}</p>
@@ -80,7 +94,6 @@
       </template>
     </el-dialog>
 
-    <!-- 创建/编辑酒店对话框 -->
     <el-dialog 
       v-model="showCreateDialog" 
       :title="editingHotel ? '编辑酒店' : '新增酒店'" 
@@ -109,9 +122,24 @@
             placeholder="请输入酒店描述"
           />
         </el-form-item>
+
         <el-form-item label="酒店图片" prop="imageUrl">
-          <el-input v-model="formData.imageUrl" placeholder="请输入酒店图片URL" />
+          <el-upload
+            class="avatar-uploader"
+            :action="`${API_BASE_URL}/upload/image`"
+            :show-file-list="false"
+            :on-success="handleUploadSuccess"
+            :before-upload="beforeUpload"
+            :headers="uploadHeaders"
+          >
+            <img v-if="formData.imageUrl" :src="getFullImageUrl(formData.imageUrl)" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+          </el-upload>
+          <div style="font-size: 12px; color: #999; margin-top: 5px; line-height: 1.2;">
+            只能上传 jpg/png/webp 文件，且不超过 5MB
+          </div>
         </el-form-item>
+
       </el-form>
       <template #footer>
         <el-button @click="showCreateDialog = false">取消</el-button>
@@ -122,8 +150,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue' // 引入加号图标
 
 const hotels = ref([])
 const pagination = ref({
@@ -167,6 +196,53 @@ const formRules = {
 
 const API_BASE_URL = 'http://localhost:8080/api'
 
+// ==== 图片上传相关逻辑开始 ====
+
+// 拼接完整的图片 URL 供前端显示
+const getFullImageUrl = (url) => {
+  if (!url) return ''
+  if (url.startsWith('http')) return url // 如果已经是网络绝对路径，直接返回
+  return `${API_BASE_URL}${url}` // 拼接后端地址
+}
+
+// 动态获取请求头
+const uploadHeaders = computed(() => {
+  const user = localStorage.getItem('user')
+  if (user) {
+    const userInfo = JSON.parse(user)
+    return {
+      'X-User-Id': userInfo.id,
+      'X-User-Role': userInfo.role
+    }
+  }
+  return {}
+})
+
+// 图片上传前的校验
+const beforeUpload = (file) => {
+  const isImage = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp'
+  const isLt5M = file.size / 1024 / 1024 < 5
+
+  if (!isImage) {
+    ElMessage.error('上传图片只能是 JPG/PNG/WEBP 格式!')
+  }
+  if (!isLt5M) {
+    ElMessage.error('上传图片大小不能超过 5MB!')
+  }
+  return isImage && isLt5M
+}
+
+// 图片上传成功的回调
+const handleUploadSuccess = (response, uploadFile) => {
+  if (response.code === 0 || response.code === '0') {
+    formData.value.imageUrl = response.data
+    ElMessage.success('图片上传成功！')
+  } else {
+    ElMessage.error(response.message || '图片上传失败')
+  }
+}
+// ==== 图片上传相关逻辑结束 ====
+
 /**
  * 打开创建对话框
  */
@@ -187,7 +263,7 @@ const loadHotels = async () => {
     )
     const data = await response.json()
 
-    if (data.code === '0') {
+    if (data.code === 0 || data.code === '0') {
       hotels.value = data.data.hotels
       pagination.value.total = data.data.total
     } else {
@@ -243,7 +319,7 @@ const addRoom = async () => {
     )
     const data = await response.json()
 
-    if (data.code === '0') {
+    if (data.code === 0 || data.code === '0') {
       ElMessage.success('房间添加成功')
       roomDialogVisible.value = false
       loadHotels()
@@ -268,7 +344,7 @@ const deleteRoom = async (roomId) => {
     )
     const data = await response.json()
 
-    if (data.code === '0') {
+    if (data.code === 0 || data.code === '0') {
       ElMessage.success('房间删除成功')
       loadHotels()
     } else {
@@ -319,7 +395,7 @@ const submitForm = async () => {
       })
       const data = await response.json()
 
-      if (data.code === '0') {
+      if (data.code === 0 || data.code === '0') {
         ElMessage.success(editingHotel.value ? '酒店编辑成功' : '酒店创建成功')
         showCreateDialog.value = false
         editingHotel.value = null
@@ -366,7 +442,7 @@ const deleteHotel = (hotelId) => {
         )
         const data = await response.json()
 
-        if (data.code === '0') {
+        if (data.code === 0 || data.code === '0') {
           ElMessage.success('酒店删除成功')
           loadHotels()
         } else {
@@ -405,5 +481,34 @@ onMounted(() => {
   flex-wrap: wrap;
   gap: 4px;
   align-items: center;
+}
+
+/* 上传组件的样式 */
+:deep(.avatar-uploader .el-upload) {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+:deep(.avatar-uploader .el-upload:hover) {
+  border-color: var(--el-color-primary);
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  text-align: center;
+}
+
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+  object-fit: cover;
 }
 </style>

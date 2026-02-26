@@ -36,8 +36,8 @@
             <el-row :gutter="20">
               <el-col v-for="result in searchResults" :key="`${result.type}-${result.id}`" :xs="24" :sm="12" :md="8">
                 <el-card class="result-card" @click="navigateToDetail(result)">
-                  <div class="result-image" v-if="result.imageUrl">
-                    <img :src="result.imageUrl" :alt="result.name" />
+                  <div class="result-image" v-if="getFullImageUrl(result.imageUrl)">
+                    <img :src="getFullImageUrl(result.imageUrl)" :alt="result.name" />
                   </div>
                   <div class="result-info">
                     <div class="result-name">{{ result.name }}</div>
@@ -98,8 +98,8 @@
             <el-row :gutter="20">
               <el-col v-for="attraction in guangzhouAttractions" :key="attraction.id" :xs="24" :sm="12" :md="8">
                 <el-card class="attraction-card" @click="navigateToAttractionDetail(attraction.id)">
-                  <div class="attraction-image" v-if="attraction.imageUrl">
-                    <img :src="attraction.imageUrl" :alt="attraction.name" />
+                  <div class="attraction-image" v-if="getFullImageUrl(attraction.imageUrl)">
+                    <img :src="getFullImageUrl(attraction.imageUrl)" :alt="attraction.name" />
                   </div>
                   <div class="attraction-info">
                     <div class="attraction-name">{{ attraction.name }}</div>
@@ -360,6 +360,16 @@ const navigateToAttractionDetail = (id) => {
 // 导航到酒店详情
 const navigateToHotelDetail = (id) => {
   router.push(`/hotels/${id}`)
+}
+
+
+// 拼接完整的图片 URL 供前端显示
+const getFullImageUrl = (url) => {
+  if (!url) return ''
+  // 如果已经是完整的网络图片地址（比如外链），直接返回
+  if (url.startsWith('http')) return url 
+  // 如果是相对路径（我们自己上传的），拼接上 Spring Boot 后端的地址
+  return `http://localhost:8080/api${url}`
 }
 
 // 导航到商品详情

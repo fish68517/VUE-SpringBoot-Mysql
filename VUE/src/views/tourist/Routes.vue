@@ -76,9 +76,9 @@
                 <span class="description">{{ route.description }}</span>
               </div>
             </div>
-            <el-button type="primary" size="small" style="width: 100%; margin-top: 10px">
+            <!-- <el-button type="primary" size="small" style="width: 100%; margin-top: 10px">
               查看详情
-            </el-button>
+            </el-button> -->
           </el-card>
         </el-col>
       </el-row>

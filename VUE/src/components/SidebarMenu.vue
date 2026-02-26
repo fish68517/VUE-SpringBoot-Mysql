@@ -42,6 +42,10 @@
           <el-icon><map-location /></el-icon>
           <span>路线管理</span>
         </el-menu-item>
+        <el-menu-item index="/admin/products">
+  <el-icon><bell /></el-icon>
+  <span>商品管理</span>
+</el-menu-item>
       </template>
 
       <!-- 游客菜单 -->
@@ -75,10 +79,10 @@
           <el-icon><shopping-cart /></el-icon>
           <span>我的订单</span>
         </el-menu-item>
-        <el-menu-item index="/favorites">
+        <!-- <el-menu-item index="/favorites">
           <el-icon><star-filled /></el-icon>
           <span>我的收藏</span>
-        </el-menu-item>
+        </el-menu-item> -->
       </template>
     </el-menu>
   </el-aside>

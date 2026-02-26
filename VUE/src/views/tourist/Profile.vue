@@ -16,14 +16,14 @@
             <div class="stat-number">{{ stats.orderCount }}</div>
             <div class="stat-label">订单</div>
           </div>
-          <div class="stat-item">
+          <!-- <div class="stat-item">
             <div class="stat-number">{{ stats.favoriteCount }}</div>
             <div class="stat-label">收藏</div>
-          </div>
-          <div class="stat-item">
+          </div> -->
+          <!-- <div class="stat-item">
             <div class="stat-number">{{ stats.historyCount }}</div>
             <div class="stat-label">浏览</div>
-          </div>
+          </div> -->
         </div>
       </div>
     </el-card>
@@ -123,14 +123,14 @@
       </el-tab-pane>
 
       <!-- Favorites Tab -->
-      <el-tab-pane label="我的收藏" name="favorites">
+      <!-- <el-tab-pane label="我的收藏" name="favorites">
         <FavoritesList :userId="userInfo.id" />
-      </el-tab-pane>
+      </el-tab-pane> -->
 
       <!-- Browsing History Tab -->
-      <el-tab-pane label="浏览历史" name="history">
+      <!-- <el-tab-pane label="浏览历史" name="history">
         <BrowsingHistoryList />
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
 
     <!-- Order Detail Dialog -->
