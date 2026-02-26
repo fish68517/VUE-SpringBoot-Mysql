@@ -51,8 +51,7 @@
                 管理员面板
               </el-dropdown-item>
               <el-dropdown-item divided @click="handleLogout">
-                <el-icon><logout /></el-icon>
-                退出登录
+                <el-icon><switch-button /></el-icon> 退出登录
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -69,7 +68,7 @@ import {
   UserFilled,
   User,
   Setting,
-  Logout,
+  SwitchButton, // <--- 把 Logout 改成 SwitchButton
   ArrowDown
 } from '@element-plus/icons-vue'
 

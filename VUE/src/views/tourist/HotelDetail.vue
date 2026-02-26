@@ -109,7 +109,7 @@ const loadHotelDetail = async () => {
     const response = await fetch(`http://localhost:8080/hotels/${hotelId}`)
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       hotel.value = data.data
     } else {
       ElMessage.error(data.message || '加载酒店详情失败')

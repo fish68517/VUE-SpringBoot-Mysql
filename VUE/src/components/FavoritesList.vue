@@ -96,7 +96,7 @@ const totalCount = ref(0)
 const loading = ref(false)
 const removingId = ref(null)
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 获取类型标签类型
@@ -148,7 +148,7 @@ const loadFavorites = async () => {
     const response = await fetch(url)
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       if (selectedType.value) {
         // 如果选择了类型，手动处理分页
         const allFavorites = data.data.favorites
@@ -190,7 +190,7 @@ const removeFavorite = async (id, targetType, targetId) => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('取消收藏成功')
       loadFavorites()
     } else {

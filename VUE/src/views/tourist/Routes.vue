@@ -119,6 +119,7 @@ const filterForm = ref({
 })
 
 // 按天数推荐
+// 按天数推荐
 const handleSearchByDuration = async () => {
   if (!filterForm.value.days) {
     ElMessage.warning('请输入旅游天数')
@@ -127,12 +128,13 @@ const handleSearchByDuration = async () => {
   
   loading.value = true
   try {
+    // 加上 http://localhost:8080/api 前缀
     const response = await fetch(
-      `/routes/recommend/by-duration?durationDays=${filterForm.value.days}&page=${currentPage.value - 1}&size=${pageSize.value}`
+      `http://localhost:8080/api/routes/recommend/by-duration?durationDays=${filterForm.value.days}&page=${currentPage.value - 1}&size=${pageSize.value}`
     )
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       routes.value = data.data.routes
       total.value = data.data.total
       currentPage.value = data.data.currentPage + 1
@@ -148,15 +150,17 @@ const handleSearchByDuration = async () => {
 }
 
 // 获取广州特色路线
+// 获取广州特色路线
 const handleGetGuangzhouSpecial = async () => {
   loading.value = true
   try {
+    // 加上 http://localhost:8080/api 前缀
     const response = await fetch(
-      `/routes/recommend/guangzhou-special?page=${currentPage.value - 1}&size=${pageSize.value}`
+      `http://localhost:8080/api/routes/recommend/guangzhou-special?page=${currentPage.value - 1}&size=${pageSize.value}`
     )
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       routes.value = data.data.routes
       total.value = data.data.total
       currentPage.value = data.data.currentPage + 1
@@ -172,10 +176,12 @@ const handleGetGuangzhouSpecial = async () => {
 }
 
 // 获取优先推荐路线
+// 获取优先推荐路线
 const handleGetPriorityRecommended = async () => {
   loading.value = true
   try {
-    let url = `/routes/recommend/priority?page=${currentPage.value - 1}&size=${pageSize.value}`
+    // 加上 http://localhost:8080/api 前缀
+    let url = `http://localhost:8080/api/routes/recommend/priority?page=${currentPage.value - 1}&size=${pageSize.value}`
     if (filterForm.value.priorityDays && filterForm.value.priorityDays > 0) {
       url += `&durationDays=${filterForm.value.priorityDays}`
     }
@@ -183,7 +189,7 @@ const handleGetPriorityRecommended = async () => {
     const response = await fetch(url)
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       routes.value = data.data.routes
       total.value = data.data.total
       currentPage.value = data.data.currentPage + 1

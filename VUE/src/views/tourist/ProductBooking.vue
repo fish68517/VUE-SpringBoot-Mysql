@@ -120,7 +120,7 @@ const submitting = ref(false)
 const showSuccessDialog = ref(false)
 const successOrder = ref({})
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 加载商品详情
@@ -131,7 +131,7 @@ const loadProductDetail = async () => {
     const response = await fetch(`${API_BASE_URL}/products/${productId}`)
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       product.value = data.data
       calculateTotal()
     } else {
@@ -199,7 +199,7 @@ const submitPurchase = async () => {
 
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       successOrder.value = data.data
       showSuccessDialog.value = true
       ElMessage.success('购买成功')

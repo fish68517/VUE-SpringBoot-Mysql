@@ -93,7 +93,7 @@ const pagination = ref({
 
 const loading = ref(false)
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 获取商品列表
@@ -112,7 +112,7 @@ const fetchProducts = async () => {
     const response = await fetch(url)
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       products.value = data.data.products
       pagination.value.total = data.data.total
     } else {

@@ -28,6 +28,12 @@ import AdminAnnouncements from '../views/admin/Announcements.vue'
 import AdminRoutes from '../views/admin/Routes.vue'
 
 const routes = [
+  // 1. 访问根目录直接重定向到登录页
+  {
+    path: '/',
+    redirect: '/login'
+  },
+  
   // Auth routes
   {
     path: '/login',
@@ -43,8 +49,9 @@ const routes = [
   },
 
   // Tourist routes
+  // 2. 原来的首页路由改到 '/home'
   {
-    path: '/',
+    path: '/home',
     name: 'Home',
     component: Home,
     meta: { requiresAuth: false }
@@ -187,18 +194,35 @@ const router = createRouter({
 // Navigation guard for authentication
 router.beforeEach((to, _from, next) => {
   const user = localStorage.getItem('user')
-  const userInfo = user ? JSON.parse(user) : null
+  let userInfo = null
+  
+  // 加上 try-catch 防止 JSON.parse 崩溃导致白屏
+  try {
+    userInfo = user ? JSON.parse(user) : null
+  } catch (error) {
+    console.error('解析用户信息失败，清空本地存储:', error)
+    localStorage.removeItem('user')
+  }
+
+  console.log('当前路由目标:', to.path)
+  console.log('userInfo:', userInfo)
 
   if (to.meta.requiresAuth) {
     if (!userInfo) {
       next('/login')
     } else if (to.meta.role && userInfo.role !== to.meta.role) {
-      next('/')
+      // 3. 权限不足时，返回 /home 而不是 / (因为 / 会再次跳去 /login)
+      next('/home')
     } else {
       next()
     }
   } else {
-    next()
+    // 4. (可选优化) 如果用户已经登录，访问 /login 则自动跳去首页
+    if (userInfo && (to.path === '/login' || to.path === '/register')) {
+      next('/home')
+    } else {
+      next()
+    }
   }
 })
 

@@ -1,7 +1,7 @@
 import client from './client'
 
 export const routeApi = {
-  getRoutes: (params) => client.get('/routes', { params }),
+  getRoutes: (params) => client.get('/routes/list', { params }),
   getRouteDetail: (id) => client.get(`/routes/${id}`),
   createRoute: (data) => client.post('/routes', data),
   updateRoute: (id, data) => client.put(`/routes/${id}`, data),

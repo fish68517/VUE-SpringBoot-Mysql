@@ -188,7 +188,7 @@ const formRules = {
   ]
 }
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 打开创建对话框
@@ -210,7 +210,7 @@ const loadAttractions = async () => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       attractions.value = data.data.attractions
       pagination.value.total = data.data.total
     } else {
@@ -254,7 +254,7 @@ const addTag = async () => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('标签添加成功')
       tagDialogVisible.value = false
       loadAttractions()
@@ -279,7 +279,7 @@ const removeTag = async (attractionId, tagName) => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('标签删除成功')
       loadAttractions()
     } else {
@@ -332,7 +332,7 @@ const submitForm = async () => {
       })
       const data = await response.json()
 
-      if (data.code === 0) {
+      if (data.code === '0') {
         ElMessage.success(editingAttraction.value ? '景点编辑成功' : '景点创建成功')
         showCreateDialog.value = false
         editingAttraction.value = null
@@ -381,7 +381,7 @@ const deleteAttraction = (attractionId) => {
         )
         const data = await response.json()
 
-        if (data.code === 0) {
+        if (data.code === '0') {
           ElMessage.success('景点删除成功')
           loadAttractions()
         } else {

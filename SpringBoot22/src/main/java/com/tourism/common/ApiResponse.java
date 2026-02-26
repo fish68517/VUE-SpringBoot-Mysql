@@ -29,14 +29,14 @@ public class ApiResponse<T> {
      * 成功响应
      */
     public static <T> ApiResponse<T> success(T data) {
-        return new ApiResponse<>("0000", "成功", data);
+        return new ApiResponse<>("0", "成功", data);
     }
 
     /**
      * 成功响应（无数据）
      */
     public static <T> ApiResponse<T> success() {
-        return new ApiResponse<>("0000", "成功", null);
+        return new ApiResponse<>("0", "成功", null);
     }
 
     /**

@@ -165,7 +165,7 @@ const formRules = {
   ]
 }
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 打开创建对话框
@@ -187,7 +187,7 @@ const loadHotels = async () => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       hotels.value = data.data.hotels
       pagination.value.total = data.data.total
     } else {
@@ -243,7 +243,7 @@ const addRoom = async () => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('房间添加成功')
       roomDialogVisible.value = false
       loadHotels()
@@ -268,7 +268,7 @@ const deleteRoom = async (roomId) => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('房间删除成功')
       loadHotels()
     } else {
@@ -319,7 +319,7 @@ const submitForm = async () => {
       })
       const data = await response.json()
 
-      if (data.code === 0) {
+      if (data.code === '0') {
         ElMessage.success(editingHotel.value ? '酒店编辑成功' : '酒店创建成功')
         showCreateDialog.value = false
         editingHotel.value = null
@@ -366,7 +366,7 @@ const deleteHotel = (hotelId) => {
         )
         const data = await response.json()
 
-        if (data.code === 0) {
+        if (data.code === '0') {
           ElMessage.success('酒店删除成功')
           loadHotels()
         } else {

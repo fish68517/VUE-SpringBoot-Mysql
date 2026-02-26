@@ -17,7 +17,7 @@ import java.util.Map;
  * 浏览历史控制器
  */
 @RestController
-@RequestMapping("/api/browsing-history")
+@RequestMapping("/browsing-history")
 @CrossOrigin(origins = "*")
 public class BrowsingHistoryController {
     

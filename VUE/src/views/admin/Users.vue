@@ -75,7 +75,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 const searchForm = ref({
   keyword: ''
@@ -99,7 +99,7 @@ const fetchUsers = async () => {
     const response = await fetch(`${API_BASE_URL}/users/admin/list?page=${page}&size=${size}`)
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       users.value = data.data.users
       pagination.value.total = data.data.total
     } else {
@@ -136,7 +136,7 @@ const handleDisable = async (row) => {
     })
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('用户已禁用')
       fetchUsers()
     } else {
@@ -167,7 +167,7 @@ const handleEnable = async (row) => {
     })
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('用户已启用')
       fetchUsers()
     } else {
@@ -198,7 +198,7 @@ const handleDelete = async (row) => {
     })
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('用户已删除')
       fetchUsers()
     } else {

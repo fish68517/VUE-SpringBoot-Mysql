@@ -38,7 +38,7 @@ const emit = defineEmits(['favorite-changed'])
 const isFavorited = ref(false)
 const loading = ref(false)
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 检查是否已收藏
@@ -52,7 +52,7 @@ const checkFavorite = async () => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       isFavorited.value = data.data.isFavorited
     }
   } catch (error) {
@@ -81,7 +81,7 @@ const toggleFavorite = async () => {
       )
       const data = await response.json()
 
-      if (data.code === 0) {
+      if (data.code === '0') {
         isFavorited.value = false
         ElMessage.success('取消收藏成功')
         emit('favorite-changed', false)
@@ -103,7 +103,7 @@ const toggleFavorite = async () => {
       })
       const data = await response.json()
 
-      if (data.code === 0) {
+      if (data.code === '0') {
         isFavorited.value = true
         ElMessage.success('收藏成功')
         emit('favorite-changed', true)

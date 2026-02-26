@@ -117,7 +117,7 @@ const submitting = ref(false)
 const showSuccessDialog = ref(false)
 const successOrder = ref({})
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 加载景点详情
@@ -128,7 +128,7 @@ const loadAttractionDetail = async () => {
     const response = await fetch(`${API_BASE_URL}/attractions/${attractionId}`)
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       attraction.value = data.data
       calculateTotal()
     } else {
@@ -204,7 +204,7 @@ const submitBooking = async () => {
 
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       successOrder.value = data.data
       showSuccessDialog.value = true
       ElMessage.success('预订成功')

@@ -1,7 +1,6 @@
 <template>
   <div id="app" class="app-container">
-    <el-container>
-      <!-- 顶部导航栏 -->
+    <el-container direction="vertical">
       <top-navigation 
         :is-logged-in="isLoggedIn"
         :username="userInfo.username"
@@ -10,13 +9,11 @@
       />
 
       <el-container class="main-container">
-        <!-- 侧边栏菜单 -->
         <sidebar-menu 
           v-if="showSidebar"
           :user-role="userInfo.role"
         />
 
-        <!-- 主内容区 -->
         <el-main class="app-main">
           <router-view />
         </el-main>
@@ -26,7 +23,8 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+// 2. 修复状态：引入 watch 来监听路由变化
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import TopNavigation from './components/TopNavigation.vue'
 import SidebarMenu from './components/SidebarMenu.vue'
@@ -43,13 +41,30 @@ const showSidebar = computed(() => {
   return isLoggedIn.value && !route.path.startsWith('/login') && !route.path.startsWith('/register')
 })
 
-onMounted(() => {
-  // Check if user is logged in (from localStorage or session)
+// 提取一个专门检查登录状态的函数
+const checkAuthStatus = () => {
   const storedUser = localStorage.getItem('user')
   if (storedUser) {
-    userInfo.value = JSON.parse(storedUser)
-    isLoggedIn.value = true
+    try {
+      userInfo.value = JSON.parse(storedUser)
+      isLoggedIn.value = true
+    } catch (e) {
+      isLoggedIn.value = false
+    }
+  } else {
+    isLoggedIn.value = false
+    userInfo.value = { username: '', role: 'tourist' }
   }
+}
+
+// 首次加载时检查状态
+onMounted(() => {
+  checkAuthStatus()
+})
+
+// 监听路由变化，每次跳转页面都会重新检查登录状态
+watch(() => route.path, () => {
+  checkAuthStatus()
 })
 
 const logout = () => {

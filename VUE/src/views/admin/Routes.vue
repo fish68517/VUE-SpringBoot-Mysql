@@ -181,7 +181,7 @@ const formRules = {
   ]
 }
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 打开创建对话框
@@ -203,7 +203,7 @@ const loadRoutes = async () => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       routes.value = data.data.routes
       pagination.value.total = data.data.total
     } else {
@@ -255,7 +255,7 @@ const submitForm = async () => {
       })
       const data = await response.json()
 
-      if (data.code === 0) {
+      if (data.code === '0') {
         ElMessage.success(editingRoute.value ? '路线编辑成功' : '路线创建成功')
         showCreateDialog.value = false
         editingRoute.value = null
@@ -301,7 +301,7 @@ const deleteRoute = (routeId) => {
         )
         const data = await response.json()
 
-        if (data.code === 0) {
+        if (data.code === '0') {
           ElMessage.success('路线删除成功')
           loadRoutes()
         } else {
@@ -333,7 +333,7 @@ const loadRouteItems = async (routeId) => {
     const response = await fetch(`${API_BASE_URL}/routes/${routeId}/items`)
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       routeItems.value = data.data.items
     } else {
       ElMessage.error(data.message || '加载路线项目失败')
@@ -365,7 +365,7 @@ const addItem = async () => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('项目添加成功')
       resetNewItemForm()
       await loadRouteItems(selectedRoute.value.id)
@@ -396,7 +396,7 @@ const removeItem = async (itemId) => {
         )
         const data = await response.json()
 
-        if (data.code === 0) {
+        if (data.code === '0') {
           ElMessage.success('项目删除成功')
           await loadRouteItems(selectedRoute.value.id)
         } else {

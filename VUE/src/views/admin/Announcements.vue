@@ -109,7 +109,7 @@ const fetchAnnouncements = async () => {
     const size = pagination.value.pageSize
     const response = await announcementApi.getAnnouncements({ page, size })
     
-    if (response.code === 0) {
+    if (response.code === '0') {
       announcements.value = response.data.announcements
       pagination.value.total = response.data.total
     } else {
@@ -172,7 +172,7 @@ const handleSave = async () => {
       })
     }
 
-    if (response.code === 0) {
+    if (response.code === '0') {
       ElMessage.success(isEdit.value ? '公告更新成功' : '公告创建成功')
       dialogVisible.value = false
       fetchAnnouncements()
@@ -200,7 +200,7 @@ const handleDelete = (row) => {
     loading.value = true
     try {
       const response = await announcementApi.deleteAnnouncement(row.id)
-      if (response.code === 0) {
+      if (response.code === '0') {
         ElMessage.success('公告删除成功')
         fetchAnnouncements()
       } else {

@@ -200,7 +200,7 @@ import { ref, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 const orders = ref([])
 const selectedOrder = ref(null)
@@ -283,7 +283,7 @@ const loadStatistics = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/orders/admin/statistics`)
     
-    if (response.data.code === 0) {
+    if (response.data.code === '0') {
       statistics.value = response.data.data
     } else {
       ElMessage.error(response.data.message || '获取订单统计失败')
@@ -312,7 +312,7 @@ const loadOrders = async () => {
       }
     })
 
-    if (response.data.code === 0) {
+    if (response.data.code === '0') {
       orders.value = response.data.data.orders
       pagination.value.total = response.data.data.total
     } else {
@@ -329,7 +329,7 @@ const handleViewDetail = async (row) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/orders/${row.id}`)
     
-    if (response.data.code === 0) {
+    if (response.data.code === '0') {
       selectedOrder.value = response.data.data
       orderItems.value = response.data.data.items || []
       detailDialogVisible.value = true
@@ -359,7 +359,7 @@ const confirmUpdateStatus = async () => {
       { status: statusForm.value.status }
     )
     
-    if (response.data.code === 0) {
+    if (response.data.code === '0') {
       ElMessage.success('订单状态已更新')
       updateStatusDialogVisible.value = false
       loadOrders()

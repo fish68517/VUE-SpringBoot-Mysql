@@ -209,7 +209,7 @@ const fetchAnnouncements = async () => {
   try {
     const response = await announcementApi.getAnnouncements({ page: 0, size: 5 })
     
-    if (response.code === 0) {
+    if (response.code === '0') {
       announcements.value = response.data.announcements || []
     } else {
       ElMessage.error(response.message || '获取公告失败')
@@ -230,15 +230,18 @@ const fetchGuangzhouAttractions = async () => {
       size: 6,
       isGuangzhouSpecial: true 
     })
-    
-    if (response.code === 0) {
+    // console.log("广州特色：" ,JSON.stringify(response));
+    if (response.code === '0') {
       guangzhouAttractions.value = response.data.attractions || []
+      // console.log("获取广州特色景点：" ,JSON.stringify(guangzhouAttractions.value));
     } else {
+      // console.log("获取广州特色景点失败：" ,JSON.stringify(response));
       ElMessage.error(response.message || '获取广州特色景点失败')
     }
   } catch (error) {
     ElMessage.error('获取广州特色景点失败: ' + error.message)
   } finally {
+  
     guangzhouAttractionsLoading.value = false
   }
 }
@@ -249,7 +252,7 @@ const fetchRecommendedRoutes = async () => {
   try {
     const response = await routeApi.getRoutes({ page: 0, size: 6 })
     
-    if (response.code === 0) {
+    if (response.code === '0') {
       recommendedRoutes.value = response.data.routes || []
     } else {
       ElMessage.error(response.message || '获取推荐路线失败')
@@ -280,7 +283,7 @@ const handleSearch = async () => {
     ])
 
     // 处理景点搜索结果
-    if (attractionsRes.code === 0 && attractionsRes.data.attractions) {
+    if (attractionsRes.code === '0' && attractionsRes.data.attractions) {
       attractionsRes.data.attractions.forEach(attraction => {
         searchResults.value.push({
           id: attraction.id,
@@ -293,7 +296,7 @@ const handleSearch = async () => {
     }
 
     // 处理酒店搜索结果
-    if (hotelsRes.code === 0 && hotelsRes.data.hotels) {
+    if (hotelsRes.code === '0' && hotelsRes.data.hotels) {
       hotelsRes.data.hotels.forEach(hotel => {
         searchResults.value.push({
           id: hotel.id,
@@ -306,7 +309,7 @@ const handleSearch = async () => {
     }
 
     // 处理商品搜索结果
-    if (productsRes.code === 0 && productsRes.data.products) {
+    if (productsRes.code === '0' && productsRes.data.products) {
       productsRes.data.products.forEach(product => {
         searchResults.value.push({
           id: product.id,

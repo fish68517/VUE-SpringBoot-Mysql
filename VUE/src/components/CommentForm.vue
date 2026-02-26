@@ -90,7 +90,7 @@ const rules = {
   ]
 }
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 提交评价
@@ -123,7 +123,7 @@ const submitComment = async () => {
 
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('评价提交成功，等待审核')
       resetForm()
       emit('comment-submitted', data.data)

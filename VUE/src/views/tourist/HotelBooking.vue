@@ -156,7 +156,7 @@ const submitting = ref(false)
 const showSuccessDialog = ref(false)
 const successOrder = ref({})
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 const maxRoomQuantity = computed(() => {
   if (!bookingForm.value.roomType) return 1
@@ -173,7 +173,7 @@ const loadHotelDetail = async () => {
     const response = await fetch(`${API_BASE_URL}/hotels/${hotelId}`)
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       hotel.value = data.data
     } else {
       ElMessage.error(data.message || '加载酒店详情失败')
@@ -296,7 +296,7 @@ const submitBooking = async () => {
 
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       successOrder.value = data.data
       showSuccessDialog.value = true
       ElMessage.success('预订成功')

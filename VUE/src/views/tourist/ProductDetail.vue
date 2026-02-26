@@ -83,7 +83,7 @@ const product = ref(null)
 const isFavorited = ref(false)
 const loading = ref(false)
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 获取商品详情
@@ -95,7 +95,7 @@ const fetchProductDetail = async () => {
     const response = await fetch(`${API_BASE_URL}/products/${productId}`)
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       product.value = data.data
     } else {
       ElMessage.error(data.message || '获取商品详情失败')

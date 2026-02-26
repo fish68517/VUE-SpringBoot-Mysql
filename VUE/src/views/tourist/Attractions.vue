@@ -126,7 +126,7 @@ const pagination = ref({
 const attractions = ref([])
 const loading = ref(false)
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 加载景点列表
@@ -148,7 +148,7 @@ const loadAttractions = async () => {
     const response = await fetch(url)
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       attractions.value = data.data.attractions
       pagination.value.total = data.data.total
     } else {

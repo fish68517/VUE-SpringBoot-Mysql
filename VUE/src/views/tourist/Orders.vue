@@ -88,7 +88,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import axios from 'axios'
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 const orders = ref([])
 const selectedOrder = ref(null)
@@ -103,7 +103,8 @@ const pagination = ref({
 })
 
 // Get user ID from localStorage
-const userId = localStorage.getItem('userId')
+const user = localStorage.getItem('user')
+const userId = user ? JSON.parse(user).id : null
 
 const getStatusType = (status) => {
   const statusMap = {
@@ -152,7 +153,7 @@ const loadOrders = async () => {
       }
     )
 
-    if (response.data.code === 0) {
+    if (response.data.code === '0') {
       orders.value = response.data.data.orders
       pagination.value.total = response.data.data.total
     } else {
@@ -169,7 +170,7 @@ const handleViewDetail = async (row) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/orders/${row.id}`)
     
-    if (response.data.code === 0) {
+    if (response.data.code === '0') {
       selectedOrder.value = response.data.data
       orderItems.value = response.data.data.items || []
       detailDialogVisible.value = true
@@ -194,7 +195,7 @@ const handleCancel = (row) => {
     try {
       const response = await axios.put(`${API_BASE_URL}/orders/${row.id}/cancel`)
       
-      if (response.data.code === 0) {
+      if (response.data.code === '0') {
         ElMessage.success('订单已取消')
         loadOrders()
       } else {

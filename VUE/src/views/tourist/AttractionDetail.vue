@@ -129,7 +129,7 @@ const loading = ref(false)
 const currentUser = ref(null)
 const commentListKey = ref(0)
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 加载景点详情
@@ -141,7 +141,7 @@ const loadAttractionDetail = async () => {
     const response = await fetch(`${API_BASE_URL}/attractions/${attractionId}`)
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       attraction.value = data.data
     } else {
       ElMessage.error(data.message || '加载景点详情失败')

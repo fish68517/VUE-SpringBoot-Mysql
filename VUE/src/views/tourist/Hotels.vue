@@ -79,16 +79,16 @@ const pagination = ref({
 
 const loadHotels = async () => {
   try {
-    let url = 'http://localhost:8080/hotels/list?page=' + (pagination.value.currentPage - 1) + '&size=' + pagination.value.pageSize
+    let url = 'http://localhost:8080/api/hotels/list?page=' + (pagination.value.currentPage - 1) + '&size=' + pagination.value.pageSize
     
     if (searchForm.value.keyword) {
-      url = 'http://localhost:8080/hotels/search?keyword=' + searchForm.value.keyword + '&page=' + (pagination.value.currentPage - 1) + '&size=' + pagination.value.pageSize
+      url = 'http://localhost:8080/api/hotels/search?keyword=' + searchForm.value.keyword + '&page=' + (pagination.value.currentPage - 1) + '&size=' + pagination.value.pageSize
     }
     
     const response = await fetch(url)
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       hotels.value = data.data.hotels
       pagination.value.total = data.data.total
     } else {

@@ -173,7 +173,7 @@ import { userApi } from '../../api/user'
 import BrowsingHistoryList from '../../components/BrowsingHistoryList.vue'
 import FavoritesList from '../../components/FavoritesList.vue'
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 // User info
 const userInfo = ref({
@@ -262,7 +262,7 @@ const loadStats = async () => {
       `${API_BASE_URL}/orders/user/${userInfo.value.id}`,
       { params: { page: 0, size: 1 } }
     )
-    if (ordersResponse.data.code === 0) {
+    if (ordersResponse.data.code === '0') {
       stats.value.orderCount = ordersResponse.data.data.total || 0
     }
 
@@ -270,7 +270,7 @@ const loadStats = async () => {
     const favoritesResponse = await axios.get(
       `${API_BASE_URL}/favorites/user/${userInfo.value.id}`
     )
-    if (favoritesResponse.data.code === 0) {
+    if (favoritesResponse.data.code === '0') {
       stats.value.favoriteCount = favoritesResponse.data.data.total || 0
     }
 
@@ -279,7 +279,7 @@ const loadStats = async () => {
       `${API_BASE_URL}/browsing-history/user/${userInfo.value.id}`,
       { params: { page: 0, size: 1 } }
     )
-    if (historyResponse.data.code === 0) {
+    if (historyResponse.data.code === '0') {
       stats.value.historyCount = historyResponse.data.data.totalElements || 0
     }
   } catch (error) {
@@ -297,7 +297,7 @@ const handleSave = async () => {
       phone: form.value.phone
     })
     
-    if (response.code === 0) {
+    if (response.code === '0') {
       ElMessage.success('保存成功')
       userInfo.value = {
         ...userInfo.value,
@@ -367,7 +367,7 @@ const loadOrders = async () => {
       }
     )
 
-    if (response.data.code === 0) {
+    if (response.data.code === '0') {
       orders.value = response.data.data.orders
       orderPagination.value.total = response.data.data.total
     } else {
@@ -384,7 +384,7 @@ const handleViewOrderDetail = async (row) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/orders/${row.id}`)
     
-    if (response.data.code === 0) {
+    if (response.data.code === '0') {
       selectedOrder.value = response.data.data
       orderItems.value = response.data.data.items || []
       orderDetailVisible.value = true
@@ -409,7 +409,7 @@ const handleCancelOrder = (row) => {
     try {
       const response = await axios.put(`${API_BASE_URL}/orders/${row.id}/cancel`)
       
-      if (response.data.code === 0) {
+      if (response.data.code === '0') {
         ElMessage.success('订单已取消')
         loadOrders()
       } else {

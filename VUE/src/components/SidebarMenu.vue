@@ -23,7 +23,7 @@
           <span>景点管理</span>
         </el-menu-item>
         <el-menu-item index="/admin/hotels">
-          <el-icon><building /></el-icon>
+          <el-icon><office-building /></el-icon>
           <span>酒店管理</span>
         </el-menu-item>
         <el-menu-item index="/admin/orders">
@@ -55,7 +55,7 @@
           <span>景点</span>
         </el-menu-item>
         <el-menu-item index="/hotels">
-          <el-icon><building /></el-icon>
+          <el-icon><office-building /></el-icon>
           <span>酒店</span>
         </el-menu-item>
         <el-menu-item index="/products">
@@ -90,7 +90,7 @@ import { useRoute } from 'vue-router'
 import {
   User,
   Location,
-  Building,
+  OfficeBuilding, // <--- 把 Building 改成 OfficeBuilding
   ShoppingCart,
   ChatDotSquare,
   Bell,

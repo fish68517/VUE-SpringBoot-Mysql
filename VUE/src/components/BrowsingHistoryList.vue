@@ -79,7 +79,7 @@ const loadBrowsingHistory = async () => {
       pageSize.value
     )
     
-    if (response.code === 0) {
+    if (response.code === '0') {
       historyList.value = response.data.content || []
       total.value = response.data.totalElements || 0
       
@@ -111,7 +111,7 @@ const loadItemInfo = async (item) => {
       response = await productApi.getDetail(item.targetId)
     }
     
-    if (response && response.code === 0) {
+    if (response && response.code === '0') {
       itemCache.value[key] = response.data
     }
   } catch (error) {
@@ -193,7 +193,7 @@ const handleClearAll = async () => {
     )
     
     const response = await browsingHistoryApi.deleteAll(userId.value)
-    if (response.code === 0) {
+    if (response.code === '0') {
       historyList.value = []
       total.value = 0
       ElMessage.success('浏览历史已清空')

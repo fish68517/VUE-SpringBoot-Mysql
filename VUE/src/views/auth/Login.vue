@@ -67,11 +67,12 @@ const handleLogin = async () => {
   try {
     await formRef.value.validate()
     const response = await userApi.login(form.value)
-    
-    if (response.code === '0000') {
+    // 打印响应数据
+    console.log("登录数据： " + JSON.stringify(response));
+    if (response.code === '0') {
       localStorage.setItem('user', JSON.stringify(response.data))
       ElMessage.success('登录成功')
-      router.push('/')
+      router.push('/home')
     } else {
       ElMessage.error(response.message || '登录失败')
     }

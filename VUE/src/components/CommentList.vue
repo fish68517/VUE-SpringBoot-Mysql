@@ -82,7 +82,7 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 const totalComments = ref(0)
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 /**
  * 加载评价列表
@@ -95,7 +95,7 @@ const loadComments = async () => {
     )
     const data = await response.json()
 
-    if (data.code === 0) {
+    if (data.code === '0') {
       comments.value = data.data.comments || []
       totalComments.value = data.data.total || 0
     } else {

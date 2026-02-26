@@ -89,7 +89,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-const API_BASE_URL = 'http://localhost:8080'
+const API_BASE_URL = 'http://localhost:8080/api'
 
 const comments = ref([])
 const loading = ref(false)
@@ -125,7 +125,7 @@ const loadComments = async () => {
     )
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       comments.value = data.data.comments.map(comment => ({
         ...comment,
         actionLoading: false
@@ -150,7 +150,7 @@ const handleApprove = async (row) => {
     )
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('留言已批准')
       row.status = 'approved'
     } else {
@@ -172,7 +172,7 @@ const handleReject = async (row) => {
     )
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('留言已拒绝')
       row.status = 'rejected'
     } else {
@@ -195,7 +195,7 @@ const handlePin = async (row) => {
     )
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success(row.isPinned ? '已取消置顶' : '已置顶')
       row.isPinned = !row.isPinned
     } else {
@@ -227,7 +227,7 @@ const handleDelete = async (row) => {
     )
     const data = await response.json()
     
-    if (data.code === 0) {
+    if (data.code === '0') {
       ElMessage.success('留言已删除')
       await loadComments()
     } else {
