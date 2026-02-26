@@ -1,6 +1,7 @@
 package com.agricultural.controller;
 
 import com.agricultural.dto.LoginResponse;
+import com.agricultural.dto.RegisterRequest;
 import com.agricultural.dto.Result;
 import com.agricultural.entity.User;
 import com.agricultural.security.RequirePermission;
@@ -9,6 +10,7 @@ import com.agricultural.util.JwtUtil;
 import com.agricultural.util.LoggerUtil;
 import com.agricultural.util.PermissionUtil;
 import com.agricultural.util.StringUtil;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,44 +37,43 @@ public class UserController {
     /**
      * 用户注册接口
      * 
-     * @param username 用户名
-     * @param password 密码
-     * @param email 邮箱
-     * @param phone 手机号
-     * @param userType 用户类型 (FARMER, MERCHANT, ADMIN)
-     * @param region 地区
-     * @return 注册成功的用户信息和JWT令牌
+
      */
     @PostMapping("/register")
-    public Result<LoginResponse> register(
-            @RequestParam @NotBlank(message = "用户名不能为空") String username,
-            @RequestParam @NotBlank(message = "密码不能为空") String password,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String phone,
-            @RequestParam @NotNull(message = "用户类型不能为空") User.UserType userType,
-            @RequestParam(required = false) String region) {
-        
-        LoggerUtil.info("收到用户注册请求，用户名: {}", username);
+    public Result<LoginResponse> register(@RequestBody @Valid RegisterRequest request) {
+
+        LoggerUtil.info("收到用户注册请求，用户名: {}", request.getUsername());
         
         try {
+            // 参数验证可以省略一部分，因为 @Valid 结合 DTO 里的注解会自动拦截空值
+
+
             // 参数验证
-            if (StringUtil.isBlank(username)) {
+            if (StringUtil.isBlank(request.getUsername())) {
                 LoggerUtil.warn("用户注册请求参数验证失败: 用户名为空");
                 return Result.validationError("用户名不能为空");
             }
-            
-            if (StringUtil.isBlank(password)) {
+
+            if (StringUtil.isBlank(request.getPassword())) {
                 LoggerUtil.warn("用户注册请求参数验证失败: 密码为空");
                 return Result.validationError("密码不能为空");
             }
-            
-            if (userType == null) {
+
+            if (request.getUserType() == null) {
                 LoggerUtil.warn("用户注册请求参数验证失败: 用户类型为空");
                 return Result.validationError("用户类型不能为空");
             }
-            
+
             // 调用业务层进行注册
-            User registeredUser = userService.register(username, password, email, phone, userType, region);
+            // 调用业务层进行注册
+            User registeredUser = userService.register(
+                    request.getUsername(),
+                    request.getPassword(),
+                    request.getEmail(),
+                    request.getPhone(),
+                    request.getUserType(),
+                    request.getRegion()
+            );
             
             // 生成JWT令牌
             String token = jwtUtil.generateToken(registeredUser.getId(), registeredUser.getUsername(), registeredUser.getUserType().toString());
@@ -89,7 +90,7 @@ public class UserController {
                     .region(registeredUser.getRegion())
                     .build();
             
-            LoggerUtil.info("用户注册成功，用户ID: {}, 用户名: {}", registeredUser.getId(), username);
+            LoggerUtil.info("用户注册成功，用户ID: {}, 用户名: {}", registeredUser.getId(), registeredUser.getUsername());
             return Result.success("用户注册成功", loginResponse);
             
         } catch (IllegalArgumentException e) {
@@ -104,31 +105,21 @@ public class UserController {
     /**
      * 用户登录接口
      * 
-     * @param username 用户名
-     * @param password 密码
+
      * @return 登录成功的用户信息和JWT令牌
      */
     @PostMapping("/login")
     public Result<LoginResponse> login(
-            @RequestParam @NotBlank(message = "用户名不能为空") String username,
-            @RequestParam @NotBlank(message = "密码不能为空") String password) {
+            @RequestBody @Valid RegisterRequest request) {
         
-        LoggerUtil.info("收到用户登录请求，用户名: {}", username);
+
         
         try {
-            // 参数验证
-            if (StringUtil.isBlank(username)) {
-                LoggerUtil.warn("用户登录请求参数验证失败: 用户名为空");
-                return Result.validationError("用户名不能为空");
-            }
-            
-            if (StringUtil.isBlank(password)) {
-                LoggerUtil.warn("用户登录请求参数验证失败: 密码为空");
-                return Result.validationError("密码不能为空");
-            }
+           @NotBlank(message = "用户名不能为空") String username = request.getUsername();
+           String password = request.getPassword();
             
             // 调用业务层进行登录
-            User loginUser = userService.login(username, password);
+            User loginUser = userService.login(username.toString(), password);
             
             // 生成JWT令牌
             String token = jwtUtil.generateToken(loginUser.getId(), loginUser.getUsername(), loginUser.getUserType().toString());

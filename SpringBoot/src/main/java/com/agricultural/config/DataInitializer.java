@@ -16,7 +16,7 @@ import java.sql.Connection;
  * 在应用启动时执行SQL脚本初始化数据库
  */
 @Slf4j
-@Configuration
+//@Configuration
 public class DataInitializer {
     
     /**

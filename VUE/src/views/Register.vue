@@ -30,8 +30,8 @@
         </el-form-item>
         <el-form-item label="用户类型" prop="userType">
           <el-select v-model="form.userType" placeholder="请选择用户类型">
-            <el-option label="农户" value="farmer" />
-            <el-option label="商家" value="merchant" />
+            <el-option label="农户" value="FARMER" />
+            <el-option label="商家" value="MERCHANT" />
           </el-select>
         </el-form-item>
         <el-form-item label="地区" prop="region">
@@ -66,7 +66,7 @@ const form = ref({
   email: '',
   password: '',
   confirmPassword: '',
-  userType: 'farmer',
+  userType: 'FARMER',
   region: '',
 })
 

@@ -70,10 +70,10 @@ public class UserService {
         }
 
         // 验证手机号
-        if (StringUtil.isNotBlank(phone) && !StringUtil.isValidPhone(phone)) {
+ /*       if (StringUtil.isNotBlank(phone) && !StringUtil.isValidPhone(phone)) {
             LoggerUtil.warn("用户注册失败: 手机号格式不正确，手机号: {}", phone);
             throw new IllegalArgumentException("手机号格式不正确");
-        }
+        }*/
 
         // 验证用户类型
         if (userType == null) {
@@ -229,25 +229,7 @@ public class UserService {
         return users;
     }
 
-    /**
-     * 根据用户类型查询用户列表
-     *
-     * @param userType 用户类型
-     * @return 用户列表
-     */
-    public List<User> getUsersByType(User.UserType userType) {
-        LoggerUtil.info("根据用户类型查询用户，用户类型: {}", userType);
 
-        if (userType == null) {
-            LoggerUtil.warn("查询用户失败: 用户类型为空");
-            throw new IllegalArgumentException("用户类型不能为空");
-        }
-
-        List<User> users = userRepository.findByUserType(userType);
-        LoggerUtil.info("根据用户类型查询用户成功，用户类型: {}, 用户数: {}", userType, users.size());
-
-        return users;
-    }
 
     /**
      * 根据地区查询用户列表

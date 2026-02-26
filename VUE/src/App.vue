@@ -5,7 +5,7 @@
         <div class="header-content">
           <h1>气象+农资一体化服务平台</h1>
           <nav class="nav-menu">
-            <router-link to="/">首页</router-link>
+            <router-link to="/home">首页</router-link>
             <router-link to="/weather">气象数据</router-link>
             <router-link to="/warnings">预警信息</router-link>
             <router-link to="/products">农资产品</router-link>

@@ -63,7 +63,7 @@ const handleLogin = async () => {
     // Response is now the LoginResponse object directly (token, userId, username, userType, etc.)
     authStore.setAuth(response.token, response)
     ElMessage.success('登录成功')
-    router.push('/')
+    router.push('/home')
   } catch (error) {
     ElMessage.error(error.message || '登录失败')
   } finally {

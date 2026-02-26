@@ -4,8 +4,8 @@ import { useAuthStore } from '@/stores/auth'
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('@/views/Home.vue'),
+    // 无论什么状态，只要访问根路径 / 就重定向到 /login
+    redirect: '/login',
   },
   {
     path: '/login',
@@ -16,6 +16,13 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: () => import('@/views/Register.vue'),
+  },
+  // 如果你还需要原来的主页，可以把它移到一个新的路径下，例如 /home，并加上权限验证
+  {
+    path: '/home',
+    name: 'Home',
+    component: () => import('@/views/Home.vue'),
+    meta: { requiresAuth: true }, 
   },
   {
     path: '/weather',
@@ -73,7 +80,10 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     next('/login')
   } else if (to.meta.requiresAdmin && authStore.userRole !== 'admin') {
-    next('/')
+    // 注意：原本非 admin 访问 analytics 会被踢回 '/'
+    // 因为现在 '/' 会重定向到 '/login'，所以非管理员访问也会被踢回登录页
+    // 如果你想让他们去首页，应该改成 next('/home')
+    next('/home') 
   } else {
     next()
   }

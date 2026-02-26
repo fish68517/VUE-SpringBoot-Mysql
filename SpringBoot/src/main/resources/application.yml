@@ -61,7 +61,8 @@ logging:
 # 应用自定义配置
 app:
   jwt:
-    secret: weather-agricultural-platform-secret-key-2024
+    # 替换为一个至少 64 字符的强密钥
+    secret: weather-agricultural-platform-secret-key-2024-with-more-than-64-characters-for-hs512
     expiration: 86400000
   cors:
     allowed-origins: http://localhost:3000,http://localhost:5173
