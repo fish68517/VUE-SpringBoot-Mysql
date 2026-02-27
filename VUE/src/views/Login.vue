@@ -66,7 +66,15 @@ const handleLogin = async () => {
     console.log("登录成功后：",JSON.stringify(response))
     localStorage.setItem('user', JSON.stringify(response))
     ElMessage.success('登录成功')
-    router.push('/home')
+    // 判断用户类型
+    console.log("用户类型：",response.userType)
+    if (response.userType === 'ADMIN') {
+
+      router.push('/admin')
+    } else {
+      router.push('/home')
+    }
+    
   } catch (error) {
     ElMessage.error(error.message || '登录失败')
   } finally {

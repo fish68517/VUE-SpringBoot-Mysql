@@ -72,6 +72,44 @@ const routes = [
     component: () => import('@/views/Profile.vue'),
     meta: { requiresAuth: true },
   },
+
+
+  
+  // ================= 新增：管理员后台路由 =================
+  {
+    path: '/admin',
+    component: () => import('@/views/admin/AdminLayout.vue'),
+    // 添加权限校验，只有 admin 角色可以进入
+    meta: { requiresAuth: true, requiresAdmin: true },
+    // 默认重定向到用户管理页
+    redirect: '/admin/users',
+    children: [
+      {
+        path: 'users', // 注意：子路由不需要加斜杠
+        name: 'AdminUsers',
+        component: () => import('@/views/admin/UserManage.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true },
+      },
+      {
+        path: 'products',
+        name: 'AdminProducts',
+        component: () => import('@/views/admin/ProductManage.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true },
+      },
+      {
+        path: 'orders',
+        name: 'AdminOrders',
+        component: () => import('@/views/admin/OrderManage.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true },
+      },
+      {
+        path: 'warnings',
+        name: 'AdminWarnings',
+        component: () => import('@/views/admin/WarningManage.vue'),
+        meta: { requiresAuth: true, requiresAdmin: true },
+      }
+    ]
+  }
 ]
 
 const router = createRouter({
@@ -79,18 +117,26 @@ const router = createRouter({
   routes,
 })
 
-// Navigation guard for authentication
+// 全局路由导航守卫
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
 
+  // 1. 不管是否登录，只要访问根路径 '/'，无条件跳转到登录页
+  if (to.path === '/') {
+    next('/login')
+    return
+  }
+
+  // 2. 访问需要登录的页面（requiresAuth），但尚未登录
   if (to.meta.requiresAuth && !authStore.isLoggedIn) {
     next('/login')
-  } else if (to.meta.requiresAdmin && authStore.userRole !== 'admin') {
-    // 注意：原本非 admin 访问 analytics 会被踢回 '/'
-    // 因为现在 '/' 会重定向到 '/login'，所以非管理员访问也会被踢回登录页
-    // 如果你想让他们去首页，应该改成 next('/home')
-    next('/home') 
-  } else {
+  } 
+  // 3. 访问需要管理员权限的页面（requiresAdmin），但当前角色不是管理员
+  else if (to.meta.requiresAdmin && authStore.userRole !== 'ADMIN') {
+    next('/home') // 权限不足，强制踢回前台首页
+  } 
+  // 4. 其他所有情况（包括直接访问 /login 或 /register），正常放行
+  else {
     next()
   }
 })

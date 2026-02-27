@@ -7,6 +7,7 @@
             v-model="filters.region"
             placeholder="请输入地区"
             @input="handleSearch"
+            clearable
           />
         </el-col>
         <el-col :xs="24" :sm="12" :md="8">
@@ -14,13 +15,23 @@
             v-model="filters.date"
             type="date"
             placeholder="选择日期"
-            value-format="YYYY-MM-DD"  @change="handleSearch"
-            clearable                  />
+            value-format="YYYY-MM-DD"
+            @change="handleSearch"
+            clearable
+            style="width: 100%;"
+          />
         </el-col>
         <el-col :xs="24" :sm="12" :md="8">
           <el-button type="primary" @click="handleSearch">查询</el-button>
         </el-col>
       </el-row>
+
+      <div 
+        ref="chartRef" 
+        style="width: 100%; height: 350px; margin-bottom: 20px;" 
+        v-show="hasChartData"
+      ></div>
+      <el-empty v-show="!hasChartData" description="暂无图表数据，请尝试更换地区或日期" style="height: 350px;" />
 
       <Table
         :data="weatherData"
@@ -58,12 +69,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import { weatherAPI } from '@/api/weather'
 import Card from '@/components/common/Card.vue'
 import Table from '@/components/common/Table.vue'
+import * as echarts from 'echarts' // 引入 echarts
 
+// --- 状态变量 ---
 const filters = ref({
   region: '',
   date: null,
@@ -77,6 +90,11 @@ const pagination = ref({
   total: 0,
 })
 
+// 图表相关变量
+const chartRef = ref(null)
+let chartInstance = null
+const hasChartData = ref(false)
+
 const columns = [
   { prop: 'region', label: '地区' },
   { prop: 'temperature', label: '温度(°C)' },
@@ -87,46 +105,145 @@ const columns = [
   { prop: 'recordedAt', label: '记录时间' },
 ]
 
+// --- 获取与处理数据 ---
 const handleSearch = async () => {
   try {
-    // 构造请求参数
     const params = {
       region: filters.value.region
     }
 
-    // 如果用户在前端选择了日期，我们将其转换为当天的起始和结束时间
     if (filters.value.date) {
       params.startTime = `${filters.value.date} 00:00:00`
       params.endTime = `${filters.value.date} 23:59:59`
     }
 
-    // 重点：改为调用 queryWeather 接口
     const response = await weatherAPI.queryWeather(params)
-    
-    // 后端返回的 data 是一个数组 (List<WeatherData>)
     const allData = response || []
     
-    // ---- 前端模拟分页逻辑 ----
-    // 因为后端 query 接口没有做数据库层面的分页，返回的是全部 list
-    pagination.value.total = allData.length
+    // 渲染图表 (传递所有查询到的数据，因为图表不需要分页)
+    renderChart(allData)
     
+    // 分页计算 (表格依然需要分页)
+    pagination.value.total = allData.length
     const startIdx = (pagination.value.current - 1) * pagination.value.size
     const endIdx = startIdx + pagination.value.size
     
-    // 切割当前页需要显示的数据
     weatherData.value = allData.slice(startIdx, endIdx)
 
   } catch (error) {
     console.error('获取气象数据失败', error)
-    // ElMessage.error('获取数据失败或该地区暂无数据')
     weatherData.value = []
     pagination.value.total = 0
+    hasChartData.value = false
   }
 }
 
+// --- 绘制 ECharts 折线图 ---
+const renderChart = (data) => {
+  if (!data || data.length === 0) {
+    hasChartData.value = false
+    if (chartInstance) {
+      chartInstance.clear()
+    }
+    return
+  }
+
+  hasChartData.value = true
+
+  // 1. 将数据按时间升序排列 (保证折线图从左到右的时间顺序)
+  const sortedData = [...data].sort((a, b) => new Date(a.recordedAt) - new Date(b.recordedAt))
+
+  // 2. 提取 X轴 和 Y轴 的数据
+  // 如果是同一天的数据，X轴截取 HH:mm 即可；如果是多天，可以截取 MM-DD HH:mm
+  const xData = sortedData.map(item => {
+    const dateObj = new Date(item.recordedAt)
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0')
+    const day = String(dateObj.getDate()).padStart(2, '0')
+    const hours = String(dateObj.getHours()).padStart(2, '0')
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0')
+    return `${month}-${day} ${hours}:${minutes}`
+  })
+  const tempData = sortedData.map(item => item.temperature)
+  const humidityData = sortedData.map(item => item.humidity)
+
+  // 3. 确保 DOM 渲染完毕后初始化图表
+  nextTick(() => {
+    if (!chartInstance) {
+      chartInstance = echarts.init(chartRef.value)
+    }
+
+    // 4. 配置项 (双 Y 轴折线图)
+    const option = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'cross' }
+      },
+      legend: {
+        data: ['温度 (°C)', '湿度 (%)']
+      },
+      grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: [
+        {
+          type: 'category',
+          boundaryGap: false,
+          data: xData
+        }
+      ],
+      yAxis: [
+        {
+          type: 'value',
+          name: '温度 (°C)',
+          position: 'left',
+          axisLabel: { formatter: '{value} °C' },
+          splitLine: { show: true, lineStyle: { type: 'dashed' } }
+        },
+        {
+          type: 'value',
+          name: '湿度 (%)',
+          position: 'right',
+          axisLabel: { formatter: '{value} %' },
+          splitLine: { show: false } // 隐藏第二个 Y轴 的网格线，防止杂乱
+        }
+      ],
+      series: [
+        {
+          name: '温度 (°C)',
+          type: 'line',
+          yAxisIndex: 0,
+          smooth: true, // 平滑曲线
+          itemStyle: { color: '#f56c6c' },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              { offset: 0, color: 'rgba(245, 108, 108, 0.3)' },
+              { offset: 1, color: 'rgba(245, 108, 108, 0.1)' }
+            ])
+          },
+          data: tempData
+        },
+        {
+          name: '湿度 (%)',
+          type: 'line',
+          yAxisIndex: 1,
+          smooth: true,
+          itemStyle: { color: '#409eff' },
+          data: humidityData
+        }
+      ]
+    }
+
+    chartInstance.setOption(option)
+  })
+}
+
+// --- 分页与生命周期 ---
 const handlePageChange = (page) => {
   pagination.value.current = page
-  handleSearch()
+  handleSearch() // 即使重新搜索，图表也会用全部数据重绘，保证折线图始终完整
 }
 
 const handlePageSizeChange = (size) => {
@@ -135,13 +252,29 @@ const handlePageSizeChange = (size) => {
   handleSearch()
 }
 
+// 监听窗口大小变化，让图表自适应缩放
+const resizeChart = () => {
+  if (chartInstance) {
+    chartInstance.resize()
+  }
+}
+
 onMounted(async () => {
+  window.addEventListener('resize', resizeChart)
   try {
     const response = await weatherAPI.getForecast()
     forecastData.value = response || []
     handleSearch()
   } catch (error) {
     ElMessage.error('获取预报数据失败')
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeChart)
+  if (chartInstance) {
+    chartInstance.dispose()
+    chartInstance = null
   }
 })
 </script>

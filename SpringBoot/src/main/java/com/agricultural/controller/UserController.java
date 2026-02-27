@@ -16,6 +16,8 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 用户控制层
  * 
@@ -388,6 +390,34 @@ public class UserController {
         } catch (Exception e) {
             LoggerUtil.error("检查邮箱异常: " + e.getMessage(), e);
             return Result.error("检查邮箱失败，请稍后重试");
+        }
+    }
+
+
+
+    // 请确保文件顶部引入了 java.util.List
+    // import java.util.List;
+
+    /**
+     * 获取所有用户列表接口 (供管理员后台使用)
+     * * @return 用户列表
+     */
+    @GetMapping
+    public Result<List<User>> getAllUsers() {
+        LoggerUtil.info("收到获取所有用户列表请求");
+
+        try {
+            // 调用业务层获取所有用户
+            // 注意：请确保你的 UserService 中已经实现了 getAllUsers() 方法！
+            // 如果没有，需要在 UserService 里加上：return userRepository.findAll();
+            List<User> users = userService.getAllUsers();
+
+            LoggerUtil.info("获取所有用户列表成功，总数: {}", users.size());
+            return Result.success(users);
+
+        } catch (Exception e) {
+            LoggerUtil.error("获取所有用户列表异常: " + e.getMessage(), e);
+            return Result.error("获取用户列表失败，请稍后重试");
         }
     }
 }

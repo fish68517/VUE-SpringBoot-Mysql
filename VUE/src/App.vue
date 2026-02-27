@@ -28,17 +28,28 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRoute } from 'vue-router' // 引入 useRoute
+import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-const route = useRoute() // 获取当前路由信息
+const route = useRoute()
 const authStore = useAuthStore()
 
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
-// 新增：判断当前路由是否为登录或注册页
+// 核心修改：动态判断是否显示顶部导航栏
 const showNav = computed(() => {
-  return route.path !== '/login' && route.path !== '/register'
+  // 1. 如果处于登录或注册页面，隐藏导航栏
+  if (route.path === '/login' || route.path === '/register') {
+    return false
+  }
+  
+  // 2. 如果当前已登录，并且角色是系统管理员(ADMIN)，隐藏前台导航栏
+  if (authStore.isLoggedIn && authStore.userRole === 'ADMIN') {
+    return false
+  }
+  
+  // 3. 其他情况（如普通农户、农资商家），正常显示导航栏
+  return true
 })
 </script>
 

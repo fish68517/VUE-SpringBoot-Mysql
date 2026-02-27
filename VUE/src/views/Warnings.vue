@@ -37,7 +37,7 @@
         </el-col>
         <el-col :xs="24" :sm="12" :md="6">
           <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="showCreateDialog = true">新增预警</el-button>
+          
         </el-col>
       </el-row>
 
@@ -45,6 +45,7 @@
         :data="warnings"
         :columns="columns"
         :show-pagination="true"
+        :show-actions="false"
         :current-page="pagination.current"
         :page-size="pagination.size"
         :total="pagination.total"
