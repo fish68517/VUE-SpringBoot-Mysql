@@ -56,7 +56,7 @@ class CropRepositoryTest {
                 .region("河南省郑州市")
                 .userId(testUser.getId())
                 .plantingDate(LocalDate.of(2023, 10, 15))
-                .expectedHarvestDate(LocalDate.of(2024, 6, 1))
+                .expectedHarvestDate(LocalDate.of(2026, 6, 1))
                 .build();
     }
 
@@ -95,8 +95,8 @@ class CropRepositoryTest {
                 .growthStage("苗期")
                 .region("河南省郑州市")
                 .userId(testUser.getId())
-                .plantingDate(LocalDate.of(2024, 4, 1))
-                .expectedHarvestDate(LocalDate.of(2024, 10, 15))
+                .plantingDate(LocalDate.of(2026, 4, 1))
+                .expectedHarvestDate(LocalDate.of(2026, 10, 15))
                 .build();
         cropRepository.save(anotherCrop);
         
@@ -118,8 +118,8 @@ class CropRepositoryTest {
                 .growthStage("分蘖期")
                 .region("河南省郑州市")
                 .userId(testUser.getId())
-                .plantingDate(LocalDate.of(2024, 5, 1))
-                .expectedHarvestDate(LocalDate.of(2024, 10, 1))
+                .plantingDate(LocalDate.of(2026, 5, 1))
+                .expectedHarvestDate(LocalDate.of(2026, 10, 1))
                 .build();
         cropRepository.save(anotherCrop);
         
@@ -154,8 +154,8 @@ class CropRepositoryTest {
                 .growthStage("拔节期")
                 .region("山东省济南市")
                 .userId(testUser.getId())
-                .plantingDate(LocalDate.of(2024, 4, 1))
-                .expectedHarvestDate(LocalDate.of(2024, 10, 15))
+                .plantingDate(LocalDate.of(2026, 4, 1))
+                .expectedHarvestDate(LocalDate.of(2026, 10, 15))
                 .build();
         cropRepository.save(anotherCrop);
         
@@ -187,8 +187,8 @@ class CropRepositoryTest {
                 .growthStage("苗期")
                 .region("山东省济南市")
                 .userId(anotherUser.getId())
-                .plantingDate(LocalDate.of(2024, 4, 1))
-                .expectedHarvestDate(LocalDate.of(2024, 10, 15))
+                .plantingDate(LocalDate.of(2026, 4, 1))
+                .expectedHarvestDate(LocalDate.of(2026, 10, 15))
                 .build();
         cropRepository.save(anotherCrop);
         
@@ -209,12 +209,12 @@ class CropRepositoryTest {
         
         // 更新作物信息
         savedCrop.setGrowthStage("抽穗期");
-        savedCrop.setExpectedHarvestDate(LocalDate.of(2024, 6, 15));
+        savedCrop.setExpectedHarvestDate(LocalDate.of(2026, 6, 15));
         Crop updatedCrop = cropRepository.save(savedCrop);
         
         // 验证更新结果
         assertEquals("抽穗期", updatedCrop.getGrowthStage());
-        assertEquals(LocalDate.of(2024, 6, 15), updatedCrop.getExpectedHarvestDate());
+        assertEquals(LocalDate.of(2026, 6, 15), updatedCrop.getExpectedHarvestDate());
     }
 
     @Test
@@ -239,8 +239,8 @@ class CropRepositoryTest {
                 .growthStage("开花期")
                 .region("河南省郑州市")
                 .userId(testUser.getId())
-                .plantingDate(LocalDate.of(2024, 5, 15))
-                .expectedHarvestDate(LocalDate.of(2024, 10, 30))
+                .plantingDate(LocalDate.of(2026, 5, 15))
+                .expectedHarvestDate(LocalDate.of(2026, 10, 30))
                 .build();
         
         // 保存作物

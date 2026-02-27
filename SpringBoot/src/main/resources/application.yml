@@ -62,10 +62,14 @@ logging:
 app:
   jwt:
     # 替换为一个至少 64 字符的强密钥
-    secret: weather-agricultural-platform-secret-key-2024-with-more-than-64-characters-for-hs512
+    secret: weather-agricultural-platform-secret-key-2026-with-more-than-64-characters-for-hs512
     expiration: 86400000
   cors:
     allowed-origins: http://localhost:3000,http://localhost:5173
     allowed-methods: GET,POST,PUT,DELETE,OPTIONS
     allowed-headers: "*"
     allow-credentials: true
+# 高德地图 API 配置
+amap:
+  api:
+    key: 6da1db0cfc02fb2445509493cae2b28f # 例如：e8b...（填入你申请的真实Key）

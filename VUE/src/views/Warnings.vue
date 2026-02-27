@@ -128,8 +128,8 @@ const handleSearch = async () => {
       page: pagination.value.current,
       size: pagination.value.size,
     })
-    warnings.value = response.data.records || []
-    pagination.value.total = response.data.total || 0
+    warnings.value = response || []
+    pagination.value.total = response || 0
   } catch (error) {
     ElMessage.error('获取预警信息失败')
   }

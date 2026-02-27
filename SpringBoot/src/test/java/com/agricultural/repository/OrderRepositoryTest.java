@@ -82,7 +82,7 @@ class OrderRepositoryTest {
 
         // 创建测试订单
         testOrder = Order.builder()
-                .orderNumber("ORD20240220001")
+                .orderNumber("ORD20260220001")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(2)
@@ -100,7 +100,7 @@ class OrderRepositoryTest {
         
         // 验证订单已保存
         assertNotNull(savedOrder.getId());
-        assertEquals("ORD20240220001", savedOrder.getOrderNumber());
+        assertEquals("ORD20260220001", savedOrder.getOrderNumber());
         assertEquals(testUser.getId(), savedOrder.getUserId());
         assertEquals(Order.OrderStatus.PENDING, savedOrder.getStatus());
         assertNotNull(savedOrder.getCreatedAt());
@@ -117,7 +117,7 @@ class OrderRepositoryTest {
         
         // 验证查询结果
         assertTrue(foundOrder.isPresent());
-        assertEquals("ORD20240220001", foundOrder.get().getOrderNumber());
+        assertEquals("ORD20260220001", foundOrder.get().getOrderNumber());
         assertEquals(testUser.getId(), foundOrder.get().getUserId());
     }
 
@@ -127,7 +127,7 @@ class OrderRepositoryTest {
         orderRepository.save(testOrder);
         
         // 根据订单号查询
-        Optional<Order> foundOrder = orderRepository.findByOrderNumber("ORD20240220001");
+        Optional<Order> foundOrder = orderRepository.findByOrderNumber("ORD20260220001");
         
         // 验证查询结果
         assertTrue(foundOrder.isPresent());
@@ -139,7 +139,7 @@ class OrderRepositoryTest {
     void testFindByUserId() {
         // 保存多个订单
         Order order1 = Order.builder()
-                .orderNumber("ORD20240220001")
+                .orderNumber("ORD20260220001")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(2)
@@ -148,7 +148,7 @@ class OrderRepositoryTest {
                 .build();
         
         Order order2 = Order.builder()
-                .orderNumber("ORD20240220002")
+                .orderNumber("ORD20260220002")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(1)
@@ -171,7 +171,7 @@ class OrderRepositoryTest {
     void testFindByStatus() {
         // 保存多个不同状态的订单
         Order pendingOrder = Order.builder()
-                .orderNumber("ORD20240220001")
+                .orderNumber("ORD20260220001")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(2)
@@ -180,7 +180,7 @@ class OrderRepositoryTest {
                 .build();
         
         Order paidOrder = Order.builder()
-                .orderNumber("ORD20240220002")
+                .orderNumber("ORD20260220002")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(1)
@@ -203,7 +203,7 @@ class OrderRepositoryTest {
     void testFindByProductId() {
         // 保存多个订单
         Order order1 = Order.builder()
-                .orderNumber("ORD20240220001")
+                .orderNumber("ORD20260220001")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(2)
@@ -212,7 +212,7 @@ class OrderRepositoryTest {
                 .build();
         
         Order order2 = Order.builder()
-                .orderNumber("ORD20240220002")
+                .orderNumber("ORD20260220002")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(1)
@@ -235,7 +235,7 @@ class OrderRepositoryTest {
     void testFindByUserIdAndStatus() {
         // 保存多个订单
         Order pendingOrder = Order.builder()
-                .orderNumber("ORD20240220001")
+                .orderNumber("ORD20260220001")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(2)
@@ -244,7 +244,7 @@ class OrderRepositoryTest {
                 .build();
         
         Order paidOrder = Order.builder()
-                .orderNumber("ORD20240220002")
+                .orderNumber("ORD20260220002")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(1)
@@ -268,7 +268,7 @@ class OrderRepositoryTest {
     void testFindByUserIdAndTimeRange() {
         // 保存订单
         Order order1 = Order.builder()
-                .orderNumber("ORD20240220001")
+                .orderNumber("ORD20260220001")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(2)
@@ -277,7 +277,7 @@ class OrderRepositoryTest {
                 .build();
         
         Order order2 = Order.builder()
-                .orderNumber("ORD20240220002")
+                .orderNumber("ORD20260220002")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(1)
@@ -307,7 +307,7 @@ class OrderRepositoryTest {
     void testFindByTimeRange() {
         // 保存订单
         Order order1 = Order.builder()
-                .orderNumber("ORD20240220001")
+                .orderNumber("ORD20260220001")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(2)
@@ -316,7 +316,7 @@ class OrderRepositoryTest {
                 .build();
         
         Order order2 = Order.builder()
-                .orderNumber("ORD20240220002")
+                .orderNumber("ORD20260220002")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(1)
@@ -345,7 +345,7 @@ class OrderRepositoryTest {
     void testFindPendingOrders() {
         // 保存多个订单
         Order pendingOrder1 = Order.builder()
-                .orderNumber("ORD20240220001")
+                .orderNumber("ORD20260220001")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(2)
@@ -354,7 +354,7 @@ class OrderRepositoryTest {
                 .build();
         
         Order pendingOrder2 = Order.builder()
-                .orderNumber("ORD20240220002")
+                .orderNumber("ORD20260220002")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(1)
@@ -363,7 +363,7 @@ class OrderRepositoryTest {
                 .build();
         
         Order paidOrder = Order.builder()
-                .orderNumber("ORD20240220003")
+                .orderNumber("ORD20260220003")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(1)
@@ -418,7 +418,7 @@ class OrderRepositoryTest {
     void testOrderPrePersist() {
         // 创建订单（不设置时间戳和状态）
         Order order = Order.builder()
-                .orderNumber("ORD20240220999")
+                .orderNumber("ORD20260220999")
                 .userId(testUser.getId())
                 .productId(testProduct.getId())
                 .quantity(1)

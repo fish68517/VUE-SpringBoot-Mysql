@@ -14,8 +14,8 @@
             v-model="filters.date"
             type="date"
             placeholder="选择日期"
-            @change="handleSearch"
-          />
+            value-format="YYYY-MM-DD"  @change="handleSearch"
+            clearable                  />
         </el-col>
         <el-col :xs="24" :sm="12" :md="8">
           <el-button type="primary" @click="handleSearch">查询</el-button>
@@ -89,15 +89,38 @@ const columns = [
 
 const handleSearch = async () => {
   try {
-    const response = await weatherAPI.getCurrentWeather({
-      region: filters.value.region,
-      page: pagination.value.current,
-      size: pagination.value.size,
-    })
-    weatherData.value = response.data.records || []
-    pagination.value.total = response.data.total || 0
+    // 构造请求参数
+    const params = {
+      region: filters.value.region
+    }
+
+    // 如果用户在前端选择了日期，我们将其转换为当天的起始和结束时间
+    if (filters.value.date) {
+      params.startTime = `${filters.value.date} 00:00:00`
+      params.endTime = `${filters.value.date} 23:59:59`
+    }
+
+    // 重点：改为调用 queryWeather 接口
+    const response = await weatherAPI.queryWeather(params)
+    
+    // 后端返回的 data 是一个数组 (List<WeatherData>)
+    const allData = response || []
+    
+    // ---- 前端模拟分页逻辑 ----
+    // 因为后端 query 接口没有做数据库层面的分页，返回的是全部 list
+    pagination.value.total = allData.length
+    
+    const startIdx = (pagination.value.current - 1) * pagination.value.size
+    const endIdx = startIdx + pagination.value.size
+    
+    // 切割当前页需要显示的数据
+    weatherData.value = allData.slice(startIdx, endIdx)
+
   } catch (error) {
-    ElMessage.error('获取气象数据失败')
+    console.error('获取气象数据失败', error)
+    // ElMessage.error('获取数据失败或该地区暂无数据')
+    weatherData.value = []
+    pagination.value.total = 0
   }
 }
 

@@ -20,7 +20,7 @@
         <router-view />
       </el-main>
       <el-footer>
-        <p>&copy; 2024 气象+农资一体化服务平台. All rights reserved.</p>
+        <p>&copy; 2026 气象+农资一体化服务平台. All rights reserved.</p>
       </el-footer>
     </el-container>
   </div>

@@ -301,7 +301,7 @@ console.log('用户信息:', user)
   "code": 200,
   "message": "操作成功",
   "data": { /* 实际数据 */ },
-  "timestamp": "2024-01-01T12:00:00"
+  "timestamp": "2026-01-01T12:00:00"
 }
 ```
 
@@ -314,7 +314,7 @@ console.log('用户信息:', user)
 {
   "code": 400,
   "message": "错误信息",
-  "timestamp": "2024-01-01T12:00:00"
+  "timestamp": "2026-01-01T12:00:00"
 }
 ```
 

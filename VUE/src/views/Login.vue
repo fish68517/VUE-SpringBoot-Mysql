@@ -62,6 +62,9 @@ const handleLogin = async () => {
     const response = await userAPI.login(form.value)
     // Response is now the LoginResponse object directly (token, userId, username, userType, etc.)
     authStore.setAuth(response.token, response)
+    // 打印响应
+    console.log("登录成功后：",JSON.stringify(response))
+    localStorage.setItem('user', JSON.stringify(response))
     ElMessage.success('登录成功')
     router.push('/home')
   } catch (error) {

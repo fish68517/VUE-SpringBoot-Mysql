@@ -4,9 +4,12 @@ import com.agricultural.entity.WeatherData;
 import com.agricultural.repository.WeatherDataRepository;
 import com.agricultural.util.LoggerUtil;
 import com.agricultural.util.StringUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,6 +26,10 @@ public class WeatherService {
 
     @Autowired
     private WeatherDataRepository weatherDataRepository;
+
+    // 从配置文件中读取高德API Key
+    @Value("${amap.api.key:}")
+    private String amapApiKey;
 
     /**
      * 获取当前气象数据
@@ -41,16 +48,80 @@ public class WeatherService {
             throw new IllegalArgumentException("地区不能为空");
         }
 
-        // 查询最新的气象数据
+        // 1. 先尝试从本地数据库查询最新的气象数据
         WeatherData weatherData = weatherDataRepository.findLatestByRegion(region);
+
+        // 2. 如果本地数据库没有数据，则调用高德API获取并保存
         if (weatherData == null) {
-            LoggerUtil.warn("获取当前气象数据失败: 该地区暂无气象数据，地区: {}", region);
-            throw new IllegalArgumentException("该地区暂无气象数据");
+            LoggerUtil.warn("本地数据库暂无气象数据，尝试从高德API获取，地区: {}", region);
+            weatherData = fetchAndSaveWeatherFromAmap(region);
+
+            // 如果高德API也获取不到，才抛出异常
+            if (weatherData == null) {
+                LoggerUtil.warn("获取当前气象数据失败: 该地区暂无气象数据且无法从第三方获取，地区: {}", region);
+                throw new IllegalArgumentException("该地区暂无气象数据");
+            }
         }
 
         LoggerUtil.info("获取当前气象数据成功，地区: {}, 数据ID: {}", region, weatherData.getId());
 
         return weatherData;
+    }
+
+    /**
+     * 从高德API获取天气并保存到本地数据库
+     */
+    private WeatherData fetchAndSaveWeatherFromAmap(String region) {
+        if (StringUtil.isBlank(amapApiKey)) {
+            LoggerUtil.warn("未配置高德API Key(amap.api.key)，无法调用第三方接口");
+            return null;
+        }
+
+        try {
+            // 每次使用直接 new RestTemplate，避免要求你在项目中额外配置 Bean
+            RestTemplate restTemplate = new RestTemplate();
+
+            // 步骤1: 地理编码 API (将地名转换为 adcode)
+            String geoUrl = "https://restapi.amap.com/v3/geocode/geo?address=" + region + "&key=" + amapApiKey;
+            JsonNode geoNode = restTemplate.getForObject(geoUrl, JsonNode.class);
+
+            if (geoNode == null || !"1".equals(geoNode.path("status").asText()) || geoNode.path("geocodes").isEmpty()) {
+                LoggerUtil.warn("高德地理编码API解析失败，地区: {}", region);
+                return null;
+            }
+            // 提取城市编码
+            String adcode = geoNode.path("geocodes").get(0).path("adcode").asText();
+
+            // 步骤2: 天气查询 API (使用 adcode 获取实况天气)
+            String weatherUrl = "https://restapi.amap.com/v3/weather/weatherInfo?city=" + adcode + "&key=" + amapApiKey + "&extensions=base";
+            JsonNode weatherNode = restTemplate.getForObject(weatherUrl, JsonNode.class);
+
+            if (weatherNode == null || !"1".equals(weatherNode.path("status").asText()) || weatherNode.path("lives").isEmpty()) {
+                LoggerUtil.warn("高德天气API获取失败，adcode: {}", adcode);
+                return null;
+            }
+
+            JsonNode liveWeather = weatherNode.path("lives").get(0);
+
+            // 步骤3: 解析数据
+            String weatherCondition = liveWeather.path("weather").asText();
+            BigDecimal temperature = new BigDecimal(liveWeather.path("temperature").asText());
+            Integer humidity = liveWeather.path("humidity").asInt();
+
+            // 高德实况天气不提供降水量，设为默认值 0
+            BigDecimal precipitation = BigDecimal.ZERO;
+
+            // 高德风力数据通常为字符串(如"≤3"或"4"), 提取出纯数字作为风速
+            String windPowerStr = liveWeather.path("windpower").asText().replaceAll("[^0-9]", "");
+            BigDecimal windSpeed = StringUtil.isBlank(windPowerStr) ? BigDecimal.ZERO : new BigDecimal(windPowerStr);
+
+            // 步骤4: 调用本类已有的 saveWeatherData 方法保存到数据库，并返回
+            return saveWeatherData(region, temperature, humidity, precipitation, windSpeed, weatherCondition);
+
+        } catch (Exception e) {
+            LoggerUtil.error("从高德API获取天气异常: " + e.getMessage(), e);
+            return null;
+        }
     }
 
     /**
