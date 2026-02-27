@@ -16,6 +16,7 @@ const BASE_RESOURCE_URL = '/image/pet/'
  * @returns {string} - 完整的图片URL
  */
 export const getImageUrl = (url, defaultImage = DEFAULT_RECIPE_IMAGE) => {
+
   if (!url) {
     return defaultImage
   }

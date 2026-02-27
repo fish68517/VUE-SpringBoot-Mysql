@@ -16,13 +16,13 @@ public interface RecipeMapper {
     @Select("SELECT * FROM recipe WHERE category_id = #{categoryId}")
     List<Recipe> findByCategoryId(Integer categoryId);
 
-    @Insert("INSERT INTO recipe(category_id, name, description, ingredients, steps, cooking_time, difficulty) " +
-            "VALUES(#{categoryId}, #{name}, #{description}, #{ingredients}, #{steps}, #{cookingTime}, #{difficulty})")
+    @Insert("INSERT INTO recipe(category_id, name, description, ingredients, steps, cooking_time, image, difficulty) " +
+            "VALUES(#{categoryId}, #{name}, #{description}, #{ingredients}, #{steps}, #{cookingTime}, #{image}, #{difficulty})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Recipe recipe);
 
     @Update("UPDATE recipe SET name = #{name}, description = #{description}, ingredients = #{ingredients}, " +
-            "steps = #{steps}, cooking_time = #{cookingTime}, difficulty = #{difficulty} WHERE id = #{id}")
+            "steps = #{steps}, cooking_time = #{cookingTime}, image = #{image}, difficulty = #{difficulty} WHERE id = #{id}")
     int update(Recipe recipe);
 
     @Delete("DELETE FROM recipe WHERE id = #{id}")

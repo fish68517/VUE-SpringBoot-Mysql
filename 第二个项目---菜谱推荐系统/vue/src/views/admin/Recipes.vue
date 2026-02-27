@@ -119,11 +119,11 @@
           <el-upload
             class="recipe-uploader"
             action="/api/upload/image"
-            :show-file-list="false"
+            :headers="uploadHeaders"  :show-file-list="false"
             :on-success="handleImageSuccess"
             :before-upload="beforeImageUpload"
           >
-            <img v-if="form.image" :src="form.image" class="uploaded-image">
+            <img v-if="form.image" :src="getImageUrl(form.image)" class="uploaded-image">
             <el-icon v-else class="upload-icon"><Plus /></el-icon>
           </el-upload>
         </el-form-item>
@@ -330,8 +330,30 @@ export default {
       }
     }
 
+    // 1. 定义上传请求头，动态获取 Token
+    const uploadHeaders = computed(() => {
+      const token = localStorage.getItem('token')
+      return {
+        Authorization: token ? `Bearer ${token}` : ''
+      }
+    })
+
+    // 2. 修改图片上传成功的处理回调
     const handleImageSuccess = (response) => {
-      form.value.image = response.url
+      // 因为 Spring Boot 返回的数据结构是 Result 对象，通常带有 code 和 data
+      // 例如：{ code: 200, message: '上传成功', data: { url: '/image/pet/xxxxx.jpg' } }
+      if (response.code === 200 && response.data) {
+        // 成功后，将生成的后端 URL 赋值给表单，图片会立刻在前端回显
+        // form.value.image = response.data.url
+        // url: "/image/pet/740b11f8-1390-4400-b557-99c615fa1dfd.jpg" 
+        // 获取 /image/pet/ 具体名称
+        form.value.image = response.data.url.split('/').pop()
+        // 打印
+        console.log("上传成功：",response.data.url.split('/').pop())
+        ElMessage.success('图片上传成功')
+      } else {
+        ElMessage.error(response.message || '图片上传失败')
+      }
     }
 
     const beforeImageUpload = (file) => {
@@ -349,7 +371,8 @@ export default {
 
     const handleSubmit = async () => {
       if (!formRef.value) return
-      
+      // 打印表单数据
+      console.log("更新：",JSON.stringify(form.value))
       await formRef.value.validate(async (valid) => {
         if (valid) {
           try {
@@ -363,6 +386,8 @@ export default {
             dialogVisible.value = false
             getRecipes()
           } catch (error) {
+            // 打印 error
+            console.log("error:",error)
             ElMessage.error(dialogType.value === 'add' ? '添加失败' : '更新失败')
           }
         }
@@ -406,7 +431,9 @@ export default {
       handleImageSuccess,
       beforeImageUpload,
       handleSubmit,
-      getImageUrl
+      getImageUrl,
+      uploadHeaders
+      
     }
   }
 }

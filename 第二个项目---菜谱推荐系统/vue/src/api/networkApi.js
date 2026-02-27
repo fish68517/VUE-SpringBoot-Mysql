@@ -61,7 +61,16 @@ export const recipeApi = {
   getRecipesByCategory: (categoryId) => request.get(`/recipes/category/${categoryId}`),
   searchRecipes: (keyword) => request.get('/recipes/search', { 
     params: { keyword }  // 使用 params 传递查询参数
-  })
+  }),
+
+  // 👇 补充缺失的增、删、改接口
+  createRecipe: (data) => request.post('/recipes', data),
+  
+  // 更新菜谱。注意：这里的 URL 路径需要根据你的 SpringBoot 后端 Controller 实际定义的路径来写。
+  // 如果后端是 @PutMapping("/recipes") 则用 request.put('/recipes', data)
+  // 如果后端是 @PutMapping("/recipes/{id}") 则用下面的写法：
+  updateRecipe: (data) => request.put(data.id ? `/recipes/${data.id}` : '/recipes', data),
+  deleteRecipe: (id) => request.delete(`/recipes/${id}`)
 }
 
 // 购物车相关接口

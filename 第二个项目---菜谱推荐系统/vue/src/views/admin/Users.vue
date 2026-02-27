@@ -55,6 +55,7 @@
             </el-button>
             <el-button 
               type="danger" 
+              v-if="false"
               link 
               @click="handleDelete(row)"
               :disabled="row.role === 'admin'"
