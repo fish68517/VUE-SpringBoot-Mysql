@@ -16,10 +16,10 @@
             @change="handleSearch"
           >
             <el-option label="全部" value="" />
-            <el-option label="低" value="low" />
-            <el-option label="中" value="medium" />
-            <el-option label="高" value="high" />
-            <el-option label="严重" value="critical" />
+            <el-option label="低" value="LOW" />
+            <el-option label="中" value="MEDIUM" />
+            <el-option label="高" value="HIGH" />
+            <el-option label="严重" value="CRITICAL" />
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="6">
@@ -68,10 +68,10 @@
         </el-form-item>
         <el-form-item label="严重程度">
           <el-select v-model="warningForm.severity">
-            <el-option label="低" value="low" />
-            <el-option label="中" value="medium" />
-            <el-option label="高" value="high" />
-            <el-option label="严重" value="critical" />
+            <el-option label="低" value="LOW" />
+            <el-option label="中" value="MEDIUM" />
+            <el-option label="高" value="HIGH" />
+            <el-option label="严重" value="CRITICAL" />
           </el-select>
         </el-form-item>
         <el-form-item label="描述">

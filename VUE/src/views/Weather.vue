@@ -35,7 +35,7 @@
       />
     </Card>
 
-    <Card title="气象预报">
+    <Card title="气象预报" v-if="false">
       <el-row :gutter="20">
         <el-col
           v-for="forecast in forecastData"
@@ -138,7 +138,7 @@ const handlePageSizeChange = (size) => {
 onMounted(async () => {
   try {
     const response = await weatherAPI.getForecast()
-    forecastData.value = response.data || []
+    forecastData.value = response || []
     handleSearch()
   } catch (error) {
     ElMessage.error('获取预报数据失败')
