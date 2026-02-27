@@ -190,48 +190,47 @@ public class UserController {
 
     /**
      * 更新用户信息接口
-     * 
-     * @param id 用户ID
-     * @param email 邮箱
-     * @param phone 手机号
-     * @param region 地区
+     * * @param id 用户ID
+     * @param request 包含用户更新信息的 JSON 对象
      * @return 更新后的用户信息
      */
     @PutMapping("/{id}")
-    @RequirePermission(requireAuth = true, description = "更新用户信息")
     public Result<User> updateUser(
             @PathVariable @NotNull(message = "用户ID不能为空") Long id,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String phone,
-            @RequestParam(required = false) String region) {
-        
+            @RequestBody com.agricultural.dto.UserUpdateRequest request) { // 👈 这里改成了 @RequestBody
+
         LoggerUtil.info("收到更新用户信息请求，用户ID: {}", id);
-        
+
         try {
             // 参数验证
             if (id == null || id <= 0) {
                 LoggerUtil.warn("更新用户信息请求参数验证失败: 用户ID无效");
                 return Result.validationError("用户ID无效");
             }
-            
+
             // 权限检查：只有管理员或用户本人可以更新用户信息
             if (!PermissionUtil.canAccessUser(id)) {
                 LoggerUtil.warn("用户权限不足，无法更新用户信息，用户ID: {}", id);
                 return Result.forbidden("权限不足，无法更新此用户信息");
             }
-            
+
+            // 从 request 对象中提取允许更新的字段
+            String email = request.getEmail();
+            String phone = request.getPhone();
+            String region = request.getRegion();
+
             // 检查是否至少提供了一个要更新的字段
             if (StringUtil.isBlank(email) && StringUtil.isBlank(phone) && StringUtil.isBlank(region)) {
                 LoggerUtil.warn("更新用户信息请求参数验证失败: 没有提供要更新的字段");
                 return Result.validationError("至少需要提供一个要更新的字段");
             }
-            
-            // 调用业务层更新用户信息
+
+            // 调用业务层更新用户信息 (注意：业务层本身只接收 email, phone, region)
             User updatedUser = userService.updateUser(id, email, phone, region);
-            
+
             LoggerUtil.info("更新用户信息成功，用户ID: {}", id);
             return Result.success("用户信息更新成功", updatedUser);
-            
+
         } catch (IllegalArgumentException e) {
             LoggerUtil.warn("更新用户信息失败: {}", e.getMessage());
             return Result.validationError(e.getMessage());

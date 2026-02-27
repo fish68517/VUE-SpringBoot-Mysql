@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,6 +72,9 @@ public class WeatherService {
     /**
      * 从高德API获取天气并保存到本地数据库
      */
+    /**
+     * 从高德API获取天气并保存到本地数据库 (使用 Upsert 逻辑)
+     */
     private WeatherData fetchAndSaveWeatherFromAmap(String region) {
         if (StringUtil.isBlank(amapApiKey)) {
             LoggerUtil.warn("未配置高德API Key(amap.api.key)，无法调用第三方接口");
@@ -78,7 +82,6 @@ public class WeatherService {
         }
 
         try {
-            // 每次使用直接 new RestTemplate，避免要求你在项目中额外配置 Bean
             RestTemplate restTemplate = new RestTemplate();
 
             // 步骤1: 地理编码 API (将地名转换为 adcode)
@@ -115,11 +118,50 @@ public class WeatherService {
             String windPowerStr = liveWeather.path("windpower").asText().replaceAll("[^0-9]", "");
             BigDecimal windSpeed = StringUtil.isBlank(windPowerStr) ? BigDecimal.ZERO : new BigDecimal(windPowerStr);
 
-            // 步骤4: 调用本类已有的 saveWeatherData 方法保存到数据库，并返回
-            return saveWeatherData(region, temperature, humidity, precipitation, windSpeed, weatherCondition);
+            // 步骤4: 提取高德的 reporttime 作为数据的唯一时间标识
+            String reportTimeStr = liveWeather.path("reporttime").asText();
+            LocalDateTime recordedAt;
+            if (StringUtil.isNotBlank(reportTimeStr)) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                recordedAt = LocalDateTime.parse(reportTimeStr, formatter);
+            } else {
+                // 极端情况：如果没有 reporttime，降级为当前时间，抹除分秒，按整点小时记录
+                recordedAt = LocalDateTime.now().withMinute(0).withSecond(0).withNano(0);
+            }
+
+            // ================= 步骤5: 存在即更新，不存在即插入 (Upsert) =================
+            WeatherData existingData = weatherDataRepository.findByRegionAndRecordedAt(region, recordedAt);
+
+            if (existingData != null) {
+                // 如果当前发布时间的数据已存在，则覆盖更新最新数值
+                existingData.setTemperature(temperature);
+                existingData.setHumidity(humidity);
+                existingData.setPrecipitation(precipitation);
+                existingData.setWindSpeed(windSpeed);
+                existingData.setWeatherCondition(weatherCondition);
+
+                WeatherData updatedData = weatherDataRepository.save(existingData);
+                LoggerUtil.info("实况天气数据已存在，更新最新数据，地区: {}, 时间: {}", region, recordedAt);
+                return updatedData;
+            } else {
+                // 如果不存在，插入一条全新的实况数据
+                WeatherData newData = WeatherData.builder()
+                        .region(region)
+                        .temperature(temperature)
+                        .humidity(humidity)
+                        .precipitation(precipitation)
+                        .windSpeed(windSpeed)
+                        .weatherCondition(weatherCondition)
+                        .recordedAt(recordedAt)
+                        .build();
+
+                WeatherData savedData = weatherDataRepository.save(newData);
+                LoggerUtil.info("插入新的实况天气数据，地区: {}, 时间: {}", region, recordedAt);
+                return savedData;
+            }
 
         } catch (Exception e) {
-            LoggerUtil.error("从高德API获取天气异常: " + e.getMessage(), e);
+            LoggerUtil.error("从高德API获取实况天气异常: " + e.getMessage(), e);
             return null;
         }
     }
@@ -255,25 +297,37 @@ public class WeatherService {
                 Integer humidity = 50;
                 BigDecimal precipitation = BigDecimal.ZERO;
 
-                // 为了防止每次查询都无限制插入重复数据，这里可以直接调用你现成的 saveWeatherData 进行存储
-                // 如果对数据要求极高，可以在这里加一层 repository.existsBy... 判断
+                // ================= 修改点 =================
+                // 1. 先去数据库里查这一天的数据是否存在
+                WeatherData existingData = weatherDataRepository.findByRegionAndRecordedAt(region, recordedAt);
 
-                WeatherData weatherData = WeatherData.builder()
-                        .region(region)
-                        .temperature(temperature)
-                        .humidity(humidity)
-                        .precipitation(precipitation)
-                        .windSpeed(windSpeed)
-                        .weatherCondition(weatherCondition)
-                        .recordedAt(recordedAt)
-                        .build();
-                // 如果某个地区当前的时间如：20260208，已经记录了，就不需要则插入
-                if (weatherDataRepository.exists(weatherData -> weatherData.getRegion().equals(region) && weatherData.getRecordedAt().equals(recordedAt))) {
-                    LoggerUtil.warn("数据已存在，跳过保存，地区: {}, 时间: {}", region, recordedAt);
-                    continue;
+                if (existingData != null) {
+                    // 2. 如果存在，说明之前的预测可能不准了，使用高德最新的预测覆盖它
+                    existingData.setTemperature(temperature);
+                    existingData.setWeatherCondition(weatherCondition);
+                    existingData.setWindSpeed(windSpeed);
+                    // 湿度和降水如果没有准确数据可以不覆盖，或者重新赋值
+                    existingData.setHumidity(humidity);
+                    existingData.setPrecipitation(precipitation);
+
+                    weatherDataRepository.save(existingData);
+                    LoggerUtil.info("数据已存在，更新最新的天气预报，地区: {}, 时间: {}", region, recordedAt);
+                } else {
+                    // 3. 如果不存在，正常插入新数据
+                    WeatherData newData = WeatherData.builder()
+                            .region(region)
+                            .temperature(temperature)
+                            .humidity(humidity)
+                            .precipitation(precipitation)
+                            .windSpeed(windSpeed)
+                            .weatherCondition(weatherCondition)
+                            .recordedAt(recordedAt)
+                            .build();
+
+                    weatherDataRepository.save(newData);
+                    LoggerUtil.info("插入新的天气预报数据，地区: {}, 时间: {}", region, recordedAt);
                 }
 
-                weatherDataRepository.save(weatherData);
             }
 
             LoggerUtil.info("从高德API成功拉取并保存了未来预报数据，地区: {}", region);

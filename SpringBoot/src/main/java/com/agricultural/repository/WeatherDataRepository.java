@@ -33,4 +33,7 @@ public interface WeatherDataRepository extends JpaRepository<WeatherData, Long> 
      */
     @Query(value = "SELECT * FROM weather_data WHERE region = :region ORDER BY recorded_at DESC LIMIT 1", nativeQuery = true)
     WeatherData findLatestByRegion(@Param("region") String region);
+
+    // 根据地区和记录时间精准查找数据
+    WeatherData findByRegionAndRecordedAt(String region, LocalDateTime recordedAt);
 }

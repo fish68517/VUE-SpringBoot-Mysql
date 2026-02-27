@@ -1,23 +1,25 @@
 import apiClient from './client'
 
 export const orderAPI = {
-  getOrders(params) {
-    return apiClient.get('/orders', { params })
-  },
-
-  getOrderById(id) {
-    return apiClient.get(`/orders/${id}`)
-  },
-
+  // 创建订单
   createOrder(data) {
     return apiClient.post('/orders', data)
   },
 
-  updateOrderStatus(id, status) {
-    return apiClient.put(`/orders/${id}/status`, { status })
+  // 支付订单
+  payOrder(orderId, data) {
+    return apiClient.post(`/orders/${orderId}/pay`, data)
   },
 
-  payOrder(id) {
-    return apiClient.post(`/orders/${id}/pay`)
+  // 获取用户订单列表
+  getOrdersByUserId(userId) {
+    return apiClient.get(`/orders/user/${userId}`)
   },
+  // 👇 补上缺失的：更新订单状态接口
+  updateOrderStatus(orderId, status) {
+    // 后端接口要求 status 是通过 @RequestParam 传递的
+    return apiClient.put(`/orders/${orderId}/status`, null, { 
+      params: { status: status.toUpperCase() } 
+    })
+  }
 }

@@ -1,4 +1,4 @@
-<template>
+handleEdit<template>
   <div class="orders-container">
     <Card title="订单管理">
       <el-row :gutter="20" class="filter-row">
@@ -42,6 +42,7 @@
         :data="orders"
         :columns="columns"
         :show-pagination="true"
+        :show-actions="false"
         :current-page="pagination.current"
         :page-size="pagination.size"
         :total="pagination.total"
@@ -96,22 +97,51 @@ const columns = [
 
 const handleSearch = async () => {
   try {
-    const params = {
-      orderNumber: filters.value.orderNumber,
-      status: filters.value.status,
-      page: pagination.value.current,
-      size: pagination.value.size,
+    // 1. 从 localStorage 获取当前登录用户的 userId
+    const userStr = localStorage.getItem('user')
+    const userId = userStr ? JSON.parse(userStr).userId : null
+    
+    if (!userId) {
+      ElMessage.error('无法获取用户信息，请重新登录')
+      return
     }
 
+    // 2. 调用正确的 API：获取当前用户的所有订单
+    const response = await orderAPI.getOrdersByUserId(userId)
+    
+    // 兼容取值
+    let allOrders = response.data || response || []
+
+    // 3. ---- 前端模拟筛选逻辑 ----
+    // 筛选订单号
+    if (filters.value.orderNumber) {
+      allOrders = allOrders.filter(o => o.orderNumber.includes(filters.value.orderNumber))
+    }
+    // 筛选状态 (注意：后端返回的状态是全大写如 'PENDING'，前端字典是小写如 'pending')
+    if (filters.value.status) {
+      allOrders = allOrders.filter(o => o.status.toLowerCase() === filters.value.status.toLowerCase())
+    }
+    // 筛选日期范围
     if (filters.value.dateRange && filters.value.dateRange.length === 2) {
-      params.startDate = filters.value.dateRange[0]
-      params.endDate = filters.value.dateRange[1]
+      const start = new Date(filters.value.dateRange[0]).getTime()
+      const end = new Date(filters.value.dateRange[1]).getTime()
+      allOrders = allOrders.filter(o => {
+        const orderTime = new Date(o.createdAt).getTime()
+        return orderTime >= start && orderTime <= end
+      })
     }
 
-    const response = await orderAPI.getOrders(params)
-    orders.value = response || []
-    pagination.value.total = response || 0
+    // 4. ---- 前端模拟分页逻辑 ----
+    pagination.value.total = allOrders.length
+    
+    const startIndex = (pagination.value.current - 1) * pagination.value.size
+    const endIndex = startIndex + pagination.value.size
+    
+    // 切割当前页需要显示的数据
+    orders.value = allOrders.slice(startIndex, endIndex)
+
   } catch (error) {
+    console.error("订单页面失败：", error)
     ElMessage.error('获取订单列表失败')
   }
 }

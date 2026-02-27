@@ -4,6 +4,7 @@
       <el-row :gutter="20" class="filter-row">
         <el-col :xs="24" :sm="12" :md="6">
           <el-input
+            v-if="false"
             v-model="filters.region"
             placeholder="请输入地区"
             @input="handleSearch"
@@ -29,9 +30,9 @@
             @change="handleSearch"
           >
             <el-option label="全部" value="" />
-            <el-option label="活跃" value="active" />
-            <el-option label="过期" value="expired" />
-            <el-option label="取消" value="cancelled" />
+            <el-option label="活跃" value="ACTIVE" />
+            <el-option label="过期" value="EXPIRED" />
+            <el-option label="取消" value="CANCELLED" />
           </el-select>
         </el-col>
         <el-col :xs="24" :sm="12" :md="6">
@@ -79,6 +80,35 @@
         </el-form-item>
       </el-form>
     </Modal>
+
+
+    <el-dialog v-model="editDialogVisible" title="编辑预警信息" width="500px">
+      <el-form :model="editForm" label-width="100px">
+        <el-form-item label="预警描述">
+          <el-input 
+            v-model="editForm.description" 
+            type="textarea" 
+            :rows="4" 
+            placeholder="请输入预警描述补充" 
+          />
+        </el-form-item>
+        <el-form-item label="结束时间" required>
+          <el-date-picker
+            v-model="editForm.endTime"
+            type="datetime"
+            placeholder="选择新的结束时间"
+            value-format="YYYY-MM-DD HH:mm:ss"
+            style="width: 100%"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="editDialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="submitEdit">确定更新</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -146,8 +176,45 @@ const handlePageSizeChange = (size) => {
   handleSearch()
 }
 
+// 1. 定义控制弹窗显示和表单数据的响应式变量
+const editDialogVisible = ref(false)
+const editForm = ref({
+  id: null,
+  description: '',
+  endTime: ''
+})
+
+// 2. 点击编辑按钮，回显数据并打开弹窗
 const handleEdit = (row) => {
-  ElMessage.info('编辑功能开发中')
+  editForm.value = {
+    id: row.id,
+    description: row.description || '',
+    endTime: row.endTime || ''
+  }
+  editDialogVisible.value = true
+}
+
+// 3. 提交编辑数据给后端
+const submitEdit = async () => {
+  if (!editForm.value.endTime) {
+    ElMessage.warning('结束时间不能为空')
+    return
+  }
+  
+  try {
+    // 调用 warningAPI.updateWarning (已在 warning.js 中定义)
+    await warningAPI.updateWarning(editForm.value.id, {
+      description: editForm.value.description,
+      endTime: editForm.value.endTime
+    })
+    
+    ElMessage.success('预警信息更新成功')
+    editDialogVisible.value = false // 关闭弹窗
+    handleSearch() // 重新拉取列表数据刷新页面
+  } catch (error) {
+    console.error(error)
+    ElMessage.error('更新预警信息失败')
+  }
 }
 
 const handleDelete = (row) => {

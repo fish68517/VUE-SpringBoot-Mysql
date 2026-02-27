@@ -4,13 +4,13 @@
       <el-header>
         <div class="header-content">
           <h1>气象+农资一体化服务平台</h1>
-          <nav class="nav-menu">
+          <nav class="nav-menu" v-if="showNav">
             <router-link to="/home">首页</router-link>
             <router-link to="/weather">气象数据</router-link>
             <router-link to="/warnings">预警信息</router-link>
             <router-link to="/products">农资产品</router-link>
             <router-link to="/orders">我的订单</router-link>
-            <router-link to="/analytics">数据分析</router-link>
+            <router-link to="/cart">购物车</router-link>
             <router-link to="/login" v-if="!isLoggedIn">登录</router-link>
             <router-link to="/profile" v-if="isLoggedIn">个人中心</router-link>
           </nav>
@@ -28,10 +28,18 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRoute } from 'vue-router' // 引入 useRoute
 import { useAuthStore } from '@/stores/auth'
 
+const route = useRoute() // 获取当前路由信息
 const authStore = useAuthStore()
+
 const isLoggedIn = computed(() => authStore.isLoggedIn)
+
+// 新增：判断当前路由是否为登录或注册页
+const showNav = computed(() => {
+  return route.path !== '/login' && route.path !== '/register'
+})
 </script>
 
 <style scoped>

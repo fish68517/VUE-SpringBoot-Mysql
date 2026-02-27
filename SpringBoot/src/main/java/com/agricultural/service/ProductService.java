@@ -5,12 +5,15 @@ import com.agricultural.repository.AgriculturalProductRepository;
 import com.agricultural.util.LoggerUtil;
 import com.agricultural.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 农资产品业务逻辑层
@@ -573,5 +576,44 @@ public class ProductService {
         LoggerUtil.info("获取商家产品总数成功，商家ID: {}, 产品总数: {}", merchantId, count);
 
         return count;
+    }
+
+    /**
+     * 动态条件查询农资产品
+     */
+    public List<AgriculturalProduct> getProductsByCondition(String productName, String category,
+                                                            BigDecimal minPrice, BigDecimal maxPrice) {
+        // 1. 创建探测对象
+        AgriculturalProduct probe = new AgriculturalProduct();
+
+        if (StringUtil.isNotBlank(productName)) {
+            probe.setProductName(productName);
+        }
+        if (StringUtil.isNotBlank(category)) {
+            probe.setCategory(category);
+        }
+
+        // 2. 配置匹配器：忽略 null，并且对产品名称使用模糊包含匹配 (Contains)
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreNullValues()
+                .withMatcher("productName", ExampleMatcher.GenericPropertyMatchers.contains());
+
+        // 3. 执行 QBE 查询
+        Example<AgriculturalProduct> example = Example.of(probe, matcher);
+        List<AgriculturalProduct> products = productRepository.findAll(example);
+
+        // 4. 价格范围过滤（如果前端传了价格区间）
+        if (minPrice != null) {
+            products = products.stream()
+                    .filter(p -> p.getPrice().compareTo(minPrice) >= 0)
+                    .collect(Collectors.toList());
+        }
+        if (maxPrice != null) {
+            products = products.stream()
+                    .filter(p -> p.getPrice().compareTo(maxPrice) <= 0)
+                    .collect(Collectors.toList());
+        }
+
+        return products;
     }
 }

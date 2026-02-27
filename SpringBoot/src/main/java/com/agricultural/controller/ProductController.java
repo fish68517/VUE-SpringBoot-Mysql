@@ -31,67 +31,63 @@ public class ProductController {
     /**
      * 添加农资产品接口
      * 
-     * @param productName 产品名称
-     * @param category 产品类别
-     * @param description 产品描述
-     * @param price 产品价格
-     * @param stock 库存数量
-     * @param merchantId 商家ID
-     * @param applicableWeather 适用天气
+
      * @return 添加成功的产品信息
      */
     @PostMapping
-    public Result<AgriculturalProduct> addProduct(
-            @RequestParam @NotBlank(message = "产品名称不能为空") String productName,
-            @RequestParam @NotBlank(message = "产品类别不能为空") String category,
-            @RequestParam(required = false) String description,
-            @RequestParam @NotNull(message = "产品价格不能为空") BigDecimal price,
-            @RequestParam @NotNull(message = "库存数量不能为空") Integer stock,
-            @RequestParam @NotNull(message = "商家ID不能为空") Long merchantId,
-            @RequestParam(required = false) String applicableWeather) {
-        
-        LoggerUtil.info("收到添加农资产品请求，产品名称: {}, 商家ID: {}", productName, merchantId);
-        
+    public Result<AgriculturalProduct> addProduct(@RequestBody @jakarta.validation.Valid com.agricultural.dto.ProductAddRequest request) {
+        LoggerUtil.info("收到添加农资产品请求，产品名称: {}, 商家ID: {}", request.getProductName(), request.getMerchantId());
+        try {
+            AgriculturalProduct addedProduct = productService.addProduct(
+                    request.getProductName(), request.getCategory(), request.getDescription(),
+                    request.getPrice(), request.getStock(), request.getMerchantId(), request.getApplicableWeather());
+            return Result.success("产品添加成功", addedProduct);
+        } catch (Exception e) {
+            return Result.error("添加产品失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 更新产品信息接口
+     */
+    @PutMapping("/{id}")
+    public Result<AgriculturalProduct> updateProduct(
+            @PathVariable @NotNull(message = "产品ID不能为空") Long id,
+            @RequestBody com.agricultural.dto.ProductUpdateRequest request) { // 👈 核心修改：改为 @RequestBody 接收 JSON
+
+        LoggerUtil.info("收到更新产品信息请求，产品ID: {}", id);
+
         try {
             // 参数验证
-            if (StringUtil.isBlank(productName)) {
-                LoggerUtil.warn("添加产品请求参数验证失败: 产品名称为空");
-                return Result.validationError("产品名称不能为空");
+            if (id == null || id <= 0) {
+                LoggerUtil.warn("更新产品信息请求参数验证失败: 产品ID无效");
+                return Result.validationError("产品ID无效");
             }
-            
-            if (StringUtil.isBlank(category)) {
-                LoggerUtil.warn("添加产品请求参数验证失败: 产品类别为空");
-                return Result.validationError("产品类别不能为空");
+
+            // 检查是否至少提供了一个要更新的字段 (从 request 对象中取值)
+            if (StringUtil.isBlank(request.getProductName()) && StringUtil.isBlank(request.getDescription()) &&
+                    request.getPrice() == null && StringUtil.isBlank(request.getApplicableWeather())) {
+                LoggerUtil.warn("更新产品信息请求参数验证失败: 没有提供要更新的字段");
+                return Result.validationError("至少需要提供一个要更新的字段");
             }
-            
-            if (price == null) {
-                LoggerUtil.warn("添加产品请求参数验证失败: 产品价格为空");
-                return Result.validationError("产品价格不能为空");
-            }
-            
-            if (stock == null) {
-                LoggerUtil.warn("添加产品请求参数验证失败: 库存数量为空");
-                return Result.validationError("库存数量不能为空");
-            }
-            
-            if (merchantId == null) {
-                LoggerUtil.warn("添加产品请求参数验证失败: 商家ID为空");
-                return Result.validationError("商家ID不能为空");
-            }
-            
-            // 调用业务层添加产品
-            AgriculturalProduct addedProduct = productService.addProduct(
-                    productName, category, description, price, stock, merchantId, applicableWeather);
-            
-            LoggerUtil.info("添加农资产品成功，产品ID: {}, 产品名称: {}", addedProduct.getId(), productName);
-            return Result.success("产品添加成功", addedProduct);
-            
+
+            // 调用业务层更新产品信息 (从 request 对象中取值)
+            AgriculturalProduct updatedProduct = productService.updateProduct(
+                    id,
+                    request.getProductName(),
+                    request.getDescription(),
+                    request.getPrice(),
+                    request.getApplicableWeather());
+
+            LoggerUtil.info("更新产品信息成功，产品ID: {}", id);
+            return Result.success("产品信息更新成功", updatedProduct);
+
         } catch (IllegalArgumentException e) {
-            LoggerUtil.warn("添加产品失败: {}", e.getMessage());
+            LoggerUtil.warn("更新产品信息失败: {}", e.getMessage());
             return Result.validationError(e.getMessage());
         } catch (Exception e) {
-            LoggerUtil.error("添加产品异常: " + e.getMessage(), e);
-            return Result.error("添加产品失败，请稍后重试");
+            LoggerUtil.error("更新产品信息异常: " + e.getMessage(), e);
+            return Result.error("更新产品信息失败，请稍后重试");
         }
     }
 
@@ -100,18 +96,26 @@ public class ProductController {
      * 
      * @return 所有产品列表
      */
+    /**
+     * 获取产品列表接口 (支持动态条件查询)
+     */
     @GetMapping
-    public Result<List<AgriculturalProduct>> getProductList() {
-        
-        LoggerUtil.info("收到获取产品列表请求");
-        
+    public Result<List<AgriculturalProduct>> getProductList(
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice) {
+
+        LoggerUtil.info("收到获取产品列表请求，名称: {}, 类别: {}, 最低价: {}, 最高价: {}",
+                productName, category, minPrice, maxPrice);
+
         try {
             // 调用业务层获取产品列表
-            List<AgriculturalProduct> products = productService.getProductList();
-            
+            List<AgriculturalProduct> products = productService.getProductsByCondition(productName, category, minPrice, maxPrice);
+
             LoggerUtil.info("获取产品列表成功，产品总数: {}", products.size());
             return Result.success(products);
-            
+
         } catch (Exception e) {
             LoggerUtil.error("获取产品列表异常: " + e.getMessage(), e);
             return Result.error("获取产品列表失败，请稍后重试");
@@ -311,7 +315,7 @@ public class ProductController {
         }
     }
 
-    /**
+/*    *//**
      * 更新产品信息接口
      * 
      * @param id 产品ID
@@ -320,7 +324,7 @@ public class ProductController {
      * @param price 产品价格
      * @param applicableWeather 适用天气
      * @return 更新后的产品信息
-     */
+     *//*
     @PutMapping("/{id}")
     public Result<AgriculturalProduct> updateProduct(
             @PathVariable @NotNull(message = "产品ID不能为空") Long id,
@@ -359,7 +363,7 @@ public class ProductController {
             LoggerUtil.error("更新产品信息异常: " + e.getMessage(), e);
             return Result.error("更新产品信息失败，请稍后重试");
         }
-    }
+    }*/
 
     /**
      * 更新产品库存接口

@@ -29,56 +29,34 @@ public class OrderController {
 
     /**
      * 创建订单接口
-     * 
-     * @param userId 用户ID
-     * @param productId 产品ID
-     * @param quantity 购买数量
-     * @param deliveryAddress 送货地址
-     * @return 创建成功的订单信息
      */
     @PostMapping
-    public Result<Order> createOrder(
-            @RequestParam @NotNull(message = "用户ID不能为空") Long userId,
-            @RequestParam @NotNull(message = "产品ID不能为空") Long productId,
-            @RequestParam @NotNull(message = "购买数量不能为空") Integer quantity,
-            @RequestParam @NotBlank(message = "送货地址不能为空") String deliveryAddress) {
-        
-        LoggerUtil.info("收到创建订单请求，用户ID: {}, 产品ID: {}, 数量: {}", userId, productId, quantity);
-        
+    public Result<Order> createOrder(@RequestBody @jakarta.validation.Valid com.agricultural.dto.OrderCreateRequest request) {
+        LoggerUtil.info("收到创建订单请求，用户ID: {}, 产品ID: {}, 数量: {}",
+                request.getUserId(), request.getProductId(), request.getQuantity());
         try {
-            // 参数验证
-            if (userId == null || userId <= 0) {
-                LoggerUtil.warn("创建订单请求参数验证失败: 用户ID无效");
-                return Result.validationError("用户ID无效");
-            }
-            
-            if (productId == null || productId <= 0) {
-                LoggerUtil.warn("创建订单请求参数验证失败: 产品ID无效");
-                return Result.validationError("产品ID无效");
-            }
-            
-            if (quantity == null || quantity <= 0) {
-                LoggerUtil.warn("创建订单请求参数验证失败: 购买数量无效");
-                return Result.validationError("购买数量必须大于0");
-            }
-            
-            if (StringUtil.isBlank(deliveryAddress)) {
-                LoggerUtil.warn("创建订单请求参数验证失败: 送货地址为空");
-                return Result.validationError("送货地址不能为空");
-            }
-            
-            // 调用业务层创建订单
-            Order createdOrder = orderService.createOrder(userId, productId, quantity, deliveryAddress);
-            
-            LoggerUtil.info("创建订单成功，订单ID: {}, 订单号: {}", createdOrder.getId(), createdOrder.getOrderNumber());
+            Order createdOrder = orderService.createOrder(
+                    request.getUserId(), request.getProductId(),
+                    request.getQuantity(), request.getDeliveryAddress());
             return Result.success("订单创建成功", createdOrder);
-            
-        } catch (IllegalArgumentException e) {
-            LoggerUtil.warn("创建订单失败: {}", e.getMessage());
-            return Result.validationError(e.getMessage());
         } catch (Exception e) {
-            LoggerUtil.error("创建订单异常: " + e.getMessage(), e);
-            return Result.error("创建订单失败，请稍后重试");
+            return Result.error("创建订单失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 订单支付接口
+     */
+    @PostMapping("/{id}/pay")
+    public Result<Order> processPayment(
+            @PathVariable @NotNull(message = "订单ID不能为空") Long id,
+            @RequestBody @jakarta.validation.Valid com.agricultural.dto.OrderPayRequest request) {
+        LoggerUtil.info("收到订单支付请求，订单ID: {}, 支付方式: {}", id, request.getPaymentMethod());
+        try {
+            Order paidOrder = orderService.processPayment(id, request.getPaymentMethod());
+            return Result.success("订单支付成功", paidOrder);
+        } catch (Exception e) {
+            return Result.error("订单支付失败：" + e.getMessage());
         }
     }
 
@@ -263,46 +241,46 @@ public class OrderController {
         }
     }
 
-    /**
-     * 订单支付接口
-     * 
-     * @param id 订单ID
-     * @param paymentMethod 支付方式
-     * @return 支付后的订单信息
-     */
-    @PostMapping("/{id}/pay")
-    public Result<Order> processPayment(
-            @PathVariable @NotNull(message = "订单ID不能为空") Long id,
-            @RequestParam @NotBlank(message = "支付方式不能为空") String paymentMethod) {
-        
-        LoggerUtil.info("收到订单支付请求，订单ID: {}, 支付方式: {}", id, paymentMethod);
-        
-        try {
-            // 参数验证
-            if (id == null || id <= 0) {
-                LoggerUtil.warn("订单支付请求参数验证失败: 订单ID无效");
-                return Result.validationError("订单ID无效");
-            }
-            
-            if (StringUtil.isBlank(paymentMethod)) {
-                LoggerUtil.warn("订单支付请求参数验证失败: 支付方式为空");
-                return Result.validationError("支付方式不能为空");
-            }
-            
-            // 调用业务层处理支付
-            Order paidOrder = orderService.processPayment(id, paymentMethod);
-            
-            LoggerUtil.info("订单支付成功，订单ID: {}, 支付方式: {}", id, paymentMethod);
-            return Result.success("订单支付成功", paidOrder);
-            
-        } catch (IllegalArgumentException e) {
-            LoggerUtil.warn("订单支付失败: {}", e.getMessage());
-            return Result.validationError(e.getMessage());
-        } catch (Exception e) {
-            LoggerUtil.error("订单支付异常: " + e.getMessage(), e);
-            return Result.error("订单支付失败，请稍后重试");
-        }
-    }
+//    /**
+//     * 订单支付接口
+//     *
+//     * @param id 订单ID
+//     * @param paymentMethod 支付方式
+//     * @return 支付后的订单信息
+//     */
+//    @PostMapping("/{id}/pay")
+//    public Result<Order> processPayment(
+//            @PathVariable @NotNull(message = "订单ID不能为空") Long id,
+//            @RequestParam @NotBlank(message = "支付方式不能为空") String paymentMethod) {
+//
+//        LoggerUtil.info("收到订单支付请求，订单ID: {}, 支付方式: {}", id, paymentMethod);
+//
+//        try {
+//            // 参数验证
+//            if (id == null || id <= 0) {
+//                LoggerUtil.warn("订单支付请求参数验证失败: 订单ID无效");
+//                return Result.validationError("订单ID无效");
+//            }
+//
+//            if (StringUtil.isBlank(paymentMethod)) {
+//                LoggerUtil.warn("订单支付请求参数验证失败: 支付方式为空");
+//                return Result.validationError("支付方式不能为空");
+//            }
+//
+//            // 调用业务层处理支付
+//            Order paidOrder = orderService.processPayment(id, paymentMethod);
+//
+//            LoggerUtil.info("订单支付成功，订单ID: {}, 支付方式: {}", id, paymentMethod);
+//            return Result.success("订单支付成功", paidOrder);
+//
+//        } catch (IllegalArgumentException e) {
+//            LoggerUtil.warn("订单支付失败: {}", e.getMessage());
+//            return Result.validationError(e.getMessage());
+//        } catch (Exception e) {
+//            LoggerUtil.error("订单支付异常: " + e.getMessage(), e);
+//            return Result.error("订单支付失败，请稍后重试");
+//        }
+//    }
 
     /**
      * 订单发货接口

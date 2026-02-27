@@ -1,6 +1,7 @@
 package com.agricultural.controller;
 
 import com.agricultural.dto.Result;
+import com.agricultural.dto.WarningUpdateRequest;
 import com.agricultural.entity.Warning;
 import com.agricultural.service.WarningService;
 import com.agricultural.util.LoggerUtil;
@@ -33,66 +34,34 @@ public class WarningController {
      * 发布预警接口
      * 
      * 创建新的极端天气预警信息
-     * 
-     * @param warningType 预警类型（必填，如：暴雨、冰雹、大风等）
-     * @param region 影响地区（必填）
-     * @param severity 预警等级（必填，LOW/MEDIUM/HIGH/CRITICAL）
-     * @param description 预警描述（可选）
-     * @param startTime 预警开始时间（必填，格式: yyyy-MM-dd HH:mm:ss）
-     * @param endTime 预警结束时间（必填，格式: yyyy-MM-dd HH:mm:ss）
-     * @return 创建的预警信息
+
      */
     @PostMapping
-    public Result<Warning> publishWarning(
-            @RequestParam @NotBlank(message = "预警类型不能为空") String warningType,
-            @RequestParam @NotBlank(message = "地区不能为空") String region,
-            @RequestParam @NotNull(message = "预警等级不能为空") Warning.WarningSeverity severity,
-            @RequestParam(required = false) String description,
-            @RequestParam @NotNull(message = "开始时间不能为空") 
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startTime,
-            @RequestParam @NotNull(message = "结束时间不能为空") 
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime) {
-        
-        LoggerUtil.info("收到发布预警请求，预警类型: {}, 地区: {}, 等级: {}", warningType, region, severity);
-        
+    public Result<Warning> publishWarning(@RequestBody @jakarta.validation.Valid com.agricultural.dto.WarningRequest request) {
+
+        LoggerUtil.info("收到发布预警请求，预警类型: {}, 地区: {}, 等级: {}",
+                request.getWarningType(), request.getRegion(), request.getSeverity());
+
         try {
-            // 参数验证
-            if (StringUtil.isBlank(warningType)) {
-                LoggerUtil.warn("发布预警请求参数验证失败: 预警类型为空");
-                return Result.validationError("预警类型不能为空");
-            }
-            
-            if (StringUtil.isBlank(region)) {
-                LoggerUtil.warn("发布预警请求参数验证失败: 地区为空");
-                return Result.validationError("地区不能为空");
-            }
-            
-            if (severity == null) {
-                LoggerUtil.warn("发布预警请求参数验证失败: 预警等级为空");
-                return Result.validationError("预警等级不能为空");
-            }
-            
-            if (startTime == null) {
-                LoggerUtil.warn("发布预警请求参数验证失败: 开始时间为空");
-                return Result.validationError("开始时间不能为空");
-            }
-            
-            if (endTime == null) {
-                LoggerUtil.warn("发布预警请求参数验证失败: 结束时间为空");
-                return Result.validationError("结束时间不能为空");
-            }
-            
-            if (startTime.isAfter(endTime)) {
-                LoggerUtil.warn("发布预警请求参数验证失败: 开始时间晚于结束时间，开始时间: {}, 结束时间: {}", startTime, endTime);
+            // 时间逻辑验证
+      /*      if (request.getStartTime().isAfter(request.getEndTime())) {
+                LoggerUtil.warn("发布预警请求参数验证失败: 开始时间晚于结束时间");
                 return Result.validationError("开始时间不能晚于结束时间");
-            }
-            
+            }*/
+
             // 调用业务层发布预警
-            Warning publishedWarning = warningService.publishWarning(warningType, region, severity, description, startTime, endTime);
-            
-            LoggerUtil.info("发布预警成功，预警ID: {}, 预警类型: {}, 地区: {}", publishedWarning.getId(), warningType, region);
+            Warning publishedWarning = warningService.publishWarning(
+                    request.getWarningType(),
+                    request.getRegion(),
+                    request.getSeverity(),
+                    request.getDescription(),
+                    request.getStartTime(),
+                    request.getEndTime()
+            );
+
+            LoggerUtil.info("发布预警成功，预警ID: {}", publishedWarning.getId());
             return Result.success("预警发布成功", publishedWarning);
-            
+
         } catch (IllegalArgumentException e) {
             LoggerUtil.warn("发布预警失败: {}", e.getMessage());
             return Result.validationError(e.getMessage());
@@ -116,43 +85,19 @@ public class WarningController {
     public Result<List<Warning>> getWarningList(
             @RequestParam(required = false) String region,
             @RequestParam(required = false) String warningType,
+            @RequestParam(required = false) Warning.WarningSeverity severity, // 👈 新增这个参数
             @RequestParam(required = false) Warning.WarningStatus status) {
-        
-        LoggerUtil.info("收到获取预警列表请求，地区: {}, 预警类型: {}, 状态: {}", region, warningType, status);
-        
+
+        LoggerUtil.info("收到获取预警列表请求，地区: {}, 预警类型: {}, 等级: {}, 状态: {}",
+                region, warningType, severity, status);
+
         try {
-            List<Warning> warnings;
-            
-            // 根据条件查询预警
-            if (StringUtil.isNotBlank(region) && StringUtil.isNotBlank(warningType) && status != null) {
-                // 按地区、预警类型和状态查询
-                warnings = warningService.getWarningsByRegionTypeAndStatus(region, warningType, status);
-            } else if (StringUtil.isNotBlank(region) && StringUtil.isNotBlank(warningType)) {
-                // 按地区和预警类型查询
-                warnings = warningService.getWarningsByRegionAndType(region, warningType);
-            } else if (StringUtil.isNotBlank(region) && status != null) {
-                // 按地区和状态查询
-                warnings = warningService.getWarningsByRegionAndStatus(region, status);
-            } else if (StringUtil.isNotBlank(region)) {
-                // 按地区查询
-                warnings = warningService.getWarningsByRegion(region);
-            } else if (StringUtil.isNotBlank(warningType)) {
-                // 按预警类型查询
-                warnings = warningService.getWarningsByType(warningType);
-            } else if (status != null) {
-                // 按状态查询
-                warnings = warningService.getWarningsByStatus(status);
-            } else {
-                // 获取所有预警
-                warnings = warningService.getWarningList();
-            }
-            
+            // 直接把所有参数传给 Service 层统一处理，不再使用繁琐的 if-else
+            List<Warning> warnings = warningService.getWarningsByCondition(region, warningType, severity, status);
+
             LoggerUtil.info("获取预警列表成功，预警总数: {}", warnings.size());
             return Result.success(warnings);
-            
-        } catch (IllegalArgumentException e) {
-            LoggerUtil.warn("获取预警列表失败: {}", e.getMessage());
-            return Result.validationError(e.getMessage());
+
         } catch (Exception e) {
             LoggerUtil.error("获取预警列表异常: " + e.getMessage(), e);
             return Result.error("获取预警列表失败，请稍后重试");
@@ -205,34 +150,33 @@ public class WarningController {
      * @param endTime 预警结束时间（可选，格式: yyyy-MM-dd HH:mm:ss）
      * @return 更新后的预警信息
      */
+    /**
+     * 更新预警接口
+     * 更新预警的描述和结束时间
+     */
     @PutMapping("/{id}")
     public Result<Warning> updateWarning(
             @PathVariable @NotNull(message = "预警ID不能为空") Long id,
-            @RequestParam(required = false) String description,
-            @RequestParam(required = false) 
-            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endTime) {
-        
+            @RequestBody WarningUpdateRequest request) { // 👈 这里改成了 @RequestBody
+
         LoggerUtil.info("收到更新预警请求，预警ID: {}", id);
-        
+
         try {
-            // 参数验证
             if (id == null || id <= 0) {
                 LoggerUtil.warn("更新预警请求参数验证失败: 预警ID无效");
                 return Result.validationError("预警ID无效");
             }
-            
-            // 检查是否至少提供了一个要更新的字段
-            if (StringUtil.isBlank(description) && endTime == null) {
-                LoggerUtil.warn("更新预警请求参数验证失败: 没有提供要更新的字段");
-                return Result.validationError("至少需要提供一个要更新的字段");
-            }
-            
+
             // 调用业务层更新预警
-            Warning updatedWarning = warningService.updateWarning(id, description, endTime);
-            
+            Warning updatedWarning = warningService.updateWarning(
+                    id,
+                    request.getDescription(),
+                    request.getEndTime()
+            );
+
             LoggerUtil.info("更新预警成功，预警ID: {}", id);
             return Result.success("预警更新成功", updatedWarning);
-            
+
         } catch (IllegalArgumentException e) {
             LoggerUtil.warn("更新预警失败: {}", e.getMessage());
             return Result.validationError(e.getMessage());

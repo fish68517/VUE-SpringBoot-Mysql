@@ -31,7 +31,7 @@
       </el-form>
     </Card>
 
-    <Card title="修改密码">
+    <Card title="修改密码" v-if="false">
       <el-form
         ref="passwordFormRef"
         :model="passwordForm"
@@ -76,6 +76,7 @@ import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { userAPI } from '@/api/user'
 import Card from '@/components/common/Card.vue'
+import { lo } from 'element-plus/es/locale/index.mjs'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -122,10 +123,14 @@ const passwordRules = {
 
 const handleUpdate = async () => {
   try {
+      // 从 localStorage 获取当前登录的用户ID
+  const userStr = localStorage.getItem('user')
+  const userId = userStr ? JSON.parse(userStr).userId : null
+
     await formRef.value.validate()
     loading.value = true
 
-    await userAPI.updateProfile(authStore.user.id, profile.value)
+    await userAPI.updateProfile(userId, profile.value)
     ElMessage.success('更新成功')
   } catch (error) {
     ElMessage.error(error.response?.data?.message || '更新失败')

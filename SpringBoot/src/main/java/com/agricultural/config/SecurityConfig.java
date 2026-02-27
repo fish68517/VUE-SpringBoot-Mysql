@@ -95,14 +95,14 @@ public class SecurityConfig {
         return source;
     }
     
-    /**
+ /*   *//**
      * 安全过滤链Bean
      * 配置HTTP安全策略
      * 
      * @param http HttpSecurity
      * @return SecurityFilterChain
      * @throws Exception 异常
-     */
+     *//*
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -157,6 +157,51 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
         log.info("Spring Security配置已初始化");
+        return http.build();
+    }*/
+
+
+    /**
+     * 安全过滤链Bean
+     * 配置HTTP安全策略
+     * * @param http HttpSecurity
+     * @return SecurityFilterChain
+     * @throws Exception 异常
+     */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                // 启用CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // 禁用CSRF（因为使用JWT）
+                .csrf(csrf -> csrf.disable())
+
+                // 设置会话管理策略为无状态
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
+                // 配置授权规则
+                .authorizeHttpRequests(authz -> authz
+                        // 保留允许匿名访问的公开端点（注册、登录、查询天气预警列表等）
+                        .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/check/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/weather/current").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/weather/forecast").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/weather/history").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/warnings").permitAll()
+
+                        // ========== 删除了所有 .hasAnyRole() 的角色限制 ==========
+
+                        // 其他所有请求，只要携带了有效的 JWT Token（已登录状态）即可访问
+                        .anyRequest().authenticated()
+                )
+
+                // 添加JWT认证过滤器
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        log.info("Spring Security配置已初始化 (已移除基于角色的路径拦截)");
         return http.build();
     }
 }

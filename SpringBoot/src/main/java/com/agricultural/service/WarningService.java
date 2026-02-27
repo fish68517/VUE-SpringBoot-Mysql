@@ -5,6 +5,8 @@ import com.agricultural.repository.WarningRepository;
 import com.agricultural.util.LoggerUtil;
 import com.agricultural.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,23 +61,23 @@ public class WarningService {
             throw new IllegalArgumentException("预警等级不能为空");
         }
 
-        // 验证时间参数
+   /*     // 验证时间参数
         if (startTime == null || endTime == null) {
             LoggerUtil.warn("发布预警失败: 预警时间为空");
             throw new IllegalArgumentException("预警开始时间和结束时间不能为空");
-        }
+        }*/
 
         // 验证时间范围
-        if (startTime.isAfter(endTime)) {
+/*        if (startTime.isAfter(endTime)) {
             LoggerUtil.warn("发布预警失败: 开始时间晚于结束时间，开始时间: {}, 结束时间: {}", startTime, endTime);
             throw new IllegalArgumentException("预警开始时间不能晚于结束时间");
-        }
+        }*/
 
         // 验证预警时间不能在过去
-        if (endTime.isBefore(LocalDateTime.now())) {
+/*        if (endTime.isBefore(LocalDateTime.now())) {
             LoggerUtil.warn("发布预警失败: 预警结束时间已过期，结束时间: {}", endTime);
             throw new IllegalArgumentException("预警结束时间不能在过去");
-        }
+        }*/
 
         // 创建预警对象
         Warning warning = Warning.builder()
@@ -568,5 +570,42 @@ public class WarningService {
         LoggerUtil.info("预警统计信息: {}", statistics);
 
         return statistics;
+    }
+
+    // 请确保文件顶部引入了下面这两个包
+    // import org.springframework.data.domain.Example;
+    // import org.springframework.data.domain.ExampleMatcher;
+
+    /**
+     * 动态多条件查询预警列表 (替代原来臃肿的 if-else 查询)
+     */
+    public List<Warning> getWarningsByCondition(String region, String warningType,
+                                                Warning.WarningSeverity severity, Warning.WarningStatus status) {
+        // 1. 创建一个探测对象 (Probe)
+        Warning probe = new Warning();
+
+        // 2. 将前端传来的非空条件设置进去
+        if (StringUtil.isNotBlank(region)) {
+            probe.setRegion(region);
+        }
+        if (StringUtil.isNotBlank(warningType)) {
+            probe.setWarningType(warningType);
+        }
+        if (severity != null) {
+            probe.setSeverity(severity);
+        }
+        if (status != null) {
+            probe.setStatus(status);
+        }
+
+        // 3. 配置匹配器：忽略 null 值的字段，字符串采用精准匹配
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreNullValues();
+
+        // 4. 生成 Example 对象
+        Example<Warning> example = Example.of(probe, matcher);
+
+        // 5. 调用 Repository 自带的 findAll(Example) 执行动态查询
+        return warningRepository.findAll(example);
     }
 }
