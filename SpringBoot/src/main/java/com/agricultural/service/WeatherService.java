@@ -162,42 +162,125 @@ public class WeatherService {
     }
 
     /**
-     * 获取历史气象数据
-     * 获取指定地区和时间范围内的历史气象数据
-     *
-     * @param region 地区
-     * @param startTime 开始时间
-     * @param endTime 结束时间
-     * @return 历史气象数据列表
-     * @throws IllegalArgumentException 当参数无效时抛出异常
+     * 获取区间/历史气象数据
+     * 获取指定地区和时间范围内的气象数据。如果本地没有，尝试去高德获取未来几天的预报补充。
      */
     public List<WeatherData> getHistoricalWeather(String region, LocalDateTime startTime, LocalDateTime endTime) {
-        LoggerUtil.info("获取历史气象数据，地区: {}, 开始时间: {}, 结束时间: {}", region, startTime, endTime);
+        LoggerUtil.info("获取区间气象数据，地区: {}, 开始时间: {}, 结束时间: {}", region, startTime, endTime);
 
         // 验证地区参数
         if (StringUtil.isBlank(region)) {
-            LoggerUtil.warn("获取历史气象数据失败: 地区为空");
+            LoggerUtil.warn("获取气象数据失败: 地区为空");
             throw new IllegalArgumentException("地区不能为空");
         }
 
         // 验证时间参数
         if (startTime == null || endTime == null) {
-            LoggerUtil.warn("获取历史气象数据失败: 时间参数为空");
+            LoggerUtil.warn("获取气象数据失败: 时间参数为空");
             throw new IllegalArgumentException("开始时间和结束时间不能为空");
         }
 
         // 验证时间范围
         if (startTime.isAfter(endTime)) {
-            LoggerUtil.warn("获取历史气象数据失败: 开始时间晚于结束时间，开始时间: {}, 结束时间: {}", startTime, endTime);
+            LoggerUtil.warn("获取气象数据失败: 开始时间晚于结束时间，开始时间: {}, 结束时间: {}", startTime, endTime);
             throw new IllegalArgumentException("开始时间不能晚于结束时间");
         }
 
-        // 查询历史数据
+        // 1. 首次查询：尝试从本地数据库获取
         List<WeatherData> historicalData = weatherDataRepository.findByRegionAndTimeRange(region, startTime, endTime);
 
-        LoggerUtil.info("获取历史气象数据成功，地区: {}, 数据条数: {}", region, historicalData.size());
+        // 2. 如果数据库为空，尝试从高德获取预报数据补充 (注意:高德仅支持今明后三天)
+        if (historicalData.isEmpty()) {
+            LoggerUtil.warn("本地数据库暂无该时间段气象数据，尝试从高德API获取预报补充，地区: {}", region);
+            fetchAndSaveForecastFromAmap(region);
+
+            // 3. 补充完毕后，再次查询数据库返回最新结果
+            historicalData = weatherDataRepository.findByRegionAndTimeRange(region, startTime, endTime);
+        }
+
+        LoggerUtil.info("获取气象数据成功，地区: {}, 数据条数: {}", region, historicalData.size());
 
         return historicalData;
+    }
+
+    /**
+     * 新增方法：从高德API获取未来3天天气预报并保存到本地数据库
+     * fetchAndSaveWeatherFromAmap
+     */
+    private void fetchAndSaveForecastFromAmap(String region) {
+        if (StringUtil.isBlank(amapApiKey)) {
+            LoggerUtil.warn("未配置高德API Key(amap.api.key)，无法调用预报接口");
+            return;
+        }
+
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+
+            // 步骤1: 地理编码 API (将地名转换为 adcode)
+            String geoUrl = "https://restapi.amap.com/v3/geocode/geo?address=" + region + "&key=" + amapApiKey;
+            JsonNode geoNode = restTemplate.getForObject(geoUrl, JsonNode.class);
+
+            if (geoNode == null || !"1".equals(geoNode.path("status").asText()) || geoNode.path("geocodes").isEmpty()) {
+                LoggerUtil.warn("高德地理编码API解析失败，无法补充预报，地区: {}", region);
+                return;
+            }
+            String adcode = geoNode.path("geocodes").get(0).path("adcode").asText();
+
+            // 步骤2: 天气查询 API (使用 extensions=all 获取未来预报)
+            String weatherUrl = "https://restapi.amap.com/v3/weather/weatherInfo?city=" + adcode + "&key=" + amapApiKey + "&extensions=all";
+            JsonNode weatherNode = restTemplate.getForObject(weatherUrl, JsonNode.class);
+
+            if (weatherNode == null || !"1".equals(weatherNode.path("status").asText()) || weatherNode.path("forecasts").isEmpty()) {
+                LoggerUtil.warn("高德预报API获取失败，adcode: {}", adcode);
+                return;
+            }
+
+            JsonNode casts = weatherNode.path("forecasts").get(0).path("casts");
+
+            // 步骤3: 遍历未来几天的预报并保存
+            for (JsonNode cast : casts) {
+                // 提取日期，例如 "2026-02-28"
+                String dateStr = cast.path("date").asText();
+                // 默认将预报数据存为当天的正午 12:00:00
+                LocalDateTime recordedAt = java.time.LocalDate.parse(dateStr).atTime(12, 0);
+
+                String weatherCondition = cast.path("dayweather").asText();
+                BigDecimal temperature = new BigDecimal(cast.path("daytemp").asText());
+
+                // 高德风力数据为字符串范围(如"1-3"或"≤3"), 提取出左侧数字
+                String windPowerStr = cast.path("daypower").asText().split("-")[0].replaceAll("[^0-9]", "");
+                BigDecimal windSpeed = StringUtil.isBlank(windPowerStr) ? BigDecimal.ZERO : new BigDecimal(windPowerStr);
+
+                // 预报通常不包含准确的湿度和降水量，设定合理的默认值
+                Integer humidity = 50;
+                BigDecimal precipitation = BigDecimal.ZERO;
+
+                // 为了防止每次查询都无限制插入重复数据，这里可以直接调用你现成的 saveWeatherData 进行存储
+                // 如果对数据要求极高，可以在这里加一层 repository.existsBy... 判断
+
+                WeatherData weatherData = WeatherData.builder()
+                        .region(region)
+                        .temperature(temperature)
+                        .humidity(humidity)
+                        .precipitation(precipitation)
+                        .windSpeed(windSpeed)
+                        .weatherCondition(weatherCondition)
+                        .recordedAt(recordedAt)
+                        .build();
+                // 如果某个地区当前的时间如：20260208，已经记录了，就不需要则插入
+                if (weatherDataRepository.exists(weatherData -> weatherData.getRegion().equals(region) && weatherData.getRecordedAt().equals(recordedAt))) {
+                    LoggerUtil.warn("数据已存在，跳过保存，地区: {}, 时间: {}", region, recordedAt);
+                    continue;
+                }
+
+                weatherDataRepository.save(weatherData);
+            }
+
+            LoggerUtil.info("从高德API成功拉取并保存了未来预报数据，地区: {}", region);
+
+        } catch (Exception e) {
+            LoggerUtil.error("从高德API获取预报异常: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -373,6 +456,15 @@ public class WeatherService {
 
         // 查询数据
         List<WeatherData> weatherDataList = weatherDataRepository.findByRegion(region);
+
+        // 2. 如果数据库为空，尝试从高德获取预报数据补充 (注意:高德仅支持今明后三天)
+        if (weatherDataList.isEmpty()) {
+            LoggerUtil.warn("本地数据库暂无该时间段气象数据，尝试从高德API获取预报补充，地区: {}", region);
+            fetchAndSaveForecastFromAmap(region);
+
+            // 3. 补充完毕后，再次查询数据库返回最新结果
+            weatherDataList = weatherDataRepository.findByRegion(region);
+        }
         LoggerUtil.info("根据地区查询气象数据成功，地区: {}, 数据条数: {}", region, weatherDataList.size());
 
         return weatherDataList;
