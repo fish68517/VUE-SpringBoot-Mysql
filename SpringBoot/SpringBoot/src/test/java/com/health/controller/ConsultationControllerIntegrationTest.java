@@ -1,4 +1,4 @@
-package com.health.controller;
+﻿package com.health.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.health.dto.ConsultationAnswerRequest;
@@ -56,12 +56,10 @@ public class ConsultationControllerIntegrationTest {
 
     @BeforeEach
     public void setUp() {
-        // 清空数据库
         consultationRepository.deleteAll();
         doctorRepository.deleteAll();
         userRepository.deleteAll();
 
-        // 创建患者用户
         patientUser = new User();
         patientUser.setUsername("patient1");
         patientUser.setPassword("password123");
@@ -72,7 +70,6 @@ public class ConsultationControllerIntegrationTest {
         patientUser = userRepository.save(patientUser);
         patientId = patientUser.getId();
 
-        // 创建医师用户
         doctorUser = new User();
         doctorUser.setUsername("doctor1");
         doctorUser.setPassword("password123");
@@ -82,7 +79,6 @@ public class ConsultationControllerIntegrationTest {
         doctorUser.setStatus("ACTIVE");
         doctorUser = userRepository.save(doctorUser);
 
-        // 创建医师记录
         doctor = new Doctor();
         doctor.setUserId(doctorUser.getId());
         doctor.setLicenseNumber("DOC123456789");
@@ -95,11 +91,9 @@ public class ConsultationControllerIntegrationTest {
 
     @Test
     public void testSubmitConsultationSuccess() throws Exception {
-        // 准备咨询请求
         ConsultationRequest consultationRequest = new ConsultationRequest();
         consultationRequest.setQuestion("我最近感觉头晕，请问是什么原因？");
 
-        // 执行提交咨询请求
         mockMvc.perform(post("/consultations")
                 .param("userId", patientId.toString())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -110,17 +104,14 @@ public class ConsultationControllerIntegrationTest {
                 .andExpect(jsonPath("$.data.question").value("我最近感觉头晕，请问是什么原因？"))
                 .andExpect(jsonPath("$.data.status").value("PENDING"));
 
-        // 验证咨询已保存到数据库
         assert consultationRepository.findByUserId(patientId).size() > 0;
     }
 
     @Test
     public void testSubmitConsultationEmptyQuestion() throws Exception {
-        // 准备咨询请求（空问题）
         ConsultationRequest consultationRequest = new ConsultationRequest();
         consultationRequest.setQuestion("");
 
-        // 执行提交咨询请求
         mockMvc.perform(post("/consultations")
                 .param("userId", patientId.toString())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -132,7 +123,6 @@ public class ConsultationControllerIntegrationTest {
 
     @Test
     public void testGetConsultationListSuccess() throws Exception {
-        // 创建多条咨询记录
         for (int i = 0; i < 3; i++) {
             Consultation consultation = new Consultation();
             consultation.setUserId(patientId);
@@ -142,7 +132,6 @@ public class ConsultationControllerIntegrationTest {
             consultationRepository.save(consultation);
         }
 
-        // 执行获取咨询列表请求
         mockMvc.perform(get("/consultations")
                 .param("userId", patientId.toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -154,7 +143,6 @@ public class ConsultationControllerIntegrationTest {
 
     @Test
     public void testGetConsultationListEmpty() throws Exception {
-        // 执行获取咨询列表请求（没有咨询记录）
         mockMvc.perform(get("/consultations")
                 .param("userId", patientId.toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -166,7 +154,6 @@ public class ConsultationControllerIntegrationTest {
 
     @Test
     public void testReplyConsultationSuccess() throws Exception {
-        // 创建咨询记录
         Consultation consultation = new Consultation();
         consultation.setUserId(patientId);
         consultation.setDoctorId(doctorId);
@@ -175,11 +162,9 @@ public class ConsultationControllerIntegrationTest {
         consultation = consultationRepository.save(consultation);
         Long consultationId = consultation.getId();
 
-        // 准备回复请求
         ConsultationAnswerRequest answerRequest = new ConsultationAnswerRequest();
         answerRequest.setAnswer("建议您去医院检查一下血压和血糖");
 
-        // 执行医师回复咨询请求
         mockMvc.perform(put("/consultations/{id}/answer", consultationId)
                 .param("doctorId", doctorId.toString())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -190,7 +175,6 @@ public class ConsultationControllerIntegrationTest {
                 .andExpect(jsonPath("$.data.answer").value("建议您去医院检查一下血压和血糖"))
                 .andExpect(jsonPath("$.data.status").value("ANSWERED"));
 
-        // 验证咨询已更新
         Consultation updatedConsultation = consultationRepository.findById(consultationId).orElse(null);
         assert updatedConsultation != null;
         assert updatedConsultation.getStatus().equals("ANSWERED");
@@ -198,7 +182,6 @@ public class ConsultationControllerIntegrationTest {
 
     @Test
     public void testReplyConsultationEmptyAnswer() throws Exception {
-        // 创建咨询记录
         Consultation consultation = new Consultation();
         consultation.setUserId(patientId);
         consultation.setDoctorId(doctorId);
@@ -207,11 +190,9 @@ public class ConsultationControllerIntegrationTest {
         consultation = consultationRepository.save(consultation);
         Long consultationId = consultation.getId();
 
-        // 准备回复请求（空回复）
         ConsultationAnswerRequest answerRequest = new ConsultationAnswerRequest();
         answerRequest.setAnswer("");
 
-        // 执行医师回复咨询请求
         mockMvc.perform(put("/consultations/{id}/answer", consultationId)
                 .param("doctorId", doctorId.toString())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -223,7 +204,6 @@ public class ConsultationControllerIntegrationTest {
 
     @Test
     public void testGetConsultationDetailSuccess() throws Exception {
-        // 创建咨询记录
         Consultation consultation = new Consultation();
         consultation.setUserId(patientId);
         consultation.setDoctorId(doctorId);
@@ -233,7 +213,6 @@ public class ConsultationControllerIntegrationTest {
         consultation = consultationRepository.save(consultation);
         Long consultationId = consultation.getId();
 
-        // 执行获取咨询详情请求
         mockMvc.perform(get("/consultations/{id}", consultationId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -245,7 +224,6 @@ public class ConsultationControllerIntegrationTest {
 
     @Test
     public void testGetConsultationDetailNotFound() throws Exception {
-        // 执行获取不存在的咨询详情请求
         mockMvc.perform(get("/consultations/{id}", 99999)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
