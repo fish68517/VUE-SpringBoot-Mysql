@@ -24,6 +24,64 @@ public class HealthDataController {
     @Autowired
     private HealthDataService healthDataService;
 
+
+    /**
+     * 新增：获取特定审核状态的健康数据端点 (医师端使用)
+     * GET /health-data/review?status=PENDING
+     */
+    @GetMapping("/review")
+    public ResponseEntity<?> getHealthDataByReviewStatus(@RequestParam(defaultValue = "PENDING") String status) {
+        try {
+            List<HealthData> healthDataList = healthDataService.getHealthDataByReviewStatus(status);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 200);
+            response.put("message", "获取审核数据成功");
+            response.put("data", healthDataList);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 500);
+            response.put("message", "服务器内部错误: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 新增：医师提交审核意见端点
+     * POST /health-data/{id}/review
+     */
+    @PostMapping("/{id}/review")
+    public ResponseEntity<?> reviewHealthData(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+        try {
+            String feedback = requestBody.get("reviewFeedback");
+            if (feedback == null || feedback.trim().isEmpty()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", 400);
+                response.put("message", "审核意见不能为空");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            HealthData reviewedData = healthDataService.reviewHealthData(id, feedback);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 200);
+            response.put("message", "审核提交成功");
+            response.put("data", reviewedData);
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 404);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("code", 500);
+            response.put("message", "服务器内部错误: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     /**
      * 提交健康数据端点
      * POST /api/health-data
@@ -166,6 +224,7 @@ public class HealthDataController {
             @RequestParam Long userId,
             @RequestParam String startTime,
             @RequestParam String endTime) {
+        System.out.println("getHealthDataByRange called with userId=" + userId + ", startTime=" + startTime + ", endTime=" + endTime);
         try {
             // 验证用户ID
             if (userId == null) {
@@ -190,6 +249,14 @@ public class HealthDataController {
                 return ResponseEntity.badRequest().body(response);
             }
 
+            // 补全时间字符串（如果前端只传了 yyyy-MM-dd）
+            if (startTime.length() == 10) {
+                startTime += " 00:00:00";
+            }
+            if (endTime.length() == 10) {
+                endTime += " 23:59:59";
+            }
+
             // 解析时间字符串
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             LocalDateTime start = LocalDateTime.parse(startTime, formatter);
@@ -212,6 +279,7 @@ public class HealthDataController {
             Map<String, Object> response = new HashMap<>();
             response.put("code", 500);
             response.put("message", "服务器内部错误: " + e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

@@ -1,7 +1,9 @@
 package com.health.controller;
 
 import com.health.dto.HealthAdviceRequest;
+import com.health.entity.Doctor;
 import com.health.entity.HealthAdvice;
+import com.health.repository.DoctorRepository;
 import com.health.service.HealthAdviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +24,11 @@ public class HealthAdviceController {
 
     @Autowired
     private HealthAdviceService healthAdviceService;
+
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
 
     /**
      * 创建健康建议端点
@@ -51,9 +58,15 @@ public class HealthAdviceController {
                 return ResponseEntity.badRequest().body(response);
             }
 
+            System.out.println("获取医师患者列表HHHH: " + doctorId);
+            Doctor doctor = doctorRepository.findByUserId(doctorId)
+                    .orElseThrow(() -> new IllegalArgumentException("医师不存在"));
+
+            long doctorId2 = doctor.getId();
+
             // 创建健康建议
             HealthAdvice healthAdvice = healthAdviceService.createHealthAdvice(
-                    doctorId,
+                    doctorId2,
                     healthAdviceRequest.getPatientId(),
                     healthAdviceRequest.getAdviceContent(),
                     healthAdviceRequest.getRecommendation()

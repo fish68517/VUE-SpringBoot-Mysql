@@ -33,6 +33,8 @@ public class DoctorController {
      */
     @GetMapping("/patients")
     public ResponseEntity<?> getDoctorPatients(@RequestParam Long doctorId) {
+        System.out.println("获取医师患者列表: " + doctorId);
+
         try {
             List<Map<String, Object>> patients = doctorService.getDoctorPatients(doctorId);
             Map<String, Object> response = new HashMap<>();

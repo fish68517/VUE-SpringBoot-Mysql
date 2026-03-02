@@ -1,10 +1,12 @@
 package com.health.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.math.BigDecimal;
 
 /**
@@ -18,81 +20,89 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class HealthData {
 
-    /**
-     * 健康数据ID - 主键
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * 用户ID - 外键
-     */
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    /**
-     * 身高（单位：cm）
-     */
     @Column(name = "height", precision = 5, scale = 2)
     private BigDecimal height;
 
-    /**
-     * 体重（单位：kg）
-     */
     @Column(name = "weight", precision = 5, scale = 2)
     private BigDecimal weight;
 
-    /**
-     * 血压
-     */
     @Column(name = "blood_pressure", length = 20)
     private String bloodPressure;
 
-    /**
-     * 心率（单位：次/分钟）
-     */
     @Column(name = "heart_rate")
     private Integer heartRate;
 
-    /**
-     * 饮食记录
-     */
     @Column(name = "diet_record", columnDefinition = "TEXT")
     private String dietRecord;
 
-    /**
-     * 运动记录
-     */
     @Column(name = "exercise_record", columnDefinition = "TEXT")
     private String exerciseRecord;
 
-    /**
-     * 数据类型 - ROUTINE(常规), GENDER_SPECIFIC(性别相关)
-     */
+    @Column(name = "check_results", columnDefinition = "TEXT")
+    private String checkResults; // 新增：检查结果备注
+
     @Column(name = "data_type", length = 50)
     private String dataType;
 
-    /**
-     * 记录时间
-     */
+    // --- 新增：性别相关数据 (GENDER_SPECIFIC) ---
+    @Column(name = "menstrual_cycle")
+    private Integer menstrualCycle; // 月经周期
+
+    @Column(name = "menstrual_days")
+    private Integer menstrualDays; // 月经天数
+
+    @Column(name = "last_menstrual_date")
+    private LocalDate lastMenstrualDate; // 最后月经日期
+
+    @Column(name = "pregnancy_status", length = 20)
+    private String pregnancyStatus; // 妊娠状态
+
+    @Column(name = "menstrual_symptoms", columnDefinition = "TEXT")
+    private String menstrualSymptoms; // 月经症状
+
+    @Column(name = "prostate_health", columnDefinition = "TEXT")
+    private String prostateHealth; // 健康状态
+
+    @Column(name = "sexual_function", length = 20)
+    private String sexualFunction; // 性功能状态
+
+    // --- 新增：医师审核数据 ---
+    @Column(name = "review_status", length = 20)
+    private String reviewStatus; // 审核状态: PENDING, REVIEWED
+
+    @Column(name = "review_feedback", columnDefinition = "TEXT")
+    private String reviewFeedback; // 审核反馈意见
+
+// ... 其他代码保持不变
+
+    @Column(name = "feedback_date")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime feedbackDate; // 审核反馈时间
+
     @Column(name = "recorded_at")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime recordedAt;
 
-    /**
-     * 创建时间
-     */
     @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createdAt;
 
-    /**
-     * 在保存前设置创建时间和记录时间
-     */
+    // ... 其他代码保持不变
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         if (recordedAt == null) {
             recordedAt = LocalDateTime.now();
+        }
+        if (reviewStatus == null) {
+            reviewStatus = "PENDING"; // 默认设置为待审核
         }
     }
 }

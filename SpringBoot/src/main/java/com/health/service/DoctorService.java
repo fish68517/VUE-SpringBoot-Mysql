@@ -45,13 +45,18 @@ public class DoctorService {
      * 获取医师的患者列表
      * 通过咨询记录和健康建议找到医师关联的患者
      *
-     * @param doctorId 医师ID
+     * @param userId 医师ID
      * @return 患者列表
      */
-    public List<Map<String, Object>> getDoctorPatients(Long doctorId) {
+    public List<Map<String, Object>> getDoctorPatients(Long userId) {
         // 验证医师是否存在
-        Doctor doctor = doctorRepository.findById(doctorId)
+        System.out.println("获取医师患者列表GGG: " + userId);
+        Doctor doctor = doctorRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("医师不存在"));
+
+        Long doctorId = doctor.getId();
+     /*   Doctor doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new IllegalArgumentException("医师不存在"));*/
 
         // 获取医师通过咨询关联的患者ID集合
         List<Consultation> consultations = consultationRepository.findByDoctorId(doctorId);
@@ -89,14 +94,17 @@ public class DoctorService {
      * 获取患者的完整档案
      * 包含患者个人信息、健康数据、咨询记录和健康建议
      *
-     * @param doctorId 医师ID
+     * @param
      * @param patientId 患者ID
      * @return 患者档案信息
      */
-    public Map<String, Object> getPatientRecord(Long doctorId, Long patientId) {
+    public Map<String, Object> getPatientRecord(Long userId, Long patientId) {
         // 验证医师是否存在
-        Doctor doctor = doctorRepository.findById(doctorId)
+        System.out.println("获取医师患者列表GGG: " + userId);
+        Doctor doctor = doctorRepository.findByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("医师不存在"));
+
+        Long doctorId = doctor.getId();
 
         // 验证患者是否存在
         User patient = userRepository.findById(patientId)

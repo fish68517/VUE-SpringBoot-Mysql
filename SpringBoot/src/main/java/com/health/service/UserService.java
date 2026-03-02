@@ -185,7 +185,7 @@ public class UserService {
      * @return 性别格式是否正确
      */
     private boolean isValidGender(String gender) {
-        return gender != null && (gender.equals("男") || gender.equals("女") || gender.equals("其他"));
+        return gender != null && (gender.equals("MALE") || gender.equals("FEMALE") || gender.equals("OTHER"));
     }
 
     /**

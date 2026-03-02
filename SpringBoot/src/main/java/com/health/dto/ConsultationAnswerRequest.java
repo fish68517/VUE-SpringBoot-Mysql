@@ -17,4 +17,6 @@ public class ConsultationAnswerRequest {
      * 回复内容
      */
     private String answer;
+
+    private Long doctorId;
 }

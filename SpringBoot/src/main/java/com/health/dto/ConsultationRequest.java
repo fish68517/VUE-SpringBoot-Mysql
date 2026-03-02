@@ -17,4 +17,6 @@ public class ConsultationRequest {
      * 咨询问题
      */
     private String question;
+
+    private int userId;
 }

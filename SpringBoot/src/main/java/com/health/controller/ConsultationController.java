@@ -3,6 +3,8 @@ package com.health.controller;
 import com.health.dto.ConsultationAnswerRequest;
 import com.health.dto.ConsultationRequest;
 import com.health.entity.Consultation;
+import com.health.entity.Doctor;
+import com.health.repository.DoctorRepository;
 import com.health.service.ConsultationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,10 @@ public class ConsultationController {
     @Autowired
     private ConsultationService consultationService;
 
+
+    @Autowired
+    private DoctorRepository doctorRepository;
+
     /**
      * 提交咨询端点
      * POST /api/consultations
@@ -34,7 +40,6 @@ public class ConsultationController {
      */
     @PostMapping
     public ResponseEntity<?> submitConsultation(
-            @RequestParam Long userId,
             @RequestBody ConsultationRequest consultationRequest) {
         try {
             // 验证请求参数
@@ -45,8 +50,9 @@ public class ConsultationController {
                 return ResponseEntity.badRequest().body(response);
             }
 
+            int userId = consultationRequest.getUserId();
             // 提交咨询
-            Consultation consultation = consultationService.submitConsultation(userId, consultationRequest.getQuestion());
+            Consultation consultation = consultationService.submitConsultation((long) userId, consultationRequest.getQuestion());
 
             Map<String, Object> response = new HashMap<>();
             response.put("code", 200);
@@ -104,7 +110,7 @@ public class ConsultationController {
     @PutMapping("/{id}/answer")
     public ResponseEntity<?> replyConsultation(
             @PathVariable Long id,
-            @RequestParam Long doctorId,
+
             @RequestBody ConsultationAnswerRequest consultationAnswerRequest) {
         try {
             // 验证回复内容
@@ -114,6 +120,13 @@ public class ConsultationController {
                 response.put("message", "回复内容不能为空");
                 return ResponseEntity.badRequest().body(response);
             }
+
+            Long userId = consultationAnswerRequest.getDoctorId();
+
+            Doctor doctor = doctorRepository.findByUserId(userId)
+                    .orElseThrow(() -> new IllegalArgumentException("医师不存在"));
+
+            Long doctorId = doctor.getId();
 
             // 医师回复咨询
             Consultation consultation = consultationService.replyConsultation(id, doctorId, consultationAnswerRequest.getAnswer());

@@ -64,6 +64,32 @@ public class HealthDataService {
         // 保存健康数据
         return healthDataRepository.save(healthData);
     }
+    /**
+     * 新增：根据审核状态获取健康数据
+     * @param status 审核状态，如 "PENDING"
+     * @return 健康数据列表
+     */
+    public List<HealthData> getHealthDataByReviewStatus(String status) {
+        return healthDataRepository.findByReviewStatusOrderByRecordedAtDesc(status);
+    }
+
+
+    /**
+     * 新增：医师审核健康数据
+     * @param id 数据记录ID
+     * @param feedback 审核意见
+     * @return 更新后的健康数据
+     */
+    public HealthData reviewHealthData(Long id, String feedback) {
+        HealthData healthData = healthDataRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("未找到对应的健康数据记录"));
+
+        healthData.setReviewStatus("REVIEWED");
+        healthData.setReviewFeedback(feedback);
+        healthData.setFeedbackDate(LocalDateTime.now());
+
+        return healthDataRepository.save(healthData);
+    }
 
     /**
      * 获取用户的所有健康数据
