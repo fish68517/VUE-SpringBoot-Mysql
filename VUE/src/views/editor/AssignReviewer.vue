@@ -12,7 +12,11 @@
         <el-table-column prop="id" label="稿件ID" width="80" />
         <el-table-column prop="title" label="稿件标题" min-width="200" />
         <el-table-column prop="authorName" label="作者" width="120" />
-        <el-table-column prop="submissionDate" label="投稿日期" width="150" :formatter="formatDate" />
+         <el-table-column label="投稿日期" width="150">
+          <template #default="{ row }">
+            {{ formatDate(row.submissionDate) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="reviewerCount" label="已分配审稿人数" width="120" />
         <el-table-column label="操作" width="150" fixed="right">
           <template #default="{ row }">

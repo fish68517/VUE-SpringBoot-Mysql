@@ -12,7 +12,11 @@
         <el-table-column prop="id" label="稿件ID" width="80" />
         <el-table-column prop="title" label="稿件标题" min-width="200" />
         <el-table-column prop="authorName" label="作者" width="120" />
-        <el-table-column prop="submissionDate" label="投稿日期" width="150" :formatter="formatDate" />
+        <el-table-column label="投稿日期" width="150">
+          <template #default="{ row }">
+            {{ formatDate(row.submissionDate) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="getStatusType(row.status)">{{ row.status }}</el-tag>
@@ -94,6 +98,7 @@ const reviewForm = ref({
 
 const formatDate = (date) => {
   if (!date) return ''
+  console.log("投稿日期：",JSON.stringify(date))
   const d = new Date(date)
   return d.toLocaleDateString('zh-CN')
 }
@@ -110,6 +115,7 @@ const getStatusType = (status) => {
 
 const loadPendingManuscripts = async () => {
   try {
+    // const response = await editorService.getPendingManuscripts()
     const response = await editorService.getPendingManuscripts()
     if (response.data) {
       // Fetch full manuscript details for each pending manuscript

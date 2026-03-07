@@ -125,7 +125,7 @@ onMounted(() => {
 
 const loadDashboardData = async () => {
   try {
-    const response = await axios.get('/api/reviewers/tasks')
+    const response = await axios.get('/api/api/reviewers/tasks')
     if (response.data.code === 200) {
       tasks.value = response.data.data || []
       

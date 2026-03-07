@@ -73,7 +73,7 @@ onMounted(() => {
 const loadReviewHistory = async () => {
   loading.value = true
   try {
-    const response = await axios.get('/api/reviewers/history')
+    const response = await axios.get('/api/api/reviewers/history')
     if (response.data.code === 200) {
       historyList.value = response.data.data || []
     }
@@ -87,7 +87,7 @@ const loadReviewHistory = async () => {
 // View review details
 const viewDetails = async (review) => {
   try {
-    const response = await axios.get(`/api/reviewers/reviews/${review.id}`)
+    const response = await axios.get(`/api/api/reviewers/reviews/${review.id}`)
     if (response.data.code === 200) {
       currentReview.value = response.data.data
       detailsDialogVisible.value = true

@@ -46,7 +46,7 @@ public class NotificationService {
         }
 
         // Send notification from system (userId = 0 or null for system)
-        sendNotification(0L, userId, content, "NOTIFICATION", null);
+        sendNotification(userId, userId, content, "NOTIFICATION", null);
     }
 
     /**
@@ -144,7 +144,7 @@ public class NotificationService {
         }
 
         // Send notification from system to author
-        sendNotification(0L, author.getId(), content, "NOTIFICATION", manuscriptId);
+        sendNotification(author.getId(), author.getId(), content, "NOTIFICATION", manuscriptId);
     }
 
     /**

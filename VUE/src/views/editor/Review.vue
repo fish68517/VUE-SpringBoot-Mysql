@@ -7,7 +7,11 @@
           <el-table-column prop="id" label="稿件ID" width="100" />
           <el-table-column prop="title" label="标题" />
           <el-table-column prop="author" label="作者" width="120" />
-          <el-table-column prop="submissionDate" label="投稿日期" width="150" />
+           <el-table-column label="投稿日期" width="150">
+          <template #default="{ row }">
+            {{ formatDate(row.submissionDate) }}
+          </template>
+        </el-table-column>
           <el-table-column label="操作" width="150">
             <template #default>
               <el-button link type="primary" size="small">审核</el-button>

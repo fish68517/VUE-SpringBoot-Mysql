@@ -64,8 +64,13 @@ const handleLogout = async () => {
   height: 100vh;
 }
 
+/* 1. 新增：让 Element Plus 的容器占满父元素的高度 */
+.el-container {
+  height: 100%;
+}
+
 .sidebar {
-  background-color: #545c64;
+  background-color: #0f78e0; /* 保持你的蓝色背景 */
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -76,18 +81,28 @@ const handleLogout = async () => {
   text-align: center;
   font-size: 18px;
   font-weight: bold;
-  border-bottom: 1px solid #444;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* 调整边框颜色使其在蓝色背景上更融洽 */
 }
 
 .el-menu {
   flex: 1;
   border-right: none;
-  background-color: #545c64;
+  /* 2. 修改：将深灰色改为透明，或者直接改成与 sidebar 一致的 #0f78e0 */
+  background-color: transparent; 
+}
+
+/* 确保菜单文字颜色在自定义背景下可见 */
+:deep(.el-menu-item) {
+  color: #fff;
+}
+:deep(.el-menu-item:hover),
+:deep(.el-menu-item.is-active) {
+  background-color: rgba(255, 255, 255, 0.1); /* 添加一个半透明的悬浮/选中效果 */
 }
 
 .logout-btn {
   padding: 20px;
-  border-top: 1px solid #444;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .header {

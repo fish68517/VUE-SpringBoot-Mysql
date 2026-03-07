@@ -70,7 +70,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="submissionDate" label="投稿日期" width="150">
+         <el-table-column label="投稿日期" width="150">
           <template #default="{ row }">
             {{ formatDate(row.submissionDate) }}
           </template>

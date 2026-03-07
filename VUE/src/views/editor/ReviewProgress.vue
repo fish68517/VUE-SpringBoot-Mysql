@@ -12,7 +12,11 @@
         <el-table-column prop="id" label="稿件ID" width="80" />
         <el-table-column prop="title" label="稿件标题" min-width="200" />
         <el-table-column prop="authorName" label="作者" width="120" />
-        <el-table-column prop="submissionDate" label="投稿日期" width="150" :formatter="formatDate" />
+         <el-table-column label="投稿日期" width="150">
+          <template #default="{ row }">
+            {{ formatDate(row.submissionDate) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="reviewerCount" label="分配审稿人数" width="120" />
         <el-table-column prop="submittedCount" label="已提交意见数" width="120" />
         <el-table-column label="操作" width="150" fixed="right">
@@ -29,7 +33,11 @@
             <el-descriptions-item label="稿件ID">{{ selectedManuscript.id }}</el-descriptions-item>
             <el-descriptions-item label="稿件标题">{{ selectedManuscript.title }}</el-descriptions-item>
             <el-descriptions-item label="作者">{{ selectedManuscript.authorName }}</el-descriptions-item>
-            <el-descriptions-item label="投稿日期">{{ formatDate(selectedManuscript.submissionDate) }}</el-descriptions-item>
+             <el-table-column label="投稿日期" width="150">
+          <template #default="{ row }">
+            {{ formatDate(row.submissionDate) }}
+          </template>
+        </el-table-column>
           </el-descriptions>
 
           <h4 style="margin-bottom: 10px">审稿人信息与进度</h4>
@@ -40,8 +48,21 @@
                 <el-tag :type="getStatusType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
               </template>
             </el-table-column>
-            <el-table-column prop="createdAt" label="分配时间" width="150" :formatter="formatDate" />
-            <el-table-column prop="submittedDate" label="提交时间" width="150" :formatter="formatDate" />
+           
+
+               <el-table-column label="分配时间" width="150">
+                <template #default="{ row }">
+                  {{ formatDate(row.createdAt) }}
+                </template>
+              </el-table-column>
+            
+
+              <el-table-column label="提交时间" width="150">
+                <template #default="{ row }">
+                  {{ formatDate(row.submittedDate) }}
+                </template>
+              </el-table-column>
+
             <el-table-column label="操作" width="100" fixed="right">
               <template #default="{ row }">
                 <el-button 

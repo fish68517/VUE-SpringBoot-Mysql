@@ -126,7 +126,7 @@ onMounted(() => {
 const loadReviewTasks = async () => {
   loading.value = true
   try {
-    const response = await axios.get('/api/reviewers/tasks')
+    const response = await axios.get('/api/api/reviewers/tasks')
     if (response.data.code === 200) {
       const tasks = response.data.data || []
       pendingTasks.value = tasks.filter(t => t.status === 'PENDING')
@@ -142,7 +142,7 @@ const loadReviewTasks = async () => {
 // Load review history
 const loadReviewHistory = async () => {
   try {
-    const response = await axios.get('/api/reviewers/history')
+    const response = await axios.get('/api/api/reviewers/history')
     if (response.data.code === 200) {
       completedTasks.value = response.data.data || []
     }
@@ -154,7 +154,7 @@ const loadReviewHistory = async () => {
 // View manuscript content
 const viewManuscript = async (task) => {
   try {
-    const response = await axios.get(`/api/reviewers/manuscripts/${task.manuscriptId}`)
+    const response = await axios.get(`/api/api/reviewers/manuscripts/${task.manuscriptId}`)
     if (response.data.code === 200) {
       currentManuscript.value = response.data.data
       manuscriptDialogVisible.value = true
@@ -167,7 +167,7 @@ const viewManuscript = async (task) => {
 // Accept review task
 const acceptTask = async (task) => {
   try {
-    const response = await axios.post(`/api/reviewers/tasks/${task.id}/accept`)
+    const response = await axios.post(`/api/api/reviewers/tasks/${task.id}/accept`)
     if (response.data.code === 200) {
       ElMessage.success('已接受审稿任务')
       loadReviewTasks()
@@ -180,7 +180,7 @@ const acceptTask = async (task) => {
 // Reject review task
 const rejectTask = async (task) => {
   try {
-    const response = await axios.post(`/api/reviewers/tasks/${task.id}/reject`)
+    const response = await axios.post(`/api/api/reviewers/tasks/${task.id}/reject`)
     if (response.data.code === 200) {
       ElMessage.success('已拒绝审稿任务')
       loadReviewTasks()
@@ -209,7 +209,7 @@ const submitReviewOpinion = async () => {
   }
 
   try {
-    const response = await axios.post(`/api/reviewers/reviews/${currentTask.value.id}/submit`, {
+    const response = await axios.post(`/api/api/reviewers/reviews/${currentTask.value.id}/submit`, {
       opinion: reviewForm.value.opinion,
       score: reviewForm.value.score,
       recommendation: reviewForm.value.recommendation
@@ -228,7 +228,7 @@ const submitReviewOpinion = async () => {
 // View review details
 const viewReview = async (task) => {
   try {
-    const response = await axios.get(`/api/reviewers/reviews/${task.id}`)
+    const response = await axios.get(`/api/api/reviewers/reviews/${task.id}`)
     if (response.data.code === 200) {
       currentReview.value = response.data.data
       reviewDetailsDialogVisible.value = true
