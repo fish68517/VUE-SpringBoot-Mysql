@@ -187,9 +187,15 @@ onMounted(async () => {
 // Load list of authors - get from all users with AUTHOR role
 const loadAuthorList = async () => {
   try {
-    // For now, we'll use a placeholder - in a real app, you'd have an endpoint to get all authors
-    // This is a simplified version that assumes authors are available through the system
-    authorList.value = []
+    // 假设你在 editorService 中有一个 getAllAuthors 方法
+    // 如果没有，请在 src/services/editorService.js 中加上: 
+    // getAllAuthors() { return api.get('/api/editors/authors') } // 替换为真实路径
+    const response = await editorService.getAllAuthors() 
+    
+    // 修复数据层级解析
+    if (response.data && response.data.code === 200) {
+      authorList.value = response.data.data || []
+    }
   } catch (error) {
     console.error('Failed to load authors:', error)
   }
@@ -199,8 +205,9 @@ const loadAuthorList = async () => {
 const loadReviewerList = async () => {
   try {
     const response = await editorService.getAllReviewers()
-    if (response.code === 200) {
-      reviewerList.value = response.data
+    // 修复数据层级解析：从 response.code 改为 response.data.code
+    if (response.data && response.code === 200) {
+      reviewerList.value = response.data || []
     }
   } catch (error) {
     console.error('Failed to load reviewers:', error)
@@ -216,8 +223,9 @@ const loadAuthorMessages = async () => {
 
   try {
     const response = await messageService.getMessagesWithAuthor(selectedAuthorId.value)
-    if (response.code === 200) {
-      authorMessages.value = response.data
+    // 修复数据解析
+    if (response.data && response.data.code === 200) {
+      authorMessages.value = response.data.data || []
       // Scroll to bottom
       setTimeout(() => {
         const messageList = document.querySelector('.message-list')
@@ -241,8 +249,9 @@ const loadReviewerMessages = async () => {
 
   try {
     const response = await messageService.getMessagesWithReviewer(selectedReviewerId.value)
-    if (response.code === 200) {
-      reviewerMessages.value = response.data
+    // 修复数据解析
+    if (response.data && response.data.code === 200) {
+      reviewerMessages.value = response.data.data || []
       // Scroll to bottom
       setTimeout(() => {
         const messageList = document.querySelector('.message-list')
@@ -272,8 +281,9 @@ const sendAuthorMessage = async () => {
       type: 'COMMUNICATION'
     })
 
-    if (response.code === 200) {
-      authorMessages.value.push(response.data)
+    // 修复数据解析
+    if (response.data && response.data.code === 200) {
+      authorMessages.value.push(response.data.data) // 将返回的新消息推入数组
       authorMessageContent.value = ''
       ElMessage.success('消息已发送')
       // Scroll to bottom
@@ -284,7 +294,7 @@ const sendAuthorMessage = async () => {
         }
       }, 100)
     } else {
-      ElMessage.error(response.message || '发送失败')
+      ElMessage.error(response.data?.message || '发送失败')
     }
   } catch (error) {
     ElMessage.error('发送消息失败')
@@ -309,8 +319,9 @@ const sendReviewerMessage = async () => {
       type: 'COMMUNICATION'
     })
 
-    if (response.code === 200) {
-      reviewerMessages.value.push(response.data)
+    // 修复数据解析
+    if (response.data && response.data.code === 200) {
+      reviewerMessages.value.push(response.data.data) // 将返回的新消息推入数组
       reviewerMessageContent.value = ''
       ElMessage.success('消息已发送')
       // Scroll to bottom
@@ -321,7 +332,7 @@ const sendReviewerMessage = async () => {
         }
       }, 100)
     } else {
-      ElMessage.error(response.message || '发送失败')
+      ElMessage.error(response.data?.message || '发送失败')
     }
   } catch (error) {
     ElMessage.error('发送消息失败')

@@ -8,6 +8,12 @@ import java.time.LocalDateTime;
 
 /**
  * Manuscript Entity - Represents a manuscript submission
+ *
+ *  DRAFT（草稿）→ SUBMITTED（已提交）→ UNDER_REVIEW（审核中）
+ *                      ↓
+ * （审核结果）→ REVISION_REQUIRED（需修改）→ 重新提交 → UNDER_REVIEW（再次审核）
+ *                      ↓
+ * 最终结果：ACCEPTED（录用） / REJECTED（拒稿）
  */
 @Data
 @NoArgsConstructor

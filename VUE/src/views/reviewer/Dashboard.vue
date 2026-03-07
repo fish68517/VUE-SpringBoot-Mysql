@@ -93,6 +93,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
+// ⚠️ 极其重要：务必使用封装好的 api，不要用原生 axios，否则会报 Token 缺失和外键错误
+import api from '@/services/api'
 
 const router = useRouter()
 const tasks = ref([])
@@ -125,18 +127,33 @@ onMounted(() => {
 
 const loadDashboardData = async () => {
   try {
-    const response = await axios.get('/api/api/reviewers/tasks')
-    if (response.data.code === 200) {
-      tasks.value = response.data.data || []
+    // ⚠️ 修复了原来 /api/api/ 的双重路径错误，并使用带 Token 的 api 实例请求
+    const response = await api.get('/api/reviewers/tasksAll')
+    if (response.code === 200) {
+      const allTasks = response.data || []
+      tasks.value = allTasks
       
-      // Calculate statistics
-      stats.value.total = tasks.value.length
-      stats.value.pending = tasks.value.filter(t => t.status === 'PENDING').length
-      stats.value.accepted = tasks.value.filter(t => t.status === 'ACCEPTED').length
-      stats.value.completed = tasks.value.filter(t => t.status === 'SUBMITTED').length
+      // 1. 按照新规则计算统计数据
+      stats.value.total = allTasks.length
+      stats.value.pending = allTasks.filter(t => t.status === 'PENDING').length
+      stats.value.accepted = allTasks.filter(t => t.status === 'ACCEPTED').length
+      // 核心修改：既不是 PENDING 也不是 ACCEPTED 的，全部视为已完成
+      stats.value.completed = allTasks.filter(t => t.status !== 'PENDING' && t.status !== 'ACCEPTED').length
       
-      // Get recent tasks (last 5)
-      recentTasks.value = tasks.value.slice(0, 5)
+      // 2. 筛选最近 7 天的任务
+      const sevenDaysAgo = new Date()
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+      
+      let recent7DaysTasks = allTasks.filter(t => {
+        if (!t.createdAt) return false
+        // 将任务的创建时间与 7 天前的时间进行对比
+        return new Date(t.createdAt) >= sevenDaysAgo
+      })
+      
+      // (可选) 按照时间倒序排列，让最新的任务在最前面
+      recent7DaysTasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      
+      recentTasks.value = recent7DaysTasks
     }
   } catch (error) {
     ElMessage.error(error.message || '加载数据失败')
@@ -144,12 +161,18 @@ const loadDashboardData = async () => {
   }
 }
 
+// 动态获取状态文字（匹配新规则）
 const getStatusLabel = (status) => {
-  return statusMap[status] || status
+  if (status === 'PENDING') return '待审稿'
+  if (status === 'ACCEPTED') return '进行中'
+  return '已完成' // 其他所有状态都显示为已完成
 }
 
+// 动态获取状态标签颜色（匹配新规则）
 const getStatusType = (status) => {
-  return statusTypeMap[status] || 'info'
+  if (status === 'PENDING') return 'warning'  // 黄色
+  if (status === 'ACCEPTED') return 'primary' // 蓝色
+  return 'success' // 其他所有状态均为已完成（绿色）
 }
 
 const formatDate = (date) => {

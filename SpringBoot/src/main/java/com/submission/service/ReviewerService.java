@@ -12,6 +12,7 @@ import com.submission.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -108,6 +109,75 @@ public class ReviewerService {
                 .filter(r -> "PENDING".equals(r.getStatus()))
                 .map(this::convertReviewToDTO)
                 .collect(Collectors.toList());
+    }
+
+
+    public List<ReviewDTO> getReviewTasksAccepted(Long reviewerId) {
+        // Validate reviewer exists
+        User reviewer = userMapper.findById(reviewerId);
+        if (reviewer == null) {
+            throw new RuntimeException("Reviewer not found");
+        }
+        if (!"REVIEWER".equals(reviewer.getRole())) {
+            throw new RuntimeException("User is not a reviewer");
+        }
+
+        // Get all reviews assigned to this reviewer
+        List<Review> reviews = reviewMapper.findByReviewerId(reviewerId);
+
+        // Filter for pending tasks
+        return reviews.stream()
+                .filter(r -> "ACCEPTED".equals(r.getStatus()))
+                .map(this::convertReviewToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ReviewDTO> getReviewTasksAll(Long reviewerId) {
+        // Validate reviewer exists
+        User reviewer = userMapper.findById(reviewerId);
+        if (reviewer == null) {
+            throw new RuntimeException("Reviewer not found");
+        }
+        if (!"REVIEWER".equals(reviewer.getRole())) {
+            throw new RuntimeException("User is not a reviewer");
+        }
+
+        // Get all reviews assigned to this reviewer
+        List<Review> reviews = reviewMapper.findByReviewerId(reviewerId);
+
+        // Filter for pending tasks
+        return reviews.stream()
+                .map(this::convertReviewToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ReviewDTO> getReviewTasksCommented(Long reviewerId) {
+        // Validate reviewer exists
+        User reviewer = userMapper.findById(reviewerId);
+        if (reviewer == null) {
+            throw new RuntimeException("Reviewer not found");
+        }
+        if (!"REVIEWER".equals(reviewer.getRole())) {
+            throw new RuntimeException("User is not a reviewer");
+        }
+
+        // Get all reviews assigned to this reviewer
+        List<Review> reviews = reviewMapper.findByReviewerId(reviewerId);
+
+        // Filter for 非 pending 和 ACCEPTED  tasks
+        Iterator iterator = reviews.iterator();
+        while (iterator.hasNext()) {
+            Review review = (Review) iterator.next();
+            if ("PENDING".equals(review.getStatus()) || "ACCEPTED".equals(review.getStatus())) {
+                iterator.remove();
+            }
+        }
+        System.out.println(reviews);
+        return reviews.stream().map(this::convertReviewToDTO).collect(Collectors.toList());
+    /*    return reviews.stream()
+                .filter(r -> "ACCEPTED".equals(r.getStatus()))
+                .map(this::convertReviewToDTO)
+                .collect(Collectors.toList());*/
     }
 
     /**

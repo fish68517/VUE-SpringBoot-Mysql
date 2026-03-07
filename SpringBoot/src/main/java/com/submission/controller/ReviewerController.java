@@ -115,6 +115,60 @@ public class ReviewerController {
         }
     }
 
+
+    @GetMapping("/tasksAll")
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewTasksAll(HttpSession session) {
+        try {
+            Long reviewerId = (Long) session.getAttribute("userId");
+            if (reviewerId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("User not logged in"));
+            }
+
+            List<ReviewDTO> tasks = reviewerService.getReviewTasksAll(reviewerId);
+            return ResponseEntity.ok(ApiResponse.success("Review tasks retrieved", tasks));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+
+    @GetMapping("/tasks/accepted-endpoint")
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewTasksAccepted(HttpSession session) {
+        try {
+            Long reviewerId = (Long) session.getAttribute("userId");
+            if (reviewerId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("User not logged in"));
+            }
+
+            List<ReviewDTO> tasks = reviewerService.getReviewTasksAccepted(reviewerId);
+            return ResponseEntity.ok(ApiResponse.success("Review tasks retrieved", tasks));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+
+    @GetMapping("/tasks/completed-endpoint")
+    public ResponseEntity<ApiResponse<List<ReviewDTO>>> getReviewTasksCommented(HttpSession session) {
+        try {
+            Long reviewerId = (Long) session.getAttribute("userId");
+            if (reviewerId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("User not logged in"));
+            }
+
+            List<ReviewDTO> tasks = reviewerService.getReviewTasksCommented(reviewerId);
+            return ResponseEntity.ok(ApiResponse.success("Review tasks retrieved", tasks));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
     /**
      * Accept a review task
      */

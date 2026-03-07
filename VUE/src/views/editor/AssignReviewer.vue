@@ -98,12 +98,15 @@ const loadManuscriptsForReview = async () => {
           try {
             const detail = await manuscriptService.getManuscriptDetail(item.manuscriptId)
             const manuscript = detail.data.manuscript
+            // 获取分配的审稿人数组，如果不存在则默认为空数组
+            const reviews = detail.data.reviews || [] 
+            
             return {
               id: manuscript.id,
               title: manuscript.title,
               authorName: manuscript.authorName || 'Unknown',
               submissionDate: manuscript.submissionDate,
-              reviewerCount: 0 // Will be updated based on actual review assignments
+              reviewerCount: reviews.length // 动态取审稿人数组的长度
             }
           } catch (error) {
             return {

@@ -146,26 +146,33 @@ public class EditorService {
 
         // Check if initial review already exists
         InitialReview existingReview = initialReviewMapper.findByManuscriptId(manuscriptId);
+        InitialReview initialReview;
         if (existingReview != null) {
             // Update existing review
             existingReview.setStatus(status);
             existingReview.setOpinion(opinion);
             initialReviewMapper.update(existingReview);
-            return existingReview;
+            initialReview = existingReview;
+            // return existingReview;
+        } else {
+            // Create new initial review
+            initialReview = InitialReview.builder()
+                    .manuscriptId(manuscriptId)
+                    .editorId(editorId)
+                    .status(status)
+                    .opinion(opinion)
+                    .build();
+
+            initialReviewMapper.insert(initialReview);
+
+
         }
 
-        // Create new initial review
-        InitialReview initialReview = InitialReview.builder()
-                .manuscriptId(manuscriptId)
-                .editorId(editorId)
-                .status(status)
-                .opinion(opinion)
-                .build();
-
-        initialReviewMapper.insert(initialReview);
 
         // Update manuscript status based on review result
         String oldStatus = manuscript.getStatus();
+        System.out.println("Old status: " + oldStatus);
+        System.out.println(" status: " + oldStatus);
         updateManuscriptStatusAfterInitialReview(manuscript, status);
 
         // Send notification to author about initial review result

@@ -97,6 +97,9 @@ import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 
+// ⚠️ 务必使用封装好的 api，不要用原生 axios
+import api from '@/services/api'
+
 const loading = ref(false)
 const pendingTasks = ref([])
 const acceptedTasks = ref([])
@@ -118,17 +121,83 @@ const reviewForm = ref({
 
 // Load review tasks on component mount
 onMounted(() => {
-  loadReviewTasks()
-  loadReviewHistory()
+  // loadReviewTasks()
+  // loadReviewHistory()
+  loadAllData()
 })
+
+
+const loadAllData = async () => {
+  loading.value = true
+  try {
+    // 并发请求三个接口，提高加载速度
+    await Promise.all([
+      loadPendingTasks(),
+      loadAcceptedTasks(),
+      loadCompletedTasks()
+    ])
+  } finally {
+    loading.value = false
+  }
+}
+
+
+// ================== 核心修改区域 ==================
+
+// 0. 加载待审稿 (保留原有接口)
+const loadPendingTasks = async () => {
+  try {
+    const response = await api.get('/api/reviewers/tasks') 
+    if (response.code === 200) {
+      const tasks = response.data || []
+      pendingTasks.value = tasks.filter(t => t.status === 'PENDING')
+    }
+  } catch (error) {
+    console.error('加载待审稿任务失败', error)
+  }
+}
+
+// 1. 加载进行中 (需求1：通过新接口获取 accepted 状态)
+const loadAcceptedTasks = async () => {
+  try {
+    // ⚠️ 请将此处的 URL 替换为你后端提供的真实【新接口地址】
+    const response = await api.get('/api/reviewers/tasks/accepted-endpoint') 
+    // 打印 response
+    console.log('response:', response)
+    if (response.code === 200) {
+      const tasks = response.data || []
+      // 过滤保险：确保只展示 ACCEPTED 状态的稿件
+      acceptedTasks.value = tasks.filter(t => t.status === 'ACCEPTED')
+    }
+  } catch (error) {
+    ElMessage.error('加载进行中任务失败')
+  }
+}
+
+// 2. 加载已完成 (需求2：通过新接口获取 非accepted 和 非PENDING 状态)
+const loadCompletedTasks = async () => {
+  try {
+    // ⚠️ 请将此处的 URL 替换为你后端提供的真实【新接口地址】
+    const response = await api.get('/api/reviewers/tasks/completed-endpoint') 
+    if (response.code === 200) {
+      const tasks = response.data || []
+      // 核心过滤逻辑：状态既不是 ACCEPTED 也不是 PENDING
+      completedTasks.value = tasks.filter(t => t.status !== 'ACCEPTED' && t.status !== 'PENDING')
+    }
+  } catch (error) {
+    ElMessage.error('加载已完成任务失败')
+  }
+}
+
+
 
 // Load pending and accepted review tasks
 const loadReviewTasks = async () => {
   loading.value = true
   try {
     const response = await axios.get('/api/api/reviewers/tasks')
-    if (response.data.code === 200) {
-      const tasks = response.data.data || []
+    if (response.code === 200) {
+      const tasks = response.data || []
       pendingTasks.value = tasks.filter(t => t.status === 'PENDING')
       acceptedTasks.value = tasks.filter(t => t.status === 'ACCEPTED')
     }
