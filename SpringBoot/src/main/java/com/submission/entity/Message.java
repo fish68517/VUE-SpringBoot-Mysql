@@ -22,4 +22,18 @@ public class Message {
     private String type; // NOTIFICATION, COMMUNICATION
     private Boolean isRead;
     private LocalDateTime createdAt;
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "id=" + id +
+                ", senderId=" + senderId +
+                ", recipientId=" + recipientId +
+                ", manuscriptId=" + manuscriptId +
+                ", content='" + content + '\'' +
+                ", type='" + type + '\'' +
+                ", isRead=" + isRead +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }

@@ -56,7 +56,7 @@
         <div class="file-section">
           <div v-if="form.currentFilePath" class="current-file">
             <span>当前文件: </span>
-            <el-link type="primary" :href="`/image/${form.currentFilePath}`" target="_blank">
+            <el-link type="primary" :href="`${baseUrl}/image/${form.currentFilePath}`" target="_blank">
               下载
             </el-link>
             <el-button link type="danger" size="small" @click="removeCurrentFile">
@@ -65,6 +65,7 @@
           </div>
           <el-upload
             ref="uploadRef"
+            v-model:file-list="fileList"
             :auto-upload="false"
             :limit="1"
             accept=".pdf,.doc,.docx,.jpg,.png,.gif"
@@ -75,11 +76,12 @@
               <div class="el-upload__text">
                 拖拽文件到此或 <em>点击上传</em>
               </div>
-              <template #tip>
-                <div class="el-upload__tip">
-                  支持 pdf, doc, docx, jpg, png, gif 格式，单个文件不超过 10MB
-                </div>
-              </template>
+            </template>
+            
+            <template #tip>
+              <div class="el-upload__tip">
+                支持 pdf, doc, docx, jpg, png, gif 格式，单个文件不超过 10MB
+              </div>
             </template>
           </el-upload>
         </div>
@@ -102,6 +104,11 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { manuscriptService } from '@/services/manuscriptService'
+// 1. 新增这一行：用于双向绑定保存选中的文件列表
+const fileList = ref([])
+
+// 新增这一行，获取后端的 Base URL
+const baseUrl = import.meta.env.VITE_API_BASE_URL || ''
 
 const router = useRouter()
 const route = useRoute()
@@ -190,9 +197,14 @@ const submitForm = async (formInstance) => {
         formData.append('abstractText', form.value.abstractText)
         formData.append('content', form.value.content)
 
-        // Add file if selected
-        if (uploadRef.value && uploadRef.value.uploadFiles.length > 0) {
-          formData.append('file', uploadRef.value.uploadFiles[0].raw)
+        // 修改前：
+        // if (uploadRef.value && uploadRef.value.uploadFiles.length > 0) {
+        //   formData.append('file', uploadRef.value.uploadFiles[0].raw)
+        // }
+
+        // 修改后：直接从 fileList 获取
+        if (fileList.value.length > 0) {
+          formData.append('file', fileList.value[0].raw)
         }
 
         const manuscriptId = route.params.id
@@ -212,7 +224,11 @@ const submitForm = async (formInstance) => {
 
 const resetForm = (formInstance) => {
   if (!formInstance) return
-  loadManuscript()
+  formInstance.resetFields()
+  
+  // 修改后：手动清空绑定的文件数组
+  fileList.value = [] 
+  
   if (uploadRef.value) {
     uploadRef.value.clearFiles()
   }

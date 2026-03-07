@@ -36,6 +36,8 @@ public class ManuscriptController {
             HttpSession session) {
         try {
             Long authorId = (Long) session.getAttribute("userId");
+            // 将 authorId 通过静态变量存储，方便后面使用
+            System.out.println("Author ID: " + authorId);
             if (authorId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ApiResponse.error("User not logged in"));

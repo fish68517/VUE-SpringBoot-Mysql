@@ -40,6 +40,11 @@ public class ManuscriptService {
         if (file != null && !file.isEmpty()) {
             filePath = FileUploadUtil.uploadFile(file);
         }
+        // 判断 filePath 是否包括 image\638cf433-9375-4c26-8192-fe390d35bbbb.pdf 去掉 image\
+        if (filePath != null && filePath.contains("image\\")) {
+            filePath = filePath.replace("image\\", "");
+        }
+        System.out.println("filePath: " + filePath);
 
         // Create manuscript
         Manuscript manuscript = Manuscript.builder()
@@ -56,7 +61,7 @@ public class ManuscriptService {
         manuscriptMapper.insert(manuscript);
         
         // Send notification to author about successful submission
-        notificationService.sendManuscriptStatusNotification(manuscript.getId(), "DRAFT", "SUBMITTED");
+        notificationService.sendManuscriptStatusNotification(manuscriptDTO.getAuthorId(),manuscript.getId(), "DRAFT", "SUBMITTED");
         
         return manuscript;
     }
@@ -141,6 +146,7 @@ public class ManuscriptService {
         if (manuscript.getFilePath() != null) {
             FileUploadUtil.deleteFile(manuscript.getFilePath());
         }
+
 
         manuscriptMapper.delete(id);
     }

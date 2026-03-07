@@ -36,7 +36,7 @@
             </div>
           </el-descriptions-item>
           <el-descriptions-item label="文件" :span="2" v-if="manuscript.filePath">
-            <el-link type="primary" :href="`/image/${manuscript.filePath}`" target="_blank">
+            <el-link type="primary" :href="`${baseUrl}/image/${manuscript.filePath}`" target="_blank">
               下载文件
             </el-link>
           </el-descriptions-item>
@@ -125,6 +125,9 @@ const loading = ref(false)
 const manuscript = ref(null)
 const initialReview = ref(null)
 const reviews = ref([])
+
+// 新增这一行，获取后端的 Base URL
+const baseUrl = import.meta.env.VITE_API_BASE_URL || ''
 
 const statusMap = {
   'DRAFT': '草稿',

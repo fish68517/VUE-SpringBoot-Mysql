@@ -52,7 +52,7 @@ public class NotificationService {
     /**
      * Send manuscript status change notification
      */
-    public void sendManuscriptStatusNotification(Long manuscriptId, String oldStatus, String newStatus) {
+    public void sendManuscriptStatusNotification(Long authorId,Long manuscriptId, String oldStatus, String newStatus) {
         Manuscript manuscript = manuscriptMapper.findById(manuscriptId);
         if (manuscript == null) {
             throw new RuntimeException("Manuscript not found");
@@ -78,7 +78,7 @@ public class NotificationService {
         }
 
         // Send notification from system to author
-        sendNotification(0L, author.getId(), content, "NOTIFICATION", manuscriptId);
+        sendNotification(authorId, author.getId(), content, "NOTIFICATION", manuscriptId);
     }
 
     /**

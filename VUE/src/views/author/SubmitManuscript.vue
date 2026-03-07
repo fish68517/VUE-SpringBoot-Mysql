@@ -53,22 +53,24 @@
 
       <el-form-item label="上传文件" prop="file">
         <el-upload
-          ref="uploadRef"
-          :auto-upload="false"
-          :limit="1"
-          accept=".pdf,.doc,.docx,.jpg,.png,.gif"
-          drag
-        >
+            ref="uploadRef"
+            v-model:file-list="fileList" 
+            :auto-upload="false"
+            :limit="1"
+            accept=".pdf,.doc,.docx,.jpg,.png,.gif"
+            drag
+          >
           <template #default>
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">
               拖拽文件到此或 <em>点击上传</em>
             </div>
-            <template #tip>
-              <div class="el-upload__tip">
-                支持 pdf, doc, docx, jpg, png, gif 格式，单个文件不超过 10MB
-              </div>
-            </template>
+          </template>
+          
+          <template #tip>
+            <div class="el-upload__tip">
+              支持 pdf, doc, docx, jpg, png, gif 格式，单个文件不超过 10MB
+            </div>
           </template>
         </el-upload>
       </el-form-item>
@@ -90,6 +92,11 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { manuscriptService } from '@/services/manuscriptService'
+
+// 新增引入 categoryService
+import { categoryService } from '@/services/categoryService'
+// 1. 新增这一行：用于双向绑定保存选中的文件列表
+const fileList = ref([])
 
 const router = useRouter()
 const formRef = ref()
@@ -119,14 +126,24 @@ const rules = {
   ]
 }
 
-onMounted(() => {
-  // Load categories - for now using mock data
-  // In real implementation, this would call a category service
-  categories.value = [
-    { id: 1, name: '学术论文' },
-    { id: 2, name: '科普文章' },
-    { id: 3, name: '技术报告' }
-  ]
+// 修改前的代码：
+// onMounted(() => {
+//   categories.value = [
+//     { id: 1, name: '学术论文' }, ...
+//   ]
+// })
+
+// 修改后的代码：
+onMounted(async () => {
+  try {
+    const response = await categoryService.getAllCategories()
+    // 注意：根据你的 api 拦截器配置，这里可能是 response 或者是 response.data
+    // 如果列表没出来，请通过 console.log(response) 查看具体的结构
+    categories.value = response.data || response 
+  } catch (error) {
+    ElMessage.error('获取栏目列表失败')
+    console.error('Failed to fetch categories:', error)
+  }
 })
 
 const submitForm = async (formInstance) => {
@@ -143,8 +160,9 @@ const submitForm = async (formInstance) => {
         formData.append('content', form.value.content)
 
         // Add file if selected
-        if (uploadRef.value && uploadRef.value.uploadFiles.length > 0) {
-          formData.append('file', uploadRef.value.uploadFiles[0].raw)
+        // 修改后：直接从 fileList 获取
+        if (fileList.value.length > 0) {
+          formData.append('file', fileList.value[0].raw)
         }
 
         const response = await manuscriptService.submitManuscript(formData)
@@ -164,6 +182,10 @@ const submitForm = async (formInstance) => {
 const resetForm = (formInstance) => {
   if (!formInstance) return
   formInstance.resetFields()
+  
+  // 修改后：手动清空绑定的文件数组
+  fileList.value = [] 
+  
   if (uploadRef.value) {
     uploadRef.value.clearFiles()
   }

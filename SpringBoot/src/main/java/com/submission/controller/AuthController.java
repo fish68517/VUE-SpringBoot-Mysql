@@ -43,6 +43,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<UserDTO>> login(@RequestBody UserDTO userDTO, HttpSession session) {
         try {
+            System.out.println("Attempting to login with username: " + userDTO.getUsername());
             User user = userService.login(userDTO.getUsername(), userDTO.getPassword());
             
             // Store user information in session
@@ -52,8 +53,10 @@ public class AuthController {
             session.setAttribute("user", user);
             
             UserDTO responseDTO = convertToDTO(user);
+            System.out.println("Login successful: " + responseDTO);
             return ResponseEntity.ok(ApiResponse.success("Login successful", responseDTO));
         } catch (RuntimeException e) {
+            System.out.println("Login failed: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ApiResponse.error(e.getMessage()));
         }

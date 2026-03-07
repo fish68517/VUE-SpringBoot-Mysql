@@ -92,6 +92,8 @@ public class MessageController {
             HttpSession session) {
         try {
             Long senderId = (Long) session.getAttribute("userId");
+            System.out.println("Sender ID: " + senderId);
+            System.out.println("Recipient : " + request);
             if (senderId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ApiResponse.error("User not logged in"));
@@ -166,5 +168,15 @@ public class MessageController {
         private String content;
         private String type; // NOTIFICATION, COMMUNICATION
         private Long manuscriptId;
+
+        @Override
+        public String toString() {
+            return "SendMessageRequest{" +
+                    "recipientId=" + recipientId +
+                    ", content='" + content + '\'' +
+                    ", type='" + type + '\'' +
+                    ", manuscriptId=" + manuscriptId +
+                    '}';
+        }
     }
 }

@@ -32,7 +32,7 @@ public class UserService {
                 .email(userDTO.getEmail())
                 .phone(userDTO.getPhone())
                 .role(userDTO.getRole())
-                .status("PENDING")
+                .status("ACTIVE")
                 .academicAchievements(userDTO.getAcademicAchievements())
                 .workEmail(userDTO.getWorkEmail())
                 .expertiseAreas(userDTO.getExpertiseAreas())
@@ -40,6 +40,7 @@ public class UserService {
                 .build();
 
         userMapper.insert(user);
+
         return user;
     }
 
@@ -58,9 +59,9 @@ public class UserService {
         }
 
         // Check if user is approved
-        if (!"ACTIVE".equals(user.getStatus()) && !"APPROVED".equals(user.getStatus())) {
+/*        if (!"ACTIVE".equals(user.getStatus()) && !"APPROVED".equals(user.getStatus())) {
             throw new RuntimeException("User account is not approved");
-        }
+        }*/
 
         return user;
     }
