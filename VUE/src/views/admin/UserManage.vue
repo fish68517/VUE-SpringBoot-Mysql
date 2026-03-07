@@ -139,10 +139,11 @@ const handleDisableUser = (row) => {
   )
     .then(async () => {
       try {
-        await adminApi.updateUserStatus(row.id, { status: 0 });
+        await adminApi.updateUserStatus(row.id, 0); // 禁用传 0
         ElMessage.success("用户已禁用");
         fetchUserList();
       } catch (error) {
+        console.log(error);
         ElMessage.error("禁用用户失败");
       }
     })
@@ -163,7 +164,7 @@ const handleEnableUser = (row) => {
   )
     .then(async () => {
       try {
-        await adminApi.updateUserStatus(row.id, { status: 1 });
+        await adminApi.updateUserStatus(row.id, 1); // 禁用传 0
         ElMessage.success("用户已启用");
         fetchUserList();
       } catch (error) {

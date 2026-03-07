@@ -28,15 +28,25 @@ export function searchUser(params) {
   return request.get("/admin/user/search", { params });
 }
 
-// 启用/禁用用户
-export function updateUserStatus(userId, data) {
-  return request.put(`/admin/user/${userId}/status`, data);
-}
+
+// 修改后（作为 Query 参数发送）：
+// 假设你的 api 文件叫 src/api/admin.js 或者 user.js
+
+// export function updateUserStatus(id, params) {
+//   // 注意：axios.put 的标准传参顺序是 (url, data, config)
+//   // 因为后端使用 @RequestParam 接收，所以请求体 data 我们传 null
+//   // 第三项 config 里面放 params，这样 axios 会自动把它拼接到 URL 后面变成 ?status=1
+//   return request.put(`/admin/user/${id}/status`, { params });
+// }
 
 // ===== 店铺管理 =====
 // 获取店铺列表
-export function getShopList(params) {
-  return request.get("/admin/shop/list", { params });
+// api.js 中的定义
+export function updateUserStatus(id, status) { // 这里接收到的是数字 0
+  // 手动把 status 包装进 params 对象中
+  return request.put(`/admin/user/${id}/status`, null, { 
+    params: { status: status } // 或者简写为 { params: { status } }
+  }); 
 }
 
 // 审核店铺
