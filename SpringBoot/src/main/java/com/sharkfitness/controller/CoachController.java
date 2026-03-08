@@ -1,6 +1,7 @@
 package com.sharkfitness.controller;
 
 import com.sharkfitness.dto.CoachStudentDTO;
+import com.sharkfitness.entity.CoachCertification;
 import com.sharkfitness.entity.CoachStudent;
 import com.sharkfitness.entity.User;
 import com.sharkfitness.exception.BusinessException;
@@ -126,6 +127,7 @@ public class CoachController {
     public ApiResponse<User> getCoachById(@PathVariable Long coachId) {
         User coach = userRepository.findById(coachId)
                 .orElseThrow(() -> new BusinessException(404, "Coach not found"));
+
         if (!"coach".equals(coach.getRole())) {
             throw new BusinessException(400, "User is not a coach");
         }

@@ -97,7 +97,7 @@
               link
             >
               <el-icon><Warning /></el-icon>
-              审核
+              审核资质
             </el-button>
             
             <el-button
@@ -211,11 +211,14 @@
               </div>
               <div class="cert-body">
                 <p><strong>发证机构：</strong>{{ cert.issuingAuthority || '未知' }}</p>
-                <p v-if="cert.issueDate"><strong>颁发日期：</strong>{{ formatDate(cert.issueDate) }}</p>
+                <p v-if="cert.issueDate"><strong>颁发日期：</strong>{{ cert.issueDate }}</p>
+                <p v-if="cert.expiryDate"><strong>到期日期：</strong>{{ cert.expiryDate }}</p>
+                <p v-if="cert.createdAt"><strong>提交时间：</strong>{{ formatDate(cert.createdAt) }}</p>
+                
                 <div class="cert-image" v-if="cert.imageUrl">
                   <el-image 
-                    :src="cert.imageUrl" 
-                    :preview-src-list="[cert.imageUrl]" 
+                    :src="getFullImageUrl(cert.imageUrl)" 
+                    :preview-src-list="[getFullImageUrl(cert.imageUrl)]" 
                     fit="contain" 
                     class="preview-img"
                   />
@@ -226,16 +229,16 @@
                 <el-button 
                   type="success" 
                   size="small" 
-                  :disabled="cert.status === 'approved'" 
-                  @click="updateCertStatus(cert.id, 'approved')"
+                  :disabled="cert.status === 1" 
+                  @click="updateCertStatus(cert.id, 1)"
                 >
                   通过
                 </el-button>
                 <el-button 
                   type="danger" 
                   size="small" 
-                  :disabled="cert.status === 'rejected'" 
-                  @click="updateCertStatus(cert.id, 'rejected')"
+                  :disabled="cert.status === 2" 
+                  @click="updateCertStatus(cert.id, 2)"
                 >
                   拒绝
                 </el-button>
@@ -260,8 +263,8 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { Search, Edit, Delete, ArrowLeft, Warning } from '@element-plus/icons-vue';
 import { getUsers, updateUser, deleteUser } from '@/api/admin';
-import { getCoachById } from '@/api/coach';
-import request from '@/utils/request'; // 直接引入 request 用于资质状态修改
+import { getCoachCertificationById } from '@/api/coach';
+import request from '@/utils/request';
 import { showSuccess, showError, handleDelete, handleFormSubmit } from '@/utils/feedback';
 
 const router = useRouter();
@@ -372,11 +375,19 @@ const formatDate = (dateString) => {
   const date = new Date(dateString);
   return date.toLocaleDateString('zh-CN', {
     year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
     hour: '2-digit',
     minute: '2-digit'
   });
+};
+
+// 拼接完整的图片URL，解决相对路径无法显示的问题
+const getFullImageUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+  return `${baseUrl}${url}`;
 };
 
 /* --- 编辑用户逻辑 --- */
@@ -457,11 +468,21 @@ const handleAudit = async (row) => {
   coachCertifications.value = [];
   
   try {
-    // 通过 getCoachById 接口拉取教练详细信息和资质数组
-    const res = await getCoachById(row.id);
-    console.log("教练资格：",JSON.stringify(res));
-    // 假设后端返回的数据结构包含 certifications 数组
-    coachCertifications.value = res.certifications || res.data?.certifications || [];
+    const res = await getCoachCertificationById(row.id);
+    // 从后端拿数据。如果接口直接返回的是证书数组 (如你的说明)，这里会兼容处理
+    // 如果返回格式是 { data: { certifications: [...] } }，也能适配
+    console.log(res);
+    let certs = res ||  [];
+    
+    // 如果接口直接返回了一个对象数组，直接赋值
+    if (Array.isArray(res)) {
+        certs = res;
+    } else  {
+        // 如果只返回了单个证书对象
+        certs = [res];
+    }
+    
+    coachCertifications.value = certs;
   } catch (error) {
     showError('获取教练资质信息失败');
   } finally {
@@ -469,34 +490,39 @@ const handleAudit = async (row) => {
   }
 };
 
-// 审核教练资格 (调用后端管理员接口修改 status)
+// 更新状态逻辑 (传递数字: 1为通过, 2为拒绝)
 const updateCertStatus = async (certId, status) => {
   try {
-    // 注意：如果您的后端接口 URL 不同，请修改这里的 url 路径。
-    // 这里假设后端存在一个专用于管理员审批资质的 PUT 接口
+    // 调用后端管理员修改状态接口（请确保此处 URL 和后端接口对应）
     await request({
-      url: `/api/admin/certifications/${certId}/status`,
+      url: `/api/coach/certifications/${certId}/status`,
       method: 'put',
-      data: { status } // 传入 'approved' 或 'rejected'
+      data: { status: status } 
     });
     
-    showSuccess(`资质已${status === 'approved' ? '通过' : '拒绝'}`);
+    showSuccess(`资质已${status === 1 ? '通过' : '拒绝'}`);
     
-    // 刷新弹窗内的数据
+    // 刷新数据
     handleAudit(selectedCoach.value);
   } catch (error) {
     showError('审批操作失败');
   }
 };
 
-// 辅助状态格式化
+// 兼容数字状态判断 (0: 待审核, 1: 已通过, 2: 已拒绝)
 const getCertStatusType = (status) => {
-  const map = { pending: 'warning', approved: 'success', rejected: 'danger' };
+  const map = { 
+    0: 'warning', 1: 'success', 2: 'danger',
+    'pending': 'warning', 'approved': 'success', 'rejected': 'danger' // 兼容旧文本状态
+  };
   return map[status] || 'info';
 };
 
 const formatCertStatus = (status) => {
-  const map = { pending: '待审核', approved: '已通过', rejected: '已拒绝' };
+  const map = { 
+    0: '待审核', 1: '已通过', 2: '已拒绝',
+    'pending': '待审核', 'approved': '已通过', 'rejected': '已拒绝' // 兼容旧文本状态
+  };
   return map[status] || '未知';
 };
 

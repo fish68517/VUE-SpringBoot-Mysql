@@ -26,4 +26,8 @@ public interface CoachCertificationMapper {
 
     @Delete("DELETE FROM coach_certification WHERE id = #{id} AND coach_id = #{coachId}")
     int delete(@Param("id") Long id, @Param("coachId") Long coachId);
+
+    // 新增：仅更新认证状态
+    @Update("UPDATE coach_certification SET status = #{status} WHERE id = #{id}")
+    int updateStatus(@Param("id") Long id, @Param("status") Integer status);
 }

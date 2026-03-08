@@ -3,6 +3,7 @@ package com.sharkfitness.controller;
 import com.sharkfitness.CoachCertificationService;
 import com.sharkfitness.entity.CoachCertification;
 import com.sharkfitness.entity.User;
+import com.sharkfitness.exception.BusinessException;
 import com.sharkfitness.vo.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import java.util.Map; // 如果还没有导入的话，请在文件顶部导入
+
 @RestController
 @RequestMapping("/api/coach/certifications")
 public class CoachCertificationController {
@@ -23,6 +26,26 @@ public class CoachCertificationController {
 
     // 获取项目根路径下的 uploads 目录
     private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
+
+
+
+
+    // ... 其他代码 ...
+
+    /**
+     * 管理员审批：更新教练资质审核状态
+     */
+    @PutMapping("/{certId}/status")
+    public ApiResponse<?> updateCertStatus(@PathVariable Long certId, @RequestBody Map<String, Integer> payload) {
+        Integer status = payload.get("status");
+        if (status == null) {
+            return ApiResponse.error("状态值不能为空");
+        }
+
+        // 调用 Service 更新状态
+        certService.updateCertificationStatus(certId, status);
+        return ApiResponse.success();
+    }
 
     /**
      * 上传证书图片
@@ -80,6 +103,16 @@ public class CoachCertificationController {
     public ApiResponse<List<CoachCertification>> getMyCerts(@RequestAttribute("currentUser") User currentUser) {
         Long userId = currentUser.getId(); // 获取当前登录ID
         return ApiResponse.success(certService.getMyCertifications(userId));
+    }
+
+
+    @GetMapping("/{coachId}")
+    public ApiResponse<CoachCertification> getCoachById(@PathVariable Long coachId) {
+        List<CoachCertification>  coach = certService.getMyCertifications(coachId);
+        if (coach == null || coach.isEmpty()) {
+            return ApiResponse.error("此教练还没有认证信息，需要在数据库添加认证信息");
+        }
+        return ApiResponse.success(coach.get(0));
     }
 
     @PostMapping

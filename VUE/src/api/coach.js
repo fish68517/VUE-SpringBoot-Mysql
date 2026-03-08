@@ -17,6 +17,7 @@ export function getCoaches() {
  * @returns {Promise} Coach profile details
  */
 export function getCoachById(id) {
+  console.log(id);
   return request({
     url: `/api/coaches/${id}`,
     method: 'get'
@@ -30,6 +31,14 @@ export function getCoachById(id) {
 export function getMyStudents() {
   return request({
     url: '/api/coaches/students',
+    method: 'get'
+  });
+}
+
+export function getCoachCertificationById(id) {
+  console.log(id);
+  return request({
+    url: `/api/coach/certifications/${id}`,
     method: 'get'
   });
 }

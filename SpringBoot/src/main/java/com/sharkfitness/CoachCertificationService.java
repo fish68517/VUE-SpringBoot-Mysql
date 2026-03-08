@@ -21,6 +21,11 @@ public class CoachCertificationService {
         certMapper.insert(cert);
     }
 
+    // 新增：更新认证状态
+    public void updateCertificationStatus(Long certId, Integer status) {
+        certMapper.updateStatus(certId, status);
+    }
+
     public void updateCertification(CoachCertification cert) {
         certMapper.update(cert);
     }
