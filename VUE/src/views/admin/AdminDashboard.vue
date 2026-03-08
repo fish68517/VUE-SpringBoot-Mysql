@@ -1,32 +1,13 @@
-没问题！这是 “管理员仪表盘” (Admin Dashboard) 页面的完整汉化版本。
 
-主要修改包括：
-
-界面标题：Admin Dashboard -> 管理员仪表盘, User Distribution -> 用户角色分布 等。
-
-统计指标：Total Users -> 总用户数, Total Coaches -> 总教练数, Pending Moderation -> 待审核内容 等。
-
-图表标签：Regular Users -> 普通用户, Administrators -> 管理员。
-
-表格列名：Avatar -> 头像, Role -> 角色, Registration Date -> 注册时间 等。
-
-系统活动：Total Posts -> 总动态数, Total Check-ins -> 总打卡数 等。
-
-快捷操作：User Management -> 用户管理, Moderation Queue -> 内容审核, Resource Management -> 资源管理。
-
-日期格式：改为中文 年-月-日 格式。
-
-请复制以下代码覆盖：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="admin-dashboard">
-    <h1>管理员仪表盘</h1>
+    <div style="display: flex; align-items: center; margin-bottom: 24px;">
+      <el-button @click="goBack" style="margin-right: 16px;">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
+      <h1 style="margin: 0; color: #303133;">管理员仪表盘</h1>
+    </div>
 
     <!-- 统计卡片 (Statistics Cards) -->
     <div class="stats-grid">
@@ -69,11 +50,11 @@ expand_less
       <el-card class="stat-card">
         <div class="stat-content">
           <el-icon class="stat-icon" :size="40" color="#F56C6C">
-            <Warning />
+            <Document />
           </el-icon>
-          <div class="stat-info">
-            <div class="stat-value">{{ statistics.pendingModeration }}</div>
-            <div class="stat-label">待审核内容</div>
+          <div class="stat-info" >  
+            <div class="stat-value">{{ statistics.totalDynamicPosts }}</div>
+            <div class="stat-label">帖子总数</div>
           </div>
         </div>
       </el-card>
@@ -199,6 +180,10 @@ expand_less
         <el-icon><Document /></el-icon>
         资源管理
       </el-button>
+      <el-button type="success" size="large" @click="goToResourceManagement">
+        <el-icon><Document /></el-icon>
+        教练资格审核
+      </el-button>
     </div>
   </div>
 </template>
@@ -206,11 +191,15 @@ expand_less
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { User, Avatar, Document, Warning } from '@element-plus/icons-vue';
+import { User, Avatar, Document, Warning, ArrowLeft } from '@element-plus/icons-vue';
 import { getStatistics, getUsers } from '@/api/admin';
 import { showError } from '@/utils/feedback';
 
 const router = useRouter();
+
+const goBack = () => {
+  router.back();
+};
 
 const statistics = ref({
   totalUsers: 0,
@@ -324,8 +313,15 @@ onMounted(() => {
   padding: 20px;
 }
 
-h1 {
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 24px;
+}
+
+h1 {
+  margin-bottom: 0;
   color: #303133;
 }
 

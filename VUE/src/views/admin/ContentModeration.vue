@@ -1,7 +1,13 @@
 
 <template>
   <div class="content-moderation">
-    <h1>内容审核</h1>
+    <div style="display: flex; align-items: center; margin-bottom: 24px;">
+      <el-button @click="$router.back()" style="margin-right: 16px;">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
+      <h1 style="margin: 0; color: #303133;">内容审核</h1>
+    </div>
 
     <!-- 筛选栏 (Filter Bar) -->
     <el-card class="filter-card" v-if="false">
@@ -262,6 +268,8 @@ import {
 } from '@element-plus/icons-vue';
 import { getModerationQueue, approveContent, rejectContent } from '@/api/admin';
 
+import {  ArrowLeft } from '@element-plus/icons-vue';
+
 const loading = ref(false);
 const rejecting = ref(false);
 const posts = ref([]);
@@ -280,6 +288,10 @@ const rejectForm = ref({
 });
 
 const moderationHistory = ref([]);
+
+const goBack = () => {
+  router.back();
+};
 
 const fetchPosts = async () => {
   loading.value = true;

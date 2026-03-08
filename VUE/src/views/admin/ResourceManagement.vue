@@ -1,7 +1,13 @@
 
 <template>
   <div class="resource-management">
-    <h1>资源管理</h1>
+        <div style="display: flex; align-items: center; margin-bottom: 24px;">
+      <el-button @click="$router.back()" style="margin-right: 16px;">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
+      <h1 style="margin: 0; color: #303133;">资源管理</h1>
+    </div>
 
     <!-- 操作栏 (Action Bar) -->
     <el-card class="action-card">
@@ -215,6 +221,10 @@ const dialogVisible = ref(false);
 const isEditing = ref(false);
 const formRef = ref(null);
 const fileList = ref([]);
+
+const goBack = () => {
+  router.back();
+};
 
 const form = ref({
   id: null,

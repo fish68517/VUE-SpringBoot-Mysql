@@ -1,34 +1,13 @@
-好的，这是 “用户管理” (User Management) 页面的完整汉化版本。
-
-主要修改包括：
-
-界面标题：User Management -> 用户管理, Search/Filter -> 搜索与筛选 等。
-
-筛选选项：Search by username -> 按用户名搜索, Filter by role -> 按角色筛选, All Roles -> 所有角色 等。
-
-表格列名：Avatar -> 头像, Username -> 用户名, Role -> 角色, Registration Date -> 注册时间, Student/Content Count -> 学员数/内容数 等。
-
-操作按钮：Edit -> 编辑, Delete -> 删除, Search -> 搜索, Save -> 保存, Cancel -> 取消。
-
-编辑弹窗：Gender -> 性别, Introduction -> 简介, Male/Female/Other -> 男/女/其他。
-
-反馈提示：更新成功、删除成功、加载失败等。
-
-日期格式：改为中文 年-月-日 时:分 格式。
-
-请复制以下代码覆盖：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="user-management">
-    <h1>用户管理</h1>
+    <div style="display: flex; align-items: center; margin-bottom: 24px;">
+      <el-button @click="$router.back()" style="margin-right: 16px;">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
+      <h1 style="margin: 0; color: #303133;">用户管理</h1>
+    </div>
 
-    <!-- 搜索与筛选栏 (Search and Filter Bar) -->
     <el-card class="filter-card">
       <div class="filter-bar">
         <el-input
@@ -63,7 +42,6 @@ expand_less
       </div>
     </el-card>
 
-    <!-- 用户列表表格 (Users Table) -->
     <el-card class="table-card">
       <el-table
         v-loading="loading"
@@ -109,8 +87,19 @@ expand_less
           </template>
         </el-table-column>
 
-        <el-table-column label="操作" width="180" fixed="right">
+        <el-table-column label="操作" width="240" fixed="right">
           <template #default="{ row }">
+            <el-button
+              v-if="row.role === 'coach'"
+              type="warning"
+              size="small"
+              @click="handleAudit(row)"
+              link
+            >
+              <el-icon><Warning /></el-icon>
+              审核
+            </el-button>
+            
             <el-button
               type="primary"
               size="small"
@@ -133,12 +122,10 @@ expand_less
         </el-table-column>
       </el-table>
 
-      <!-- 空状态 (Empty State) -->
       <div v-if="!loading && users.length === 0" class="empty-state">
         <el-empty description="未找到用户" />
       </div>
 
-      <!-- 分页 (Pagination) -->
       <div class="pagination-container">
         <el-pagination
           v-model:current-page="currentPage"
@@ -152,7 +139,6 @@ expand_less
       </div>
     </el-card>
 
-    <!-- 编辑用户弹窗 (Edit User Dialog) -->
     <el-dialog
       v-model="editDialogVisible"
       title="编辑用户"
@@ -200,14 +186,85 @@ expand_less
         </el-button>
       </template>
     </el-dialog>
+
+    <el-dialog
+      v-model="auditDialogVisible"
+      title="教练资格审核"
+      width="600px"
+    >
+      <div v-loading="auditLoading" class="audit-container">
+        <div v-if="selectedCoach" class="coach-info">
+          <div class="info-section">
+            <p><strong>用户名：</strong>{{ selectedCoach.username }}</p>
+            <p><strong>简介：</strong>{{ selectedCoach.intro || '暂无简介' }}</p>
+          </div>
+
+          <el-divider>资质审核</el-divider>
+
+          <div v-if="coachCertifications && coachCertifications.length > 0">
+            <el-card v-for="cert in coachCertifications" :key="cert.id" class="cert-card">
+              <div class="cert-header">
+                <span class="cert-name">{{ cert.name || '未命名证书' }}</span>
+                <el-tag :type="getCertStatusType(cert.status)" size="small">
+                  {{ formatCertStatus(cert.status) }}
+                </el-tag>
+              </div>
+              <div class="cert-body">
+                <p><strong>发证机构：</strong>{{ cert.issuingAuthority || '未知' }}</p>
+                <p v-if="cert.issueDate"><strong>颁发日期：</strong>{{ formatDate(cert.issueDate) }}</p>
+                <div class="cert-image" v-if="cert.imageUrl">
+                  <el-image 
+                    :src="cert.imageUrl" 
+                    :preview-src-list="[cert.imageUrl]" 
+                    fit="contain" 
+                    class="preview-img"
+                  />
+                </div>
+              </div>
+              
+              <div class="cert-actions">
+                <el-button 
+                  type="success" 
+                  size="small" 
+                  :disabled="cert.status === 'approved'" 
+                  @click="updateCertStatus(cert.id, 'approved')"
+                >
+                  通过
+                </el-button>
+                <el-button 
+                  type="danger" 
+                  size="small" 
+                  :disabled="cert.status === 'rejected'" 
+                  @click="updateCertStatus(cert.id, 'rejected')"
+                >
+                  拒绝
+                </el-button>
+              </div>
+            </el-card>
+          </div>
+          <div v-else class="empty-certs">
+            <el-empty description="该教练尚未上传资质证明" />
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="auditDialogVisible = false">关闭</el-button>
+      </template>
+    </el-dialog>
+
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { Search, Edit, Delete } from '@element-plus/icons-vue';
+import { useRouter } from 'vue-router';
+import { Search, Edit, Delete, ArrowLeft, Warning } from '@element-plus/icons-vue';
 import { getUsers, updateUser, deleteUser } from '@/api/admin';
-import { showSuccess, showError, handleDelete, handleFormSubmit, showLoading } from '@/utils/feedback';
+import { getCoachById } from '@/api/coach';
+import request from '@/utils/request'; // 直接引入 request 用于资质状态修改
+import { showSuccess, showError, handleDelete, handleFormSubmit } from '@/utils/feedback';
+
+const router = useRouter();
 
 const loading = ref(false);
 const saving = ref(false);
@@ -218,6 +275,7 @@ const pageSize = ref(20);
 const searchQuery = ref('');
 const roleFilter = ref('');
 
+// 编辑相关状态
 const editDialogVisible = ref(false);
 const editFormRef = ref(null);
 const editForm = ref({
@@ -227,6 +285,12 @@ const editForm = ref({
   gender: '',
   intro: ''
 });
+
+// 审核相关状态
+const auditDialogVisible = ref(false);
+const auditLoading = ref(false);
+const selectedCoach = ref(null);
+const coachCertifications = ref([]);
 
 const editRules = {
   intro: [
@@ -256,19 +320,11 @@ const fetchUsers = async () => {
 
     const data = await getUsers(params);
     
-    // Handle both paginated and non-paginated responses
-    if (data.content) {
-      users.value = data.content;
-      total.value = data.totalElements || data.content.length;
-    } else if (Array.isArray(data)) {
-      users.value = data;
-      total.value = data.length;
-    } else {
-      users.value = [];
-      total.value = 0;
-    }
+    // 兼容多种返回结构
+    const list = data.data || data.content || (Array.isArray(data) ? data : []);
+    users.value = list;
+    total.value = data.totalElements || list.length || 0;
   } catch (error) {
-    // Error already handled by request interceptor
     console.error('Failed to load users:', error);
     users.value = [];
     total.value = 0;
@@ -323,6 +379,7 @@ const formatDate = (dateString) => {
   });
 };
 
+/* --- 编辑用户逻辑 --- */
 const handleEdit = (user) => {
   editForm.value = {
     id: user.id,
@@ -357,46 +414,90 @@ const handleSaveEdit = async () => {
       }
     );
   } catch (error) {
-    // Error already handled
+    // 错误已拦截
   } finally {
     saving.value = false;
   }
 };
 
 const resetEditForm = () => {
-  editForm.value = {
-    id: null,
-    username: '',
-    role: '',
-    gender: '',
-    intro: ''
-  };
+  editForm.value = { id: null, username: '', role: '', gender: '', intro: '' };
   if (editFormRef.value) {
     editFormRef.value.clearValidate();
   }
 };
 
+/* --- 删除用户逻辑 --- */
 const handleDeleteUser = async (user) => {
   try {
     await handleDelete(
       async () => {
         await deleteUser(user.id);
-        
-        // Refresh the list
         if (users.value.length === 1 && currentPage.value > 1) {
           currentPage.value--;
         }
         await fetchUsers();
       },
-      `用户 "${user.username}"`, // 删除提示文本
+      `用户 "${user.username}"`, 
       {
         successMessage: '用户删除成功',
         errorMessage: '删除用户失败'
       }
     );
   } catch (error) {
-    // Error already handled
+    // 错误已拦截
   }
+};
+
+/* --- 资格审核逻辑 --- */
+const handleAudit = async (row) => {
+  selectedCoach.value = row;
+  auditDialogVisible.value = true;
+  auditLoading.value = true;
+  coachCertifications.value = [];
+  
+  try {
+    // 通过 getCoachById 接口拉取教练详细信息和资质数组
+    const res = await getCoachById(row.id);
+    console.log("教练资格：",JSON.stringify(res));
+    // 假设后端返回的数据结构包含 certifications 数组
+    coachCertifications.value = res.certifications || res.data?.certifications || [];
+  } catch (error) {
+    showError('获取教练资质信息失败');
+  } finally {
+    auditLoading.value = false;
+  }
+};
+
+// 审核教练资格 (调用后端管理员接口修改 status)
+const updateCertStatus = async (certId, status) => {
+  try {
+    // 注意：如果您的后端接口 URL 不同，请修改这里的 url 路径。
+    // 这里假设后端存在一个专用于管理员审批资质的 PUT 接口
+    await request({
+      url: `/api/admin/certifications/${certId}/status`,
+      method: 'put',
+      data: { status } // 传入 'approved' 或 'rejected'
+    });
+    
+    showSuccess(`资质已${status === 'approved' ? '通过' : '拒绝'}`);
+    
+    // 刷新弹窗内的数据
+    handleAudit(selectedCoach.value);
+  } catch (error) {
+    showError('审批操作失败');
+  }
+};
+
+// 辅助状态格式化
+const getCertStatusType = (status) => {
+  const map = { pending: 'warning', approved: 'success', rejected: 'danger' };
+  return map[status] || 'info';
+};
+
+const formatCertStatus = (status) => {
+  const map = { pending: '待审核', approved: '已通过', rejected: '已拒绝' };
+  return map[status] || '未知';
 };
 
 onMounted(() => {
@@ -405,14 +506,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 样式保持不变 */
 .user-management {
   padding: 20px;
-}
-
-h1 {
-  margin-bottom: 24px;
-  color: #303133;
 }
 
 .filter-card {
@@ -438,6 +533,54 @@ h1 {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+}
+
+/* 审核弹窗样式 */
+.audit-container {
+  min-height: 200px;
+}
+.info-section p {
+  margin: 8px 0;
+  color: #606266;
+}
+.cert-card {
+  margin-bottom: 16px;
+}
+.cert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ebeef5;
+}
+.cert-name {
+  font-weight: bold;
+  font-size: 16px;
+  color: #303133;
+}
+.cert-body p {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #606266;
+}
+.cert-image {
+  margin-top: 12px;
+  text-align: center;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+  padding: 10px;
+}
+.preview-img {
+  max-width: 100%;
+  max-height: 200px;
+}
+.cert-actions {
+  margin-top: 16px;
+  text-align: right;
+}
+.empty-certs {
+  padding: 30px 0;
 }
 
 @media (max-width: 768px) {
