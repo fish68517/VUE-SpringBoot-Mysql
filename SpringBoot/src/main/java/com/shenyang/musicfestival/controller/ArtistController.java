@@ -15,7 +15,7 @@ import java.util.List;
  * Controller for Artist operations
  */
 @RestController
-@RequestMapping("/artists")
+@RequestMapping("/api/artists")
 @RequiredArgsConstructor
 public class ArtistController {
 

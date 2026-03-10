@@ -17,6 +17,9 @@ public interface CartService {
      */
     CartDTO addToCart(Long userId, Long productId, Integer quantity);
 
+    // 新增：修改购物车商品数量
+    CartDTO updateQuantity(Long userId, Long cartItemId, Integer quantity);
+
     /**
      * Get user's cart
      * @param userId user ID

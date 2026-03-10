@@ -1,6 +1,5 @@
 <template>
   <div class="product-list-container">
-    <!-- Filters Section -->
     <div class="filters-section">
       <div class="filter-group">
         <label>分类：</label>
@@ -21,7 +20,6 @@
       </div>
     </div>
 
-    <!-- Products Grid -->
     <div v-if="!loading" class="products-grid">
       <div v-if="filteredProducts.length === 0" class="empty-state">
         <p>暂无商品</p>
@@ -29,7 +27,7 @@
 
       <div v-for="product in filteredProducts" :key="product.id" class="product-card">
         <div class="product-image">
-          <img :src="product.images?.[0] || 'https://via.placeholder.com/200x200'" :alt="product.name" />
+          <img :src="product.images?.[0] ? getImageUrl(product.images[0]) : 'https://via.placeholder.com/200x200'" :alt="product.name" />
           <div v-if="product.stock === 0" class="sold-out-badge">已售罄</div>
         </div>
 
@@ -63,12 +61,10 @@
       </div>
     </div>
 
-    <!-- Loading State -->
     <div v-else class="loading-state">
       <el-skeleton :rows="3" animated />
     </div>
 
-    <!-- Pagination -->
     <div v-if="!loading && totalPages > 1" class="pagination-section">
       <el-pagination
         v-model:current-page="currentPage"
@@ -106,6 +102,14 @@ const filteredProducts = computed(() => {
   }
   return products.value.filter((p) => p.name.toLowerCase().includes(searchKeyword.value.toLowerCase()))
 })
+
+// 新增：图片路径拼接方法
+const getImageUrl = (url: string | undefined) => {
+  console.log('getImageUrl：', url)
+  if (!url) return ''
+  if (url.startsWith('http')) return url
+  return `http://localhost:8080${url.startsWith('/') ? '' : '/'}${url}`
+}
 
 const loadCategories = async () => {
   try {
@@ -158,199 +162,33 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.product-list-container {
-  width: 100%;
-}
-
-.filters-section {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.filter-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.filter-group label {
-  font-weight: bold;
-  color: #333;
-  white-space: nowrap;
-}
-
-.filter-group :deep(.el-select) {
-  width: 150px;
-}
-
-.filter-group :deep(.el-input) {
-  width: 200px;
-}
-
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.product-card {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.product-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-4px);
-}
-
-.product-image {
-  position: relative;
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-  background: #f5f5f5;
-}
-
-.product-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.product-card:hover .product-image img {
-  transform: scale(1.05);
-}
-
-.sold-out-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.product-info {
-  padding: 15px;
-}
-
-.product-name {
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-  margin: 0 0 8px 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.product-description {
-  font-size: 12px;
-  color: #999;
-  margin: 0 0 10px 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  height: 24px;
-}
-
-.product-price {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.current-price {
-  font-size: 16px;
-  font-weight: bold;
-  color: #e74c3c;
-}
-
-.original-price {
-  font-size: 12px;
-  color: #999;
-  text-decoration: line-through;
-}
-
-.product-stock {
-  font-size: 12px;
-  margin-bottom: 10px;
-}
-
-.in-stock {
-  color: #67c23a;
-}
-
-.out-of-stock {
-  color: #f56c6c;
-}
-
-.product-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.product-actions :deep(.el-button) {
-  flex: 1;
-}
-
-.empty-state {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 40px 20px;
-  color: #999;
-}
-
-.loading-state {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.pagination-section {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-  background: white;
-  border-radius: 8px;
-}
-
-@media (max-width: 768px) {
-  .filters-section {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-group {
-    width: 100%;
-  }
-
-  .filter-group :deep(.el-select),
-  .filter-group :deep(.el-input) {
-    width: 100%;
-  }
-
-  .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
-  }
-}
+/* 样式保持不变，略... 如果你需要完整样式可以保留你原来的，没有做任何修改 */
+.product-list-container { width: 100%; }
+.filters-section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+.filter-group { display: flex; align-items: center; gap: 10px; }
+.filter-group label { font-weight: bold; color: #333; white-space: nowrap; }
+.filter-group :deep(.el-select) { width: 150px; }
+.filter-group :deep(.el-input) { width: 200px; }
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.product-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; cursor: pointer; }
+.product-card:hover { box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); transform: translateY(-4px); }
+.product-image { position: relative; width: 100%; height: 200px; overflow: hidden; background: #f5f5f5; }
+.product-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+.product-card:hover .product-image img { transform: scale(1.05); }
+.sold-out-badge { position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+.product-info { padding: 15px; }
+.product-name { font-size: 14px; font-weight: bold; color: #333; margin: 0 0 8px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.product-description { font-size: 12px; color: #999; margin: 0 0 10px 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; height: 24px; }
+.product-price { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.current-price { font-size: 16px; font-weight: bold; color: #e74c3c; }
+.original-price { font-size: 12px; color: #999; text-decoration: line-through; }
+.product-stock { font-size: 12px; margin-bottom: 10px; }
+.in-stock { color: #67c23a; }
+.out-of-stock { color: #f56c6c; }
+.product-actions { display: flex; gap: 8px; }
+.product-actions :deep(.el-button) { flex: 1; }
+.empty-state { grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: #999; }
+.loading-state { background: white; padding: 20px; border-radius: 8px; }
+.pagination-section { display: flex; justify-content: center; padding: 20px; background: white; border-radius: 8px; }
+@media (max-width: 768px) { .filters-section { flex-direction: column; align-items: stretch; } .filter-group { width: 100%; } .filter-group :deep(.el-select), .filter-group :deep(.el-input) { width: 100%; } .products-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; } }
 </style>

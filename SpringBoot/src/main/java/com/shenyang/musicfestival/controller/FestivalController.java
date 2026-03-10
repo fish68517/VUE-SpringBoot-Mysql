@@ -15,7 +15,7 @@ import java.util.List;
  * Controller for Festival operations
  */
 @RestController
-@RequestMapping("/festival")
+@RequestMapping("/api/festival")
 @RequiredArgsConstructor
 public class FestivalController {
 

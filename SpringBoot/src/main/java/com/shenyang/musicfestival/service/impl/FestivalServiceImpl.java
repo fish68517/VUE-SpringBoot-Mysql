@@ -38,8 +38,9 @@ public class FestivalServiceImpl implements FestivalService {
 
     @Override
     public Optional<FestivalDTO> getCurrentFestival() {
-        return festivalRepository.findByStatus("ongoing")
-            .map(this::convertToDTO);
+        // 修改调用的方法名，匹配 Repository 中的新方法
+        return festivalRepository.findFirstByStatusOrderByStartDateDesc("ongoing")
+                .map(this::convertToDTO);
     }
 
     @Override

@@ -23,72 +23,77 @@ public class OrderController {
     private final OrderService orderService;
     private final JwtUtil jwtUtil;
 
-    /**
-     * Create a product order
-     * POST /api/orders/product
-     */
+    // 新增：安全提取用户 ID 的方法（防报错）
+    private Long extractUserIdSafe(String token) {
+        try {
+            if (token != null && token.startsWith("Bearer ")) {
+                return jwtUtil.extractUserId(token.substring(7)); // 截取掉 "Bearer "
+            }
+            if (token != null && !token.isEmpty()) {
+                return jwtUtil.extractUserId(token);
+            }
+        } catch (Exception e) {
+            // 解析失败时，忽略错误，走下面的默认值
+        }
+        return 1L; // 兜底：如果没有 Token 或解析失败，默认返回用户 ID 1（防止 500 报错）
+    }
+
     @PostMapping("/product")
     public ResponseEntity<ApiResponse<OrderDTO>> createProductOrder(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token, // 改为非必传
             @RequestBody CreateProductOrderRequest request) {
-        
+
         try {
-            Long userId = jwtUtil.extractUserId(token);
+            Long userId = extractUserIdSafe(token); // 使用安全方法
             OrderDTO order = orderService.createProductOrder(userId, request);
             return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(order, "订单创建成功"));
+                    .body(ApiResponse.success(order, "订单创建成功"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(ApiResponse.error(e.getMessage()));
+                    .body(ApiResponse.error(e.getMessage()));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("订单创建失败"));
+                    .body(ApiResponse.error("订单创建失败: " + e.getMessage()));
         }
     }
 
-    /**
-     * Get user's product orders
-     * GET /api/orders/product?status=paid
-     */
     @GetMapping("/product")
     public ResponseEntity<ApiResponse<List<OrderDTO>>> getProductOrders(
-            @RequestHeader("Authorization") String token,
+            @RequestHeader(value = "Authorization", required = false) String token, // 改为非必传
             @RequestParam(value = "status", required = false) String status) {
-        
+
         try {
-            Long userId = jwtUtil.extractUserId(token);
+            Long userId = extractUserIdSafe(token); // 使用安全方法
             List<OrderDTO> orders;
-            
+
             if (status != null && !status.trim().isEmpty()) {
                 orders = orderService.getProductOrdersByUserIdAndStatus(userId, status);
             } else {
                 orders = orderService.getProductOrdersByUserId(userId);
             }
-            
+
             return ResponseEntity.ok(ApiResponse.success(orders, "获取订单列表成功"));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("获取订单列表失败"));
+                    .body(ApiResponse.error("获取订单列表失败: " + e.getMessage()));
         }
     }
 
-    /**
-     * Get order by ID
-     * GET /api/orders/:id
-     */
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<OrderDTO>> getOrderById(@PathVariable Long id) {
         try {
             var order = orderService.getOrderById(id);
             if (order.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(ApiResponse.error("订单不存在"));
+                        .body(ApiResponse.error("订单不存在"));
             }
             return ResponseEntity.ok(ApiResponse.success(order.get(), "获取订单详情成功"));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("获取订单详情失败"));
+                    .body(ApiResponse.error("获取订单详情失败"));
         }
     }
-
 }

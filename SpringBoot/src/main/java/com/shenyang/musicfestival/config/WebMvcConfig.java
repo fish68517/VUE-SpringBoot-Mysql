@@ -1,64 +1,42 @@
 package com.shenyang.musicfestival.config;
 
-import com.shenyang.musicfestival.interceptor.JwtAuthenticationInterceptor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.io.File;
+
 /**
- * Web MVC configuration for registering interceptors
+ * 极简版 Web MVC 配置，仅处理跨域
  */
 @Configuration
-@RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private final JwtAuthenticationInterceptor jwtAuthenticationInterceptor;
-
-
-    // 解决办法 1：配置跨域支持 (CORS)
+    // 仅保留跨域支持 (CORS) 即可，前端就能正常请求所有接口了
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")                   // 所有接口
-                .allowedOriginPatterns("*")          // 支持所有来源 (建议开发环境用，生产环境换成具体域名)
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 支持的方法
+                .allowedOriginPatterns("*")          // 支持所有来源
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 支持所有常用方法
                 .allowedHeaders("*")                 // 支持所有头
                 .allowCredentials(true)              // 允许携带 Cookie/凭证
                 .maxAge(3600);                       // 预检请求缓存时间
     }
 
+    // 已完全移除 addInterceptors 方法，不再进行任何 JWT 拦截
+
+    // 新增：配置本地图片文件夹映射，让前端可以直接通过 URL 访问
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtAuthenticationInterceptor)
-            .addPathPatterns("/**")
-            .excludePathPatterns(
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 获取项目根目录
+        String projectPath = System.getProperty("user.dir");
+        // 拼接出本地 image 文件夹的绝对路径 (注意末尾要有斜杠)
+        String imagePath = "file:" + projectPath + File.separator + "images" + File.separator;
 
-                    // 解决办法 2：确保你的登录/注册接口被排除
-                    // 如果你的 Controller 是 @RequestMapping("/api/users")，这里必须放行
-                    "/api/users/login",
-                    "/api/users/register",
-                    "/api/users/**",      // 或者直接放行 /api/users 下的所有接口
+        // 告诉 Spring Boot：当访问 /image/** 时，去本地的 image 文件夹下找资源
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations(imagePath);
 
-                    "/api/admin/**",
-                // Public endpoints that don't require authentication
-                "/auth/**",
-                "/api/festival/info",
-                "/api/festival/schedule",
-                "/artists",
-                "/artists/**",
-                "/weather",
-                "/transport",
-                "/articles",
-                "/articles/**",
-                "/products",
-                "/products/**",
-                "/products/categories",
-                "/swagger-ui.html",
-                "/swagger-ui/**",
-                "/v3/api-docs",
-                "/v3/api-docs/**"
-            );
     }
-
 }

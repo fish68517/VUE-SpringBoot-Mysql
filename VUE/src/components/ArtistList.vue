@@ -12,7 +12,7 @@
         @click="handleArtistClick(artist)"
       >
         <div class="artist-image-wrapper">
-          <img :src="artist.imageUrl" :alt="artist.name" class="artist-image" />
+          <img :src="getImageUrl(artist.imageUrl)" :alt="artist.name" class="artist-image" />
           <div v-if="artist.isLocalBand" class="local-band-badge">沈阳本土乐队</div>
         </div>
         <div class="artist-info">
@@ -46,9 +46,19 @@ const emit = defineEmits<{
 const handleArtistClick = (artist: Artist) => {
   emit('selectArtist', artist)
 }
+
+// 新增：图片路径拼接方法
+const getImageUrl = (url: string) => {
+  if (!url) return ''
+  // 如果已经是完整的 http 链接，直接返回
+  if (url.startsWith('http')) return url
+  // 否则拼接后端地址，确保斜杠不会重复或缺失
+  return `http://localhost:8080${url.startsWith('/') ? '' : '/'}${url}`
+}
 </script>
 
 <style scoped>
+/* 样式保持不变... */
 .artist-list-container {
   margin-bottom: 40px;
 }

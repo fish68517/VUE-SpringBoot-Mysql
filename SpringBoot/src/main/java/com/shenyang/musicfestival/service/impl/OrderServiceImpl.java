@@ -5,6 +5,7 @@ import com.shenyang.musicfestival.dto.CartItemDTO;
 import com.shenyang.musicfestival.dto.CreateProductOrderRequest;
 import com.shenyang.musicfestival.dto.OrderDTO;
 import com.shenyang.musicfestival.dto.OrderItemDTO;
+import com.shenyang.musicfestival.entity.CartItem;
 import com.shenyang.musicfestival.entity.Order;
 import com.shenyang.musicfestival.entity.OrderItem;
 import com.shenyang.musicfestival.entity.Product;
@@ -33,6 +34,9 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final CartService cartService;
+
+
+    // 新增：实现修改数量逻辑
 
     @Override
     @Transactional

@@ -24,9 +24,9 @@
               <span>商品订单 <span class="tab-count">({{ productOrders.length }})</span></span>
             </template>
           </el-tab-pane>
-          <el-tab-pane label="待支付" name="pending">
+          <el-tab-pane label="已支付" name="pending" v-if="false">
             <template #label>
-              <span>待支付 <span class="tab-count">({{ pendingOrders.length }})</span></span>
+              <span>已支付 <span class="tab-count">({{ pendingOrders.length }})</span></span>
             </template>
           </el-tab-pane>
           <el-tab-pane label="已发货" name="shipped">
@@ -313,15 +313,19 @@ const displayedOrders = computed(() => {
   }
 })
 
-// Methods
 const loadOrders = async () => {
   loading.value = true
   try {
-    const response = await orderApi.getProductOrders()
-    if (response.data.code === 200) {
-      orders.value = response.data.data
+    const response: any = await orderApi.getProductOrders()
+    console.log('response', JSON.stringify(response))
+    
+    // 修改这里：直接判断 response.code，不再多加一层 .data
+    if (response.code === 200) {
+      // 订单数据直接就是 response.data
+      orders.value = response.data || []
     } else {
-      ElMessage.error(response.data.message || '加载订单失败')
+      // 错误信息也直接从 response.message 取
+      ElMessage.error(response.message || '加载订单失败')
     }
   } catch (error) {
     ElMessage.error('加载订单失败，请稍后重试')

@@ -49,7 +49,7 @@
         </el-tab-pane>
 
         <!-- 手机号验证码登录 -->
-        <el-tab-pane label="验证码登录" name="sms">
+        <el-tab-pane label="验证码登录" name="sms" v-if="false">
           <el-form
             ref="smsFormRef"
             :model="smsForm"

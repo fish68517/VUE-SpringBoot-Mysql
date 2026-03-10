@@ -11,7 +11,7 @@
 
     <div v-else-if="artist" class="artist-detail-content">
       <div class="artist-detail-image">
-        <img :src="artist.imageUrl" :alt="artist.name" />
+        <img :src="getImageUrl(artist.imageUrl)" :alt="artist.name" />
         <div v-if="artist.isLocalBand" class="local-band-badge">沈阳本土乐队</div>
       </div>
 
@@ -79,6 +79,13 @@ const formatTime = (time: string) => {
   return formatDate(time, 'HH:mm')
 }
 
+// 新增：图片路径拼接方法
+const getImageUrl = (url: string) => {
+  if (!url) return ''
+  if (url.startsWith('http')) return url
+  return `http://localhost:8080${url.startsWith('/') ? '' : '/'}${url}`
+}
+
 const loadArtistDetail = async () => {
   try {
     loading.value = true
@@ -111,6 +118,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变... */
 .artist-detail-container {
   min-height: 100vh;
   background: #f5f5f5;
