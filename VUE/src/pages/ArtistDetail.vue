@@ -33,7 +33,7 @@
 
         <div class="artist-actions">
           <el-button type="primary" size="large" @click="handleBuyTicket">购票</el-button>
-          <el-button size="large" @click="handleFollow">关注</el-button>
+          <el-button size="large" @click="handleFollow" v-if="false">关注</el-button>
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@ const handleBack = () => {
 }
 
 const handleBuyTicket = () => {
-  router.push('/tickets')
+  router.push('/ticket-purchase')
 }
 
 const handleFollow = () => {

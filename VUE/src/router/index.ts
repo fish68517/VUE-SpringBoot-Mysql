@@ -99,6 +99,14 @@ const routes: RouteRecordRaw[] = [
     component: () => import('../pages/Shop.vue'),
     meta: { requiresAuth: true },
   },
+  // ================= 新增：打卡与积分商城路由 =================
+    {
+      path: '/points',
+      name: 'Points',
+      component: () => import('../pages/Points.vue'),
+      meta: { requiresAuth: true } // 需要登录才能访问
+    },
+    // ==========================================================
   {
     path: '/cart',
     name: 'Cart',

@@ -16,6 +16,9 @@ public interface OrderService {
      */
     OrderDTO createProductOrder(Long userId, CreateProductOrderRequest request);
 
+    // 新增：获取用户的所有订单（包含商品和票务）
+    List<OrderDTO> getAllOrdersByUserId(Long userId);
+
     /**
      * Get order by ID
      */

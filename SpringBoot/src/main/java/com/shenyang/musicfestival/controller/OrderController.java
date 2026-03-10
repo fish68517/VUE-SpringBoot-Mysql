@@ -23,6 +23,25 @@ public class OrderController {
     private final OrderService orderService;
     private final JwtUtil jwtUtil;
 
+
+    /**
+     * 新增：获取用户全部订单（含票务和商品）
+     * GET /api/orders/all
+     */
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<OrderDTO>>> getAllOrders(
+            @RequestHeader(value = "Authorization", required = false) String token) {
+        try {
+            Long userId = extractUserIdSafe(token);
+            List<OrderDTO> orders = orderService.getAllOrdersByUserId(userId);
+            return ResponseEntity.ok(ApiResponse.success(orders, "获取全部订单成功"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error("获取订单列表失败: " + e.getMessage()));
+        }
+    }
+
     // 新增：安全提取用户 ID 的方法（防报错）
     private Long extractUserIdSafe(String token) {
         try {

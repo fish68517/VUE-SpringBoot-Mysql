@@ -36,6 +36,18 @@ public class OrderServiceImpl implements OrderService {
     private final CartService cartService;
 
 
+    // 新增：实现获取所有订单的逻辑
+    @Override
+    public List<OrderDTO> getAllOrdersByUserId(Long userId) {
+        // 查出所有订单，然后过滤出当前用户的，并按时间倒序排列，最后转为 DTO
+        return orderRepository.findAll().stream()
+                .filter(order -> order.getUserId().equals(userId))
+                .sorted((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
+                .map(this::convertToDTO) // 复用你现有的 DTO 转换方法
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+
     // 新增：实现修改数量逻辑
 
     @Override

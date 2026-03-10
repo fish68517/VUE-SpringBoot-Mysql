@@ -154,7 +154,8 @@ const handleSubmitBuyers = async (buyers: Array<{ idNumber: string; name: string
 
 const handlePaymentConfirm = () => {
   ElMessage.success('支付成功！')
-  router.push('/my-tickets')
+  // router.push('/my-tickets')
+  router.push('/orders')
 }
 
 const handleBack = () => {

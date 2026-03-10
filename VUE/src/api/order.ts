@@ -45,5 +45,8 @@ export const orderApi = {
     }
     return requestClient.get<ApiResponse<OrderDTO[]>>('/orders/product', { params })
   },
+  // ================= 新增这一行 =================
+  getAllOrders: () => requestClient.get<ApiResponse<OrderDTO[]>>('/orders/all'),
+  // ==============================================
   getOrderById: (id: number) => requestClient.get<ApiResponse<OrderDTO>>(`/orders/${id}`),
 }
