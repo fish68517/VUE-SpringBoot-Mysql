@@ -26,39 +26,34 @@ public class FileController {
         }
 
         try {
-            // 1. 获取项目根目录，并定位到 image 文件夹
+            // 1. 获取项目根目录，并定位到 images/products 文件夹
             String projectPath = System.getProperty("user.dir");
-            File imageDir = new File(projectPath, "image");
+            File imageDir = new File(projectPath, "images/products");
 
-            // 如果 image 文件夹不存在，则自动创建
+            // 如果文件夹不存在，则自动创建
             if (!imageDir.exists()) {
                 imageDir.mkdirs();
             }
 
-            // 2. 获取原始文件名并生成新文件名 (建议用UUID防止同名文件被覆盖)
+            // 2. 获取原始文件名并生成新文件名 (用UUID防止同名文件被覆盖)
             String originalFilename = file.getOriginalFilename();
             String extension = "";
             if (originalFilename != null && originalFilename.contains(".")) {
                 extension = originalFilename.substring(originalFilename.lastIndexOf("."));
             }
-            // 例如：生成 550e8400-e29b-41d4-a716-446655440000.jpg
             String newFileName = UUID.randomUUID().toString() + extension;
-
-            // 如果你坚持想用原名(如 wuyuetian.jpg)，可以把上一行注释掉，换成这行：
-            // String newFileName = originalFilename;
 
             // 3. 将文件保存到硬盘
             File dest = new File(imageDir, newFileName);
             file.transferTo(dest);
 
             // 4. 返回前端可访问的相对路径 URL
-            String imageUrl = "/image/" + newFileName;
-
+            String imageUrl = "/images/products/" + newFileName;
             return ApiResponse.success(imageUrl, "上传成功");
 
         } catch (IOException e) {
             e.printStackTrace();
-            return ApiResponse.error("文件上传失败: " + e.getMessage());
+            return ApiResponse.error("上传图片失败: " + e.getMessage());
         }
     }
 }

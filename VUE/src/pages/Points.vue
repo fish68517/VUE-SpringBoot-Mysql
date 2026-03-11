@@ -41,7 +41,7 @@
           <el-tab-pane label="积分商城" name="mall">
             <div class="mall-grid">
               <div v-for="item in mallItems" :key="item.id" class="mall-card">
-                <div class="mall-image">
+                <div class="mall-image" v-if="false">
                   <img :src="item.image" :alt="item.name" onerror="this.src='https://via.placeholder.com/200x200?text=Gift'" />
                 </div>
                 <div class="mall-info">

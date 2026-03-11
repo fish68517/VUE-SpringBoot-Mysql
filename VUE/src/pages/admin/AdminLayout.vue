@@ -37,10 +37,10 @@
           <span>商品订单</span>
         </el-menu-item>
 
-        <el-menu-item index="/admin/content">
+        <!-- <el-menu-item index="/admin/content">
           <el-icon><Document /></el-icon>
           <span>内容管理</span>
-        </el-menu-item>
+        </el-menu-item> -->
 
         <el-menu-item index="/admin/tasks">
           <el-icon><MapLocation /></el-icon>

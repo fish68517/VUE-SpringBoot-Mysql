@@ -39,4 +39,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .addResourceLocations(imagePath);
 
     }
+
+/*    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 获取当前项目的根目录路径
+        String projectPath = System.getProperty("user.dir");
+
+        // 将 HTTP 请求的 /images/** 映射到本地硬盘的物理文件夹 images/
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("file:" + projectPath + "/images/");
+    }*/
 }

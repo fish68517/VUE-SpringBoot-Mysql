@@ -3,7 +3,7 @@
     <div class="page-header">
       <h2>周边商品管理</h2>
       <div class="header-actions">
-        <el-button @click="openCategoryDialog">分类管理</el-button>
+        <el-button @click="openCategoryDialog" v-if="false">分类管理</el-button>
         <el-button type="primary" @click="openProductDialog()">
           <el-icon><Plus /></el-icon> 发布新商品
         </el-button>
@@ -51,15 +51,12 @@
       <el-table-column label="图片" width="100">
         <template #default="{ row }">
           <el-image 
-            :src="row.images?.[0]" 
-            :preview-src-list="row.images" 
-            fit="cover" 
-            class="table-image"
-          >
-            <template #error>
-              <div class="image-slot"><el-icon><Picture /></el-icon></div>
-            </template>
-          </el-image>
+            style="width: 50px; height: 50px"
+            :src="getFirstImage(row.images)" 
+            :preview-src-list="getPreviewList(row.images)"
+            fit="cover"
+            preview-teleported
+          />
         </template>
       </el-table-column>
       
@@ -134,18 +131,19 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="商品图片">
-          <div class="image-input-list">
-             <div v-for="(img, idx) in productForm.images" :key="idx" class="image-row">
-               <el-input v-model="productForm.images[idx]" placeholder="图片URL">
-                 <template #prepend>图{{ idx + 1 }}</template>
-                 <template #append>
-                   <el-button @click="removeImageRow(idx)"><el-icon><Delete /></el-icon></el-button>
-                 </template>
-               </el-input>
-             </div>
-             <el-button size="small" type="primary" link @click="addImageRow">+ 添加图片地址</el-button>
-          </div>
+        <el-form-item label="商品图片" prop="images">
+          <el-upload
+            class="avatar-uploader"
+            action="#"
+            :http-request="customUpload"
+            :show-file-list="false"
+            :on-success="handleImageSuccess"
+            :before-upload="beforeImageUpload"
+          >
+            <img v-if="uploadImageUrl" :src="getImageUrl(uploadImageUrl)" class="avatar" />
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+          </el-upload>
+          <div class="el-upload__tip" style="margin-left: 10px; color: #999;">只能上传单张图片，大小不超过 2MB</div>
         </el-form-item>
 
         <el-row :gutter="20">
@@ -205,16 +203,46 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus, Search, Picture, Delete } from '@element-plus/icons-vue'
+import { Plus, Search } from '@element-plus/icons-vue'
 import { adminProductApi } from '@/api/adminProduct'
 import { Product, ProductCategory } from '@/api/product'
+import request from '@/api/request'
+
+// 图片前缀处理方法
+const getImageUrl = (url: string) => {
+  if (!url) return ''
+  if (url.startsWith('http')) return url
+  return `http://localhost:8080${url.startsWith('/') ? '' : '/'}${url}`
+}
+
+const getFirstImage = (imagesStr: any) => {
+  if (!imagesStr) return '';
+  try {
+    const imgArray = typeof imagesStr === 'string' ? JSON.parse(imagesStr) : imagesStr;
+    return imgArray.length > 0 ? getImageUrl(imgArray[0]) : '';
+  } catch (e) {
+    return getImageUrl(imagesStr);
+  }
+}
+
+const getPreviewList = (imagesStr: any) => {
+  if (!imagesStr) return [];
+  try {
+    const imgArray = typeof imagesStr === 'string' ? JSON.parse(imagesStr) : imagesStr;
+    return imgArray.map((img: string) => getImageUrl(img));
+  } catch (e) {
+    return [getImageUrl(imagesStr)];
+  }
+}
 
 // --- 状态定义 ---
 const loading = ref(false)
 const submitting = ref(false)
-
 const products = ref<(Product & { statusLoading?: boolean })[]>([])
 const categories = ref<ProductCategory[]>([])
+const isEdit = ref(false)
+const newCategoryName = ref('')
+const uploadImageUrl = ref('') // 存储当前上传好的图片路径
 
 const filter = reactive({
   categoryId: undefined as number | undefined,
@@ -232,27 +260,21 @@ const dialog = reactive({
   category: false
 })
 
-const isEdit = ref(false)
-const newCategoryName = ref('')
-
-// 表单对象
+// 表单对象 (去掉了 images 数组，由 uploadImageUrl 替代，提交时组装)
 const productForm = reactive({
   id: undefined as number | undefined,
   name: '',
   categoryId: undefined as number | undefined,
-  images: [''] as string[],
   currentPrice: 0,
   originalPrice: 0,
   stock: 0,
   description: '',
-  specsJson: '', // 临时存储 JSON 字符串
+  specsJson: '',
   isActive: true
 })
 
 // --- 计算属性 ---
 const lowStockCount = computed(() => {
-  // 注意：这里仅统计当前页，如果要统计所有需要后端接口支持返回统计数据
-  // 此处演示前端统计当前页的逻辑，或者假设后端返回了 extra stat
   return products.value.filter(p => p.stock < 10).length
 })
 
@@ -263,8 +285,6 @@ onMounted(() => {
 })
 
 // --- 核心方法 ---
-
-// 1. 加载分类
 const loadCategories = async () => {
   try {
     const res: any = await adminProductApi.getCategories()
@@ -278,7 +298,6 @@ const getCategoryName = (id: number) => {
   return categories.value.find(c => c.id === id)?.name || '未知分类'
 }
 
-// 2. 加载商品
 const loadProducts = async () => {
   loading.value = true
   try {
@@ -309,47 +328,101 @@ const handleFilterChange = () => {
   loadProducts()
 }
 
-// 3. 商品增删改
-const openProductDialog = (row?: Product) => {
+// --- 图片上传相关 ---
+// --- 图片上传相关 ---
+const customUpload = async (options: any) => {
+  try {
+    const formData = new FormData()
+    
+    // 【关键修复 1】：确保拿到的是真正的原生 File 对象，而不是组件的包装对象
+    const realFile = options.file.raw || options.file
+    formData.append('file', realFile) 
+    
+    // 【关键修复 2】：使用你项目全局的 request 实例，且千万不要手动加 headers！
+    // 只要你传的是 FormData 对象，Axios 会自动识别，并帮你加上带有正确 boundary 的 Content-Type，同时注入 Token
+    const res: any = await request.post('/upload/image', formData)
+    
+    if (res.code === 200) {
+      options.onSuccess(res)
+    } else {
+      options.onError(new Error(res.message || '上传失败'))
+    }
+  } catch (error) {
+    options.onError(error)
+  }
+}
+
+const handleImageSuccess = (res: any) => {
+  uploadImageUrl.value = res.data
+  ElMessage.success('图片上传成功')
+}
+
+const beforeImageUpload = (file: any) => {
+  const isImage = file.type.startsWith('image/')
+  const isLt2M = file.size / 1024 / 1024 < 2
+  if (!isImage) ElMessage.error('只能上传图片格式的文件!')
+  if (!isLt2M) ElMessage.error('图片大小不能超过 2MB!')
+  return isImage && isLt2M
+}
+
+// --- 弹窗与提交 ---
+
+// 修复点 1：正确使用变量，正确回显表单和图片
+const openProductDialog = (row?: any) => {
+  isEdit.value = !!row
   if (row) {
-    isEdit.value = true
+    // 赋值给 reactive 对象
     productForm.id = row.id
     productForm.name = row.name
     productForm.categoryId = row.categoryId
-    productForm.images = row.images && row.images.length > 0 ? [...row.images] : ['']
     productForm.currentPrice = row.currentPrice
     productForm.originalPrice = row.originalPrice
     productForm.stock = row.stock
     productForm.description = row.description
-    productForm.specsJson = JSON.stringify(row.specs || {})
+    productForm.specsJson = row.specs && Object.keys(row.specs).length > 0 ? JSON.stringify(row.specs) : ''
     productForm.isActive = row.isActive
+    
+    // 解析图片供预览显示
+    uploadImageUrl.value = ''
+    if (row.images) {
+      try {
+        const imgArray = typeof row.images === 'string' ? JSON.parse(row.images) : row.images
+        if (imgArray && imgArray.length > 0) {
+          uploadImageUrl.value = imgArray[0]
+        }
+      } catch (e) {
+        uploadImageUrl.value = row.images 
+      }
+    }
   } else {
-    isEdit.value = false
     resetProductForm()
   }
+  
+  // 打开弹窗
   dialog.product = true
 }
 
+// 修复点 2：弹窗关闭时彻底重置数据
 const resetProductForm = () => {
   productForm.id = undefined
   productForm.name = ''
   productForm.categoryId = undefined
-  productForm.images = ['']
   productForm.currentPrice = 0
   productForm.originalPrice = 0
   productForm.stock = 0
   productForm.description = ''
   productForm.specsJson = ''
   productForm.isActive = true
+  uploadImageUrl.value = ''
 }
 
+// 修复点 3：提交时将单张图片转为后端需要的 JSON 数组字符串
 const submitProduct = async () => {
   if (!productForm.name || !productForm.categoryId) {
-    ElMessage.warning('请填写必填项')
+    ElMessage.warning('请填写必填项(商品名称和分类)')
     return
   }
 
-  // 验证 JSON
   let specsObj = {}
   if (productForm.specsJson) {
     try {
@@ -362,15 +435,17 @@ const submitProduct = async () => {
 
   submitting.value = true
   try {
+    // 直接组装 payload，兼容后端 images 字段需要的 JSON 格式
     const payload: Partial<Product> = {
       name: productForm.name,
       categoryId: productForm.categoryId,
-      images: productForm.images.filter(i => !!i), // 过滤空串
+      images: JSON.stringify(uploadImageUrl.value ? [uploadImageUrl.value] : []),
       currentPrice: productForm.currentPrice,
       originalPrice: productForm.originalPrice,
       stock: productForm.stock,
       description: productForm.description,
-      specs: specsObj,
+      // 【关键修复】：将对象转成 JSON 字符串发给后端
+      specs: JSON.stringify(specsObj), 
       isActive: productForm.isActive
     }
 
@@ -400,29 +475,20 @@ const handleDelete = (row: Product) => {
     .catch(() => {})
 }
 
-// 4. 上下架切换
 const handleStatusChange = async (row: Product & { statusLoading?: boolean }, isActive: boolean) => {
   row.statusLoading = true
   try {
     await adminProductApi.updateStatus(row.id, isActive)
     ElMessage.success(isActive ? '已上架' : '已下架')
   } catch (e) {
-    row.isActive = !isActive // 恢复状态
+    row.isActive = !isActive 
     ElMessage.error('状态更新失败')
   } finally {
     row.statusLoading = false
   }
 }
 
-// 5. 图片行操作
-const addImageRow = () => {
-  productForm.images.push('')
-}
-const removeImageRow = (idx: number) => {
-  productForm.images.splice(idx, 1)
-}
-
-// 6. 分类管理逻辑
+// --- 分类管理 ---
 const openCategoryDialog = () => {
   dialog.category = true
 }
@@ -518,12 +584,37 @@ const deleteCategory = (row: ProductCategory) => {
   justify-content: flex-end;
 }
 
-/* 图片输入列表样式 */
-.image-input-list .image-row {
-  margin-bottom: 8px;
-}
-
 .category-add-row {
   display: flex;
+}
+
+/* 图片上传框样式 */
+.avatar-uploader :deep(.el-upload) {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.avatar-uploader :deep(.el-upload:hover) {
+  border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 120px;
+  height: 120px;
+  text-align: center;
+  line-height: 120px;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  display: block;
+  object-fit: cover;
 }
 </style>

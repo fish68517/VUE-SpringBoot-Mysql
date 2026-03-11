@@ -45,12 +45,12 @@
         
         <el-table-column label="收货人信息" width="220">
           <template #default="{ row }">
-            <div><el-icon><User /></el-icon> {{ row.userPhone }}</div>
-            <div class="address-text"><el-icon><Location /></el-icon> {{ row.address }}</div>
+            <div><el-icon><User /></el-icon> {{ row.buyerPhone }}</div>
+            <div class="address-text"><el-icon><Location /></el-icon> {{ row.shippingAddress }}</div>
           </template>
         </el-table-column>
 
-        <el-table-column label="商品明细">
+        <el-table-column label="商品明细" v-if="false">
           <template #default="{ row }">
             <div v-for="(item, index) in row.items" :key="index" class="order-item-row">
               <span class="item-name">{{ item.productName }}</span>

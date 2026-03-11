@@ -11,7 +11,7 @@
  Target Server Version : 80036 (8.0.36)
  File Encoding         : 65001
 
- Date: 26/02/2026 14:22:09
+ Date: 11/03/2026 10:52:39
 */
 
 SET NAMES utf8mb4;
@@ -35,7 +35,7 @@ CREATE TABLE `article_comments`  (
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `article_comments_ibfk_1` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `article_comments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章评论表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '文章评论表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of article_comments
@@ -96,18 +96,41 @@ CREATE TABLE `artists`  (
 -- ----------------------------
 -- Records of artists
 -- ----------------------------
-INSERT INTO `artists` VALUES (1, '五月天', '台湾摇滚乐队，中文摇滚的代表', NULL, 0, '2025-12-04 19:02:58', '2025-12-04 19:02:58');
-INSERT INTO `artists` VALUES (2, 'Coldplay', '英国摇滚乐队，全球知名', NULL, 0, '2025-12-04 19:02:58', '2025-12-04 19:02:58');
-INSERT INTO `artists` VALUES (3, '二手玫瑰', '中国摇滚乐队，沈阳本土乐队', NULL, 1, '2025-12-04 19:02:58', '2025-12-04 19:02:58');
-INSERT INTO `artists` VALUES (4, '谢天笑', '中国摇滚歌手，沈阳本土艺人', NULL, 1, '2025-12-04 19:02:58', '2025-12-04 19:02:58');
-INSERT INTO `artists` VALUES (5, 'Mayday', '台湾摇滚乐队', NULL, 0, '2025-12-04 19:02:58', '2025-12-04 19:02:58');
-INSERT INTO `artists` VALUES (6, 'The Neighbourhood', '美国独立摇滚乐队', NULL, 0, '2025-12-04 19:02:58', '2025-12-04 19:02:58');
-INSERT INTO `artists` VALUES (7, '五月天', '台湾摇滚乐队，中文摇滚的代表', NULL, 0, '2025-12-04 19:56:08', '2025-12-04 19:56:08');
-INSERT INTO `artists` VALUES (8, 'Coldplay', '英国摇滚乐队，全球知名', NULL, 0, '2025-12-04 19:56:08', '2025-12-04 19:56:08');
-INSERT INTO `artists` VALUES (9, '二手玫瑰', '中国摇滚乐队，沈阳本土乐队', NULL, 1, '2025-12-04 19:56:08', '2025-12-04 19:56:08');
-INSERT INTO `artists` VALUES (10, '谢天笑', '中国摇滚歌手，沈阳本土艺人', NULL, 1, '2025-12-04 19:56:08', '2025-12-04 19:56:08');
-INSERT INTO `artists` VALUES (11, 'Mayday', '台湾摇滚乐队', NULL, 0, '2025-12-04 19:56:08', '2025-12-04 19:56:08');
-INSERT INTO `artists` VALUES (12, 'The Neighbourhood', '美国独立摇滚乐队', NULL, 0, '2025-12-04 19:56:08', '2025-12-04 19:56:08');
+INSERT INTO `artists` VALUES (1, '五月天', '台湾摇滚乐队，中文摇滚的代表', 'images/wuyuetian.jpg', 0, '2025-12-04 19:02:58', '2026-03-10 09:08:17');
+INSERT INTO `artists` VALUES (2, 'Coldplay', '英国摇滚乐队，全球知名', 'images/wuyuetian.jpg', 0, '2025-12-04 19:02:58', '2026-03-10 09:08:21');
+INSERT INTO `artists` VALUES (3, '二手玫瑰', '中国摇滚乐队，沈阳本土乐队', 'images/wuyuetian.jpg', 1, '2025-12-04 19:02:58', '2026-03-10 09:08:23');
+INSERT INTO `artists` VALUES (4, '谢天笑', '中国摇滚歌手，沈阳本土艺人', 'images/wuyuetian.jpg', 1, '2025-12-04 19:02:58', '2026-03-10 09:08:25');
+INSERT INTO `artists` VALUES (5, 'Mayday', '台湾摇滚乐队', 'images/wuyuetian.jpg', 0, '2025-12-04 19:02:58', '2026-03-10 09:08:27');
+INSERT INTO `artists` VALUES (6, 'The Neighbourhood', '美国独立摇滚乐队', 'images/wuyuetian.jpg', 0, '2025-12-04 19:02:58', '2026-03-10 09:08:30');
+INSERT INTO `artists` VALUES (7, '五月天', '台湾摇滚乐队，中文摇滚的代表', 'images/wuyuetian.jpg', 0, '2025-12-04 19:56:08', '2026-03-10 09:08:31');
+INSERT INTO `artists` VALUES (8, 'Coldplay', '英国摇滚乐队，全球知名', 'images/wuyuetian.jpg', 0, '2025-12-04 19:56:08', '2026-03-10 09:08:33');
+INSERT INTO `artists` VALUES (9, '二手玫瑰', '中国摇滚乐队，沈阳本土乐队', 'images/wuyuetian.jpg', 1, '2025-12-04 19:56:08', '2026-03-10 09:08:34');
+INSERT INTO `artists` VALUES (10, '谢天笑', '中国摇滚歌手，沈阳本土艺人', 'images/wuyuetian.jpg', 1, '2025-12-04 19:56:08', '2026-03-10 09:08:36');
+INSERT INTO `artists` VALUES (11, 'Mayday', '台湾摇滚乐队', 'images/wuyuetian.jpg', 0, '2025-12-04 19:56:08', '2026-03-10 09:08:37');
+INSERT INTO `artists` VALUES (12, 'The Neighbourhood', '美国独立摇滚乐队', 'images/wuyuetian.jpg', 0, '2025-12-04 19:56:08', '2026-03-10 09:08:41');
+
+-- ----------------------------
+-- Table structure for cart_items
+-- ----------------------------
+DROP TABLE IF EXISTS `cart_items`;
+CREATE TABLE `cart_items`  (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '购物车项ID',
+  `user_id` bigint NOT NULL COMMENT '用户ID',
+  `product_id` bigint NOT NULL COMMENT '商品ID',
+  `quantity` int NOT NULL COMMENT '数量',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE INDEX `uk_user_product`(`user_id` ASC, `product_id` ASC) USING BTREE,
+  INDEX `product_id`(`product_id` ASC) USING BTREE,
+  INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
+  CONSTRAINT `cart_items_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `cart_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '购物车项表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of cart_items
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for checkin_records
@@ -132,11 +155,14 @@ CREATE TABLE `checkin_records`  (
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `checkin_records_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `checkin_records_ibfk_2` FOREIGN KEY (`task_id`) REFERENCES `checkin_tasks` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '打卡记录表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '打卡记录表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of checkin_records
 -- ----------------------------
+INSERT INTO `checkin_records` VALUES (2, 1, 1, 'demo_photo.jpg', 0.00000000, 0.00000000, 'approved', NULL, '2026-03-10 23:17:42', '2026-03-10 23:17:42');
+INSERT INTO `checkin_records` VALUES (3, 1, 2, 'demo_photo.jpg', 0.00000000, 0.00000000, 'approved', NULL, '2026-03-11 02:44:49', '2026-03-11 02:44:49');
+INSERT INTO `checkin_records` VALUES (4, 1, 11, 'demo_photo.jpg', 0.00000000, 0.00000000, 'approved', NULL, '2026-03-11 02:45:01', '2026-03-11 02:45:01');
 
 -- ----------------------------
 -- Table structure for checkin_tasks
@@ -160,21 +186,22 @@ CREATE TABLE `checkin_tasks`  (
   INDEX `idx_status`(`status` ASC) USING BTREE,
   INDEX `idx_start_time`(`start_time` ASC) USING BTREE,
   INDEX `idx_end_time`(`end_time` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '打卡任务表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '打卡任务表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of checkin_tasks
 -- ----------------------------
 INSERT INTO `checkin_tasks` VALUES (1, '盛京皇宫打卡', '在沈阳盛京皇宫完成打卡，感受满族文化', NULL, 50, 41.80440000, 123.43280000, 500, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `checkin_tasks` VALUES (2, '中街美食街打卡', '在沈阳中街美食街品尝地方美食并打卡', NULL, 40, 41.80500000, 123.43500000, 300, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `checkin_tasks` VALUES (3, '奥体中心打卡', '在音乐节举办地奥体中心打卡', NULL, 100, 41.79500000, 123.42000000, 1000, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `checkin_tasks` VALUES (4, '沈阳故宫打卡', '在沈阳故宫完成打卡，了解沈阳历史', NULL, 50, 41.81000000, 123.44000000, 400, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `checkin_tasks` VALUES (5, '北陵公园打卡', '在北陵公园完成打卡，享受自然风光', NULL, 30, 41.82000000, 123.45000000, 600, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `checkin_tasks` VALUES (6, '盛京皇宫打卡', '在沈阳盛京皇宫完成打卡，感受满族文化', NULL, 50, 41.80440000, 123.43280000, 500, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:56:09', '2025-12-04 19:56:09');
-INSERT INTO `checkin_tasks` VALUES (7, '中街美食街打卡', '在沈阳中街美食街品尝地方美食并打卡', NULL, 40, 41.80500000, 123.43500000, 300, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:56:09', '2025-12-04 19:56:09');
+INSERT INTO `checkin_tasks` VALUES (6, '盛京皇宫打卡盛京皇宫打卡', '在沈阳盛京皇宫完成打卡，感受满族文化盛京皇宫打卡盛京皇宫打卡', '', 50, 41.80440000, 123.43280000, 500, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:56:09', '2026-03-11 02:22:21');
 INSERT INTO `checkin_tasks` VALUES (8, '奥体中心打卡', '在音乐节举办地奥体中心打卡', NULL, 100, 41.79500000, 123.42000000, 1000, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:56:09', '2025-12-04 19:56:09');
 INSERT INTO `checkin_tasks` VALUES (9, '沈阳故宫打卡', '在沈阳故宫完成打卡，了解沈阳历史', NULL, 50, 41.81000000, 123.44000000, 400, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:56:09', '2025-12-04 19:56:09');
 INSERT INTO `checkin_tasks` VALUES (10, '北陵公园打卡', '在北陵公园完成打卡，享受自然风光', NULL, 30, 41.82000000, 123.45000000, 600, '2024-12-15 00:00:00', '2024-12-17 23:59:59', 'ongoing', '2025-12-04 19:56:09', '2025-12-04 19:56:09');
+INSERT INTO `checkin_tasks` VALUES (11, '哈尔滨工业大学打卡', '哈尔滨工业大学打卡哈尔滨工', '', 50, 41.80440000, 123.43280000, 500, '2026-03-24 16:00:00', '2026-04-23 16:00:00', 'ongoing', '2026-03-11 02:25:39', '2026-03-11 02:27:45');
+INSERT INTO `checkin_tasks` VALUES (12, '哈尔滨工程大学0', '哈尔滨工程大学哈尔滨工程大学', '', 50, 41.80440000, 123.43280000, 500, '2026-03-05 16:00:00', '2026-04-15 16:00:00', 'ongoing', '2026-03-11 02:28:06', '2026-03-11 02:32:43');
+INSERT INTO `checkin_tasks` VALUES (13, '000', '000', '', 50, 41.80440000, 123.43280000, 500, '2026-02-24 16:00:00', '2026-03-03 16:00:00', 'ongoing', '2026-03-11 02:32:55', '2026-03-11 02:32:55');
 
 -- ----------------------------
 -- Table structure for festival_follows
@@ -192,7 +219,7 @@ CREATE TABLE `festival_follows`  (
   INDEX `idx_festival_id`(`festival_id` ASC) USING BTREE,
   CONSTRAINT `festival_follows_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `festival_follows_ibfk_2` FOREIGN KEY (`festival_id`) REFERENCES `festivals` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '音乐节关注表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '音乐节关注表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of festival_follows
@@ -221,8 +248,8 @@ CREATE TABLE `festivals`  (
 -- ----------------------------
 -- Records of festivals
 -- ----------------------------
-INSERT INTO `festivals` VALUES (1, '2024沈阳音乐节', '沈阳首届大型音乐节，汇聚国内外知名艺人，融合沈阳本地文化元素', '2024-12-15 18:00:00', '2024-12-17 23:00:00', '沈阳奥体中心', NULL, 'ongoing', '2025-12-04 19:02:58', '2025-12-04 19:02:58');
-INSERT INTO `festivals` VALUES (2, '2024沈阳音乐节', '沈阳首届大型音乐节，汇聚国内外知名艺人，融合沈阳本地文化元素', '2024-12-15 18:00:00', '2024-12-17 23:00:00', '沈阳奥体中心', NULL, 'ongoing', '2025-12-04 19:56:07', '2025-12-04 19:56:07');
+INSERT INTO `festivals` VALUES (1, '2024沈阳音乐节', '沈阳首届大型音乐节，汇聚国内外知名艺人，融合沈阳本地文化元素', '2026-03-11 18:00:00', '2026-06-01 23:00:00', '沈阳奥体中心', NULL, 'ongoing', '2025-12-04 19:02:58', '2026-03-11 06:54:17');
+INSERT INTO `festivals` VALUES (2, '2024沈阳音乐节', '沈阳首届大型音乐节，汇聚国内外知名艺人，融合沈阳本地文化元素', '2026-03-11 18:00:00', '2026-09-01 23:00:00', '沈阳奥体中心', NULL, 'ongoing', '2025-12-04 19:56:07', '2026-03-11 06:54:31');
 
 -- ----------------------------
 -- Table structure for order_items
@@ -235,16 +262,19 @@ CREATE TABLE `order_items`  (
   `quantity` int NOT NULL COMMENT '数量',
   `unit_price` decimal(10, 2) NOT NULL COMMENT '单价',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_order_id`(`order_id` ASC) USING BTREE,
   INDEX `idx_product_id`(`product_id` ASC) USING BTREE,
   CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '订单项表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '订单项表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of order_items
 -- ----------------------------
+INSERT INTO `order_items` VALUES (1, 2, 15, 3, 79.00, '2026-03-10 02:24:14', '2026-03-10 02:24:14');
+INSERT INTO `order_items` VALUES (3, 7, 16, 1, 101.00, '2026-03-11 02:49:34', '2026-03-11 02:49:34');
 
 -- ----------------------------
 -- Table structure for orders
@@ -266,11 +296,17 @@ CREATE TABLE `orders`  (
   INDEX `idx_status`(`status` ASC) USING BTREE,
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of orders
 -- ----------------------------
+INSERT INTO `orders` VALUES (2, 1, 'product', 396.00, 'completed', '哈尔冰大学城| 收货人: 表示法表示 | 电话: 15071469547 | 邮编: 123456', NULL, '2026-03-10 02:24:14', '2026-03-11 10:01:28');
+INSERT INTO `orders` VALUES (3, 1, 'ticket', 380.00, 'paid', NULL, NULL, '2026-03-10 22:19:31', '2026-03-10 22:19:31');
+INSERT INTO `orders` VALUES (4, 1, 'ticket', 280.00, 'paid', NULL, NULL, '2026-03-10 22:20:53', '2026-03-10 22:20:53');
+INSERT INTO `orders` VALUES (5, 1, 'ticket', 280.00, 'paid', NULL, NULL, '2026-03-10 22:33:31', '2026-03-10 22:33:31');
+INSERT INTO `orders` VALUES (6, 1, 'ticket', 381.00, 'paid', NULL, NULL, '2026-03-11 02:43:37', '2026-03-11 02:43:37');
+INSERT INTO `orders` VALUES (7, 1, 'product', 101.00, 'paid', '哈尔滨工业大学宿舍楼 | 收货人: vvv | 电话: 13800138001 | 邮编: 123456', NULL, '2026-03-11 02:49:34', '2026-03-11 02:49:34');
 
 -- ----------------------------
 -- Table structure for points_exchanges
@@ -293,11 +329,13 @@ CREATE TABLE `points_exchanges`  (
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `points_exchanges_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `points_exchanges_ibfk_2` FOREIGN KEY (`mall_item_id`) REFERENCES `points_mall` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分兑换订单表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分兑换订单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of points_exchanges
 -- ----------------------------
+INSERT INTO `points_exchanges` VALUES (1, 1, 1, 500, 'pending', '哈尔冰工业大学', NULL, '2026-03-10 23:18:04', '2026-03-10 23:18:04');
+INSERT INTO `points_exchanges` VALUES (2, 1, 1, 500, 'pending', '无', NULL, '2026-03-11 02:45:25', '2026-03-11 02:45:25');
 
 -- ----------------------------
 -- Table structure for points_history
@@ -311,16 +349,23 @@ CREATE TABLE `points_history`  (
   `related_id` bigint NULL DEFAULT NULL COMMENT '关联的任务/订单ID',
   `description` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '描述',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_user_id`(`user_id` ASC) USING BTREE,
   INDEX `idx_change_type`(`change_type` ASC) USING BTREE,
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `points_history_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分流水表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分流水表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of points_history
 -- ----------------------------
+INSERT INTO `points_history` VALUES (1, 1, 50, 'checkin', 2, '完成打卡任务：盛京皇宫打卡', '2026-03-10 23:17:42', '2026-03-10 23:17:42');
+INSERT INTO `points_history` VALUES (2, 1, -500, 'exchange', 1, '兑换商城商品：音乐节限定T恤', '2026-03-10 23:18:04', '2026-03-10 23:18:04');
+INSERT INTO `points_history` VALUES (3, 1, 10, 'manual_adjust', NULL, '管理员调整：很好工会', '2026-03-10 23:29:21', '2026-03-10 23:29:21');
+INSERT INTO `points_history` VALUES (4, 1, 40, 'checkin', 3, '完成打卡任务：中街美食街打卡', '2026-03-11 02:44:49', '2026-03-11 02:44:49');
+INSERT INTO `points_history` VALUES (5, 1, 50, 'checkin', 4, '完成打卡任务：哈尔滨工业大学打卡', '2026-03-11 02:45:01', '2026-03-11 02:45:01');
+INSERT INTO `points_history` VALUES (6, 1, -500, 'exchange', 2, '兑换商城商品：音乐节限定T恤', '2026-03-11 02:45:25', '2026-03-11 02:45:25');
 
 -- ----------------------------
 -- Table structure for points_mall
@@ -342,12 +387,12 @@ CREATE TABLE `points_mall`  (
   INDEX `idx_type`(`type` ASC) USING BTREE,
   INDEX `idx_is_active`(`is_active` ASC) USING BTREE,
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '积分商城商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of points_mall
 -- ----------------------------
-INSERT INTO `points_mall` VALUES (1, '音乐节限定T恤', '积分兑换专属T恤', NULL, 500, 'entity', 100, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
+INSERT INTO `points_mall` VALUES (1, '音乐节限定T恤', '积分兑换专属T恤', NULL, 500, 'entity', 98, NULL, 1, '2025-12-04 19:02:59', '2026-03-11 02:45:25');
 INSERT INTO `points_mall` VALUES (2, 'VIP演唱会门票折扣券', '享受VIP票价9折优惠', NULL, 1000, 'virtual', 50, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `points_mall` VALUES (3, '沈阳美食代金券', '沈阳特色美食代金券100元', NULL, 800, 'virtual', 200, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `points_mall` VALUES (4, '音乐节周边礼盒', '精美周边礼盒套装', NULL, 1200, 'entity', 50, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
@@ -408,23 +453,20 @@ CREATE TABLE `products`  (
   INDEX `idx_is_active`(`is_active` ASC) USING BTREE,
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   CONSTRAINT `products_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `product_categories` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '商品表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of products
 -- ----------------------------
-INSERT INTO `products` VALUES (1, 1, '2024沈阳音乐节纪念T恤', '高质量纯棉T恤，印有音乐节LOGO', NULL, 99.00, 79.00, 500, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `products` VALUES (2, 1, '五月天主题T恤', '五月天演唱会纪念T恤', NULL, 129.00, 99.00, 300, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `products` VALUES (3, 2, '音乐节限定卫衣', '舒适保暖的音乐节主题卫衣', NULL, 199.00, 159.00, 200, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `products` VALUES (4, 3, '沈阳音乐节棒球帽', '黑色棒球帽，刺绣LOGO', NULL, 79.00, 59.00, 400, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `products` VALUES (5, 4, '音乐节纪念徽章套装', '5枚精美徽章套装', NULL, 49.00, 39.00, 600, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `products` VALUES (6, 5, '音乐节手机壳', '防摔手机壳，多种机型', NULL, 59.00, 49.00, 350, NULL, 1, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `products` VALUES (7, 1, '2024沈阳音乐节纪念T恤', '高质量纯棉T恤，印有音乐节LOGO', NULL, 99.00, 79.00, 500, NULL, 1, '2025-12-04 19:56:09', '2025-12-04 19:56:09');
-INSERT INTO `products` VALUES (8, 1, '五月天主题T恤', '五月天演唱会纪念T恤', NULL, 129.00, 99.00, 300, NULL, 1, '2025-12-04 19:56:09', '2025-12-04 19:56:09');
-INSERT INTO `products` VALUES (9, 2, '音乐节限定卫衣', '舒适保暖的音乐节主题卫衣', NULL, 199.00, 159.00, 200, NULL, 1, '2025-12-04 19:56:09', '2025-12-04 19:56:09');
-INSERT INTO `products` VALUES (10, 3, '沈阳音乐节棒球帽', '黑色棒球帽，刺绣LOGO', NULL, 79.00, 59.00, 400, NULL, 1, '2025-12-04 19:56:09', '2025-12-04 19:56:09');
-INSERT INTO `products` VALUES (11, 4, '音乐节纪念徽章套装', '5枚精美徽章套装', NULL, 49.00, 39.00, 600, NULL, 1, '2025-12-04 19:56:09', '2025-12-04 19:56:09');
-INSERT INTO `products` VALUES (12, 5, '音乐节手机壳', '防摔手机壳，多种机型', NULL, 59.00, 49.00, 350, NULL, 1, '2025-12-04 19:56:09', '2025-12-04 19:56:09');
+INSERT INTO `products` VALUES (15, 1, '2024沈阳音乐节纪念T恤', '高品质纯棉面料，印有音乐节主题图案，适合日常穿搭与收藏纪念。', '[\"/images/products/tshirt_01.jpg\", \"/images/products/tshirt_02.jpg\"]', 99.00, 79.00, 47, NULL, 1, '2026-03-10 09:04:44', '2026-03-10 02:24:14');
+INSERT INTO `products` VALUES (16, 1, '五月天主题纪念T恤', '舒适透气的短袖T恤，采用简约演出主题设计，适合粉丝收藏与现场穿着。', '[\"/images/products/cc07605e-e968-4785-912c-6d6e1e26d19c.jpg\"]', 129.00, 101.00, 34, '{}', 1, '2026-03-10 09:04:44', '2026-03-11 02:49:34');
+INSERT INTO `products` VALUES (18, 3, '沈阳音乐节棒球帽', '经典黑色棒球帽设计，前侧刺绣音乐节标志，遮阳实用，适合日常佩戴。', '[\"/images/products/cap_01.jpg\", \"/images/products/cap_02.jpg\"]', 79.00, 59.00, 40, NULL, 1, '2026-03-10 09:04:44', '2026-03-10 09:04:44');
+INSERT INTO `products` VALUES (19, 4, '音乐节纪念徽章套装', '内含多枚主题徽章，图案丰富，适合作为纪念收藏或搭配背包服饰使用。', '[\"/images/products/badge_01.jpg\", \"/images/products/badge_02.jpg\"]', 49.00, 39.00, 60, NULL, 1, '2026-03-10 09:04:44', '2026-03-10 09:04:44');
+INSERT INTO `products` VALUES (21, 6, '音乐节帆布袋', '环保耐用的帆布袋，容量充足，印有简体中文主题标语，适合通勤与购物使用。', '[\"/images/products/bag_01.jpg\", \"/images/products/bag_02.jpg\"]', 69.00, 55.00, 38, NULL, 1, '2026-03-10 09:04:44', '2026-03-10 09:04:44');
+INSERT INTO `products` VALUES (22, 7, '演出应援手环', '硅胶材质应援手环，佩戴舒适，印有音乐节名称和年份，适合作为现场纪念品。', '[\"/images/products/bracelet_01.jpg\", \"/images/products/bracelet_02.jpg\"]', 29.00, 19.00, 100, NULL, 1, '2026-03-10 09:04:44', '2026-03-10 09:04:44');
+INSERT INTO `products` VALUES (23, 8, '音乐节海报珍藏版', '高清印刷音乐节海报，画面色彩鲜明，适合装饰宿舍、工作室或收藏留念。', '[\"/images/products/poster_01.jpg\", \"/images/products/poster_02.jpg\"]', 39.00, 29.00, 70, NULL, 1, '2026-03-10 09:04:44', '2026-03-10 09:04:44');
+INSERT INTO `products` VALUES (24, 9, '音乐节保温杯', '不锈钢内胆保温杯，杯身印有演出主题图案，兼具实用性与纪念价值。', '[\"/images/products/cup_01.jpg\", \"/images/products/cup_02.jpg\"]', 89.00, 69.00, 32, NULL, 1, '2026-03-10 09:04:44', '2026-03-10 09:04:44');
+INSERT INTO `products` VALUES (25, 1, '短袖', '短袖短袖短袖短袖短袖短袖', '[\"/images/products/052df6e6-4567-4e27-952e-b189127a53e5.jpg\"]', 120.00, 100.00, 1000, '{}', 1, '2026-03-11 01:37:19', '2026-03-11 01:37:19');
 
 -- ----------------------------
 -- Table structure for schedules
@@ -454,14 +496,14 @@ INSERT INTO `schedules` VALUES (1, 1, 1, '主舞台', '2024-12-15 19:00:00', '20
 INSERT INTO `schedules` VALUES (2, 1, 2, '主舞台', '2024-12-15 21:00:00', '2024-12-15 22:30:00', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `schedules` VALUES (3, 1, 3, '副舞台', '2024-12-15 19:30:00', '2024-12-15 20:30:00', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `schedules` VALUES (4, 1, 4, '副舞台', '2024-12-15 21:00:00', '2024-12-15 22:00:00', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `schedules` VALUES (5, 1, 5, '主舞台', '2026-12-16 19:00:00', '2026-12-16 20:30:00', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `schedules` VALUES (6, 1, 6, '主舞台', '2026-12-16 21:00:00', '2026-12-16 22:30:00', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
+INSERT INTO `schedules` VALUES (5, 1, 5, '主舞台', '2024-12-16 19:00:00', '2024-12-16 20:30:00', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
+INSERT INTO `schedules` VALUES (6, 1, 6, '主舞台', '2024-12-16 21:00:00', '2024-12-16 22:30:00', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `schedules` VALUES (7, 1, 1, '主舞台', '2024-12-15 19:00:00', '2024-12-15 20:30:00', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
 INSERT INTO `schedules` VALUES (8, 1, 2, '主舞台', '2024-12-15 21:00:00', '2024-12-15 22:30:00', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
 INSERT INTO `schedules` VALUES (9, 1, 3, '副舞台', '2024-12-15 19:30:00', '2024-12-15 20:30:00', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
 INSERT INTO `schedules` VALUES (10, 1, 4, '副舞台', '2024-12-15 21:00:00', '2024-12-15 22:00:00', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
-INSERT INTO `schedules` VALUES (11, 1, 5, '主舞台', '2026-12-16 19:00:00', '2026-12-16 20:30:00', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
-INSERT INTO `schedules` VALUES (12, 1, 6, '主舞台', '2026-12-16 21:00:00', '2026-12-16 22:30:00', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
+INSERT INTO `schedules` VALUES (11, 1, 5, '主舞台', '2024-12-16 19:00:00', '2024-12-16 20:30:00', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
+INSERT INTO `schedules` VALUES (12, 1, 6, '主舞台', '2024-12-16 21:00:00', '2024-12-16 22:30:00', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
 
 -- ----------------------------
 -- Table structure for ticket_sessions
@@ -487,10 +529,10 @@ CREATE TABLE `ticket_sessions`  (
 -- Records of ticket_sessions
 -- ----------------------------
 INSERT INTO `ticket_sessions` VALUES (1, 1, '12月15日场次', '2024-12-15 18:00:00', '2024-12-15 23:00:00', 'available', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `ticket_sessions` VALUES (2, 1, '12月16日场次', '2026-12-16 18:00:00', '2026-12-16 23:00:00', 'available', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
+INSERT INTO `ticket_sessions` VALUES (2, 1, '12月16日场次', '2024-12-16 18:00:00', '2024-12-16 23:00:00', 'available', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `ticket_sessions` VALUES (3, 1, '12月17日场次', '2024-12-17 18:00:00', '2024-12-17 23:00:00', 'available', '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `ticket_sessions` VALUES (4, 1, '12月15日场次', '2024-12-15 18:00:00', '2024-12-15 23:00:00', 'available', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
-INSERT INTO `ticket_sessions` VALUES (5, 1, '12月16日场次', '2026-12-16 18:00:00', '2026-12-16 23:00:00', 'available', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
+INSERT INTO `ticket_sessions` VALUES (5, 1, '12月16日场次', '2024-12-16 18:00:00', '2024-12-16 23:00:00', 'available', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
 INSERT INTO `ticket_sessions` VALUES (6, 1, '12月17日场次', '2024-12-17 18:00:00', '2024-12-17 23:00:00', 'available', '2025-12-04 19:56:08', '2025-12-04 19:56:08');
 
 -- ----------------------------
@@ -515,16 +557,16 @@ CREATE TABLE `ticket_zones`  (
 -- ----------------------------
 -- Records of ticket_zones
 -- ----------------------------
-INSERT INTO `ticket_zones` VALUES (1, 1, 'A区', 1000, 0, 380.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
+INSERT INTO `ticket_zones` VALUES (1, 1, 'A区', 1005, 1, 381.00, '2025-12-04 19:02:59', '2026-03-11 02:43:37');
 INSERT INTO `ticket_zones` VALUES (2, 1, 'B区', 1500, 0, 280.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `ticket_zones` VALUES (3, 1, '站区', 2000, 0, 180.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `ticket_zones` VALUES (4, 1, 'VIP区', 500, 0, 680.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `ticket_zones` VALUES (5, 2, 'A区', 1000, 0, 380.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `ticket_zones` VALUES (6, 2, 'B区', 1500, 0, 280.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
+INSERT INTO `ticket_zones` VALUES (5, 2, 'A区', 1000, 1, 380.00, '2025-12-04 19:02:59', '2026-03-10 22:19:31');
+INSERT INTO `ticket_zones` VALUES (6, 2, 'B区', 1500, 1, 280.00, '2025-12-04 19:02:59', '2026-03-10 22:20:53');
 INSERT INTO `ticket_zones` VALUES (7, 2, '站区', 2000, 0, 180.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `ticket_zones` VALUES (8, 2, 'VIP区', 500, 0, 680.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `ticket_zones` VALUES (9, 3, 'A区', 1000, 0, 380.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
-INSERT INTO `ticket_zones` VALUES (10, 3, 'B区', 1500, 0, 280.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
+INSERT INTO `ticket_zones` VALUES (10, 3, 'B区', 1500, 1, 280.00, '2025-12-04 19:02:59', '2026-03-10 22:33:31');
 INSERT INTO `ticket_zones` VALUES (11, 3, '站区', 2000, 0, 180.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `ticket_zones` VALUES (12, 3, 'VIP区', 500, 0, 680.00, '2025-12-04 19:02:59', '2025-12-04 19:02:59');
 INSERT INTO `ticket_zones` VALUES (13, 1, 'A区', 1000, 0, 380.00, '2025-12-04 19:56:08', '2025-12-04 19:56:08');
@@ -565,11 +607,15 @@ CREATE TABLE `tickets`  (
   CONSTRAINT `tickets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `tickets_ibfk_2` FOREIGN KEY (`session_id`) REFERENCES `ticket_sessions` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `tickets_ibfk_3` FOREIGN KEY (`zone_id`) REFERENCES `ticket_zones` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '电子票表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '电子票表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of tickets
 -- ----------------------------
+INSERT INTO `tickets` VALUES (1, 1, 2, 5, '422201167502341512', 'zhagnsan', NULL, 'valid', '2026-03-10 22:19:31', '2026-03-10 22:19:31');
+INSERT INTO `tickets` VALUES (2, 1, 2, 6, '422201167502341513', 'lisi', NULL, 'valid', '2026-03-10 22:20:53', '2026-03-10 22:20:53');
+INSERT INTO `tickets` VALUES (3, 1, 3, 10, '225421224428527272', 'hsbs', NULL, 'valid', '2026-03-10 22:33:31', '2026-03-10 22:33:31');
+INSERT INTO `tickets` VALUES (4, 1, 1, 1, '722728272725727272', 'bb', NULL, 'valid', '2026-03-11 02:43:37', '2026-03-11 02:43:37');
 
 -- ----------------------------
 -- Table structure for transport_info
@@ -613,7 +659,7 @@ CREATE TABLE `user_collections`  (
   INDEX `idx_article_id`(`article_id` ASC) USING BTREE,
   CONSTRAINT `user_collections_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `user_collections_ibfk_2` FOREIGN KEY (`article_id`) REFERENCES `articles` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户收藏表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '用户收藏表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of user_collections
@@ -648,7 +694,7 @@ CREATE TABLE `users`  (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES (1, '15071469547', '$2a$10$gJc4..x9Ax2.OJivl//aFO4lbchnEY8T2Q00iwIZtIKfVEU5SDtA2', NULL, NULL, NULL, NULL, NULL, 0, 0, 0, '2025-12-04 12:20:35', '2025-12-04 12:20:35', 'USER');
+INSERT INTO `users` VALUES (1, '15071469547', '$2a$10$gJc4..x9Ax2.OJivl//aFO4lbchnEY8T2Q00iwIZtIKfVEU5SDtA2', NULL, NULL, NULL, NULL, NULL, 0, 9150, 0, '2025-12-04 12:20:35', '2026-03-11 02:45:25', 'USER');
 INSERT INTO `users` VALUES (2, '17665231453', '$2a$10$fTwk4xtqrhYJBmtNGZwToO6O8dM5kC1zDGLxO/tZKTch8ipnZWORq', NULL, NULL, NULL, NULL, NULL, 0, 0, 0, '2025-12-04 12:22:39', '2025-12-04 20:25:18', 'admin');
 
 -- ----------------------------
@@ -677,7 +723,7 @@ CREATE TABLE `weather_info`  (
 -- Records of weather_info
 -- ----------------------------
 INSERT INTO `weather_info` VALUES (1, 1, '2024-12-15', 5, 60, 15, '晴天', '建议穿着厚重外套、羽绒服，戴帽子和手套', '2025-12-04 19:03:00', '2025-12-04 19:03:00');
-INSERT INTO `weather_info` VALUES (2, 1, '2026-12-16', 3, 65, 18, '多云', '建议穿着厚重外套、羽绒服，戴帽子和手套', '2025-12-04 19:03:00', '2025-12-04 19:03:00');
+INSERT INTO `weather_info` VALUES (2, 1, '2024-12-16', 3, 65, 18, '多云', '建议穿着厚重外套、羽绒服，戴帽子和手套', '2025-12-04 19:03:00', '2025-12-04 19:03:00');
 INSERT INTO `weather_info` VALUES (3, 1, '2024-12-17', 2, 70, 20, '晴天', '建议穿着厚重外套、羽绒服，戴帽子和手套', '2025-12-04 19:03:00', '2025-12-04 19:03:00');
 
 SET FOREIGN_KEY_CHECKS = 1;

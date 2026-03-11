@@ -25,12 +25,12 @@
           </div>
         </div>
 
-        <el-alert title="技术说明" type="success" :closable="false" class="mb-20">
+        <el-alert title="技术说明" type="success" :closable="false" class="mb-20" v-if="false">
           支持 LBS 地理围栏设置。用户在移动端打卡时，系统将校验其 GPS 坐标是否在设定的经纬度半径范围内。
         </el-alert>
 
         <el-table :data="taskList" border v-loading="loading.tasks">
-          <el-table-column label="封面图" width="100">
+          <el-table-column label="封面图" width="100" v-if="false">
             <template #default="{ row }">
               <el-image 
                 :src="row.coverImage" 
@@ -51,7 +51,7 @@
               {{ formatDate(row.startTime) }} 至 {{ formatDate(row.endTime) }}
             </template>
           </el-table-column>
-          <el-table-column label="打卡地点" min-width="200" show-overflow-tooltip>
+          <el-table-column label="打卡地点" min-width="200" show-overflow-tooltip v-if="false">
             <template #default="{ row }">
               <div><el-icon><Location /></el-icon> {{ row.location?.addressName }}</div>
               <div class="sub-text">
@@ -87,7 +87,7 @@
         </div>
       </el-tab-pane>
 
-      <el-tab-pane label="打卡审核" name="audit">
+      <el-tab-pane label="打卡审核" name="audit" v-if="false">
         <div class="tab-action-bar">
           <div class="left-actions">
             <el-select v-model="filters.auditStatus" placeholder="状态筛选" style="width: 150px; margin-right: 10px;" @change="loadRecords">
@@ -172,7 +172,7 @@
         <el-form-item label="任务名称" required>
           <el-input v-model="taskForm.name" placeholder="例如：故宫打卡" />
         </el-form-item>
-        <el-form-item label="封面图片">
+        <el-form-item label="封面图片" v-if="false">
           <el-input v-model="taskForm.coverImage" placeholder="图片URL" />
         </el-form-item>
         <el-form-item label="任务描述">
@@ -198,7 +198,7 @@
         <el-form-item label="地点名称" required>
           <el-input v-model="taskForm.location.addressName" placeholder="例如：沈阳故宫正门" />
         </el-form-item>
-        <el-row :gutter="20">
+        <el-row :gutter="20" v-if="false">
           <el-col :span="12">
             <el-form-item label="经度" required>
               <el-input-number v-model="taskForm.location.longitude" :precision="6" style="width: 100%;" placeholder="Longitude" />
@@ -210,7 +210,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="打卡半径" required>
+        <el-form-item label="打卡半径" required v-if="false">
           <el-input v-model="taskForm.location.radius" placeholder="米">
             <template #append>米</template>
           </el-input>
@@ -359,10 +359,10 @@ const submitTask = async () => {
     return
   }
   
-  if (!taskForm.location.addressName || !taskForm.location.latitude || !taskForm.location.longitude) {
-    ElMessage.warning('请完善地理位置信息')
-    return
-  }
+  // if (!taskForm.location.addressName || !taskForm.location.latitude || !taskForm.location.longitude) {
+  //   ElMessage.warning('请完善地理位置信息')
+  //   return
+  // }
 
   // 绑定时间
   taskForm.startTime = timeRange.value[0]

@@ -23,7 +23,7 @@
         />
 
         <el-table :data="goodsList" border v-loading="loading.goods">
-          <el-table-column label="商品图片" width="100">
+          <el-table-column label="商品图片" width="100" v-if="false">
             <template #default="{ row }">
               <el-image 
                 :src="row.image" 
@@ -85,7 +85,7 @@
 
       <el-tab-pane label="兑换订单审核" name="orders">
         <div class="tab-action-bar">
-          <div class="filters">
+          <div class="filters" v-if="false">
             <el-select v-model="orderFilterStatus" placeholder="状态筛选" style="width: 150px;" @change="loadOrders">
               <el-option label="全部" value="" />
               <el-option label="待审核" value="pending" />
@@ -151,7 +151,7 @@
         <el-form-item label="商品名称">
           <el-input v-model="goodForm.name" />
         </el-form-item>
-        <el-form-item label="商品图片">
+        <el-form-item label="商品图片" v-if="false">
           <el-input v-model="goodForm.image" placeholder="请输入图片URL" />
         </el-form-item>
         <el-form-item label="类型">
