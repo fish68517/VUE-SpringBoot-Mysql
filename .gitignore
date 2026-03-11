@@ -85,11 +85,10 @@ logs/
 
 # 打包文件
 *.jar
-*.war
 *.ear
-*.zip
+
 *.tar.gz
-*.rar
+
 
 # 本地配置文件（不要提交自己的数据库密码！）
 /application-local.yml
