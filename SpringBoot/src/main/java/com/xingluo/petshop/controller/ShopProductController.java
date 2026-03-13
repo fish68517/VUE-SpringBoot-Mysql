@@ -81,11 +81,17 @@ public class ShopProductController {
     @GetMapping("/list")
     public ApiResponse<Page<ProductVO>> getShopProducts(
             @RequestParam Long shopId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "1") int page, // 前端习惯传1作为第一页
+            @RequestParam(name = "pageSize", defaultValue = "10") int pageSize) { // 将前端的pageSize映射到这个变量
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createTime"));
+        // 核心修复：JPA 分页从 0 开始，所以需要 (page - 1)
+        // 传入正确的 pageSize
+        int jpaPage = page > 0 ? page - 1 : 0;
+        Pageable pageable = PageRequest.of(jpaPage, pageSize, Sort.by(Sort.Direction.DESC, "createTime"));
+
         Page<Product> products = productService.getProductsByShop(shopId, pageable);
+        System.out.println("查询店铺ID: " + shopId);
+        System.out.println("当前页实际数据条数: " + products.getNumberOfElements()); // 打印实际条数，别用 getSize()
 
         Page<ProductVO> productVOs = products.map(this::convertToVO);
 

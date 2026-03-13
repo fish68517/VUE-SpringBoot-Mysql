@@ -42,10 +42,12 @@ export function updateProduct(productId, data) {
 }
 
 // 删除商品（店家）
-export function deleteProduct(productId) {
-  return request.delete(`/shop/product/${productId}`);
+// 删除商品（店家）
+export function deleteProduct(productId, shopId) {
+  return request.delete(`/shop/product/${productId}`, { 
+    params: { shopId } 
+  });
 }
-
 // 上下架商品（店家）
 export function updateProductStatus(productId, data) {
   return request.put(`/shop/product/${productId}/status`, data);

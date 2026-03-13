@@ -162,19 +162,33 @@ const handleToggleStatus = async (product) => {
   }
 };
 
-const handleDelete = async (productId) => {
+
+
+
+const handleDelete = async (id) => {
   try {
-    await ElMessageBox.confirm("确定要删除该商品吗？", "警告", {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "warning"
-    });
-    await deleteProduct(productId);
-    ElMessage.success("商品已删除");
-    loadProducts();
+    // 1. 弹出确认框
+    await ElMessageBox.confirm(
+      '确定要删除该商品吗？删除后不可恢复。',
+      '删除确认',
+      {
+        confirmButtonText: '确定删除',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    );
+
+    // 2. 用户点击“确定”后，执行原本的删除逻辑
+    await deleteProduct(id, userStore.userInfo?.shopId);
+    ElMessage.success("删除成功");
+    loadProducts(); 
+
   } catch (error) {
-    if (error !== "cancel") {
-      ElMessage.error("删除失败");
+    // 3. 区分是用户取消了弹框，还是接口真的报错了
+    if (error === 'cancel') {
+      ElMessage.info("已取消删除");
+    } else {
+      ElMessage.error(error.message || "删除失败");
     }
   }
 };

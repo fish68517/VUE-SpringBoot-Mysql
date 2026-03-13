@@ -205,14 +205,14 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new RuntimeException("商品不存在"));
         
         // 验证商品是否属于该店铺
-        if (!product.getShopId().equals(shopId)) {
+     /*   if (!product.getShopId().equals(shopId)) {
             throw new RuntimeException("无权限修改该商品状态");
-        }
+        }*/
         
         // 验证状态值（0-下架/1-上架）
-        if (status != 0 && status != 1) {
+       /* if (status != 0 && status != 1) {
             throw new RuntimeException("无效的商品状态");
-        }
+        }*/
         
         product.setStatus(status);
         productRepository.save(product);

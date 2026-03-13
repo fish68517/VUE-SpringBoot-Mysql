@@ -145,7 +145,7 @@ import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { createProduct, updateProduct, getShopProductList } from "@/api/shop";
 import { getCategories } from "@/api/product";
-import request from "@/utils/request"; // ★ 新增：引入 request 用于上传图片
+import request from "@/utils/request"; 
 
 import { useUserStore } from "@/store/userStore";
 const userStore = useUserStore();
@@ -166,7 +166,6 @@ const formData = ref({
   images: []
 });
 
-// ★ 新增：处理图片回显路径拼接
 const getImageUrl = (src) => {
   if (!src) return '';
   if (src.startsWith('data:image') || src.startsWith('http')) {
@@ -175,7 +174,6 @@ const getImageUrl = (src) => {
   return `http://localhost:8080/uploads/${src}`;
 };
 
-// ★ 新增：单独的图片上传函数
 const uploadSingleImage = async (file) => {
   const uploadData = new FormData();
   uploadData.append("file", file);
@@ -185,14 +183,13 @@ const uploadSingleImage = async (file) => {
         "Content-Type": "multipart/form-data",
       },
     });
-    return res; // 返回后端真实路径
+    return res; 
   } catch (error) {
     console.error("图片上传失败", error);
     throw new Error("图片上传失败");
   }
 };
 
-// ★ 修改：主图真实上传
 const handleMainImageUpload = async (event) => {
   const file = event.target.files?.[0];
   if (file) {
@@ -202,7 +199,6 @@ const handleMainImageUpload = async (event) => {
       return;
     }
     
-    // 为了体验好，可以先弄个临时本地预览（可选）
     const reader = new FileReader();
     reader.onload = (e) => {
       formData.value.image = e.target?.result;
@@ -210,18 +206,16 @@ const handleMainImageUpload = async (event) => {
     reader.readAsDataURL(file);
 
     try {
-      // 执行真实的网络请求上传
       const serverImageUrl = await uploadSingleImage(file);
-      formData.value.image = serverImageUrl; // 覆盖为后端返回的真实路径
+      formData.value.image = serverImageUrl; 
       ElMessage.success("主图上传成功");
     } catch (error) {
       ElMessage.error("主图上传失败，请重试");
     }
   }
-  event.target.value = ""; // 清除 input 状态
+  event.target.value = ""; 
 };
 
-// ★ 修改：附图真实上传 (支持多图并发)
 const handleImagesUpload = async (event) => {
   const files = Array.from(event.target.files || []);
   if (files.length > 0) {
@@ -240,7 +234,7 @@ const handleImagesUpload = async (event) => {
     }
     ElMessage.success("附图添加完成");
   }
-  event.target.value = ""; // 清除 input 状态
+  event.target.value = ""; 
 };
 
 const removeImage = (index) => {
@@ -276,8 +270,7 @@ const handleSubmit = async () => {
       price: formData.value.price,
       stock: formData.value.stock,
       description: formData.value.description,
-      image: formData.value.image, // 这里已经是后端短路径了
-      // 视你后端接口定义而定，有些后端需要 JSON 字符串，如果后端是用逗号分隔或JSON对象，保持不动即可
+      image: formData.value.image, 
       images: formData.value.images 
     };
 
@@ -306,13 +299,26 @@ const loadCategories = async () => {
   }
 };
 
+// ★ 核心修改点在这里
 const loadProductData = async () => {
   if (!isEdit.value) return;
 
   loading.value = true;
   try {
-    const data = await getShopProductList({ page: 1, pageSize: 1 });
-    const product = data?.content?.find((p) => p.id === parseInt(route.params.id));
+    // 1. 补上必须的 shopId 参数
+    // 2. 将 pageSize 调到 500（或更大），防止商品数据太多导致被分页截断，导致在第 1 页找不到要编辑的商品
+    const data = await getShopProductList({ 
+      page: 1, 
+      pageSize: 5000, 
+      shopId: userStore.userInfo?.shopId 
+    });
+    
+    // 兼容后端不同的分页返回结构，有可能是 data.content，也有可能是 data.records 或直接就是个数组
+    const productList = data?.content || data?.records || data || [];
+    
+    const product = productList.find((p) => p.id === parseInt(route.params.id));
+    // 打印出 product
+    console.log(product);
     if (product) {
       formData.value = {
         name: product.name,
@@ -321,12 +327,14 @@ const loadProductData = async () => {
         stock: product.stock,
         description: product.description,
         image: product.image,
-        // 这里需要注意回显时的格式，如果后端给你返回的是字符串，需要解析成数组
         images: Array.isArray(product.images) ? product.images : (product.images ? JSON.parse(product.images) : [])
       };
+    } else {
+      ElMessage.warning("在商品列表中未找到该商品，可能已被删除或不在第一页");
     }
   } catch (error) {
     ElMessage.error("加载商品信息失败");
+    console.error(error);
   } finally {
     loading.value = false;
   }
@@ -339,7 +347,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* 原有的所有样式保持不动 */
+/* 原有样式保持完全不变 */
 .product-form { max-width: 900px; margin: 0 auto; }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 .page-header h1 { margin: 0; font-size: 28px; color: #333; }
