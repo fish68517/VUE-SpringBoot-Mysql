@@ -6,7 +6,9 @@ import com.xingluo.petshop.dto.LoginDTO;
 import com.xingluo.petshop.dto.RegisterDTO;
 import com.xingluo.petshop.dto.UpdateUserDTO;
 import com.xingluo.petshop.dto.UserVO;
+import com.xingluo.petshop.entity.Shop;
 import com.xingluo.petshop.entity.User;
+import com.xingluo.petshop.service.ShopService;
 import com.xingluo.petshop.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -23,6 +25,8 @@ public class UserController {
 
     private final UserService userService;
 
+    private final ShopService shopService;
+
     /**
      * 用户注册
      * POST /api/user/register
@@ -35,13 +39,31 @@ public class UserController {
         user.setPassword(registerDTO.getPassword());
         user.setEmail(registerDTO.getEmail());
         user.setPhone(registerDTO.getPhone());
-        user.setNickname(registerDTO.getNickname());
-        
+        user.setNickname(registerDTO.getNickname() == null ? "" : registerDTO.getUsername());
+        user.setRole(registerDTO.getRole());
+
         // 调用服务层注册
         User registeredUser = userService.register(user);
         
         // 转换为VO返回（不包含密码）
         UserVO userVO = convertToVO(registeredUser);
+        System.out.println("userVO::" + userVO);
+        if (user.getRole().equals("SHOP") ) {
+            try {
+                Shop shop = shopService.getShopByUserId(userVO.getId());
+            } catch (Exception e) {
+                // 插入shop
+                Shop shopNew = new Shop();
+                shopNew.setUserId(userVO.getId());
+                shopNew.setName(userVO.getUsername() == null ? userVO.getNickname():  userVO.getUsername());
+                shopNew.setStatus(1);
+                shopService.createShop(shopNew);
+            }
+
+
+        } else {
+            System.out.println("getRole::" + user.getRole());
+        }
         return ApiResponse.ok(userVO);
     }
 

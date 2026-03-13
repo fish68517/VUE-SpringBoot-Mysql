@@ -18,6 +18,8 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+
+
     /**
      * 用户注册
      * 包含用户名重复检查
@@ -40,6 +42,8 @@ public class UserServiceImpl implements UserService {
         if (user.getStatus() == null) {
             user.setStatus(1);
         }
+
+
         
         return userRepository.save(user);
     }

@@ -1,9 +1,14 @@
 <template>
   <div class="register-container">
     <el-card class="box">
-      <h2>用户注册</h2>
+      <h2>账号注册</h2>
 
-      <el-form :model="form" :rules="rules" ref="formRef" label-width="80px">
+      <el-tabs v-model="activeTab" stretch>
+        <el-tab-pane label="普通用户" name="USER"></el-tab-pane>
+        <el-tab-pane label="商家入驻" name="SHOP"></el-tab-pane>
+      </el-tabs>
+
+      <el-form :model="form" :rules="rules" ref="formRef" label-width="80px" style="margin-top: 20px;">
         <el-form-item label="用户名" prop="username">
           <el-input v-model="form.username" placeholder="请输入用户名" />
         </el-form-item>
@@ -24,7 +29,9 @@
           <el-input v-model="form.phone" placeholder="请输入手机号" />
         </el-form-item>
 
-        <el-button type="primary" @click="handleRegister" :loading="loading" style="width: 100%; margin-bottom: 15px;">注册</el-button>
+        <el-button type="primary" @click="handleRegister" :loading="loading" style="width: 100%; margin-bottom: 15px;">
+          立即注册{{ activeTab === 'SHOP' ? '商家' : '' }}
+        </el-button>
         <div style="text-align: right;">
           <el-link type="primary" @click="goToLogin">已有账号？去登录</el-link>
         </div>
@@ -42,6 +49,9 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 const formRef = ref(null);
 const loading = ref(false);
+
+// 新增：当前选中的注册身份，默认为普通用户
+const activeTab = ref("USER");
 
 const form = ref({
   username: "",
@@ -110,9 +120,13 @@ function handleRegister() {
       loading.value = true;
       try {
         const { confirmPassword, ...data } = form.value;
+        // 核心修改：将当前 Tab 的身份标识附加到注册请求数据中
+        data.role = activeTab.value; 
+        
         await register(data);
         ElMessage.success("注册成功，请登录");
-        router.push("/login");
+        // 注册成功后跳转到登录页，并可通过 URL 参数传递身份
+        router.push({ path: "/login", query: { role: activeTab.value }});
       } catch (error) {
         ElMessage.error(error.response?.data?.message || "注册失败");
       } finally {
@@ -128,23 +142,20 @@ function goToLogin() {
 </script>
 
 <style scoped>
-/* 注册背景容器 */
 .register-container {
   height: 100vh;
   width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* 与登录页保持一样的背景图，或者用另一张也可以 */
   background-image: url('@/assets/bg.jpg'); 
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-/* 注册卡片样式优化 */
 .box {
-  width: 450px; /* 注册表单项目多，卡片稍微宽一点点 */
+  width: 450px;
   padding: 20px;
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.9);
@@ -154,7 +165,7 @@ function goToLogin() {
 
 h2 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: #333;
 }
 </style>

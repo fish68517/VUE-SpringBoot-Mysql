@@ -44,7 +44,7 @@ import AdminPostManage from "@/views/admin/PostManage.vue";
 
 const routes = [
   // --- Public Routes ---
-  { path: "/", component: Home, meta: { title: '首页' } },
+  { path: "/", component: Login, meta: { title: '登录' } },
   { path: "/login", component: Login, meta: { requiresAuth: false, title: '登录' } },
   { path: "/register", component: Register, meta: { requiresAuth: false, title: '注册' } },
   

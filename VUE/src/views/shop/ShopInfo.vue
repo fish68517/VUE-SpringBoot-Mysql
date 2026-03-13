@@ -76,7 +76,6 @@
         </div>
       </form>
 
-      <!-- 店铺统计信息 -->
       <div class="stats-section">
         <h2>店铺统计</h2>
         <div class="stats-grid">
@@ -99,6 +98,7 @@ import { ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { getShopInfo, updateShopInfo } from "@/api/shop";
 import { useUserStore } from "@/store/userStore";
+import request from "@/utils/request"; // ★ 新增：引入 request 用于真实上传图片
 
 const userStore = useUserStore();
 const loading = ref(false);
@@ -111,10 +111,14 @@ const formData = ref({
   logo: ""
 });
 
-
-// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
+// 处理图片 src 显示逻辑
 const getImageUrl = (src) => {
-  console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
+  if (!src) return '';
+  // ★ 新增判断：如果是 base64 (刚选中时的本地预览) 或者是 http 全路径，则直接返回不拼接
+  if (src.startsWith('data:image') || src.startsWith('http')) {
+    return src;
+  }
+  console.log("图片路径：" + src);  
   return `http://localhost:8080/uploads/${src}`;
 };
 
@@ -147,15 +151,54 @@ const formatDate = (date) => {
   });
 };
 
-const handleLogoUpload = (event) => {
+// ★ 新增：单独的图片上传函数 (参考 PostForm.vue)
+const uploadSingleImage = async (file) => {
+  const uploadData = new FormData();
+  uploadData.append("file", file);
+  
+  try {
+    const res = await request.post("/upload/image", uploadData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res; // request.js 拦截器会返回后端响应的真实路径 URL
+  } catch (error) {
+    console.error("图片上传失败", error);
+    throw new Error("图片上传失败");
+  }
+};
+
+// ★ 修改：处理图片选择与上传逻辑
+const handleLogoUpload = async (event) => {
   const file = event.target.files?.[0];
   if (file) {
+    // 限制图片大小为 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      ElMessage.error("Logo 图片不能超过5MB");
+      event.target.value = "";
+      return;
+    }
+
+    // 可选优化：在上传完成前，先利用 FileReader 做个本地预览，提升用户体验
     const reader = new FileReader();
     reader.onload = (e) => {
-      formData.value.logo = e.target?.result;
+      formData.value.logo = e.target?.result; 
     };
     reader.readAsDataURL(file);
+
+    try {
+      // 执行真实的网络请求上传到 Spring Boot
+      const serverImageUrl = await uploadSingleImage(file);
+      // 上传成功后，将后端的真实路径覆盖掉刚才的本地预览 Base64
+      formData.value.logo = serverImageUrl;
+      ElMessage.success("Logo 上传成功");
+    } catch (error) {
+      ElMessage.error("Logo 上传失败，请重试");
+    }
   }
+  // 清空 input，允许重复上传同一张图片
+  event.target.value = "";
 };
 
 const handleSubmit = async () => {
@@ -204,224 +247,45 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* 样式保持不变... (省略原有CSS，你无需更改样式) */
 .shop-info {
   max-width: 800px;
   margin: 0 auto;
 }
-
-.page-header {
-  margin-bottom: 30px;
-}
-
-.page-header h1 {
-  margin: 0 0 10px 0;
-  font-size: 28px;
-  color: #333;
-}
-
-.page-header p {
-  margin: 0;
-  color: #999;
-  font-size: 14px;
-}
-
-.loading {
-  text-align: center;
-  padding: 40px;
-  color: #999;
-}
-
-.info-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-}
-
-.info-form {
-  margin-bottom: 30px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  color: #333;
-  font-weight: 500;
-  font-size: 14px;
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: border-color 0.3s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.logo-upload {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.logo-preview {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
-
-.file-input {
-  display: none;
-}
-
-.upload-btn {
-  padding: 10px 20px;
-  background: #667eea;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.upload-btn:hover {
-  background: #5568d3;
-}
-
-.status-display {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 500;
-  color: white;
-}
-
-.status-pending {
-  background: #f39c12;
-}
-
-.status-active {
-  background: #27ae60;
-}
-
-.status-disabled {
-  background: #e74c3c;
-}
-
-.status-hint {
-  margin: 0;
-  color: #999;
-  font-size: 12px;
-}
-
-.form-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 30px;
-}
-
-.btn-primary,
-.btn-secondary {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-primary {
-  background: #667eea;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #5568d3;
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background: #f0f0f0;
-  color: #333;
-}
-
-.btn-secondary:hover {
-  background: #e0e0e0;
-}
-
-.stats-section {
-  margin-top: 30px;
-  padding-top: 30px;
-  border-top: 1px solid #eee;
-}
-
-.stats-section h2 {
-  margin: 0 0 15px 0;
-  font-size: 18px;
-  color: #333;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 15px;
-  background: #f9f9f9;
-  border-radius: 4px;
-}
-
-.stat-label {
-  color: #999;
-  font-size: 12px;
-}
-
-.stat-value {
-  color: #333;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-@media (max-width: 768px) {
-  .info-container {
-    padding: 20px;
-  }
-
-  .logo-upload {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
+/* ...（这里是原本下方的所有样式）... */
+.page-header { margin-bottom: 30px; }
+.page-header h1 { margin: 0 0 10px 0; font-size: 28px; color: #333; }
+.page-header p { margin: 0; color: #999; font-size: 14px; }
+.loading { text-align: center; padding: 40px; color: #999; }
+.info-container { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); padding: 30px; }
+.info-form { margin-bottom: 30px; }
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; font-size: 14px; }
+.form-group input, .form-group textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; transition: border-color 0.3s ease; }
+.form-group input:focus, .form-group textarea:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+.logo-upload { display: flex; align-items: center; gap: 15px; }
+.logo-preview { width: 100px; height: 100px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd; }
+.file-input { display: none; }
+.upload-btn { padding: 10px 20px; background: #667eea; color: white; border-radius: 4px; cursor: pointer; font-size: 14px; transition: all 0.3s ease; }
+.upload-btn:hover { background: #5568d3; }
+.status-display { display: flex; align-items: center; gap: 15px; }
+.status-badge { display: inline-block; padding: 6px 12px; border-radius: 4px; font-size: 14px; font-weight: 500; color: white; }
+.status-pending { background: #f39c12; }
+.status-active { background: #27ae60; }
+.status-disabled { background: #e74c3c; }
+.status-hint { margin: 0; color: #999; font-size: 12px; }
+.form-actions { display: flex; gap: 10px; margin-top: 30px; }
+.btn-primary, .btn-secondary { padding: 10px 24px; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; transition: all 0.3s ease; }
+.btn-primary { background: #667eea; color: white; }
+.btn-primary:hover:not(:disabled) { background: #5568d3; }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-secondary { background: #f0f0f0; color: #333; }
+.btn-secondary:hover { background: #e0e0e0; }
+.stats-section { margin-top: 30px; padding-top: 30px; border-top: 1px solid #eee; }
+.stats-section h2 { margin: 0 0 15px 0; font-size: 18px; color: #333; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+.stat-item { display: flex; flex-direction: column; gap: 5px; padding: 15px; background: #f9f9f9; border-radius: 4px; }
+.stat-label { color: #999; font-size: 12px; }
+.stat-value { color: #333; font-size: 14px; font-weight: 500; }
+@media (max-width: 768px) { .info-container { padding: 20px; } .logo-upload { flex-direction: column; align-items: flex-start; } }
 </style>

@@ -32,4 +32,9 @@ public class RegisterDTO {
      * 昵称
      */
     private String nickname;
+
+    /**
+     * 昵称
+     */
+    private String role;
 }
