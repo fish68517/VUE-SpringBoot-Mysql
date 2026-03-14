@@ -10,7 +10,20 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.hakimi.HakimiApplication;
 import com.hakimi.R;
+import com.hakimi.model.ApiResponse;
+import com.hakimi.model.FitnessPlan;
+import com.hakimi.network.ApiService;
+import com.hakimi.network.RetrofitClient;
+import com.hakimi.utils.SharedPrefManager;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class VirtualFitnessActivity extends AppCompatActivity {
 
@@ -23,6 +36,8 @@ public class VirtualFitnessActivity extends AppCompatActivity {
     private TextView tvGeneratedPlan;
 
     private SharedPreferences sharedPreferences;
+    private ApiService apiService;
+    private SharedPrefManager sharedPrefManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +45,8 @@ public class VirtualFitnessActivity extends AppCompatActivity {
         setContentView(R.layout.activity_virtual_fitness);
 
         sharedPreferences = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+        apiService = RetrofitClient.getInstance().getApiService();
+        sharedPrefManager = SharedPrefManager.getInstance();
         initViews();
         loadLastData();
         setupListeners();
@@ -69,7 +86,54 @@ public class VirtualFitnessActivity extends AppCompatActivity {
                 .putString(KEY_LAST_PLAN, generatedPlan)
                 .apply();
 
-        Toast.makeText(this, "\u5df2\u751f\u6210\u5e76\u4fdd\u5b58\u8ba1\u5212", Toast.LENGTH_SHORT).show();
+        savePlanToDatabase(goal, generatedPlan);
+    }
+
+    private void savePlanToDatabase(String goal, String planContent) {
+        Long userId = getCurrentUserId();
+        if (userId == null || userId <= 0) {
+            Toast.makeText(this, "\u5df2\u751f\u6210\u8ba1\u5212\uff08\u672a\u83b7\u53d6\u5230\u7528\u6237\uff0c\u672a\u540c\u6b65\u6570\u636e\u5e93\uff09",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("user_id", userId);
+        params.put("goal", goal);
+        params.put("planContent", planContent);
+        params.put("plan_content", planContent);
+
+        apiService.generatePlan(params).enqueue(new Callback<ApiResponse<FitnessPlan>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<FitnessPlan>> call, Response<ApiResponse<FitnessPlan>> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isSuccess()) {
+                    Toast.makeText(VirtualFitnessActivity.this, "\u5df2\u751f\u6210\u5e76\u540c\u6b65\u5230\u6570\u636e\u5e93",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    String msg = response.body() != null ? response.body().getMessage() : "\u8bf7\u7a0d\u540e\u91cd\u8bd5";
+                    Toast.makeText(VirtualFitnessActivity.this, "\u8ba1\u5212\u5df2\u751f\u6210\uff0c\u4f46\u5165\u5e93\u5931\u8d25: " + msg,
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<FitnessPlan>> call, Throwable t) {
+                Toast.makeText(VirtualFitnessActivity.this, "\u8ba1\u5212\u5df2\u751f\u6210\uff0c\u4f46\u5165\u5e93\u5931\u8d25: " + t.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private Long getCurrentUserId() {
+        long userId = sharedPrefManager.getUserId();
+        if (userId > 0) {
+            return userId;
+        }
+        if (HakimiApplication.curUser != null && HakimiApplication.curUser.getId() != null) {
+            return HakimiApplication.curUser.getId();
+        }
+        return null;
     }
 
     // Placeholder logic for AI plan generation. Replace with real model API later.
