@@ -26,4 +26,13 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
            "AND c.startTime <= ?2 AND c.endTime >= ?2 " +
            "AND (c.totalCount IS NULL OR c.usedCount < c.totalCount)")
     List<Coupon> findAvailableCouponsByShopId(Long shopId, LocalDateTime now);
+
+    /**
+     * 查询全站可兑换优惠券（用户端兑换中心）
+     */
+    @Query("SELECT c FROM Coupon c LEFT JOIN FETCH c.shop WHERE c.status = 1 " +
+           "AND c.startTime <= ?1 AND c.endTime >= ?1 " +
+           "AND (c.totalCount IS NULL OR c.usedCount < c.totalCount) " +
+           "ORDER BY c.createTime DESC")
+    List<Coupon> findExchangeableCoupons(LocalDateTime now);
 }

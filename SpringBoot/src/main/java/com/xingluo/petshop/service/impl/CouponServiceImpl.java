@@ -2,9 +2,11 @@ package com.xingluo.petshop.service.impl;
 
 import com.xingluo.petshop.common.exception.BusinessException;
 import com.xingluo.petshop.entity.Coupon;
+import com.xingluo.petshop.entity.User;
 import com.xingluo.petshop.entity.UserCoupon;
 import com.xingluo.petshop.repository.CouponRepository;
 import com.xingluo.petshop.repository.UserCouponRepository;
+import com.xingluo.petshop.repository.UserRepository;
 import com.xingluo.petshop.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class CouponServiceImpl implements CouponService {
     
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Coupon getCouponById(Long id) {
@@ -89,6 +92,11 @@ public class CouponServiceImpl implements CouponService {
     public List<Coupon> getAvailableCoupons(Long shopId) {
         return couponRepository.findAvailableCouponsByShopId(shopId, LocalDateTime.now());
     }
+
+    @Override
+    public List<Coupon> getExchangeableCoupons() {
+        return couponRepository.findExchangeableCoupons(LocalDateTime.now());
+    }
     
     @Override
     @Transactional
@@ -125,6 +133,55 @@ public class CouponServiceImpl implements CouponService {
         userCoupon.setStatus(0); // 未使用
         userCoupon.setReceiveTime(now);
         
+        return userCouponRepository.save(userCoupon);
+    }
+
+    @Override
+    @Transactional
+    public UserCoupon exchangeCoupon(Long userId, Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new BusinessException(404, "优惠券不存在"));
+
+        if (coupon.getStatus() != 1) {
+            throw new BusinessException(400, "该优惠券不可兑换");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        if (coupon.getStartTime() == null || coupon.getEndTime() == null
+                || now.isBefore(coupon.getStartTime()) || now.isAfter(coupon.getEndTime())) {
+            throw new BusinessException(400, "该优惠券不在可兑换时间内");
+        }
+
+        if (coupon.getTotalCount() != null && coupon.getUsedCount() >= coupon.getTotalCount()) {
+            throw new BusinessException(400, "优惠券库存不足");
+        }
+
+        if (userCouponRepository.existsByUserIdAndCouponId(userId, couponId)) {
+            throw new BusinessException(400, "您已兑换过该优惠券");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(404, "用户不存在"));
+
+        int needPoints = coupon.getExchangePoints() == null ? 0 : coupon.getExchangePoints();
+        if (needPoints < 0) {
+            throw new BusinessException(400, "优惠券兑换积分配置错误");
+        }
+
+        int currentPoints = user.getPoint() == null ? 0 : user.getPoint();
+        if (currentPoints < needPoints) {
+            throw new BusinessException(400, "积分不足，无法兑换");
+        }
+
+        user.setPoint(currentPoints - needPoints);
+        userRepository.save(user);
+
+        UserCoupon userCoupon = new UserCoupon();
+        userCoupon.setUserId(userId);
+        userCoupon.setCouponId(couponId);
+        userCoupon.setStatus(0);
+        userCoupon.setReceiveTime(now);
+
         return userCouponRepository.save(userCoupon);
     }
     

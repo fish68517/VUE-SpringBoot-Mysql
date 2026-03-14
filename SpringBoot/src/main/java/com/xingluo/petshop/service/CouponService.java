@@ -34,11 +34,21 @@ public interface CouponService {
      * 查询店铺可用优惠券（用户端）
      */
     List<Coupon> getAvailableCoupons(Long shopId);
+
+    /**
+     * 查询全站可兑换优惠券（用户端）
+     */
+    List<Coupon> getExchangeableCoupons();
     
     /**
      * 用户领取优惠券
      */
     UserCoupon receiveCoupon(Long userId, Long couponId);
+
+    /**
+     * 用户积分兑换优惠券
+     */
+    UserCoupon exchangeCoupon(Long userId, Long couponId);
     
     /**
      * 查询用户优惠券列表

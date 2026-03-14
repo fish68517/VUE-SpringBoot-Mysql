@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,6 +37,14 @@ public class AdminCommunityController {
 
         // 查询所有帖子列表
         Page<CommunityPost> postPage = communityPostService.getAllPostList(page, size);
+        // 过滤 status = 1 软删除的帖子
+        Iterator iterator = postPage.iterator();
+        while (iterator.hasNext()) {
+            CommunityPost post = (CommunityPost) iterator.next();
+            if (post.getStatus() == 1) {
+                iterator.remove();
+            }
+        }
 
         // 2. 核心修改：将 Entity 转换为 VO
         List<PostVO> postVOList = postPage.getContent().stream()

@@ -285,12 +285,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public Page<Product> getPendingAuditProducts(Pageable pageable) {
-       /* if (status != null) {
-            return productRepository.findByStatus(status, pageable);
-        } else {
-            return productRepository.findAll(pageable);
-        }*/
-        return productRepository.findAll(pageable);
+        // 仅返回待审核商品（status=2）
+        return productRepository.findByStatus(2, pageable);
     }
 
     @Override

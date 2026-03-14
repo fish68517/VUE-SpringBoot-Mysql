@@ -1,69 +1,57 @@
-<template>
+﻿<template>
   <div class="user-manage">
     <h1>用户管理</h1>
-    
-    <!-- 搜索和筛选 -->
+
     <div class="filter-section">
       <div class="search-group">
         <el-input
           v-model="searchKeyword"
-          placeholder="搜索用户名或邮箱"
+          placeholder="搜索用户名/昵称/邮箱/手机号"
           clearable
           @keyup.enter="handleSearch"
         />
+        <el-select v-model="roleFilter" placeholder="按类别筛选" clearable style="width: 180px" @change="applyRoleFilter">
+          <el-option label="系统管理员" value="ADMIN" />
+          <el-option label="商家用户" value="SHOP" />
+          <el-option label="普通用户" value="USER" />
+        </el-select>
         <el-button type="primary" @click="handleSearch">搜索</el-button>
         <el-button @click="resetSearch">重置</el-button>
       </div>
     </div>
 
-    <!-- 用户列表表格 -->
     <div class="table-section">
-      <el-table
-        :data="userList"
-        stripe
-        style="width: 100%"
-        v-loading="loading"
-      >
+      <el-table :data="displayList" stripe style="width: 100%" v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="username" label="用户名" width="120" />
-        <el-table-column prop="email" label="邮箱" width="180" />
-        <el-table-column prop="phone" label="手机号" width="120" />
+        <el-table-column prop="username" label="用户名" width="130" />
         <el-table-column prop="nickname" label="昵称" width="120" />
+        <el-table-column prop="email" label="邮箱" min-width="180" />
+        <el-table-column prop="phone" label="手机号" width="130" />
+
+        <el-table-column label="类别" width="120">
+          <template #default="{ row }">
+            <el-tag :type="roleType(row.role)">{{ roleLabel(row.role) }}</el-tag>
+          </template>
+        </el-table-column>
+
         <el-table-column label="状态" width="100">
           <template #default="{ row }">
-            <el-tag :type="row.status === 1 ? 'success' : 'danger'">
-              {{ row.status === 1 ? '启用' : '禁用' }}
-            </el-tag>
+            <el-tag :type="row.status === 1 ? 'success' : 'danger'">{{ row.status === 1 ? '启用' : '禁用' }}</el-tag>
           </template>
         </el-table-column>
+
         <el-table-column label="创建时间" width="180">
-          <template #default="{ row }">
-            {{ formatDate(row.createTime) }}
-          </template>
+          <template #default="{ row }">{{ formatDate(row.createTime) }}</template>
         </el-table-column>
+
         <el-table-column label="操作" width="150" fixed="right">
           <template #default="{ row }">
-            <el-button
-              v-if="row.status === 1"
-              type="danger"
-              size="small"
-              @click="handleDisableUser(row)"
-            >
-              禁用
-            </el-button>
-            <el-button
-              v-else
-              type="success"
-              size="small"
-              @click="handleEnableUser(row)"
-            >
-              启用
-            </el-button>
+            <el-button v-if="row.status === 1" type="danger" size="small" @click="handleUpdateStatus(row, 0)">禁用</el-button>
+            <el-button v-else type="success" size="small" @click="handleUpdateStatus(row, 1)">启用</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
       <div class="pagination">
         <el-pagination
           v-model:current-page="currentPage"
@@ -79,37 +67,51 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import * as adminApi from "@/api/admin";
 
 const userList = ref([]);
 const loading = ref(false);
 const searchKeyword = ref("");
+const roleFilter = ref("");
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
 
+const displayList = computed(() => {
+  if (!roleFilter.value) return userList.value;
+  return userList.value.filter((u) => u.role === roleFilter.value);
+});
+
+const roleLabel = (role) => {
+  if (role === "ADMIN") return "系统管理员";
+  if (role === "SHOP") return "商家用户";
+  return "普通用户";
+};
+
+const roleType = (role) => {
+  if (role === "ADMIN") return "danger";
+  if (role === "SHOP") return "warning";
+  return "info";
+};
+
 const fetchUserList = async () => {
   loading.value = true;
   try {
-
-     // ★★★ 修改点开始 ★★★
     const params = {
-      // 1. 前端页码(1开始) -> 后端页码(0开始)
       page: currentPage.value - 1,
-      size: pageSize.value 
+      size: pageSize.value
     };
-    // ★★★ 修改点结束 ★★★
-    
-    if (searchKeyword.value) {
-      params.keyword = searchKeyword.value;
-    }
-    
-    const response = await adminApi.getUserList(params);
+
+    const response = searchKeyword.value
+      ? await adminApi.searchUser({ ...params, keyword: searchKeyword.value })
+      : await adminApi.getUserList(params);
+
     userList.value = response.content || [];
     total.value = response.totalElements || 0;
   } catch (error) {
+    console.error(error);
     ElMessage.error("获取用户列表失败");
   } finally {
     loading.value = false;
@@ -121,65 +123,38 @@ const handleSearch = () => {
   fetchUserList();
 };
 
+const applyRoleFilter = () => {
+  // 本地过滤，不触发后端请求
+};
+
 const resetSearch = () => {
   searchKeyword.value = "";
+  roleFilter.value = "";
   currentPage.value = 1;
   fetchUserList();
 };
 
-const handleDisableUser = (row) => {
+const handleUpdateStatus = (row, status) => {
   ElMessageBox.confirm(
-    `确定要禁用用户 "${row.username}" 吗？`,
-    "警告",
+    `确认要${status === 1 ? "启用" : "禁用"}用户 "${row.username}" 吗？`,
+    "提示",
     {
-      confirmButtonText: "确定",
+      confirmButtonText: "确认",
       cancelButtonText: "取消",
       type: "warning"
     }
   )
     .then(async () => {
-      try {
-        await adminApi.updateUserStatus(row.id, 0); // 禁用传 0
-        ElMessage.success("用户已禁用");
-        fetchUserList();
-      } catch (error) {
-        console.log(error);
-        ElMessage.error("禁用用户失败");
-      }
+      await adminApi.updateUserStatus(row.id, status);
+      ElMessage.success(`用户已${status === 1 ? "启用" : "禁用"}`);
+      fetchUserList();
     })
-    .catch(() => {
-      // 取消操作
-    });
-};
-
-const handleEnableUser = (row) => {
-  ElMessageBox.confirm(
-    `确定要启用用户 "${row.username}" 吗？`,
-    "确认",
-    {
-      confirmButtonText: "确定",
-      cancelButtonText: "取消",
-      type: "info"
-    }
-  )
-    .then(async () => {
-      try {
-        await adminApi.updateUserStatus(row.id, 1); // 禁用传 0
-        ElMessage.success("用户已启用");
-        fetchUserList();
-      } catch (error) {
-        ElMessage.error("启用用户失败");
-      }
-    })
-    .catch(() => {
-      // 取消操作
-    });
+    .catch(() => {});
 };
 
 const formatDate = (dateString) => {
   if (!dateString) return "-";
-  const date = new Date(dateString);
-  return date.toLocaleString("zh-CN");
+  return new Date(dateString).toLocaleString("zh-CN");
 };
 
 onMounted(() => {
@@ -195,7 +170,7 @@ onMounted(() => {
 }
 
 h1 {
-  margin: 0 0 20px 0;
+  margin: 0 0 20px;
   font-size: 24px;
   color: #333;
 }
@@ -214,26 +189,12 @@ h1 {
 }
 
 .search-group :deep(.el-input) {
-  width: 300px;
-}
-
-.table-section {
-  margin-top: 20px;
+  width: 320px;
 }
 
 .pagination {
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
-}
-
-@media (max-width: 768px) {
-  .search-group {
-    flex-direction: column;
-  }
-
-  .search-group :deep(.el-input) {
-    width: 100%;
-  }
 }
 </style>

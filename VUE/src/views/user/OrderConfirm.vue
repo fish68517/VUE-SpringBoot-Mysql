@@ -117,7 +117,7 @@ import { ElMessage } from "element-plus";
 import { useUserStore } from "@/store/userStore";
 import { useCartStore } from "@/store/cartStore";
 import { useOrderStore } from "@/store/orderStore";
-import { getAvailableCoupons } from "@/api/coupon";
+import { getUserCoupons } from "@/api/coupon";
 
 const router = useRouter();
 const route = useRoute();
@@ -203,8 +203,22 @@ const loadData = async () => {
     const shopId = selectedItems.value[0].shopId;
 
     // 5. 获取可用优惠券
-    const coupons = await getAvailableCoupons(shopId);
-    availableCoupons.value = coupons || [];
+    const userCoupons = await getUserCoupons(userStore.userInfo.id);
+    const now = Date.now();
+    availableCoupons.value = (userCoupons || [])
+      .filter((coupon) => {
+        const isUnused = Number(coupon.status) === 0;
+        const isSameShop = Number(coupon.shopId) === Number(shopId);
+        const isNotExpired = !coupon.endTime || new Date(coupon.endTime).getTime() >= now;
+        return isUnused && isSameShop && isNotExpired;
+      })
+      .map((coupon) => ({
+        id: coupon.couponId,
+        name: coupon.couponName,
+        discountAmount: coupon.discountAmount,
+        minAmount: coupon.minAmount,
+        endTime: coupon.endTime
+      }));
     
   } catch (error) {
     console.error("加载数据失败:", error);

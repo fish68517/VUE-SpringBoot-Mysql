@@ -7,12 +7,16 @@ import com.xingluo.petshop.dto.CreateCouponDTO;
 import com.xingluo.petshop.dto.UpdateCouponDTO;
 import com.xingluo.petshop.dto.UserCouponVO;
 import com.xingluo.petshop.entity.Coupon;
+import com.xingluo.petshop.entity.User;
 import com.xingluo.petshop.entity.UserCoupon;
+import com.xingluo.petshop.repository.UserRepository;
 import com.xingluo.petshop.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -24,6 +28,7 @@ import java.util.stream.Collectors;
 public class CouponController {
     
     private final CouponService couponService;
+    private final UserRepository userRepository;
 
     /**
      * 获取单个优惠券详情（店家编辑用）
@@ -96,6 +101,18 @@ public class CouponController {
                 .collect(Collectors.toList());
         return ApiResponse.ok(voList);
     }
+
+    /**
+     * 获取全站可兑换优惠券（用户兑换中心）
+     */
+    @GetMapping("/exchange/list")
+    public ApiResponse<List<CouponVO>> getExchangeableCoupons() {
+        List<Coupon> coupons = couponService.getExchangeableCoupons();
+        List<CouponVO> voList = coupons.stream()
+                .map(CouponVO::fromEntity)
+                .collect(Collectors.toList());
+        return ApiResponse.ok(voList);
+    }
     
     /**
      * 领取优惠券（用户）
@@ -105,6 +122,22 @@ public class CouponController {
         UserCoupon userCoupon = couponService.receiveCoupon(userId, id);
         //return Result.success(UserCouponVO.fromEntity(userCoupon));
         return ApiResponse.ok(UserCouponVO.fromEntity(userCoupon));
+    }
+
+    /**
+     * 兑换优惠券（用户）
+     */
+    @PostMapping("/{id}/exchange")
+    public ApiResponse<Map<String, Object>> exchangeCoupon(@PathVariable Long id, @RequestParam Long userId) {
+        UserCoupon userCoupon = couponService.exchangeCoupon(userId, id);
+        Coupon coupon = couponService.getCouponById(id);
+        User user = userRepository.findById(userId).orElse(null);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("userCoupon", UserCouponVO.fromEntity(userCoupon));
+        result.put("costPoints", coupon.getExchangePoints() == null ? 0 : coupon.getExchangePoints());
+        result.put("currentPoints", user == null || user.getPoint() == null ? 0 : user.getPoint());
+        return ApiResponse.ok(result);
     }
     
     /**
