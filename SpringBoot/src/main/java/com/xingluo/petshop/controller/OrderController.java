@@ -4,12 +4,16 @@ import com.xingluo.petshop.common.ApiResponse;
 import com.xingluo.petshop.dto.CreateOrderDTO;
 import com.xingluo.petshop.dto.OrderItemVO;
 import com.xingluo.petshop.dto.OrderVO;
+import com.xingluo.petshop.dto.ReceiverInfoDTO;
 import com.xingluo.petshop.entity.Order;
 import com.xingluo.petshop.entity.OrderItem;
 import com.xingluo.petshop.repository.OrderItemRepository;
+import com.xingluo.petshop.repository.OrderRepository;
 import com.xingluo.petshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +28,8 @@ import java.util.stream.Collectors;
 public class OrderController {
 
     private final OrderService orderService;
+    @Autowired
+    private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
     /**
@@ -128,6 +134,11 @@ public class OrderController {
         Order order = orderService.completeOrder(id);
         return ApiResponse.ok(convertToOrderVO(order));
     }
+   /* @PutMapping("/{id}/receiver")
+    public ApiResponse<OrderVO> receiverOrder(@PathVariable Long id) {
+        Order order = orderRepository.updateReceiverInfo(id);
+        return ApiResponse.ok(convertToOrderVO(order));
+    }*/
 
     /**
      * 获取订单商品明细
@@ -140,5 +151,29 @@ public class OrderController {
                 .map(this::convertToItemVO)
                 .collect(Collectors.toList());
         return ApiResponse.ok(voList);
+    }
+
+
+    // ... 其他代码 ...
+
+    /**
+     * 更新订单收货人信息
+     * @param id 订单ID (路径参数)
+     * @param dto 收货人信息 (请求体 JSON)
+     */
+    @PutMapping("/{id}/receiver")
+    public ApiResponse<Void> updateReceiverInfo(
+            @PathVariable("id") Long id,
+            @RequestBody ReceiverInfoDTO dto) {
+
+        // 参数校验 (可选，视你项目的严谨程度而定)
+        if (dto.getReceiverName() == null || dto.getReceiverPhone() == null || dto.getReceiverAddress() == null) {
+            return (ApiResponse<Void>) ApiResponse.error("收货人信息不能为空");
+        }
+
+        // 调用 Service 更新数据
+        orderRepository.updateReceiverInfo(id, dto.getReceiverName(), dto.getReceiverPhone(), dto.getReceiverAddress());
+
+        return ApiResponse.ok(null);
     }
 }

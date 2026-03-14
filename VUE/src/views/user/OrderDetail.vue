@@ -11,15 +11,14 @@
         <p>订单不存在</p>
       </div>
       <div v-else class="detail-content">
-        <!-- 订单状态 -->
         <div class="section status-section">
           <div class="status-card" :class="getStatusClass(order.status)">
             <div class="status-icon">
-              <span v-if="order.status === 0">⏳</span>
+              <span v-if="order.status === 0">⌛</span>
               <span v-else-if="order.status === 1">📦</span>
               <span v-else-if="order.status === 2">🚚</span>
-              <span v-else-if="order.status === 3">✅</span>
-              <span v-else-if="order.status === 4">❌</span>
+              <span v-else-if="order.status === 3">✓</span>
+              <span v-else-if="order.status === 4">✕</span>
             </div>
             <div class="status-info">
               <p class="status-title">{{ getStatusText(order.status) }}</p>
@@ -28,7 +27,6 @@
           </div>
         </div>
 
-        <!-- 订单信息 -->
         <div class="section">
           <h2 class="section-title">订单信息</h2>
           <div class="info-grid">
@@ -37,7 +35,7 @@
               <span class="value">{{ order.orderNo }}</span>
             </div>
             <div class="info-item">
-              <span class="label">订单时间：</span>
+              <span class="label">下单时间：</span>
               <span class="value">{{ formatDate(order.createTime) }}</span>
             </div>
             <div class="info-item">
@@ -51,18 +49,69 @@
           </div>
         </div>
 
-        <!-- 收货地址 -->
         <div class="section">
-          <h2 class="section-title">收货地址</h2>
-          <div class="address-info">
-            <p class="address-name">{{ order.receiverName }}</p>
-            <p class="address-phone">{{ order.receiverPhone }}</p>
-            <p class="address-detail">{{ order.receiverAddress }}</p>
+          <div class="section-header">
+            <h2 class="section-title">收货信息</h2>
+            <button
+              v-if="canEditReceiverInfo && !editingReceiver"
+              @click="startEditReceiver"
+              class="btn-edit-address"
+            >
+              修改收货信息
+            </button>
+          </div>
+
+          <div v-if="editingReceiver" class="address-form">
+            <div class="form-group">
+              <label>收货人</label>
+              <input
+                v-model.trim="receiverForm.receiverName"
+                type="text"
+                placeholder="请输入收货人姓名"
+              />
+            </div>
+            <div class="form-group">
+              <label>电话号码</label>
+              <input
+                v-model.trim="receiverForm.receiverPhone"
+                type="text"
+                placeholder="请输入电话号码"
+              />
+            </div>
+            <div class="form-group">
+              <label>收货地址</label>
+              <textarea
+                v-model.trim="receiverForm.receiverAddress"
+                rows="3"
+                placeholder="请输入收货地址"
+              ></textarea>
+            </div>
+            <div class="address-form-actions">
+              <button
+                @click="saveReceiverInfo"
+                :disabled="savingReceiver || !isReceiverFormValid"
+                class="btn-address-action btn-address-save"
+              >
+                {{ savingReceiver ? "保存中..." : "保存" }}
+              </button>
+              <button
+                @click="cancelEditReceiver"
+                :disabled="savingReceiver"
+                class="btn-address-action btn-address-cancel"
+              >
+                取消
+              </button>
+            </div>
+          </div>
+
+          <div v-else class="address-info">
+            <p class="address-name">{{ order.receiverName || "未填写" }}</p>
+            <p class="address-phone">{{ order.receiverPhone || "未填写" }}</p>
+            <p class="address-detail">{{ order.receiverAddress || "未填写" }}</p>
             <p v-if="order.remark" class="address-remark">备注：{{ order.remark }}</p>
           </div>
         </div>
 
-        <!-- 订单商品 -->
         <div class="section">
           <h2 class="section-title">订单商品</h2>
           <div class="products-table">
@@ -76,33 +125,31 @@
               <div v-for="item in orderItems" :key="item.id" class="table-row">
                 <div class="col-product">
                   <div class="product-info">
-                    <img :src="item.productImage" :alt="item.productName" class="product-image" />
+                    <img :src="getImageUrl(item.productImage)" :alt="item.productName" class="product-image" />
                     <p class="product-name">{{ item.productName }}</p>
                   </div>
                 </div>
-                <div class="col-price">¥{{ item.price }}</div>
+                <div class="col-price">￥{{ item.price }}</div>
                 <div class="col-quantity">{{ item.quantity }}</div>
-                <div class="col-subtotal">¥{{ item.subtotal }}</div>
+                <div class="col-subtotal">￥{{ item.subtotal }}</div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 订单金额 -->
         <div class="section amount-section">
           <div class="amount-summary">
             <div class="amount-row">
               <span>商品总额：</span>
-              <span>¥{{ order.totalAmount }}</span>
+              <span>￥{{ order.totalAmount }}</span>
             </div>
             <div class="amount-row total">
               <span>订单总额：</span>
-              <span class="total-amount">¥{{ order.totalAmount }}</span>
+              <span class="total-amount">￥{{ order.totalAmount }}</span>
             </div>
           </div>
         </div>
 
-        <!-- 操作按钮 -->
         <div class="section action-section">
           <div class="actions">
             <button
@@ -138,11 +185,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useOrderStore } from "@/store/orderStore";
 import { getOrderItems } from "@/api/orderItems";
+
+const getImageUrl = (src) => {
+  if (!src) return "";
+  if (src.startsWith("http")) {
+    return src;
+  }
+  return `http://localhost:8080/uploads/${src}`;
+};
 
 const router = useRouter();
 const route = useRoute();
@@ -152,16 +207,40 @@ const loading = ref(false);
 const paying = ref(false);
 const cancelling = ref(false);
 const completing = ref(false);
+const savingReceiver = ref(false);
+const editingReceiver = ref(false);
 const order = ref(null);
 const orderItems = ref([]);
+const receiverForm = ref({
+  receiverName: "",
+  receiverPhone: "",
+  receiverAddress: ""
+});
+
+const canEditReceiverInfo = computed(() => order.value?.status === 0);
+const isReceiverFormValid = computed(() => {
+  return (
+    receiverForm.value.receiverName &&
+    receiverForm.value.receiverPhone &&
+    receiverForm.value.receiverAddress
+  );
+});
+
+const syncReceiverForm = () => {
+  receiverForm.value = {
+    receiverName: order.value?.receiverName || "",
+    receiverPhone: order.value?.receiverPhone || "",
+    receiverAddress: order.value?.receiverAddress || ""
+  };
+};
 
 const loadOrderDetail = async () => {
   loading.value = true;
   try {
     const orderId = route.params.id;
     order.value = await orderStore.fetchOrderDetail(orderId);
-    
-    // 获取订单商品
+    syncReceiverForm();
+
     try {
       orderItems.value = await getOrderItems(orderId);
     } catch (error) {
@@ -179,12 +258,10 @@ const loadOrderDetail = async () => {
 const formatDate = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString);
-  return date.toLocaleDateString("zh-CN") + " " + date.toLocaleTimeString("zh-CN");
+  return `${date.toLocaleDateString("zh-CN")} ${date.toLocaleTimeString("zh-CN")}`;
 };
 
-const getStatusText = (status) => {
-  return orderStore.getStatusText(status);
-};
+const getStatusText = (status) => orderStore.getStatusText(status);
 
 const getStatusClass = (status) => {
   const classMap = {
@@ -195,6 +272,46 @@ const getStatusClass = (status) => {
     4: "status-cancelled"
   };
   return classMap[status] || "";
+};
+
+const startEditReceiver = () => {
+  syncReceiverForm();
+  editingReceiver.value = true;
+};
+
+const cancelEditReceiver = () => {
+  syncReceiverForm();
+  editingReceiver.value = false;
+};
+
+// ★ 核心修复位置
+const saveReceiverInfo = async () => {
+  if (!isReceiverFormValid.value) {
+    ElMessage.warning("请填写完整的收货信息");
+    return;
+  }
+
+  try {
+    savingReceiver.value = true;
+    
+    // 1. 调用更新接口
+    await orderStore.updateReceiver(order.value.id, receiverForm.value);
+    
+    // 2. 关闭编辑状态
+    editingReceiver.value = false;
+    
+    // 3. 提示成功
+    ElMessage.success("收货信息已更新");
+    
+    // 4. ★直接重新加载数据刷新页面，不要再去读取没定义的变量了
+    await loadOrderDetail();
+    
+  } catch (error) {
+    console.error("修改收货信息失败:", error);
+    ElMessage.error(error.message || "修改收货信息失败");
+  } finally {
+    savingReceiver.value = false;
+  }
 };
 
 const payOrder = async () => {
@@ -208,8 +325,6 @@ const payOrder = async () => {
     paying.value = true;
     await orderStore.pay(order.value.id);
     ElMessage.success("支付成功");
-    
-    // 重新加载订单详情
     await loadOrderDetail();
   } catch (error) {
     if (error !== "cancel") {
@@ -232,8 +347,6 @@ const cancelOrderAction = async () => {
     cancelling.value = true;
     await orderStore.cancel(order.value.id);
     ElMessage.success("订单已取消");
-    
-    // 重新加载订单详情
     await loadOrderDetail();
   } catch (error) {
     if (error !== "cancel") {
@@ -247,7 +360,7 @@ const cancelOrderAction = async () => {
 
 const completeOrderAction = async () => {
   try {
-    await ElMessageBox.confirm("确认已收到商品？", "提示", {
+    await ElMessageBox.confirm("确认已经收到商品？", "提示", {
       confirmButtonText: "确定",
       cancelButtonText: "取消",
       type: "warning"
@@ -256,8 +369,6 @@ const completeOrderAction = async () => {
     completing.value = true;
     await orderStore.complete(order.value.id);
     ElMessage.success("订单已完成");
-    
-    // 重新加载订单详情
     await loadOrderDetail();
   } catch (error) {
     if (error !== "cancel") {
@@ -351,6 +462,34 @@ onMounted(() => {
   font-size: 16px;
   font-weight: 600;
   color: #333;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.section-header .section-title {
+  margin-bottom: 0;
+}
+
+.btn-edit-address {
+  padding: 8px 14px;
+  border: 1px solid #667eea;
+  background: white;
+  color: #667eea;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.btn-edit-address:hover {
+  background: #667eea;
+  color: white;
 }
 
 .status-section {
@@ -472,6 +611,81 @@ onMounted(() => {
   font-size: 12px;
   color: #999;
   font-style: italic;
+}
+
+.address-form {
+  padding: 16px;
+  background: #f9f9f9;
+  border-radius: 4px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+.form-group label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  background: white;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.12);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 88px;
+}
+
+.address-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.btn-address-action {
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-address-save {
+  background: #667eea;
+  border: 1px solid #667eea;
+  color: white;
+}
+
+.btn-address-cancel {
+  background: white;
+  border: 1px solid #ddd;
+  color: #666;
 }
 
 .products-table {
@@ -647,7 +861,8 @@ onMounted(() => {
   color: #667eea;
 }
 
-.btn-action:disabled {
+.btn-action:disabled,
+.btn-address-action:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -657,6 +872,11 @@ onMounted(() => {
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .info-grid {
@@ -675,7 +895,8 @@ onMounted(() => {
     text-align: left;
   }
 
-  .actions {
+  .actions,
+  .address-form-actions {
     justify-content: flex-start;
   }
 

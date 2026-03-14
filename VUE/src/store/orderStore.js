@@ -1,7 +1,15 @@
 // src/store/orderStore.js
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { getOrderList, getOrderDetail, createOrder, payOrder, cancelOrder, completeOrder } from "@/api/order";
+import {
+  getOrderList,
+  getOrderDetail,
+  createOrder,
+  payOrder,
+  cancelOrder,
+  completeOrder,
+  updateOrderReceiver
+} from "@/api/order";
 
 export const useOrderStore = defineStore("order", () => {
   const orders = ref([]);
@@ -132,6 +140,32 @@ export const useOrderStore = defineStore("order", () => {
     }
   }
 
+  // 修改收货信息
+  async function updateReceiver(orderId, receiverData) {
+    loading.value = true;
+    try {
+      const result = await updateOrderReceiver(orderId, receiverData);
+
+      const order = orders.value.find(o => o.id === orderId);
+      if (order) {
+        order.receiverName = result.receiverName;
+        order.receiverPhone = result.receiverPhone;
+        order.receiverAddress = result.receiverAddress;
+      }
+
+      if (currentOrder.value && currentOrder.value.id === orderId) {
+        currentOrder.value = result;
+      }
+
+      return result;
+    } catch (error) {
+      console.error("修改收货信息失败:", error);
+      throw error;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   // 获取订单状态文本
   function getStatusText(status) {
     const statusMap = {
@@ -154,6 +188,7 @@ export const useOrderStore = defineStore("order", () => {
     pay,
     cancel,
     complete,
+    updateReceiver,
     getStatusText
   };
 });

@@ -40,7 +40,7 @@
 
               <div class="col-product">
                 <div class="product-info">
-                  <img :src="item.productImage" :alt="item.productName" class="product-image" />
+                  <img :src="getImageUrl(item.productImage)" :alt="item.productName" class="product-image" />
                   <div class="product-details">
                     <p class="product-name">{{ item.productName }}</p>
                     <p v-if="item.productStatus === 0" class="product-status">已下架</p>
@@ -143,6 +143,15 @@ const cartStore = useCartStore();
 const loading = ref(false);
 const selectedItems = ref([]);
 const selectAll = ref(false);
+
+// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
+const getImageUrl = (src) => {
+  console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
+  if (src.startsWith("http")) {
+    return src;
+  }
+  return `http://localhost:8080/uploads/${src}`;
+};
 
 const selectedTotal = computed(() => {
   return cartStore.calculateSelectedTotal(selectedItems.value).toFixed(2);

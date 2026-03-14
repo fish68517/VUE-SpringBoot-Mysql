@@ -73,7 +73,7 @@
 
         <!-- 商品详情和评价 -->
         <div class="detail-tabs">
-          <div class="tabs-header">
+          <div class="tabs-header" v-if="false">
             <button
               :class="{ active: activeTab === 'detail' }"
               @click="activeTab = 'detail'"
@@ -155,6 +155,9 @@ const reviewCount = computed(() => {
 // 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
 const getImageUrl = (src) => {
   console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
+  if (src.startsWith("http")) {
+    return src;
+  }
   return `http://localhost:8080/uploads/${src}`;
 };
 

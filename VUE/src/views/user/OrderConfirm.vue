@@ -14,7 +14,7 @@
           <h2 class="section-title">订单商品</h2>
           <div class="products-list">
             <div v-for="item in selectedItems" :key="item.id" class="product-item">
-              <img :src="item.productImage" :alt="item.productName" class="product-image" />
+              <img :src="getImageUrl(item.productImage)" :alt="item.productName" class="product-image" />
               <div class="product-info">
                 <p class="product-name">{{ item.productName }}</p>
                 <p class="product-price">¥{{ item.productPrice }}</p>
@@ -131,6 +131,16 @@ const selectedItems = ref([]);
 const availableCoupons = ref([]);
 const selectedCoupon = ref(null);
 
+
+// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
+const getImageUrl = (src) => {
+  console.log("图片路径：" + src);
+  if (src.startsWith("http")) {
+    return `${src}`;
+  }
+  return `http://localhost:8080/uploads/${src}`;
+};
+
 const form = ref({
   receiverName: "",
   receiverPhone: "",
@@ -236,7 +246,8 @@ const submitOrder = async () => {
     ElMessage.success("订单创建成功");
     
     // 跳转到订单详情页
-    router.push(`/order/${order.id}`);
+    // 跳转到订单详情页
+    router.push(`/user/orders/${order.id}`); // ✅ 加上 /user/orders/ 前缀
   } catch (error) {
     console.error("创建订单失败:", error);
     ElMessage.error(error.message || "创建订单失败");
