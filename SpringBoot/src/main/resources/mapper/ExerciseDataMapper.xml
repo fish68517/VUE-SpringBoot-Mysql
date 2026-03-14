@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.admin.mapper.ExerciseDataMapper">
+
+    <resultMap id="ExerciseDataResultMap" type="com.admin.entity.ExerciseData">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="exercise_type" property="exerciseType"/>
+        <result column="location" property="location"/>
+        <result column="duration" property="duration"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="findById" parameterType="Long" resultMap="ExerciseDataResultMap">
+        SELECT id, user_id, exercise_type, location, duration, created_at, updated_at
+        FROM exercise_data
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="ExerciseDataResultMap">
+        SELECT id, user_id, exercise_type, location, duration, created_at, updated_at
+        FROM exercise_data
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*)
+        FROM exercise_data
+    </select>
+
+    <select id="findTodayByUserId" parameterType="Long" resultMap="ExerciseDataResultMap">
+        SELECT id, user_id, exercise_type, location, duration, created_at, updated_at
+        FROM exercise_data
+        WHERE user_id = #{userId}
+          AND DATE(created_at) = CURDATE()
+        ORDER BY created_at DESC
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.admin.entity.ExerciseData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO exercise_data (user_id, exercise_type, location, duration, created_at, updated_at)
+        VALUES (#{userId}, #{exerciseType}, #{location}, #{duration}, NOW(), NOW())
+    </insert>
+
+    <update id="update" parameterType="com.admin.entity.ExerciseData">
+        UPDATE exercise_data
+        <set>
+            <if test="exerciseType != null">exercise_type = #{exerciseType},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="duration != null">duration = #{duration},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM exercise_data
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.admin.mapper.PostMapper">
+
+    <resultMap id="PostResultMap" type="com.admin.entity.Post">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="content" property="content"/>
+        <result column="image_path" property="imagePath"/>
+        <result column="likes_count" property="likesCount"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="findById" parameterType="Long" resultMap="PostResultMap">
+        SELECT id, user_id, content, image_path, likes_count, created_at, updated_at
+        FROM posts
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="PostResultMap">
+        SELECT id, user_id, content, image_path, likes_count, created_at, updated_at
+        FROM posts
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*)
+        FROM posts
+    </select>
+
+    <insert id="insert" parameterType="com.admin.entity.Post" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO posts (user_id, content, image_path, likes_count, created_at, updated_at)
+        VALUES (#{userId}, #{content}, #{imagePath}, #{likesCount}, NOW(), NOW())
+    </insert>
+
+    <update id="incrementLikes" parameterType="Long">
+        UPDATE posts
+        SET likes_count = likes_count + 1,
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM posts
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

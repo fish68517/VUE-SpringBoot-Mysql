@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.admin.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.admin.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="email" property="email"/>
+        <result column="height" property="height"/>
+        <result column="weight" property="weight"/>
+        <result column="avatar" property="avatar"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="findById" parameterType="Long" resultMap="UserResultMap">
+        SELECT id, username, password, email, height, weight, avatar, created_at, updated_at
+        FROM users
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="UserResultMap">
+        SELECT id, username, password, email, height, weight, avatar, created_at, updated_at
+        FROM users
+        <where>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                (username LIKE CONCAT('%', #{searchKeyword}, '%') OR email LIKE CONCAT('%', #{searchKeyword}, '%'))
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        <where>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                (username LIKE CONCAT('%', #{searchKeyword}, '%') OR email LIKE CONCAT('%', #{searchKeyword}, '%'))
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="com.admin.entity.User">
+        UPDATE users
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="email != null">email = #{email},</if>
+            <if test="height != null">height = #{height},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM users
+        WHERE id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.admin.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (username, password, email, created_at, updated_at)
+        VALUES (#{username}, #{password}, #{email}, NOW(), NOW())
+    </insert>
+
+
+    <select id="findByUsername" parameterType="String" resultMap="UserResultMap">
+        SELECT id, username, password, email, height, weight, avatar, created_at, updated_at
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+</mapper>
