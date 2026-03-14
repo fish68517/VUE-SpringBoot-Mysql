@@ -35,6 +35,9 @@ public class Coupon {
     
     @Column(name = "total_count")
     private Integer totalCount;
+
+    @Column(name = "exchange_points", nullable = false)
+    private Integer exchangePoints = 0;
     
     @Column(name = "used_count")
     private Integer usedCount = 0;

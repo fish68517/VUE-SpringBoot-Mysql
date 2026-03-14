@@ -53,8 +53,9 @@
               <img
                 v-for="(image, index) in post.images.slice(0, 3)"
                 :key="index"
-                :src="image"
+                :src="getImageUrl(image)"
                 :alt="post.title"
+                @error="handlePostImageError"
                 class="post-image"
               />
               <div v-if="post.images.length > 3" class="image-more">
@@ -101,6 +102,24 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserStore } from "@/store/userStore";
 import { getPostList, deletePost } from "@/api/community";
 import Pagination from "@/components/Pagination.vue";
+import defaultPostImage from "@/assets/bg.jpg";
+
+// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
+const getImageUrl = (src) => {
+  console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
+  if (!src) return defaultPostImage;
+  if (src.startsWith("http")) {
+    return src;
+  }
+  return `http://localhost:8080/uploads/${src}`;
+};
+
+const handlePostImageError = (event) => {
+  const img = event?.target;
+  if (!img || img.dataset.fallbackApplied === "1") return;
+  img.dataset.fallbackApplied = "1";
+  img.src = defaultPostImage;
+};
 
 const router = useRouter();
 const userStore = useUserStore();

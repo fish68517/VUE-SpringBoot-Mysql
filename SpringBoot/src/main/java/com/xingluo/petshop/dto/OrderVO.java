@@ -24,6 +24,8 @@ public class OrderVO {
     private LocalDateTime payTime;
     private LocalDateTime shipTime;
     private LocalDateTime createTime;
+    private Integer awardedPoints;
+    private Integer currentPoints;
 
     // 包含订单明细列表
     private List<OrderItemVO> orderItems;

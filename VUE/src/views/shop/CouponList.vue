@@ -1,8 +1,8 @@
-<template>
+﻿<template>
   <div class="shop-coupons">
     <div class="page-header">
       <h1>优惠券管理</h1>
-      <router-link to="/shop/coupons/create" class="btn-add">➕ 创建优惠券</router-link>
+      <router-link to="/shop/coupons/create" class="btn-add">+ 创建优惠券</router-link>
     </div>
 
     <div v-if="loading" class="loading">加载中...</div>
@@ -31,6 +31,10 @@
               <span class="value">{{ coupon.totalCount || "无限" }}</span>
             </div>
             <div class="detail-item">
+              <span class="label">兑换积分：</span>
+              <span class="value">{{ coupon.exchangePoints || 0 }}</span>
+            </div>
+            <div class="detail-item">
               <span class="label">已使用：</span>
               <span class="value">{{ coupon.usedCount || 0 }}</span>
             </div>
@@ -49,23 +53,10 @@
     </div>
     <div v-else class="empty">暂无优惠券</div>
 
-    <!-- 分页 -->
     <div v-if="total > pageSize" class="pagination">
-      <button
-        @click="currentPage--"
-        :disabled="currentPage === 1"
-        class="page-btn"
-      >
-        上一页
-      </button>
+      <button @click="currentPage--" :disabled="currentPage === 1" class="page-btn">上一页</button>
       <span class="page-info">第 {{ currentPage }} 页，共 {{ totalPages }} 页</span>
-      <button
-        @click="currentPage++"
-        :disabled="currentPage === totalPages"
-        class="page-btn"
-      >
-        下一页
-      </button>
+      <button @click="currentPage++" :disabled="currentPage === totalPages" class="page-btn">下一页</button>
     </div>
   </div>
 </template>
@@ -73,32 +64,25 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { getShopCouponList } from "@/api/coupon";
-import { deleteCoupon } from "@/api/coupon";
+import { getShopCouponList, deleteCoupon } from "@/api/coupon";
+import { useUserStore } from "@/store/userStore";
 
 const loading = ref(false);
 const coupons = ref([]);
 const currentPage = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
-import { useUserStore } from "@/store/userStore";
 const userStore = useUserStore();
 
 const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 
 const getStatusText = (status) => {
-  const statusMap = {
-    0: "禁用",
-    1: "启用"
-  };
+  const statusMap = { 0: "禁用", 1: "启用" };
   return statusMap[status] || "未知";
 };
 
 const getStatusClass = (status) => {
-  const classMap = {
-    0: "status-disabled",
-    1: "status-active"
-  };
+  const classMap = { 0: "status-disabled", 1: "status-active" };
   return classMap[status] || "";
 };
 
@@ -111,13 +95,10 @@ const loadCoupons = async () => {
   loading.value = true;
   try {
     const params = {
-      page: currentPage.value -1,
-      pageSize: pageSize.value
+      page: currentPage.value - 1,
+      pageSize: pageSize.value,
+      shopId: userStore.userInfo?.shopId
     };
-
-    // 增加shopId
-    // 添加shopId
-    params.shopId = userStore.userInfo?.shopId;
     const data = await getShopCouponList(params);
     coupons.value = data || [];
     total.value = data?.total || 0;
@@ -135,15 +116,11 @@ const handleDelete = async (couponId) => {
       cancelButtonText: "取消",
       type: "warning"
     });
-    // TODO: 调用删除API
     await deleteCoupon(couponId);
-
     ElMessage.success("优惠券已删除");
     loadCoupons();
   } catch (error) {
     if (error !== "cancel") {
-      // log
-      console.log("删除失败  ",error);
       ElMessage.error("删除失败");
     }
   }
@@ -159,241 +136,32 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.shop-coupons {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.page-header h1 {
-  margin: 0;
-  font-size: 28px;
-  color: #333;
-}
-
-.btn-add {
-  padding: 10px 20px;
-  background: #667eea;
-  color: white;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.btn-add:hover {
-  background: #5568d3;
-}
-
-.loading {
-  text-align: center;
-  padding: 40px;
-  color: #999;
-}
-
-.empty {
-  text-align: center;
-  padding: 40px;
-  color: #999;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.coupons-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
-.coupon-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.coupon-card:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-}
-
-.coupon-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.coupon-name {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.3);
-  color: white;
-}
-
-.status-active {
-  background: rgba(39, 174, 96, 0.8);
-}
-
-.status-disabled {
-  background: rgba(149, 165, 166, 0.8);
-}
-
-.coupon-content {
-  padding: 20px;
-  display: flex;
-  gap: 20px;
-}
-
-.discount-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-width: 80px;
-  padding: 15px;
-  background: #f9f9f9;
-  border-radius: 4px;
-}
-
-.discount-amount {
-  font-size: 24px;
-  font-weight: 600;
-  color: #e74c3c;
-}
-
-.discount-label {
-  font-size: 12px;
-  color: #999;
-  margin-top: 5px;
-}
-
-.coupon-details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-}
-
-.detail-item .label {
-  color: #999;
-}
-
-.detail-item .value {
-  color: #333;
-  font-weight: 500;
-}
-
-.coupon-actions {
-  display: flex;
-  gap: 10px;
-  padding: 15px;
-  border-top: 1px solid #eee;
-}
-
-.btn-edit,
-.btn-delete {
-  flex: 1;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-edit {
-  background: #3498db;
-  color: white;
-  text-decoration: none;
-  display: block;
-  text-align: center;
-}
-
-.btn-edit:hover {
-  background: #2980b9;
-}
-
-.btn-delete {
-  background: #e74c3c;
-  color: white;
-}
-
-.btn-delete:hover {
-  background: #c0392b;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  padding: 20px;
-}
-
-.page-btn {
-  padding: 8px 16px;
-  background: #667eea;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #5568d3;
-}
-
-.page-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.page-info {
-  color: #666;
-  font-size: 14px;
-}
-
-@media (max-width: 768px) {
-  .page-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .coupons-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .coupon-content {
-    flex-direction: column;
-  }
-}
+.shop-coupons { max-width: 1200px; margin: 0 auto; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.page-header h1 { margin: 0; font-size: 28px; color: #333; }
+.btn-add { padding: 10px 20px; background: #667eea; color: white; border-radius: 4px; text-decoration: none; font-size: 14px; }
+.loading, .empty { text-align: center; padding: 40px; color: #999; }
+.empty { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+.coupons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.coupon-card { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden; }
+.coupon-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.coupon-name { font-size: 16px; font-weight: 600; }
+.status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+.status-active { background: rgba(39, 174, 96, 0.8); color: #fff; }
+.status-disabled { background: rgba(149, 165, 166, 0.8); color: #fff; }
+.coupon-content { padding: 20px; display: flex; gap: 20px; }
+.discount-info { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 80px; padding: 15px; background: #f9f9f9; border-radius: 4px; }
+.discount-amount { font-size: 24px; font-weight: 600; color: #e74c3c; }
+.discount-label { font-size: 12px; color: #999; margin-top: 5px; }
+.coupon-details { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.detail-item { display: flex; justify-content: space-between; font-size: 13px; }
+.detail-item .label { color: #999; }
+.detail-item .value { color: #333; font-weight: 500; }
+.coupon-actions { display: flex; gap: 10px; padding: 15px; border-top: 1px solid #eee; }
+.btn-edit, .btn-delete { flex: 1; padding: 8px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; }
+.btn-edit { background: #3498db; color: white; text-decoration: none; text-align: center; }
+.btn-delete { background: #e74c3c; color: white; }
+.pagination { display: flex; justify-content: center; align-items: center; gap: 15px; padding: 20px; }
+.page-btn { padding: 8px 16px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; }
+.page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 </style>

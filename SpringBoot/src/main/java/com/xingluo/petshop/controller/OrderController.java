@@ -7,8 +7,10 @@ import com.xingluo.petshop.dto.OrderVO;
 import com.xingluo.petshop.dto.ReceiverInfoDTO;
 import com.xingluo.petshop.entity.Order;
 import com.xingluo.petshop.entity.OrderItem;
+import com.xingluo.petshop.entity.User;
 import com.xingluo.petshop.repository.OrderItemRepository;
 import com.xingluo.petshop.repository.OrderRepository;
+import com.xingluo.petshop.repository.UserRepository;
 import com.xingluo.petshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,8 @@ public class OrderController {
     @Autowired
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final UserRepository userRepository;
+    private static final BigDecimal POINT_EXCHANGE_AMOUNT = new BigDecimal("100");
 
     /**
      * 实体转 OrderVO
@@ -114,7 +119,12 @@ public class OrderController {
     @PutMapping("/{id}/pay")
     public ApiResponse<OrderVO> payOrder(@PathVariable Long id) {
         Order order = orderService.payOrder(id);
-        return ApiResponse.ok(convertToOrderVO(order));
+        OrderVO vo = convertToOrderVO(order);
+        int awardedPoints = order.getTotalAmount().divideToIntegralValue(POINT_EXCHANGE_AMOUNT).intValue();
+        User user = userRepository.findById(order.getUserId()).orElse(null);
+        vo.setAwardedPoints(awardedPoints);
+        vo.setCurrentPoints(user == null || user.getPoint() == null ? 0 : user.getPoint());
+        return ApiResponse.ok(vo);
     }
 
     /**

@@ -10,6 +10,7 @@ public class UpdateCouponDTO {
     private BigDecimal discountAmount;
     private BigDecimal minAmount;
     private Integer totalCount;
+    private Integer exchangePoints;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer status;

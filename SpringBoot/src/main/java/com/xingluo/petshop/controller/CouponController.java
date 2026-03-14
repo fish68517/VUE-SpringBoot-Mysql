@@ -44,6 +44,7 @@ public class CouponController {
         coupon.setDiscountAmount(dto.getDiscountAmount());
         coupon.setMinAmount(dto.getMinAmount());
         coupon.setTotalCount(dto.getTotalCount());
+        coupon.setExchangePoints(dto.getExchangePoints());
         coupon.setStartTime(dto.getStartTime());
         coupon.setEndTime(dto.getEndTime());
         coupon.setStatus(dto.getStatus());
@@ -63,6 +64,7 @@ public class CouponController {
         coupon.setDiscountAmount(dto.getDiscountAmount());
         coupon.setMinAmount(dto.getMinAmount());
         coupon.setTotalCount(dto.getTotalCount());
+        coupon.setExchangePoints(dto.getExchangePoints());
         coupon.setStartTime(dto.getStartTime());
         coupon.setEndTime(dto.getEndTime());
         

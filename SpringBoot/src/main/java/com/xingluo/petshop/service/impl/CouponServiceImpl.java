@@ -39,6 +39,7 @@ public class CouponServiceImpl implements CouponService {
         existing.setDiscountAmount(coupon.getDiscountAmount());
         existing.setMinAmount(coupon.getMinAmount());
         existing.setTotalCount(coupon.getTotalCount());
+        existing.setExchangePoints(coupon.getExchangePoints() == null ? 0 : coupon.getExchangePoints());
         existing.setStartTime(coupon.getStartTime());
         existing.setEndTime(coupon.getEndTime());
         existing.setStatus(coupon.getStatus());
@@ -48,6 +49,9 @@ public class CouponServiceImpl implements CouponService {
             throw new BusinessException(400, "结束时间不能早于开始时间");
         }
 
+        if (existing.getExchangePoints() < 0) {
+            throw new BusinessException(400, "兑换所需积分不能小于0");
+        }
         return couponRepository.save(existing);
     }
     
@@ -67,6 +71,12 @@ public class CouponServiceImpl implements CouponService {
             throw new BusinessException(400, "结束时间不能早于开始时间");
         }
         
+        if (coupon.getExchangePoints() == null) {
+            coupon.setExchangePoints(0);
+        }
+        if (coupon.getExchangePoints() < 0) {
+            throw new BusinessException(400, "兑换所需积分不能小于0");
+        }
         return couponRepository.save(coupon);
     }
     

@@ -20,6 +20,8 @@ public class CreateCouponDTO {
     private BigDecimal minAmount;
     
     private Integer totalCount;
+
+    private Integer exchangePoints;
     
     private LocalDateTime startTime;
     

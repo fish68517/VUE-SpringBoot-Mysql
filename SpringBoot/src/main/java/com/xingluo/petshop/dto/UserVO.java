@@ -54,6 +54,8 @@ public class UserVO {
      * 状态
      */
     private Integer status;
+
+    private Integer point;
     
     /**
      * 创建时间

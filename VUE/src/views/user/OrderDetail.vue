@@ -189,6 +189,7 @@ import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useOrderStore } from "@/store/orderStore";
+import { useUserStore } from "@/store/userStore";
 import { getOrderItems } from "@/api/orderItems";
 
 const getImageUrl = (src) => {
@@ -202,6 +203,7 @@ const getImageUrl = (src) => {
 const router = useRouter();
 const route = useRoute();
 const orderStore = useOrderStore();
+const userStore = useUserStore();
 
 const loading = ref(false);
 const paying = ref(false);
@@ -323,8 +325,17 @@ const payOrder = async () => {
     });
 
     paying.value = true;
-    await orderStore.pay(order.value.id);
-    ElMessage.success("支付成功");
+    const payResult = await orderStore.pay(order.value.id);
+    const awardedPoints = Number(payResult?.awardedPoints ?? Math.floor(Number(order.value?.totalAmount || 0) / 100));
+    const currentPoints = Number(payResult?.currentPoints ?? Number(userStore.userInfo?.point || 0) + awardedPoints);
+    if (userStore.userInfo) {
+      userStore.setUserInfo({
+        ...userStore.userInfo,
+        point: currentPoints
+      });
+    }
+    ElMessage.closeAll();
+    ElMessage.success(`支付成功，获得${awardedPoints}积分，当前总积分${currentPoints}`);
     await loadOrderDetail();
   } catch (error) {
     if (error !== "cancel") {

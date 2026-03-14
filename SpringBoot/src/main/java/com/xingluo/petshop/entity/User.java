@@ -42,6 +42,9 @@ public class User {
     
     @Column(nullable = false)
     private Integer status = 1;
+
+    @Column(nullable = false)
+    private Integer point = 0;
     
     @Column(name = "create_time", updatable = false)
     private LocalDateTime createTime;

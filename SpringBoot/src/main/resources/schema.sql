@@ -204,6 +204,7 @@ CREATE TABLE IF NOT EXISTS `coupon` (
     `name` VARCHAR(100) NOT NULL COMMENT '优惠券名称',
     `discount_amount` DECIMAL(10,2) NOT NULL COMMENT '折扣金额',
     `min_amount` DECIMAL(10,2) DEFAULT 0 COMMENT '最低消费金额',
+    `exchange_points` INT NOT NULL DEFAULT 0 COMMENT '兑换所需积分',
     `total_count` INT COMMENT '发放总数',
     `used_count` INT DEFAULT 0 COMMENT '已使用数量',
     `start_time` DATETIME COMMENT '开始时间',

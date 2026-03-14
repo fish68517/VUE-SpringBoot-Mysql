@@ -25,6 +25,8 @@ public class CouponVO {
     private BigDecimal minAmount;
     
     private Integer totalCount;
+
+    private Integer exchangePoints;
     
     private Integer usedCount;
     
@@ -47,6 +49,7 @@ public class CouponVO {
         vo.setDiscountAmount(coupon.getDiscountAmount());
         vo.setMinAmount(coupon.getMinAmount());
         vo.setTotalCount(coupon.getTotalCount());
+        vo.setExchangePoints(coupon.getExchangePoints());
         vo.setUsedCount(coupon.getUsedCount());
         vo.setStartTime(coupon.getStartTime());
         vo.setEndTime(coupon.getEndTime());

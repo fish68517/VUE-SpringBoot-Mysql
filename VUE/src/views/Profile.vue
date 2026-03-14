@@ -15,6 +15,10 @@
               <el-input v-model="form.username" disabled />
             </el-form-item>
 
+            <el-form-item label="积分">
+              <el-input :value="form.point" disabled />
+            </el-form-item>
+
             <el-form-item label="昵称" prop="nickname">
               <el-input v-model="form.nickname" placeholder="请输入昵称" />
             </el-form-item>
@@ -39,7 +43,7 @@
         </el-tab-pane>
 
         <!-- 头像标签 -->
-        <el-tab-pane label="头像" name="avatar">
+        <el-tab-pane label="头像" name="avatar" v-if="false">
           <div class="avatar-section">
             <div class="avatar-preview">
               <img v-if="form.avatar" :src="form.avatar" alt="头像" class="avatar-img" />
@@ -84,7 +88,8 @@ const form = ref({
   email: "",
   phone: "",
   address: "",
-  avatar: ""
+  avatar: "",
+  point: 0
 });
 
 const originalForm = ref({});
@@ -139,7 +144,8 @@ function initFormFromStore() {
     email: userInfo.email || "",
     phone: userInfo.phone || "",
     address: userInfo.address || "",
-    avatar: userInfo.avatar || ""
+    avatar: userInfo.avatar || "",
+    point: Number(userInfo.point || 0)
   };
   
   // 备份原始数据用于重置
@@ -151,9 +157,12 @@ function handleUpdate() {
     if (valid) {
       loading.value = true;
       try {
-        const { username, ...data } = form.value;
+        const { username, point, ...data } = form.value;
         await updateUserProfile(data);
-        userStore.setUserInfo(form.value);
+        userStore.setUserInfo({
+          ...userStore.userInfo,
+          ...form.value
+        });
         originalForm.value = JSON.parse(JSON.stringify(form.value));
         ElMessage.success("个人信息更新成功");
       } catch (error) {

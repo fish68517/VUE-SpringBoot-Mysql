@@ -5,10 +5,12 @@ import com.xingluo.petshop.entity.Cart;
 import com.xingluo.petshop.entity.Order;
 import com.xingluo.petshop.entity.OrderItem;
 import com.xingluo.petshop.entity.Product;
+import com.xingluo.petshop.entity.User;
 import com.xingluo.petshop.repository.CartRepository;
 import com.xingluo.petshop.repository.OrderItemRepository;
 import com.xingluo.petshop.repository.OrderRepository;
 import com.xingluo.petshop.repository.ProductRepository;
+import com.xingluo.petshop.repository.UserRepository;
 import com.xingluo.petshop.service.OrderService;
 import com.xingluo.petshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -32,9 +34,11 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
     private final ProductService productService;
     
     private static final AtomicLong orderCounter = new AtomicLong(0);
+    private static final BigDecimal POINT_EXCHANGE_AMOUNT = new BigDecimal("100");
     
     /**
      * 生成订单号
@@ -143,7 +147,18 @@ public class OrderServiceImpl implements OrderService {
         
         order.setStatus(1); // 待发货
         order.setPayTime(LocalDateTime.now());
-        
+
+        int pointsToAdd = order.getTotalAmount()
+                .divideToIntegralValue(POINT_EXCHANGE_AMOUNT)
+                .intValue();
+        if (pointsToAdd > 0) {
+            User user = userRepository.findById(order.getUserId())
+                    .orElseThrow(() -> new BusinessException(404, "user not found"));
+            int currentPoints = user.getPoint() == null ? 0 : user.getPoint();
+            user.setPoint(currentPoints + pointsToAdd);
+            userRepository.save(user);
+        }
+
         return orderRepository.save(order);
     }
     

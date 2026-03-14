@@ -145,19 +145,27 @@ export const useOrderStore = defineStore("order", () => {
     loading.value = true;
     try {
       const result = await updateOrderReceiver(orderId, receiverData);
+      const safeReceiverData = {
+        receiverName: result?.receiverName ?? receiverData.receiverName,
+        receiverPhone: result?.receiverPhone ?? receiverData.receiverPhone,
+        receiverAddress: result?.receiverAddress ?? receiverData.receiverAddress
+      };
 
-      const order = orders.value.find(o => o.id === orderId);
+      const order = orders.value.find(o => Number(o.id) === Number(orderId));
       if (order) {
-        order.receiverName = result.receiverName;
-        order.receiverPhone = result.receiverPhone;
-        order.receiverAddress = result.receiverAddress;
+        order.receiverName = safeReceiverData.receiverName;
+        order.receiverPhone = safeReceiverData.receiverPhone;
+        order.receiverAddress = safeReceiverData.receiverAddress;
       }
 
-      if (currentOrder.value && currentOrder.value.id === orderId) {
-        currentOrder.value = result;
+      if (currentOrder.value && Number(currentOrder.value.id) === Number(orderId)) {
+        currentOrder.value = {
+          ...currentOrder.value,
+          ...safeReceiverData
+        };
       }
 
-      return result;
+      return result ?? safeReceiverData;
     } catch (error) {
       console.error("修改收货信息失败:", error);
       throw error;
