@@ -2,11 +2,8 @@
   <el-card class="post-card" shadow="hover" @click="handleCardClick">
     <div class="post-header">
       <div class="user-info">
-        <el-avatar :size="40" :src="post.user?.avatar || '/default-avatar.png'">
-          {{ post.user?.username?.charAt(0).toUpperCase() }}
-        </el-avatar>
         <div class="user-details">
-          <span class="username">{{ post.user?.username }}</span>
+          <span class="username">发布者：{{ postAuthorName }}</span>
           <span class="timestamp">{{ formatTime(post.createdAt) }}</span>
         </div>
       </div>
@@ -53,7 +50,13 @@
           fit="cover"
           class="post-image"
           @click.stop
-        />
+        >
+          <template #error>
+            <div class="image-fallback">
+              <img :src="postDefaultImage" alt="post default" class="fallback-image" />
+            </div>
+          </template>
+        </el-image>
         <div 
           v-if="imageList.length > maxDisplayImages" 
           class="more-images-overlay"
@@ -88,7 +91,8 @@ import { useAuthStore } from '@/store/modules/auth'
 import { MoreFilled, Edit, Delete, ChatLineRound } from '@element-plus/icons-vue'
 import { deleteDynamic } from '@/api/community'
 import { showSuccess, showError, confirmDelete } from '@/utils/feedback'
-import LikeButton from './LikeButton.vue'
+// import LikeButton from './LikeButton.vue'
+import postDefaultImage from '@/assets/post_default.png'
 
 const props = defineProps({
   post: {
@@ -106,12 +110,25 @@ const expanded = ref(false)
 const maxDisplayImages = 4
 const maxContentLength = 200
 
+const getEntityUserId = (entity) => {
+  if (!entity) return null
+  return entity.id ?? entity.userId ?? entity.user?.id ?? entity.user?.userId ?? null
+}
+
+const currentUserId = computed(() => getEntityUserId(authStore.currentUser))
+const postOwnerId = computed(() => getEntityUserId(props.post?.user || props.post))
+
 const isOwnPost = computed(() => {
-  return authStore.currentUser?.id === props.post.user?.id
+  if (currentUserId.value == null || postOwnerId.value == null) return false
+  return String(currentUserId.value) === String(postOwnerId.value)
 })
 
 const isLongContent = computed(() => {
   return props.post.content && props.post.content.length > maxContentLength
+})
+
+const postAuthorName = computed(() => {
+  return props.post?.user?.username || props.post?.username || '未知用户'
 })
 
 const imageList = computed(() => {
@@ -155,6 +172,11 @@ const handleCardClick = () => {
 }
 
 const handleCommand = async (command) => {
+  if (!isOwnPost.value) {
+    showError('只能编辑或删除自己发布的帖子')
+    return
+  }
+
   if (command === 'edit') {
     emit('edit', props.post)
   } else if (command === 'delete') {
@@ -202,7 +224,6 @@ const handleLikeCountUpdate = (count) => {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
 }
 
 .user-details {
@@ -295,6 +316,21 @@ const handleLikeCountUpdate = (count) => {
   height: 200px;
   border-radius: 4px;
   overflow: hidden;
+}
+
+.image-fallback {
+  width: 100%;
+  height: 100%;
+  background-color: #f5f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fallback-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .image-grid-single .post-image {

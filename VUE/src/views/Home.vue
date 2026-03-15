@@ -118,9 +118,9 @@
         <el-col :xs="24" :sm="12" :md="12" :lg="8" v-for="post in recentPosts" :key="post.id">
           <el-card shadow="hover" class="post-card" @click="navigateTo(`/community/${post.id}`)">
             <div class="post-header">
-              <el-avatar :size="40" :src="post.user?.avatar || '/default-avatar.png'" />
+              <el-avatar :size="40" :src="post.user?.avatar || '/default-avatar.png'" v-if="false"/>
               <div class="post-user-info">
-                <span class="username">{{ post.user?.username }}</span>
+                <span class="username">{{ post.username }}</span>
                 <span class="post-time">{{ formatTime(post.createdAt) }}</span>
               </div>
             </div>

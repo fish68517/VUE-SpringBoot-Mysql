@@ -8,11 +8,8 @@
       <el-card v-if="!loading && post" class="post-card">
         <div class="post-header">
           <div class="user-info">
-            <el-avatar :size="48" :src="post.user?.avatar || '/default-avatar.png'">
-              {{ post.user?.username?.charAt(0).toUpperCase() }}
-            </el-avatar>
             <div class="user-details">
-              <span class="username">{{ post.user?.username }}</span>
+              <span class="username">发布者：{{ postAuthorName }}</span>
               <span class="timestamp">{{ formatTime(post.createdAt) }}</span>
             </div>
           </div>
@@ -49,7 +46,13 @@
             :initial-index="index"
             fit="cover"
             class="post-image"
-          />
+          >
+            <template #error>
+              <div class="image-fallback">
+                <img :src="postDefaultImage" alt="post default" class="fallback-image" />
+              </div>
+            </template>
+          </el-image>
         </div>
 
         <div class="post-footer">
@@ -130,6 +133,7 @@ import { createComment, getComments } from '@/api/comment'
 import LikeButton from '@/components/community/LikeButton.vue'
 import CommentList from '@/components/community/CommentList.vue'
 import { confirmDelete, showError, showSuccess, showWarning } from '@/utils/feedback'
+import postDefaultImage from '@/assets/post_default.png'
 
 const route = useRoute()
 const router = useRouter()
@@ -157,6 +161,10 @@ const getEntityUserId = (entity) => {
 
 const currentUserId = computed(() => getEntityUserId(currentUser.value))
 const postOwnerId = computed(() => getEntityUserId(post.value?.user || post.value))
+
+const postAuthorName = computed(() => {
+  return post.value?.user?.username || post.value?.username || '未知用户'
+})
 
 const isOwnPost = computed(() => {
   if (currentUserId.value == null || postOwnerId.value == null) return false
@@ -346,7 +354,6 @@ const handleLikeCountUpdate = (count) => {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
 }
 
 .user-details {
@@ -394,6 +401,21 @@ const handleLikeCountUpdate = (count) => {
   height: 250px;
   border-radius: 8px;
   overflow: hidden;
+}
+
+.image-fallback {
+  width: 100%;
+  height: 100%;
+  background-color: #f5f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fallback-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .post-footer {

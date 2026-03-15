@@ -79,14 +79,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Edit } from '@element-plus/icons-vue'
+import { useAuthStore } from '@/store/modules/auth'
 import { getDynamics, updateDynamic } from '@/api/community'
 import PostCard from '@/components/community/PostCard.vue'
 import { showSuccess, showError, showWarning } from '@/utils/feedback'
 
 const router = useRouter();
+const authStore = useAuthStore()
 
 const goBack = () => {
   router.push('/home')
@@ -106,6 +108,19 @@ const editForm = ref({
   content: '',
   imageUrls: ''
 })
+
+const getEntityUserId = (entity) => {
+  if (!entity) return null
+  return entity.id ?? entity.userId ?? entity.user?.id ?? entity.user?.userId ?? null
+}
+
+const currentUserId = computed(() => getEntityUserId(authStore.currentUser))
+
+const canEditPost = (post) => {
+  const ownerId = getEntityUserId(post?.user || post)
+  if (currentUserId.value == null || ownerId == null) return false
+  return String(currentUserId.value) === String(ownerId)
+}
 
 onMounted(() => {
   console.log('CommunityFeed mounted')
@@ -146,6 +161,11 @@ const handleCreatePost = () => {
 }
 
 const handleEditPost = (post) => {
+  if (!canEditPost(post)) {
+    showWarning('只能编辑自己发布的帖子')
+    return
+  }
+
   editForm.value = {
     id: post.id,
     content: post.content,
@@ -155,6 +175,13 @@ const handleEditPost = (post) => {
 }
 
 const handleUpdatePost = async () => {
+  const targetPost = posts.value.find((p) => p.id === editForm.value.id)
+  if (!canEditPost(targetPost)) {
+    showWarning('只能修改自己发布的帖子')
+    editDialogVisible.value = false
+    return
+  }
+
   if (!editForm.value.content.trim()) {
     showWarning('请输入动态内容')
     return

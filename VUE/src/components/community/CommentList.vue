@@ -10,13 +10,9 @@
         :key="comment.id"
         class="comment-item"
       >
-        <el-avatar :size="36" :src="comment.user?.avatar || '/default-avatar.png'">
-          {{ comment.user?.username?.charAt(0).toUpperCase() }}
-        </el-avatar>
-        
         <div class="comment-content">
           <div class="comment-header-info">
-            <span class="comment-username">{{ comment.user?.username }}</span>
+            <span class="comment-username">{{ comment.username }}</span>
             <span class="comment-time">{{ formatTime(comment.createdAt) }}</span>
           </div>
           <p class="comment-text">{{ comment.content }}</p>
@@ -41,7 +37,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useAuthStore } from '@/store/modules/auth'
 import { Delete } from '@element-plus/icons-vue'
 import { deleteComment } from '@/api/comment'
@@ -122,7 +117,7 @@ const handleDelete = async (commentId) => {
 
 .comment-item {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   padding: 12px;
   border-radius: 8px;
   background-color: #f5f7fa;
