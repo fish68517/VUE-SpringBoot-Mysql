@@ -8,5 +8,6 @@ import java.util.List;
 public class OrderRequest {
     private List<OrderItemRequest> items;
     private List<Integer> cartItemIds;
+    private String remark;
 }
 

@@ -74,6 +74,10 @@
             <span class="label">取餐码：</span>
             <span>{{ currentOrder.pickupCode || '-' }}</span>
           </div>
+          <div class="info-item" v-if="currentOrder.remark">
+            <span class="label">订单备注：</span>
+            <span>{{ currentOrder.remark }}</span>
+          </div>
         </div>
 
         <el-divider>订单菜品</el-divider>

@@ -11,6 +11,7 @@ public class Order {
     private Integer userId;
     private String orderNo;
     private String pickupCode;
+    private String remark;
     private BigDecimal totalAmount;
     private String status;
     private Date createdAt;

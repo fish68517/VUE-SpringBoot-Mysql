@@ -13,6 +13,7 @@
           <el-tag :type="getStatusType(order.status)">{{ order.status }}</el-tag>
         </div>
         <div class="pickup-code">取餐码：<b>{{ order.pickupCode || '-' }}</b></div>
+        <div class="pickup-code" v-if="order.remark">订单备注：{{ order.remark }}</div>
 
         <div class="order-items">
           <div v-for="detail in order.orderDetails" :key="detail.id" class="order-item">

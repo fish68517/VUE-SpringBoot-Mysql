@@ -40,6 +40,9 @@ public class RecipeController {
         if ("merchant".equals(operator.getRole())) {
             recipe.setMerchantId(userId);
         }
+        if (recipe.getWindowId() == null) {
+            recipe.setWindowId(recipe.getCategoryId());
+        }
         recipeMapper.insert(recipe);
         return ResponseEntity.ok(recipe);
     }
@@ -59,6 +62,9 @@ public class RecipeController {
                 return ResponseEntity.status(403).body("无权修改该菜品");
             }
             recipe.setMerchantId(userId);
+        }
+        if (recipe.getWindowId() == null) {
+            recipe.setWindowId(recipe.getCategoryId());
         }
         recipe.setId(id);
         recipeMapper.update(recipe);
@@ -82,7 +88,6 @@ public class RecipeController {
         return ResponseEntity.ok().build();
     }
 
-
     @GetMapping("/search")
     public List<Recipe> searchRecipes(@RequestParam String keyword) {
         return recipeMapper.searchRecipes(keyword);
@@ -104,14 +109,11 @@ public class RecipeController {
         }
 
         int total = recipeMapper.count(query, merchantId);
-
         List<Recipe> recipes = recipeMapper.findByPage(offset, pageSize, query, merchantId);
 
         Map<String, Object> result = new HashMap<>();
         result.put("total", total);
         result.put("data", recipes);
-
         return ResponseEntity.ok(result);
     }
-
-} 
+}

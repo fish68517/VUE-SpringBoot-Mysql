@@ -1,7 +1,7 @@
-/*
+﻿/*
  Navicat Premium Dump SQL
 
- Source Server         : 本地数据库
+ Source Server         : 鏈湴鏁版嵁搴?
  Source Server Type    : MySQL
  Source Server Version : 80036 (8.0.36)
  Source Host           : localhost:3306
@@ -54,9 +54,9 @@ CREATE TABLE `comment`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `recipe_id` int NOT NULL,
-  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '评论内容',
-  `rating` int NULL DEFAULT 5 COMMENT '评分 1-5',
-  `likes` int NULL DEFAULT 0 COMMENT '点赞数',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '璇勮鍐呭',
+  `rating` int NULL DEFAULT 5 COMMENT '璇勫垎 1-5',
+  `likes` int NULL DEFAULT 0 COMMENT '鐐硅禐鏁?,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
@@ -108,7 +108,7 @@ CREATE TABLE `order`  (
   `order_no` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `pickup_code` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
   `total_amount` decimal(10, 2) NOT NULL,
-  `status` enum('待付款','已付款','已完成','已取消') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '待付款',
+  `status` enum('寰呬粯娆?,'宸蹭粯娆?,'宸插畬鎴?,'宸插彇娑?) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '寰呬粯娆?,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `order_no`(`order_no` ASC) USING BTREE,
@@ -125,7 +125,7 @@ CREATE TABLE `order_detail`  (
   `order_id` int NULL DEFAULT NULL,
   `recipe_id` int NULL DEFAULT NULL,
   `quantity` int NOT NULL,
-  `price` decimal(10, 2) NULL DEFAULT NULL COMMENT '单价/金额',
+  `price` decimal(10, 2) NULL DEFAULT NULL COMMENT '鍗曚环/閲戦',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `order_id`(`order_id` ASC) USING BTREE,
   INDEX `recipe_id`(`recipe_id` ASC) USING BTREE,
@@ -146,14 +146,14 @@ CREATE TABLE `recipe`  (
   `ingredients` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `steps` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL,
-  `cooking_time` int NULL DEFAULT NULL COMMENT '烹饪时间(分钟)',
-  `difficulty` enum('简单','中等','困难') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '中等',
+  `cooking_time` int NULL DEFAULT NULL COMMENT '鐑归オ鏃堕棿(鍒嗛挓)',
+  `difficulty` enum('绠€鍗?,'涓瓑','鍥伴毦') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '涓瓑',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `Taste` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '口味',
-  `cooking_method` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '烹饪方式',
-  `cuisine_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '菜系',
-  `food_category` enum('主食','甜点','小吃','汤品','饮品','菜谱') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '食物分类',
-  `Price` double NULL DEFAULT NULL COMMENT '价格',
+  `Taste` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '鍙ｅ懗',
+  `cooking_method` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '鐑归オ鏂瑰紡',
+  `cuisine_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '鑿滅郴',
+  `food_category` enum('涓婚','鐢滅偣','灏忓悆','姹ゅ搧','楗搧','鑿滆氨') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '椋熺墿鍒嗙被',
+  `Price` double NULL DEFAULT NULL COMMENT '浠锋牸',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `category_id`(`category_id` ASC) USING BTREE,
   INDEX `merchant_id`(`merchant_id` ASC) USING BTREE,
@@ -193,12 +193,12 @@ CREATE TABLE `user`  (
   `role` enum('user','merchant','admin') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT 'user',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `bmi` float NULL DEFAULT NULL COMMENT 'BMI指数',
-  `height` decimal(5, 2) NULL DEFAULT NULL COMMENT '身高(cm)',
-  `weight` decimal(5, 2) NULL DEFAULT NULL COMMENT '体重(kg)',
-  `taste_preference` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '口味偏好',
-  `cooking_skill` enum('初学者','进阶','专业') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '初学者' COMMENT '烹饪技能水平',
-  `dietary_restriction` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '饮食限制',
+  `bmi` float NULL DEFAULT NULL COMMENT 'BMI鎸囨暟',
+  `height` decimal(5, 2) NULL DEFAULT NULL COMMENT '韬珮(cm)',
+  `weight` decimal(5, 2) NULL DEFAULT NULL COMMENT '浣撻噸(kg)',
+  `taste_preference` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '鍙ｅ懗鍋忓ソ',
+  `cooking_skill` enum('鍒濆鑰?,'杩涢樁','涓撲笟') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT '鍒濆鑰? COMMENT '鐑归オ鎶€鑳芥按骞?,
+  `dietary_restriction` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '楗闄愬埗',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username` ASC) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
@@ -219,4 +219,5 @@ ALTER TABLE `recipe`
 ADD CONSTRAINT `fk_recipe_merchant`
 FOREIGN KEY (`merchant_id`) REFERENCES `user` (`id`)
 ON DELETE SET NULL ON UPDATE CASCADE;
+
 

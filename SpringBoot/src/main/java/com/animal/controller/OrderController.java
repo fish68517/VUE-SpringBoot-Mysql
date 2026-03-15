@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @RestController
@@ -88,6 +90,18 @@ public class OrderController {
         return order;
     }
 
+    @GetMapping("/waiting-count")
+    public Map<Integer, Integer> getWaitingCount() {
+        List<Map<String, Object>> rows = orderMapper.countWaitingByWindow();
+        Map<Integer, Integer> result = new HashMap<>();
+        for (Map<String, Object> row : rows) {
+            Integer windowId = ((Number) row.get("windowId")).intValue();
+            Integer waitingCount = ((Number) row.get("waitingCount")).intValue();
+            result.put(windowId, waitingCount);
+        }
+        return result;
+    }
+
     @PostMapping
     @Transactional
     public ResponseEntity<?> createOrder(
@@ -97,6 +111,7 @@ public class OrderController {
         order.setUserId(userId);
         order.setOrderNo(generateOrderNo());
         order.setPickupCode(generatePickupCode());
+        order.setRemark(request.getRemark());
         order.setStatus("待付款");
         order.setCreatedAt(new Date());
 

@@ -98,6 +98,7 @@ export const orderApi = {
     return request.get('/orders/user', { params })
   },
   getOrderDetail: (id) => request.get(`/orders/${id}`),
+  getWaitingCount: () => request.get('/orders/waiting-count'),
   createOrder: (data) => request.post('/orders', data),
   updateOrderStatus: (id, status) => request.put(`/orders/${id}/status`, { status })
 }
@@ -130,6 +131,10 @@ export const favoriteApi = {
 export const recommendApi = {
   getRecommendedRecipes: () => request.get('/recommend'),
   getHotRecipes: () => request.get('/recommend/hot')
+}
+
+export const windowApi = {
+  getWindows: () => request.get('/windows')
 }
 
 // 璇勮鐩稿叧鎺ュ彛

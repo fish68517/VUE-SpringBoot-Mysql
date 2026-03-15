@@ -8,6 +8,7 @@ public class Recipe {
     private Integer id;
     private Integer categoryId;
     private Integer merchantId;
+    private Integer windowId;
     private String name;
     private String description;
     private String ingredients;

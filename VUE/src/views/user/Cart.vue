@@ -24,12 +24,10 @@
         <div v-for="item in cartItems" :key="item.id" class="cart-item">
           <el-checkbox v-model="selectedIds" :label="item.id" />
           <el-image :src="getImageUrl(item.recipe?.image)" class="recipe-image" fit="cover" />
-
           <div class="recipe-info">
             <h3>{{ item.recipe?.name }}</h3>
             <p class="description">{{ item.recipe?.description }}</p>
           </div>
-
           <div class="quantity-control">
             <el-input-number
               v-model="item.quantity"
@@ -39,16 +37,23 @@
               @change="(val) => updateQuantity(item, val)"
             />
           </div>
-
           <div class="actions">
             <el-button type="danger" link @click="removeFromCart(item.id)">删除</el-button>
           </div>
         </div>
 
+        <div class="remark-bar">
+          <span class="remark-label">订单备注模板：</span>
+          <el-select v-model="remarkTemplates" multiple collapse-tags placeholder="请选择备注模板" style="width: 360px">
+            <el-option label="少辣" value="少辣" />
+            <el-option label="多菜" value="多菜" />
+            <el-option label="可打包" value="可打包" />
+            <el-option label="不要香菜" value="不要香菜" />
+          </el-select>
+        </div>
+
         <div class="cart-footer">
-          <div class="total">
-            已选 {{ selectedItems.length }} 项，共 {{ selectedQuantity }} 份
-          </div>
+          <div class="total">已选 {{ selectedItems.length }} 项，共 {{ selectedQuantity }} 份</div>
           <el-button type="primary" size="large" :disabled="!selectedItems.length" @click="createOrder">
             结算已选
           </el-button>
@@ -71,6 +76,7 @@ export default {
     const cartItems = ref([])
     const selectedIds = ref([])
     const checkAll = ref(false)
+    const remarkTemplates = ref([])
 
     const selectedItems = computed(() =>
       cartItems.value.filter(item => selectedIds.value.includes(item.id))
@@ -142,10 +148,12 @@ export default {
             recipeId: item.recipeId,
             quantity: item.quantity
           })),
-          cartItemIds: selectedItems.value.map(item => item.id)
+          cartItemIds: selectedItems.value.map(item => item.id),
+          remark: remarkTemplates.value.join(' / ')
         }
         await orderApi.createOrder(orderData)
         ElMessage.success('下单成功')
+        remarkTemplates.value = []
         await getCartList()
         router.push('/user/orders')
       } catch (error) {
@@ -162,6 +170,7 @@ export default {
       selectedQuantity,
       checkAll,
       isIndeterminate,
+      remarkTemplates,
       toggleCheckAll,
       updateQuantity,
       removeFromCart,
@@ -174,40 +183,14 @@ export default {
 </script>
 
 <style scoped>
-.cart {
-  padding: 20px;
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.cart-top {
-  margin-bottom: 10px;
-}
-.cart-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px 0;
-  border-bottom: 1px solid #ebeef5;
-}
-.recipe-image {
-  width: 90px;
-  height: 90px;
-  border-radius: 6px;
-}
-.recipe-info {
-  flex: 1;
-}
-.description {
-  color: #909399;
-  font-size: 13px;
-}
-.cart-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 16px;
-}
+.cart { padding: 20px; }
+.header { display: flex; justify-content: space-between; align-items: center; }
+.cart-top { margin-bottom: 10px; }
+.cart-item { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid #ebeef5; }
+.recipe-image { width: 90px; height: 90px; border-radius: 6px; }
+.recipe-info { flex: 1; }
+.description { color: #909399; font-size: 13px; }
+.remark-bar { margin-top: 16px; display: flex; align-items: center; gap: 10px; }
+.remark-label { color: #666; white-space: nowrap; }
+.cart-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; }
 </style>
