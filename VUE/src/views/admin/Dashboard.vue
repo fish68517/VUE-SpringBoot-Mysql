@@ -1,345 +1,325 @@
 <template>
   <div class="dashboard">
-    <h1>数据看板</h1>
-    
     <!-- 统计卡片 -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-icon users">👥</div>
-        <div class="stat-content">
-          <div class="stat-label">用户总数</div>
-          <div class="stat-value">{{ dashboardData.totalUsers }}</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon shops">🏪</div>
-        <div class="stat-content">
-          <div class="stat-label">店铺总数</div>
-          <div class="stat-value">{{ dashboardData.totalShops }}</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon products">📦</div>
-        <div class="stat-content">
-          <div class="stat-label">商品总数</div>
-          <div class="stat-value">{{ dashboardData.totalProducts }}</div>
-        </div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon orders">📋</div>
-        <div class="stat-content">
-          <div class="stat-label">订单总数</div>
-          <div class="stat-value">{{ dashboardData.totalOrders }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 时间范围统计 -->
-    <div class="statistics-section">
-      <h2>时间范围统计</h2>
-      <div class="filter-group">
-        <el-date-picker
-          v-model="dateRange"
-          type="daterange"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-          @change="handleDateChange"
-        />
-        <el-button type="primary" @click="fetchStatistics">查询</el-button>
-      </div>
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <el-card class="stat-card">
+          <template #header>
+            <div class="card-header">
+              <span>总用户数</span>
+            </div>
+          </template>
+          <div class="card-body">
+            <h2>{{ stats.userCount }}</h2>
+            <div class="trend">
+              <span>较昨日</span>
+              <span :class="{ 'up': stats.userIncrease > 0 }">
+                {{ stats.userIncrease > 0 ? '+' : '' }}{{ stats.userIncrease }}
+              </span>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
       
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📈</div>
-          <div class="stat-content">
-            <div class="stat-label">新增用户</div>
-            <div class="stat-value">{{ statisticsData.newUsers }}</div>
+      <el-col :span="6">
+        <el-card class="stat-card">
+          <template #header>
+            <div class="card-header">
+              <span>总订单数</span>
+            </div>
+          </template>
+          <div class="card-body">
+            <h2>{{ stats.orderCount }}</h2>
+            <div class="trend">
+              <span>较昨日</span>
+              <span :class="{ 'up': stats.orderIncrease > 0 }">
+                {{ stats.orderIncrease > 0 ? '+' : '' }}{{ stats.orderIncrease }}
+              </span>
+            </div>
           </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">📊</div>
-          <div class="stat-content">
-            <div class="stat-label">新增订单</div>
-            <div class="stat-value">{{ statisticsData.newOrders }}</div>
+        </el-card>
+      </el-col>
+      
+      <el-col :span="6">
+        <el-card class="stat-card">
+          <template #header>
+            <div class="card-header">
+              <span>总菜品数</span>
+            </div>
+          </template>
+          <div class="card-body">
+            <h2>{{ stats.recipeCount }}</h2>
+            <div class="trend">
+              <span>较昨日</span>
+              <span :class="{ 'up': stats.recipeIncrease > 0 }">
+                {{ stats.recipeIncrease > 0 ? '+' : '' }}{{ stats.recipeIncrease }}
+              </span>
+            </div>
           </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">💰</div>
-          <div class="stat-content">
-            <div class="stat-label">交易金额</div>
-            <div class="stat-value">¥{{ statisticsData.totalAmount }}</div>
+        </el-card>
+      </el-col>
+      
+      <el-col :span="6">
+        <el-card class="stat-card">
+          <template #header>
+            <div class="card-header">
+              <span>总评价数</span>
+            </div>
+          </template>
+          <div class="card-body">
+            <h2>{{ stats.reviewCount }}</h2>
+            <div class="trend">
+              <span>较昨日</span>
+              <span :class="{ 'up': stats.reviewIncrease > 0 }">
+                {{ stats.reviewIncrease > 0 ? '+' : '' }}{{ stats.reviewIncrease }}
+              </span>
+            </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </el-card>
+      </el-col>
+    </el-row>
 
-    <!-- 图表 -->
-    <div class="charts-section">
-      <div class="chart-container">
-        <h2>分类商品统计</h2>
-        <div id="categoryChart" style="width: 100%; height: 400px;"></div>
-      </div>
-    </div>
+    <!-- 图表区域 -->
+    <el-row :gutter="20" class="charts-row">
+      <el-col :span="12">
+        <el-card>
+          <template #header>
+            <div class="card-header">
+              <span>订单趋势</span>
+              <el-radio-group v-model="orderChartType" size="small">
+                <el-radio-button label="week">周</el-radio-button>
+                <el-radio-button label="month">月</el-radio-button>
+              </el-radio-group>
+            </div>
+          </template>
+          <div class="chart-container">
+            <v-chart :option="orderChartOption" autoresize />
+          </div>
+        </el-card>
+      </el-col>
+      
+      <el-col :span="12">
+        <el-card>
+          <template #header>
+            <div class="card-header">
+              <span>菜品分类统计</span>
+            </div>
+          </template>
+          <div class="chart-container">
+            <v-chart :option="categoryChartOption" autoresize />
+          </div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <!-- 最新订单列表 -->
+    <el-card class="recent-orders">
+      <template #header>
+        <div class="card-header">
+          <span>最新订单</span>
+          <el-button v-show="false" type="primary" link @click="$router.push('/admin/orders')">
+            查看全部
+          </el-button>
+        </div>
+      </template>
+      
+      <el-table :data="recentOrders" stripe>
+        <el-table-column prop="orderNo" label="订单号" width="180" />
+        <el-table-column prop="user.username" label="用户" width="120" />
+        <el-table-column prop="totalAmount" label="金额" width="120">
+          <template #default="{ row }">
+            ¥{{ row.totalAmount }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="120">
+          <template #default="{ row }">
+            <el-tag :type="getStatusType(row.status)">{{ row.status }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createdAt" label="创建时间" width="180">
+          <template #default="{ row }">
+            {{ formatDate(row.createdAt) }}
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
-import { ElMessage } from "element-plus";
-import * as echarts from "echarts";
-import * as adminApi from "@/api/admin";
+<script>
+import { ref, onMounted } from 'vue'
+import { use } from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
+import { LineChart, PieChart } from 'echarts/charts'
+import {
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent
+} from 'echarts/components'
+import VChart from 'vue-echarts'
+import { orderApi, statsApi } from '@/api/networkApi'
 
-const dashboardData = ref({
-  totalUsers: 0,
-  totalShops: 0,
-  totalProducts: 0,
-  totalOrders: 0
-});
+use([
+  CanvasRenderer,
+  LineChart,
+  PieChart,
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GridComponent
+])
 
-const statisticsData = ref({
-  newUsers: 0,
-  newOrders: 0,
-  totalAmount: 0
-});
+export default {
+  components: {
+    VChart
+  },
+  
+  setup() {
+    const stats = ref({
+      userCount: 0,
+      userIncrease: 0,
+      orderCount: 0,
+      orderIncrease: 0,
+      recipeCount: 0,
+      recipeIncrease: 0,
+      reviewCount: 0,
+      reviewIncrease: 0
+    })
 
-const dateRange = ref([]);
-let categoryChart = null;
+    const orderChartType = ref('week')
+    const recentOrders = ref([])
 
-const fetchDashboard = async () => {
-  try {
-    const data = await adminApi.getDashboard();
-    dashboardData.value = data;
-  } catch (error) {
-    ElMessage.error("获取数据看板失败");
-  }
-};
+    // 订单趋势图配置
+    const orderChartOption = ref({
+      tooltip: {
+        trigger: 'axis'
+      },
+      xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        data: [150, 230, 224, 218, 135, 147, 260],
+        type: 'line',
+        smooth: true
+      }]
+    })
 
-const fetchStatistics = async () => {
-  try {
-    if (!dateRange.value || dateRange.value.length !== 2) {
-      ElMessage.warning("请选择时间范围");
-      return;
+    // 菜品分类统计图配置
+    const categoryChartOption = ref({
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [{
+        type: 'pie',
+        radius: '50%',
+        data: [
+          { value: 1048, name: '川菜' },
+          { value: 735, name: '粤菜' },
+          { value: 580, name: '苏菜' },
+          { value: 484, name: '鲁菜' },
+          { value: 300, name: '其他' }
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }]
+    })
+
+    const getStatusType = (status) => {
+      const types = {
+        '待付款': 'warning',
+        '已付款': 'primary',
+        '已完成': 'success',
+        '已取消': 'info'
+      }
+      return types[status] || 'info'
     }
-    
-    const params = {
-      startDate: dateRange.value[0],
-      endDate: dateRange.value[1]
-    };
-    
-    const data = await adminApi.getDashboardStatistics(params);
-    statisticsData.value = data;
-  } catch (error) {
-    ElMessage.error("获取统计数据失败");
-  }
-};
 
-const fetchCategoryStatistics = async () => {
-  try {
-    const data = await adminApi.getDashboardCategory();
-    // console.log("获取分类统计成功：" + JSON.stringify(data));
-    
-    // ★★★ 核心修复：将对象转换为数组 ★★★
-    // 后端返回：{ "分类名": { productCount: 1, salesAmount: 100 }, ... }
-    // 转换目标：[ { categoryName: "分类名", productCount: 1, salesAmount: 100 }, ... ]
-    const chartData = Object.keys(data).map(key => ({
-      categoryName: key,
-      productCount: data[key].productCount,
-      salesAmount: data[key].salesAmount
-    }));
+    const formatDate = (date) => {
+      return new Date(date).toLocaleString()
+    }
 
-    // 将转换后的数组传给渲染函数
-    renderCategoryChart(chartData);
-  } catch (error) {
-    console.error("渲染图表出错:", error); // 建议打印具体错误，方便调试
-    ElMessage.error("获取分类统计失败");
-  }
-};
-
-const renderCategoryChart = (data) => {
-  if (!categoryChart) {
-    const chartDom = document.getElementById("categoryChart");
-    categoryChart = echarts.init(chartDom);
-  }
-
-  const option = {
-    tooltip: {
-      trigger: "axis",
-      axisPointer: {
-        type: "shadow"
+    const getRecentOrders = async () => {
+      try {
+        const data = await orderApi.getOrderList({ limit: 10 })
+        recentOrders.value = data
+      } catch (error) {
+        console.error('获取最新订单失败:', error)
       }
-    },
-    legend: {
-      data: ["商品数量", "销售额"]
-    },
-    grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
-      containLabel: true
-    },
-    xAxis: {
-      type: "category",
-      data: data.map(item => item.categoryName)
-    },
-    yAxis: [
-      {
-        type: "value",
-        name: "商品数量"
-      },
-      {
-        type: "value",
-        name: "销售额"
+    }
+
+    const loadStats = async () => {
+      try {
+        const data = await statsApi.getDashboardStats()
+        stats.value = data
+      } catch (error) {
+        console.error('获取统计数据失败:', error)
       }
-    ],
-    series: [
-      {
-        name: "商品数量",
-        type: "bar",
-        data: data.map(item => item.productCount),
-        yAxisIndex: 0
-      },
-      {
-        name: "销售额",
-        type: "line",
-        data: data.map(item => item.salesAmount),
-        yAxisIndex: 1
-      }
-    ]
-  };
+    }
 
-  categoryChart.setOption(option);
-};
+    onMounted(() => {
+      getRecentOrders()
+      loadStats()
+    })
 
-const handleDateChange = () => {
-  // 日期变化时的处理
-};
-
-onMounted(() => {
-  fetchDashboard();
-  fetchCategoryStatistics();
-});
+    return {
+      stats,
+      orderChartType,
+      orderChartOption,
+      categoryChartOption,
+      recentOrders,
+      getStatusType,
+      formatDate
+    }
+  }
+}
 </script>
 
 <style scoped>
 .dashboard {
-  background: white;
-  border-radius: 8px;
   padding: 20px;
 }
-
-h1 {
-  margin: 0 0 20px 0;
-  font-size: 24px;
-  color: #333;
-}
-
-h2 {
-  margin: 20px 0 15px 0;
-  font-size: 18px;
-  color: #333;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
-}
-
 .stat-card {
-  display: flex;
-  align-items: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 8px;
-  color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  .card-body {
+    text-align: center;
+    h2 {
+      font-size: 24px;
+      margin: 10px 0;
+    }
+    .trend {
+      color: #909399;
+      font-size: 14px;
+      .up {
+        color: #67C23A;
+      }
+    }
+  }
 }
-
-.stat-card:hover {
-  transform: translateY(-5px);
+.charts-row {
+  margin-top: 20px;
 }
-
-.stat-card.users {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.stat-card.shops {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.stat-card.products {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.stat-card.orders {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-}
-
-.stat-icon {
-  font-size: 32px;
-  margin-right: 15px;
-}
-
-.stat-content {
-  flex: 1;
-}
-
-.stat-label {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-bottom: 5px;
-}
-
-.stat-value {
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.statistics-section {
-  margin-bottom: 30px;
-}
-
-.filter-group {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  align-items: center;
-}
-
-.charts-section {
-  margin-top: 30px;
-}
-
 .chart-container {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 300px;
 }
-
-@media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .stat-card {
-    padding: 15px;
-  }
-
-  .stat-icon {
-    font-size: 24px;
-    margin-right: 10px;
-  }
-
-  .stat-value {
-    font-size: 20px;
-  }
-
-  .filter-group {
-    flex-direction: column;
-  }
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-</style>
+.recent-orders {
+  margin-top: 20px;
+}
+</style> 
