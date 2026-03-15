@@ -1,65 +1,65 @@
 {
-  "hash": "6121b594",
-  "browserHash": "3fb48ebc",
+  "hash": "443a89a6",
+  "browserHash": "2190b6d6",
   "optimized": {
     "@element-plus/icons-vue": {
       "src": "../../node_modules/@element-plus/icons-vue/dist/index.js",
       "file": "@element-plus_icons-vue.js",
-      "fileHash": "d34f3015",
+      "fileHash": "cfe5c268",
       "needsInterop": false
     },
     "axios": {
       "src": "../../node_modules/axios/index.js",
       "file": "axios.js",
-      "fileHash": "fc31d14d",
+      "fileHash": "b93efeea",
       "needsInterop": false
     },
     "chart.js/auto": {
       "src": "../../node_modules/chart.js/auto/auto.js",
       "file": "chart__js_auto.js",
-      "fileHash": "b170bcc5",
+      "fileHash": "fd674e3b",
       "needsInterop": false
     },
     "element-plus": {
       "src": "../../node_modules/element-plus/es/index.mjs",
       "file": "element-plus.js",
-      "fileHash": "92e261ed",
+      "fileHash": "027d416f",
       "needsInterop": false
     },
     "element-plus/es/locale/lang/zh-cn": {
       "src": "../../node_modules/element-plus/es/locale/lang/zh-cn.mjs",
       "file": "element-plus_es_locale_lang_zh-cn.js",
-      "fileHash": "7f68b173",
+      "fileHash": "c0deb00b",
       "needsInterop": false
     },
     "pinia": {
       "src": "../../node_modules/pinia/dist/pinia.mjs",
       "file": "pinia.js",
-      "fileHash": "460f202f",
+      "fileHash": "fac31916",
       "needsInterop": false
     },
     "vue": {
       "src": "../../node_modules/vue/dist/vue.runtime.esm-bundler.js",
       "file": "vue.js",
-      "fileHash": "876cdaa3",
+      "fileHash": "2b83adac",
       "needsInterop": false
     },
     "vue-router": {
       "src": "../../node_modules/vue-router/dist/vue-router.mjs",
       "file": "vue-router.js",
-      "fileHash": "9560d245",
+      "fileHash": "d0225978",
       "needsInterop": false
     }
   },
   "chunks": {
+    "chunk-7PVM3VIS": {
+      "file": "chunk-7PVM3VIS.js"
+    },
     "chunk-RNWUNH7L": {
       "file": "chunk-RNWUNH7L.js"
     },
     "chunk-AYVSL3LM": {
       "file": "chunk-AYVSL3LM.js"
-    },
-    "chunk-7PVM3VIS": {
-      "file": "chunk-7PVM3VIS.js"
     },
     "chunk-T2235JKB": {
       "file": "chunk-T2235JKB.js"
