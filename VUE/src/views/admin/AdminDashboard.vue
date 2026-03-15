@@ -180,7 +180,7 @@
         <el-icon><Document /></el-icon>
         资源管理
       </el-button>
-      <el-button type="success" size="large" @click="goToResourceManagement">
+      <el-button type="success" size="large" @click="goToResourceManagement" v-if="false">
         <el-icon><Document /></el-icon>
         教练资格审核
       </el-button>

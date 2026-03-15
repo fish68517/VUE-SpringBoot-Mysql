@@ -3,7 +3,12 @@
   <div class="community-feed">
     <!-- 顶部标题栏 -->
     <div class="feed-header">
+         <el-button class="back-btn" text @click="goBack">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
       <h2>社区动态</h2>
+    
       <el-button type="primary" @click="handleCreatePost">
         <el-icon><Edit /></el-icon>
         发布动态
@@ -81,7 +86,12 @@ import { getDynamics, updateDynamic } from '@/api/community'
 import PostCard from '@/components/community/PostCard.vue'
 import { showSuccess, showError, showWarning } from '@/utils/feedback'
 
-const router = useRouter()
+const router = useRouter();
+
+const goBack = () => {
+  router.push('/home')
+}
+
 
 const loading = ref(false)
 const posts = ref([])

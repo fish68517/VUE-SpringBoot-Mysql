@@ -5,6 +5,10 @@
    
      <div class="my-training-plans">
     <div class="page-header">
+       <el-button class="back-btn" text @click="goBack">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
       <h1>我的训练计划</h1>
       <p class="subtitle">查看、追踪并反馈您的专属训练计划</p>
     </div>
@@ -143,6 +147,9 @@ import TrainingFeedbackDialog from '../../components/training/TrainingFeedbackDi
 
 
 const router = useRouter();
+const goBack = () => {
+  router.back()
+}
 
 const loading = ref(false);
 const plans = ref([]);

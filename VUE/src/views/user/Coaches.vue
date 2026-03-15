@@ -1,28 +1,28 @@
 <template>
   <div class="coaches-container">
     <div class="page-header">
-      <h1>找教练</h1>
-      <p class="subtitle">发现专业的健身教练，为您量身定制训练计划</p>
+      <el-button class="back-btn" text @click="goBack">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
+      <h1>我的教练</h1>
+      <p class="subtitle">选择适合你的教练并管理训练关系</p>
     </div>
 
-    <!-- 搜索栏 -->
     <div class="search-section">
       <el-input
         v-model="searchQuery"
-        placeholder="搜索教练姓名..."
+        placeholder="搜索教练姓名或简介..."
         :prefix-icon="Search"
         clearable
         class="search-input"
-        @input="handleSearch"
       />
     </div>
 
-    <!-- 加载状态 -->
     <div v-if="loading" class="loading-container">
       <el-skeleton :rows="3" animated count="4" class="skeleton-grid" />
     </div>
 
-    <!-- 教练列表 -->
     <div v-else-if="filteredCoaches.length > 0" class="coach-grid">
       <el-card
         v-for="coach in filteredCoaches"
@@ -31,10 +31,9 @@
         :class="{ 'is-member': isActiveMember(coach) }"
         shadow="hover"
       >
-        <!-- 状态角标 -->
         <div v-if="getRelationStatus(coach) !== 'none'" class="status-badge">
           <el-tag :type="getRelationStatus(coach) === 'active' ? 'success' : 'danger'" effect="dark">
-            {{ getRelationStatus(coach) === 'active' ? '签约会员' : '合约已过期' }}
+            {{ getRelationStatus(coach) === 'active' ? '会员有效' : '会员已过期' }}
           </el-tag>
         </div>
 
@@ -46,10 +45,9 @@
           </div>
           <div class="coach-info">
             <h3 class="coach-name">{{ coach.username }}</h3>
-            
-            <!-- 会员有效期显示 -->
+
             <p v-if="isActiveMember(coach)" class="expire-info active">
-              <el-icon><Timer /></el-icon> 有效期至：{{ formatDate(coach.relationship?.expireAt) }}
+              <el-icon><Timer /></el-icon> 到期：{{ formatDate(coach.relationship?.expireAt) }}
             </p>
             <p v-else-if="getRelationStatus(coach) === 'expired'" class="expire-info expired">
               <el-icon><Warning /></el-icon> 已于 {{ formatDate(coach.relationship?.expireAt) }} 过期
@@ -67,123 +65,147 @@
           </div>
         </div>
 
-        <!-- 底部操作按钮组 -->
         <div class="card-footer">
-          <!-- 情况1: 有效会员 -> 制定计划 -->
-          <el-button 
-            v-if="isActiveMember(coach)" 
-            type="primary" 
-            size="small" 
+          <el-button
+  
+            v-if="false"
+            type="primary"
+            size="small"
             class="action-btn"
             @click.stop="goToTrainingPlan(coach)"
           >
-            <el-icon><Calendar /></el-icon> 制定计划
+            <el-icon><Calendar /></el-icon> 训练计划
           </el-button>
 
-          <!-- 情况3: 反馈 -> 评价 需要弹框-->
-          <el-button 
-            v-if="isActiveMember(coach)"  
-            type="success" 
-    
-            size="small" 
+          <el-button
+            v-if="isActiveMember(coach)"
+            type="success"
+            size="small"
             class="action-btn"
-            @click.stop="showFeedbackDialog(coach)">  <el-icon><Star /></el-icon> 反馈</el-button>
+            @click.stop="showFeedbackDialog(coach)"
+          >
+            <el-icon><Star /></el-icon> 学员反馈
+          </el-button>
 
-          <!-- 情况2: 过期或未签约 -> 续约/签约 -->
-          <el-button 
+          <el-button
             v-else
-            type="warning" 
-            plain 
-            size="small" 
+            type="warning"
+            plain
+            size="small"
             class="action-btn"
             @click.stop="handleRenew(coach)"
           >
-            <el-icon><Money /></el-icon> {{ getRelationStatus(coach) === 'expired' ? '立即续约' : '办理会员' }}
+            <el-icon><Money /></el-icon> {{ getRelationStatus(coach) === 'expired' ? '续费' : '开通会员' }}
           </el-button>
 
-          <el-button @click.stop="showCoachDetails(coach)" size="small" plain>详情</el-button>
+          <el-button @click.stop="showCoachDetails(coach)" size="small" plain>查看详情</el-button>
         </div>
       </el-card>
     </div>
 
-    <!-- 空状态 -->
     <div v-else class="empty-state">
-      <el-empty description="暂无符合条件的教练" />
+      <el-empty description="暂无匹配的教练" />
     </div>
 
-  
-    <!-- 评价反馈弹框 (修改后) -->
     <el-dialog
       v-model="feedbackDialogVisible"
-      title="训练反馈与评价"
-      width="500px"
+      title="学员反馈"
+      width="680px"
       center
       destroy-on-close
       class="feedback-dialog"
     >
-      <el-form 
-        ref="feedbackFormRef" 
-        :model="feedbackForm" 
-        :rules="feedbackRules"
-        label-width="100px"
-      >
-        <!-- 对应 DB: feedback_date -->
-        <el-form-item label="训练日期" prop="feedback_date">
+      <el-form ref="feedbackFormRef" :model="feedbackForm" :rules="feedbackRules" label-width="96px">
+        <el-form-item label="反馈日期" prop="feedback_date">
           <el-date-picker
             v-model="feedbackForm.feedback_date"
             type="date"
-            placeholder="选择日期"
+            placeholder="选择反馈日期"
             value-format="YYYY-MM-DD"
             style="width: 100%"
-            :disabled-date="(time) => time.getTime() > Date.now()" 
+            :disabled-date="(time) => time.getTime() > Date.now()"
           />
         </el-form-item>
 
-        <!-- 对应 DB: feeling (easy, normal, hard, exhausted) -->
-        <el-form-item label="体感状态" prop="feeling">
+        <el-form-item label="训练感受" prop="feeling">
           <el-radio-group v-model="feedbackForm.feeling">
             <el-radio-button label="easy">轻松</el-radio-button>
-            <el-radio-button label="normal">适中</el-radio-button>
-            <el-radio-button label="hard">困难</el-radio-button>
-            <el-radio-button label="exhausted">力竭</el-radio-button>
+            <el-radio-button label="normal">正常</el-radio-button>
+            <el-radio-button label="hard">较难</el-radio-button>
+            <el-radio-button label="exhausted">非常累</el-radio-button>
           </el-radio-group>
         </el-form-item>
 
-        <!-- 对应 DB: rating -->
-        <el-form-item label="评分" prop="rating"> 
-          <el-rate 
-            v-model="feedbackForm.rating" 
-            :max="5" 
-            show-text
-            :texts="['极差', '失望', '一般', '满意', '惊喜']"
-          />          
+        <el-form-item label="评分" prop="rating">
+          <el-rate v-model="feedbackForm.rating" :max="5" show-text :texts="['很差', '较差', '一般', '不错', '很好']" />
         </el-form-item>
 
-        <!-- 对应 DB: content -->
-        <el-form-item label="评价内容" prop="content">
-          <el-input 
-            v-model="feedbackForm.content" 
-            type="textarea" 
-            rows="4" 
-            maxlength="255"
+        <el-form-item label="反馈内容" prop="content">
+          <el-input
+            v-model="feedbackForm.content"
+            type="textarea"
+            :rows="4"
+            maxlength="500"
             show-word-limit
-            placeholder="请详细描述今天的训练感受或遇到的问题..." 
+            placeholder="请输入反馈内容（可只上传附件）"
           />
+        </el-form-item>
+
+        <el-form-item label="上传图片">
+          <el-upload
+            list-type="picture-card"
+            :limit="6"
+            :http-request="handleImageUpload"
+            :on-remove="handleImageRemove"
+            :before-upload="beforeImageUpload"
+            :file-list="imageFileList"
+            accept="image/*"
+          >
+            <el-icon><Plus /></el-icon>
+          </el-upload>
+          <div class="upload-tip">支持 jpg/png/webp，单张不超过 5MB</div>
+        </el-form-item>
+
+        <el-form-item label="上传视频">
+          <el-upload
+            :limit="2"
+            :http-request="handleVideoUpload"
+            :on-remove="handleVideoRemove"
+            :before-upload="beforeVideoUpload"
+            :file-list="videoFileList"
+            accept="video/*"
+          >
+            <el-button type="primary" plain :loading="uploadingVideo">上传视频</el-button>
+          </el-upload>
+          <div class="upload-tip">支持 mp4/mov/avi，单个不超过 100MB</div>
+        </el-form-item>
+
+        <el-form-item label="上传文档">
+          <el-upload
+            :limit="3"
+            :http-request="handleDocumentUpload"
+            :on-remove="handleDocumentRemove"
+            :before-upload="beforeDocumentUpload"
+            :file-list="documentFileList"
+            accept=".pdf,.doc,.docx,.txt"
+          >
+            <el-button type="primary" plain :loading="uploadingDocument">上传文档</el-button>
+          </el-upload>
+          <div class="upload-tip">支持 pdf/doc/docx/txt，单个不超过 20MB</div>
         </el-form-item>
       </el-form>
 
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="feedbackDialogVisible = false">取消</el-button>
-          <el-button type="primary" @click="submitFeedback" :loading="submittingFeedback">提交评价</el-button>
+          <el-button type="primary" @click="submitFeedback" :loading="submittingFeedback">提交反馈</el-button>
         </span>
       </template>
     </el-dialog>
 
-    <!-- 教练详情弹窗 -->
     <el-dialog
       v-model="dialogVisible"
-      :title="selectedCoach?.username + ' - 教练详情'"
+      :title="selectedCoach?.username ? selectedCoach.username + ' - 教练详情' : '教练详情'"
       width="500px"
       destroy-on-close
       center
@@ -200,41 +222,40 @@
           </h2>
         </div>
 
-        <!-- 会员状态专区 -->
         <div class="detail-section highlight-section" v-if="getRelationStatus(selectedCoach) !== 'none'">
           <h3><el-icon><UserFilled /></el-icon> 会员状态</h3>
           <div class="membership-info">
             <div class="info-row">
-              <span class="label">当前状态：</span>
+              <span class="label">当前状态</span>
               <span :class="['value', getRelationStatus(selectedCoach)]">
-                {{ getRelationStatus(selectedCoach) === 'active' ? '正常服务中' : '服务已暂停 (已过期)' }}
+                {{ getRelationStatus(selectedCoach) === 'active' ? '有效' : '已过期' }}
               </span>
             </div>
             <div class="info-row">
-              <span class="label">签约时间：</span>
+              <span class="label">开通时间</span>
               <span class="value">{{ formatDate(selectedCoach.relationship?.createdAt) }}</span>
             </div>
             <div class="info-row">
-              <span class="label">到期时间：</span>
+              <span class="label">到期时间</span>
               <span class="value">{{ formatDate(selectedCoach.relationship?.expireAt) }}</span>
             </div>
-            <el-button type="primary" style="width: 100%; margin-top: 10px;" @click="handleRenew(selectedCoach)">
-              {{ getRelationStatus(selectedCoach) === 'active' ? '延长有效期' : '重新激活会员' }}
+            <el-button type="primary" style="width: 100%; margin-top: 10px" @click="handleRenew(selectedCoach)">
+              {{ getRelationStatus(selectedCoach) === 'active' ? '续费会员' : '开通会员' }}
             </el-button>
           </div>
         </div>
 
         <div class="detail-section">
-          <h3>个人简介</h3>
-          <p class="detail-intro">{{ selectedCoach.intro || '这位教练很神秘，还没有写简介。' }}</p>
+          <h3>教练简介</h3>
+          <p class="detail-intro">{{ selectedCoach.intro || '暂无简介' }}</p>
         </div>
 
         <div class="detail-section" v-if="selectedCoach.specialties">
-          <h3>擅长领域</h3>
+          <h3>擅长方向</h3>
           <div class="specialties-list">
-            <el-tag 
-              v-for="(tag, index) in (selectedCoach.specialties ? selectedCoach.specialties.split(',') : [])" 
-              :key="index" 
+            <el-tag
+              v-for="(tag, index) in (selectedCoach.specialties ? selectedCoach.specialties.split(',') : [])"
+              :key="index"
               class="specialty-tag"
             >
               {{ tag }}
@@ -244,20 +265,14 @@
       </div>
     </el-dialog>
 
-    <!-- 续约/支付确认弹窗 (模拟) -->
-    <el-dialog
-      v-model="renewDialogVisible"
-      title="办理会员续约"
-      width="400px"
-      center
-    >
+    <el-dialog v-model="renewDialogVisible" title="开通/续费会员" width="400px" center>
       <div v-if="targetRenewCoach" class="renew-content">
-        <p>您正在与教练 <strong>{{ targetRenewCoach.username }}</strong> 办理续约。</p>
+        <p>为教练 <strong>{{ targetRenewCoach.username }}</strong> 购买会员：</p>
         <div class="price-options">
           <el-radio-group v-model="renewDuration">
-            <el-radio-button label="1">1个月 / ￥300</el-radio-button>
-            <el-radio-button label="3">3个月 / ￥800</el-radio-button>
-            <el-radio-button label="12">12个月 / ￥3000</el-radio-button>
+            <el-radio-button label="1">1个月 / ￥100</el-radio-button>
+            <el-radio-button label="3">3个月 / ￥270</el-radio-button>
+            <el-radio-button label="12">12个月 / ￥960</el-radio-button>
           </el-radio-group>
         </div>
       </div>
@@ -272,16 +287,25 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick, reactive } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-import { Search, Timer, Warning, Calendar, Money, UserFilled } from '@element-plus/icons-vue'
-import Layout from '@/components/common/Layout.vue'
+import {
+  ArrowLeft,
+  Calendar,
+  Money,
+  Plus,
+  Search,
+  Star,
+  Timer,
+  UserFilled,
+  Warning
+} from '@element-plus/icons-vue'
 import { getCoaches, getCoachById, getCoachStudentsById, renewCoachStudent } from '@/api/coach.js'
-// 
-import { submitNewFeedback} from '@/api/feedback.js'
+import { submitNewFeedback } from '@/api/feedback.js'
+import { uploadDocument, uploadImage, uploadVideo } from '@/api/upload.js'
 import { getUserInfo } from '@/utils/auth.js'
-import { showSuccess, showError, showInfo } from '@/utils/feedback.js'
+import { showError, showSuccess } from '@/utils/feedback.js'
 
 const router = useRouter()
 const coaches = ref([])
@@ -290,298 +314,348 @@ const searchQuery = ref('')
 const dialogVisible = ref(false)
 const selectedCoach = ref(null)
 
-// --- 状态定义 ---
 const feedbackDialogVisible = ref(false)
 const submittingFeedback = ref(false)
 const feedbackFormRef = ref(null)
-
-// 当前选中的教练或计划信息缓存
 const currentCoachInfo = ref(null)
 
-// 表单数据 (结构对应 training_feedback 表)
-const feedbackForm = reactive({
-  plan_id: null,        // 需要在打开弹窗时赋值
-  feedback_date: '',    // 对应 feedback_date
-  feeling: 'normal',    // 对应 feeling，默认适中
-  rating: 5,            // 对应 rating
-  content: ''           // 对应 content
-})
+const uploadingVideo = ref(false)
+const uploadingDocument = ref(false)
+const imageFileList = ref([])
+const videoFileList = ref([])
+const documentFileList = ref([])
 
-// 表单验证规则
-const feedbackRules = {
-  feedback_date: [{ required: true, message: '请选择训练日期', trigger: 'change' }],
-  feeling: [{ required: true, message: '请选择体感状态', trigger: 'change' }],
-  rating: [{ required: true, message: '请评分', trigger: 'change' }],
-  content: [{ required: true, message: '请输入评价内容', trigger: 'blur' }]
-}
-
-
-/**
- * 打开反馈弹窗
- * @param {Object} coach - 点击的教练对象
- */
-const showFeedbackDialog = (coach) => {
-  currentCoachInfo.value = coach;
-  feedbackDialogVisible.value = true;
-  
-  // 重置表单
-  nextTick(() => {
-    if(feedbackFormRef.value) feedbackFormRef.value.resetFields();
-    
-    // 初始化默认值
-    feedbackForm.rating = 5;
-    feedbackForm.feeling = 'normal';
-    // 默认日期为今天
-    feedbackForm.feedback_date = new Date().toISOString().split('T')[0];
-    feedbackForm.content = '';
-    
-    // 【关键】关联 plan_id
-    // 假设 coach 对象中有当前计划的 ID，或者你需要从其他地方获取 plan_id
-    // 如果数据库表要求 plan_id 必填，这里必须赋值
-    if (coach.currentPlanId) {
-        feedbackForm.plan_id = coach.currentPlanId; 
-    } else {
-        console.warn("未找到关联的 plan_id，提交可能会失败");
-        // 如果 coach 对象里没有 plan_id，你可能需要根据业务逻辑去查找
-        feedbackForm.plan_id = 1; // 占位符，实际应用中请替换
-    }
-  });
-}
-
-/**
- * 提交反馈
- */
-const submitFeedback = async () => {
-  if (!feedbackFormRef.value) return;
-  
-  await feedbackFormRef.value.validate(async (valid) => {
-    if (valid) {
-      submittingFeedback.value = true;
-      const userInfo = getUserInfo()
-      const userId = userInfo ? userInfo.userId : null
-      try {
-        // 构造发送给后端的数据
-        const payload = {
-          planId: feedbackForm.plan_id, // 必填
-          studentId: userId,
-          coachId: currentCoachInfo.value.id,
-          feedbackDate: feedbackForm.feedback_date,
-          rating: feedbackForm.rating,
-          feeling: feedbackForm.feeling,
-          content: feedbackForm.content
-        };
-
-        console.log('提交的数据:', payload);
-
-        // TODO: 调用后端 API
-       await submitNewFeedback(payload);
-
-        ElMessage.success('反馈提交成功');
-        feedbackDialogVisible.value = false;
-        
-      } catch (error) {
-        console.error(error);
-        ElMessage.error('提交失败，请重试');
-      } finally {
-        submittingFeedback.value = false;
-      }
-    }
-  });
-}
-
-// 续约相关状态
 const renewDialogVisible = ref(false)
 const targetRenewCoach = ref(null)
 const renewDuration = ref('1')
 const renewing = ref(false)
 
-// 过滤教练列表
+const feedbackForm = reactive({
+  plan_id: null,
+  feedback_date: '',
+  feeling: 'normal',
+  rating: 5,
+  content: ''
+})
+
+const validateFeedbackContent = (_rule, _value, callback) => {
+  const hasText = !!(feedbackForm.content && feedbackForm.content.trim())
+  const hasAttachment =
+    imageFileList.value.length > 0 || videoFileList.value.length > 0 || documentFileList.value.length > 0
+
+  if (!hasText && !hasAttachment) {
+    callback(new Error('请至少填写文字反馈或上传一个附件'))
+    return
+  }
+  callback()
+}
+
+const feedbackRules = {
+  feedback_date: [{ required: true, message: '请选择反馈日期', trigger: 'change' }],
+  feeling: [{ required: true, message: '请选择训练感受', trigger: 'change' }],
+  rating: [{ required: true, message: '请评分', trigger: 'change' }],
+  content: [{ validator: validateFeedbackContent, trigger: 'blur' }]
+}
+
 const filteredCoaches = computed(() => {
   if (!searchQuery.value) return coaches.value
   const query = searchQuery.value.toLowerCase()
-  return coaches.value.filter(coach => 
-    coach.username.toLowerCase().includes(query) ||
-    (coach.intro && coach.intro.toLowerCase().includes(query))
-  )
+  return coaches.value.filter((coach) => {
+    return (
+      coach.username?.toLowerCase().includes(query) ||
+      (coach.intro && coach.intro.toLowerCase().includes(query))
+    )
+  })
 })
 
-// 获取所有教练
-const fetchCoaches = async () => {
-  loading.value = true
-  try {
-    const response = await getCoaches()
-    let rawCoaches = Array.isArray(response) ? response : (response.content || [])
-    
-    const userInfo = getUserInfo()
-    const userId = userInfo ? userInfo.userId : null
-
-    console.log("当前用户ID:", userId)
-
-    if (userId) {
-      // 并行获取所有教练与当前用户的关系
-      // 使用 Promise.all 确保所有状态加载完毕后再渲染列表，避免UI闪烁
-      const coachesWithRelation = await Promise.all(rawCoaches.map(async (coach) => {
-        try {
-          const relation = await getCoachStudentsById(coach.id, userId)
-          console.log(`教练 ${coach.id} 的关系数据:`, relation== null ? '无关系' : relation)
-          return {
-            ...coach,
-            relationship: relation || null // 如果返回 undefined/null 则设为 null
-          }
-        } catch (err) {
-          console.error(`获取教练 ${coach.id} 关系失败:`, err)
-          return { ...coach, relationship: null }
-        }
-      }))
-      coaches.value = coachesWithRelation
-    } else {
-      // 未登录或无ID，显示普通列表
-      coaches.value = rawCoaches.map(c => ({ ...c, relationship: null }))
-    }
-    
-  } catch (error) {
-    console.error('获取教练列表失败:', error)
-    showError('无法加载教练列表')
-  } finally {
-    loading.value = false
-  }
+const goBack = () => {
+  router.back()
 }
 
-// 辅助函数：判断关系状态
-// 返回值: 'active' (会员中), 'expired' (已过期), 'none' (无关系)
 const getRelationStatus = (coach) => {
-  if (!coach.relationship) return 'none'
-  
-  // 逻辑对应 SQL: status=1 且 expire_at > now
-  const now = new Date()
-  const expireDate = new Date(coach.relationship.expireAt)
-  const status = coach.relationship.status
+  if (!coach?.relationship) return 'none'
 
-  // status: 1-正常, 0-已过期/冻结
-  if (status === 1 && expireDate > now) {
+  const now = new Date()
+  const expireAt = coach.relationship.expireAt ? new Date(coach.relationship.expireAt) : null
+  if (coach.relationship.status === 1 && expireAt && expireAt > now) {
     return 'active'
   }
   return 'expired'
 }
 
-// 辅助函数：是否为有效会员
-const isActiveMember = (coach) => {
-  return getRelationStatus(coach) === 'active'
-}
+const isActiveMember = (coach) => getRelationStatus(coach) === 'active'
 
-// 详情查看
-const showCoachDetails = async (coach) => {
-  selectedCoach.value = coach
-  dialogVisible.value = true
-  
-  try {
-    const detail = await getCoachById(coach.id)
-    // 合并详情数据，保留列表中的 relationship 信息
-    selectedCoach.value = { ...selectedCoach.value, ...detail }
-  } catch (error) {
-    console.error('获取详情失败:', error)
-  }
-}
-
-// 跳转到制定计划页面
-// 跳转到制定计划页面
-const goToTrainingPlan = (coach) => {
-  const userInfo = getUserInfo()
-  const studentId = userInfo.userId // 这行代码可能在这个跳转场景中暂时用不到，但保留着没关系
-
-  // 打印 coach
-  console.log("当前跳转的教练 :", JSON.stringify(coach))
-
-  // ✅ 正确的跳转方式：使用命名路由 (name) 和 params
-  router.push({
-    name: 'CreateTrainingPlanStudent', // <--- 使用路由的名称
-    params: {
-      coachId: coach.id // <--- 在 params 中传递 coachId
-    }
-  })
-}
-
-
-// 打开续约弹窗
-const handleRenew = (coach) => {
-  targetRenewCoach.value = coach
-  renewDialogVisible.value = true
-}
-
-// 确认续约逻辑
-// 确认续约逻辑 (真实逻辑)
-const confirmRenew = async () => {
-  renewing.value = true
-  try {
-    const userInfo = getUserInfo()
-    const studentId = userInfo.userId
-    const coachId = targetRenewCoach.value.id
-    
-    // 1. 获取当前基础时间
-    const now = new Date()
-    let startDate = now
-    
-    // 如果已经是活跃会员，则在当前到期时间基础上累加
-    const currentStatus = getRelationStatus(targetRenewCoach.value)
-    if (currentStatus === 'active') {
-      const currentExpire = new Date(targetRenewCoach.value.relationship.expireAt)
-      if (currentExpire > now) {
-        startDate = currentExpire
-      }
-    }
-    
-    // 2. 计算新的到期时间
-    const months = parseInt(renewDuration.value)
-    const newExpireDate = new Date(startDate)
-    newExpireDate.setMonth(newExpireDate.getMonth() + months)
-    
-    // 3. 调用 API 更新
-    console.log(`正在续约: 教练=${coachId}, 学员=${studentId}, 新到期时间=${newExpireDate.toISOString()}`)
-    
-    await renewCoachStudent({
-      coachId: coachId,
-      studentId: studentId,
-      expireAt: newExpireDate.toISOString() // 发送 ISO 格式字符串
-    })
-
-    showSuccess(`成功为 ${targetRenewCoach.value.username} 办理了续约！`)
-    renewDialogVisible.value = false
-    
-    // 4. 刷新列表状态
-    await fetchCoaches()
-    
-    // 如果详情弹窗开着，也尝试刷新详情数据
-    if (dialogVisible.value && selectedCoach.value?.id === coachId) {
-      const relation = await getCoachStudentsById(coachId, studentId)
-      selectedCoach.value.relationship = relation
-    }
-
-  } catch (error) {
-    console.error('续约失败:', error)
-    showError(error.message || '续约失败，请重试')
-  } finally {
-    renewing.value = false
-  }
-}
-
-const handleSearch = () => { /* Computed handled */ }
-
-// 工具函数
 const formatGender = (gender) => {
-  const map = { 'Male': '男', 'Female': '女', 'Other': '其他' }
+  const map = { Male: '男', Female: '女', Other: '其他' }
   return map[gender] || '未知'
 }
 
 const formatDate = (dateString) => {
   if (!dateString) return '--'
-  return new Date(dateString).toLocaleDateString('zh-CN', { 
-    year: 'numeric', month: '2-digit', day: '2-digit' 
+  return new Date(dateString).toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
   })
 }
 
 const truncateText = (text, maxLength) => {
   if (!text) return ''
-  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text
+  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text
+}
+
+const fetchCoaches = async () => {
+  loading.value = true
+  try {
+    const response = await getCoaches()
+    const rawCoaches = Array.isArray(response) ? response : (response.content || [])
+
+    const userInfo = getUserInfo()
+    const studentId = userInfo?.userId
+
+    if (!studentId) {
+      coaches.value = rawCoaches.map((item) => ({ ...item, relationship: null }))
+      return
+    }
+
+    const coachesWithRelation = await Promise.all(
+      rawCoaches.map(async (coach) => {
+        try {
+          const relation = await getCoachStudentsById(coach.id, studentId)
+          return { ...coach, relationship: relation || null }
+        } catch {
+          return { ...coach, relationship: null }
+        }
+      })
+    )
+
+    coaches.value = coachesWithRelation
+  } catch (error) {
+    console.error('获取教练列表失败:', error)
+    showError('获取教练列表失败')
+  } finally {
+    loading.value = false
+  }
+}
+
+const showCoachDetails = async (coach) => {
+  selectedCoach.value = coach
+  dialogVisible.value = true
+
+  try {
+    const detail = await getCoachById(coach.id)
+    selectedCoach.value = { ...selectedCoach.value, ...detail }
+  } catch (error) {
+    console.error('获取教练详情失败:', error)
+  }
+}
+
+const goToTrainingPlan = (coach) => {
+  router.push({
+    name: 'CreateTrainingPlanStudent',
+    params: { coachId: coach.id }
+  })
+}
+
+const handleRenew = (coach) => {
+  targetRenewCoach.value = coach
+  renewDialogVisible.value = true
+}
+
+const confirmRenew = async () => {
+  renewing.value = true
+  try {
+    const userInfo = getUserInfo()
+    const studentId = userInfo?.userId
+    const coachId = targetRenewCoach.value?.id
+
+    if (!studentId || !coachId) {
+      throw new Error('缺少续费必要参数')
+    }
+
+    const now = new Date()
+    let startDate = now
+
+    const currentStatus = getRelationStatus(targetRenewCoach.value)
+    if (currentStatus === 'active') {
+      const currentExpire = new Date(targetRenewCoach.value.relationship.expireAt)
+      if (currentExpire > now) startDate = currentExpire
+    }
+
+    const months = Number.parseInt(renewDuration.value, 10)
+    const newExpireDate = new Date(startDate)
+    newExpireDate.setMonth(newExpireDate.getMonth() + months)
+
+    await renewCoachStudent({
+      coachId,
+      studentId,
+      expireAt: newExpireDate.toISOString()
+    })
+
+    showSuccess(`已为 ${targetRenewCoach.value.username} 完成会员续费`)
+    renewDialogVisible.value = false
+
+    await fetchCoaches()
+
+    if (dialogVisible.value && selectedCoach.value?.id === coachId) {
+      const relation = await getCoachStudentsById(coachId, studentId)
+      selectedCoach.value.relationship = relation || null
+    }
+  } catch (error) {
+    console.error('续费失败:', error)
+    showError(error.message || '续费失败，请稍后再试')
+  } finally {
+    renewing.value = false
+  }
+}
+
+const resetFeedbackForm = () => {
+  feedbackForm.plan_id = null
+  feedbackForm.feedback_date = new Date().toISOString().split('T')[0]
+  feedbackForm.feeling = 'normal'
+  feedbackForm.rating = 5
+  feedbackForm.content = ''
+  imageFileList.value = []
+  videoFileList.value = []
+  documentFileList.value = []
+}
+
+const resolvePlanId = (coach) => {
+  return coach.currentPlanId || coach.relationship?.planId || coach.planId || null
+}
+
+const showFeedbackDialog = (coach) => {
+  currentCoachInfo.value = coach
+  feedbackDialogVisible.value = true
+
+  nextTick(() => {
+    feedbackFormRef.value?.resetFields()
+    resetFeedbackForm()
+    feedbackForm.plan_id = resolvePlanId(coach)
+  })
+}
+
+const normalizeUploadedUrl = (res) => {
+  if (!res) return ''
+  if (typeof res === 'string') return res
+  if (res.url) return res.url
+  if (res.data?.url) return res.data.url
+  return ''
+}
+
+const beforeImageUpload = (file) => {
+  const isLt5M = file.size / 1024 / 1024 < 5
+  if (!isLt5M) ElMessage.error('图片大小不能超过 5MB')
+  return isLt5M
+}
+
+const beforeVideoUpload = (file) => {
+  const isLt100M = file.size / 1024 / 1024 < 100
+  if (!isLt100M) ElMessage.error('视频大小不能超过 100MB')
+  return isLt100M
+}
+
+const beforeDocumentUpload = (file) => {
+  const isLt20M = file.size / 1024 / 1024 < 20
+  if (!isLt20M) ElMessage.error('文档大小不能超过 20MB')
+  return isLt20M
+}
+
+const handleImageUpload = async ({ file, onSuccess, onError }) => {
+  try {
+    const res = await uploadImage(file)
+    const url = normalizeUploadedUrl(res)
+    imageFileList.value.push({ name: file.name, url })
+    onSuccess?.(res)
+  } catch (error) {
+    onError?.(error)
+  }
+}
+
+const handleVideoUpload = async ({ file, onSuccess, onError }) => {
+  uploadingVideo.value = true
+  try {
+    const res = await uploadVideo(file)
+    const url = normalizeUploadedUrl(res)
+    videoFileList.value.push({ name: file.name, url })
+    onSuccess?.(res)
+  } catch (error) {
+    onError?.(error)
+  } finally {
+    uploadingVideo.value = false
+  }
+}
+
+const handleDocumentUpload = async ({ file, onSuccess, onError }) => {
+  uploadingDocument.value = true
+  try {
+    const res = await uploadDocument(file)
+    const url = normalizeUploadedUrl(res)
+    documentFileList.value.push({ name: file.name, url })
+    onSuccess?.(res)
+  } catch (error) {
+    onError?.(error)
+  } finally {
+    uploadingDocument.value = false
+  }
+}
+
+const handleImageRemove = (file) => {
+  imageFileList.value = imageFileList.value.filter((item) => item.url !== file.url)
+}
+
+const handleVideoRemove = (file) => {
+  videoFileList.value = videoFileList.value.filter((item) => item.url !== file.url)
+}
+
+const handleDocumentRemove = (file) => {
+  documentFileList.value = documentFileList.value.filter((item) => item.url !== file.url)
+}
+
+const submitFeedback = async () => {
+  if (!feedbackFormRef.value) return
+
+  await feedbackFormRef.value.validate(async (valid) => {
+    if (!valid) return
+
+    if (!feedbackForm.plan_id) {
+      ElMessage.error('当前教练未关联训练计划，暂时无法提交反馈')
+      return
+    }
+
+    const userInfo = getUserInfo()
+    const studentId = userInfo?.userId
+
+    if (!studentId || !currentCoachInfo.value?.id) {
+      ElMessage.error('用户信息异常，请重新登录后再试')
+      return
+    }
+
+    submittingFeedback.value = true
+    try {
+      const payload = {
+        planId: feedbackForm.plan_id,
+        studentId,
+        coachId: currentCoachInfo.value.id,
+        feedbackDate: feedbackForm.feedback_date,
+        rating: feedbackForm.rating,
+        feeling: feedbackForm.feeling,
+        content: feedbackForm.content?.trim() || '',
+        imageUrls: imageFileList.value.map((item) => item.url).join(','),
+        videoUrls: videoFileList.value.map((item) => item.url).join(','),
+        documentUrls: documentFileList.value.map((item) => item.url).join(',')
+      }
+
+      await submitNewFeedback(payload)
+      ElMessage.success('反馈提交成功')
+      feedbackDialogVisible.value = false
+    } catch (error) {
+      console.error('提交反馈失败:', error)
+      ElMessage.error('提交反馈失败，请稍后再试')
+    } finally {
+      submittingFeedback.value = false
+    }
+  })
 }
 
 onMounted(() => {
@@ -597,8 +671,15 @@ onMounted(() => {
 }
 
 .page-header {
+  position: relative;
   text-align: center;
   margin-bottom: 32px;
+}
+
+.back-btn {
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .page-header h1 {
@@ -642,9 +723,8 @@ onMounted(() => {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
 }
 
-/* 会员高亮样式 */
 .coach-card.is-member {
-  border-color: #e1f3d8; /* 浅绿色边框 */
+  border-color: #e1f3d8;
   background: linear-gradient(to bottom, #f0f9eb 0%, #ffffff 50px);
 }
 
@@ -723,7 +803,17 @@ onMounted(() => {
   flex: 1;
 }
 
-/* 详情弹窗样式 */
+.feedback-dialog :deep(.el-upload-list__item-name) {
+  max-width: 380px;
+}
+
+.upload-tip {
+  color: #909399;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 6px;
+}
+
 .highlight-section {
   background-color: #f0f9eb;
   padding: 15px;
@@ -786,7 +876,7 @@ onMounted(() => {
   font-size: 16px;
   margin-bottom: 10px;
   padding-left: 10px;
-  border-left: 4px solid #409EFF;
+  border-left: 4px solid #409eff;
 }
 
 .detail-intro {
@@ -811,9 +901,22 @@ onMounted(() => {
   .coaches-container {
     padding: 16px;
   }
-  
+
   .coach-grid {
     grid-template-columns: 1fr;
+  }
+
+  .back-btn {
+    position: static;
+    margin-bottom: 12px;
+  }
+
+  .page-header {
+    text-align: left;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
   }
 }
 </style>

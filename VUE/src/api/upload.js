@@ -37,3 +37,22 @@ export function uploadVideo(file) {
     }
   });
 }
+
+/**
+ * Upload document file
+ * @param {File} file - Document file to upload
+ * @returns {Promise} Upload response with file URL
+ */
+export function uploadDocument(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return request({
+    url: '/api/upload/document',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+}

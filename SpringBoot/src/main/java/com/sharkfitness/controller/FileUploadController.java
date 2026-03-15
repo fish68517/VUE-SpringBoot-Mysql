@@ -57,4 +57,22 @@ public class FileUploadController {
         
         return ApiResponse.success(result);
     }
+
+    /**
+     * Upload a document file
+     * @param file the document file to upload
+     * @return API response with file URL
+     */
+    @PostMapping("/document")
+    public ApiResponse<Map<String, String>> uploadDocument(@RequestParam("file") MultipartFile file) {
+        log.info("Received document upload request: {}", file.getOriginalFilename());
+
+        String fileUrl = fileUploadService.uploadDocument(file);
+
+        Map<String, String> result = new HashMap<>();
+        result.put("url", fileUrl);
+        result.put("filename", file.getOriginalFilename());
+
+        return ApiResponse.success(result);
+    }
 }

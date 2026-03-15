@@ -1,6 +1,10 @@
 <template>
   <div class="resource-list-container">
     <div class="resource-list-header">
+      <el-button class="back-btn" text @click="goBack">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
       <h1>健身资源</h1>
       <p class="subtitle">您可以浏览健身视频，文章，和教程</p>
     </div>
@@ -71,12 +75,18 @@ import { getResources } from '@/api/resource';
 import { showError } from '@/utils/feedback';
 import { getResourcesAll } from '../../api/resource';
 
+
 const resources = ref([]);
 const loading = ref(false);
 const selectedType = ref('');
 const currentPage = ref(1);
 const pageSize = ref(12);
 const total = ref(0);
+const router = useRouter();
+import { useRouter } from 'vue-router'
+const goBack = () => {
+  router.back()
+}
 
 const emptyMessage = computed(() => {
   if (selectedType.value) {

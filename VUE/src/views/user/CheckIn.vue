@@ -1,18 +1,13 @@
-没问题！我已经将打卡页面（Check-In）的所有界面文本、按钮状态、弹窗提示以及 JavaScript 中的反馈消息全部翻译成了符合中文使用习惯的用语。
 
-请复制以下代码覆盖你原来的文件：
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <template>
   <div class="check-in-container">
     <el-card class="check-in-card">
       <template #header>
         <div class="card-header">
+            <el-button class="back-btn" text @click="goBack">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
           <h2>每日打卡</h2>
         </div>
       </template>
@@ -119,6 +114,11 @@ import { useUserStore } from '@/store/modules/user'
 import { showSuccess, showError, showInfo } from '@/utils/feedback'
 
 const userStore = useUserStore()
+const router = useRouter();
+import { useRouter } from 'vue-router'
+const goBack = () => {
+  router.back()
+}
 
 const checkingIn = ref(false)
 const showCelebration = ref(false)

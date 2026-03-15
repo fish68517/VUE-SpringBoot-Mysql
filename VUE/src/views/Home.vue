@@ -4,6 +4,10 @@
     <!-- 欢迎横幅 (Welcome Banner) -->
     <el-card class="welcome-banner" shadow="hover">
       <div class="banner-content">
+        <el-button class="back-btn" text @click="goBack">
+        <el-icon><ArrowLeft /></el-icon>
+        返回登录
+      </el-button>
         <h1>欢迎回来，{{ userName }}！👋</h1>
         <p>准备好继续您的健身之旅了吗？</p>
       </div>
@@ -29,7 +33,7 @@
           </el-statistic>
         </el-card>
       </el-col>
-      <el-col :xs="12" :sm="6">
+      <el-col :xs="12" :sm="6" v-if="false">
         <el-card shadow="hover" class="stat-card">
           <el-statistic title="我的发布" :value="stats.posts">
             <template #prefix>
@@ -167,6 +171,11 @@ import {
 
 const router = useRouter();
 const authStore = useAuthStore();
+
+const goBack = () => {
+  router.push('/login')
+}
+
 
 const featuredResources = ref([]);
 const recentPosts = ref([]);

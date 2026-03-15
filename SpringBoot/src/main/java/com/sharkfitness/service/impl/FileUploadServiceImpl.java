@@ -34,6 +34,17 @@ public class FileUploadServiceImpl implements FileUploadService {
             "video/mp4", "video/avi", "video/mpeg"
     );
 
+    private static final List<String> ALLOWED_DOCUMENT_TYPES = Arrays.asList(
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "text/plain"
+    );
+
     @Override
     public String uploadImage(MultipartFile file) {
         log.debug("Uploading image file: {}", file.getOriginalFilename());
@@ -53,6 +64,13 @@ public class FileUploadServiceImpl implements FileUploadService {
         log.debug("Uploading avatar file: {}", file.getOriginalFilename());
         validateImageFile(file);
         return saveFile(file, "avatars");
+    }
+
+    @Override
+    public String uploadDocument(MultipartFile file) {
+        log.debug("Uploading document file: {}", file.getOriginalFilename());
+        validateDocumentFile(file);
+        return saveFile(file, "documents");
     }
 
     /**
@@ -92,6 +110,24 @@ public class FileUploadServiceImpl implements FileUploadService {
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_VIDEO_TYPES.contains(contentType.toLowerCase())) {
             throw new ValidationException("Invalid video format. Allowed formats: MP4, AVI, MPEG");
+        }
+    }
+
+    /**
+     * Validate document file type and size
+     */
+    private void validateDocumentFile(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            throw new ValidationException("File cannot be empty");
+        }
+
+        if (file.getSize() > fileUploadConfig.getMaxDocumentSize()) {
+            throw new ValidationException("Document size exceeds 20MB limit");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !ALLOWED_DOCUMENT_TYPES.contains(contentType.toLowerCase())) {
+            throw new ValidationException("Invalid document format. Allowed formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT");
         }
     }
 

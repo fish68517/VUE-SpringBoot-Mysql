@@ -289,7 +289,7 @@ const viewCoachProfile = () => {
 };
 
 const goBack = () => {
-  router.push('/resources');
+  router.push('/home');
 };
 
 onMounted(() => {

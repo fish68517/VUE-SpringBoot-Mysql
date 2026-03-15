@@ -23,6 +23,13 @@ public interface FileUploadService {
     String uploadVideo(MultipartFile file);
 
     /**
+     * Upload a document file
+     * @param file the document file to upload
+     * @return the URL path to access the uploaded document
+     */
+    String uploadDocument(MultipartFile file);
+
+    /**
      * Upload an avatar image
      * @param file the avatar image file to upload
      * @return the URL path to access the uploaded avatar

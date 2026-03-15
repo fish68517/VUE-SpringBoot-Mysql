@@ -42,6 +42,10 @@ public class TrainingFeedbackService {
         feedback.setRating(request.getRating());
         feedback.setFeedbackDate(request.getFeedbackDate());
         feedback.setCoachId(request.getCoachId());
+        feedback.setFeeling(request.getFeeling());
+        feedback.setImageUrls(request.getImageUrls());
+        feedback.setVideoUrls(request.getVideoUrls());
+        feedback.setDocumentUrls(request.getDocumentUrls());
 
         TrainingFeedback savedFeedback = feedbackRepository.save(feedback);
         return convertToDto(savedFeedback);
@@ -57,6 +61,10 @@ public class TrainingFeedbackService {
                 .content(feedback.getContent())
                 .rating(feedback.getRating())
                 .feedbackDate(feedback.getFeedbackDate())
+                .feeling(feedback.getFeeling())
+                .imageUrls(feedback.getImageUrls())
+                .videoUrls(feedback.getVideoUrls())
+                .documentUrls(feedback.getDocumentUrls())
                 .build();
     }
 

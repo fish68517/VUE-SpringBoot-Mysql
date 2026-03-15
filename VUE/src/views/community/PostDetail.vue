@@ -1,14 +1,11 @@
-
 <template>
   <div class="post-detail">
-    <!-- 返回按钮 -->
     <div class="back-button">
       <el-button :icon="ArrowLeft" @click="goBack">返回动态列表</el-button>
     </div>
 
     <div v-loading="loading" class="detail-content">
       <el-card v-if="!loading && post" class="post-card">
-        <!-- 动态头部 (Post Header) -->
         <div class="post-header">
           <div class="user-info">
             <el-avatar :size="48" :src="post.user?.avatar || '/default-avatar.png'">
@@ -16,21 +13,21 @@
             </el-avatar>
             <div class="user-details">
               <span class="username">{{ post.user?.username }}</span>
-              <!-- 时间显示已本地化 -->
               <span class="timestamp">{{ formatTime(post.createdAt) }}</span>
             </div>
           </div>
+
           <div v-if="isOwnPost" class="post-actions">
             <el-dropdown @command="handleCommand">
-              <el-icon :size="20"><more-filled /></el-icon>
+              <el-icon :size="20"><MoreFilled /></el-icon>
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item command="edit">
-                    <el-icon><edit /></el-icon>
+                    <el-icon><Edit /></el-icon>
                     编辑
                   </el-dropdown-item>
                   <el-dropdown-item command="delete">
-                    <el-icon><delete /></el-icon>
+                    <el-icon><Delete /></el-icon>
                     删除
                   </el-dropdown-item>
                 </el-dropdown-menu>
@@ -39,13 +36,11 @@
           </div>
         </div>
 
-        <!-- 动态内容 (Post Content) -->
         <div class="post-content">
           <p>{{ post.content }}</p>
         </div>
 
-        <!-- 动态图片 (Post Images) -->
-        <div v-if="post.imageUrls && imageList.length > 0" class="post-images">
+        <div v-if="imageList.length > 0" class="post-images">
           <el-image
             v-for="(image, index) in imageList"
             :key="index"
@@ -57,9 +52,8 @@
           />
         </div>
 
-        <!-- 底部操作栏 (Post Footer) -->
         <div class="post-footer">
-          <like-button
+          <LikeButton
             v-if="false"
             :dynamic-id="post.id"
             :like-count="post.likeCount"
@@ -68,17 +62,15 @@
             @update:like-count="handleLikeCountUpdate"
           />
           <div class="comment-count">
-            <el-icon :size="20"><chat-line-round /></el-icon>
+            <el-icon :size="20"><ChatLineRound /></el-icon>
             <span>{{ comments.length }}</span>
           </div>
         </div>
       </el-card>
 
-      <!-- 评论区域 (Comments Section) -->
       <el-card v-if="!loading && post" class="comments-card">
-        <comment-list :comments="comments" @refresh="loadComments" />
+        <CommentList :comments="comments" @refresh="loadComments" />
 
-        <!-- 评论输入框 -->
         <div class="comment-input-section">
           <el-avatar :size="36" :src="currentUser?.avatar || '/default-avatar.png'">
             {{ currentUser?.username?.charAt(0).toUpperCase() }}
@@ -93,6 +85,7 @@
             class="comment-input"
           />
         </div>
+
         <div class="comment-actions">
           <el-button
             type="primary"
@@ -106,20 +99,14 @@
       </el-card>
     </div>
 
-    <!-- 编辑动态弹窗 (Edit Post Dialog) -->
-    <el-dialog
-      v-model="editDialogVisible"
-      title="编辑动态"
-      width="600px"
-      @close="handleDialogClose"
-    >
+    <el-dialog v-model="editDialogVisible" title="编辑动态" width="600px" @close="handleDialogClose">
       <el-form :model="editForm" label-position="top">
         <el-form-item label="内容">
           <el-input
             v-model="editForm.content"
             type="textarea"
             :rows="6"
-            placeholder="分享您的健身心得..."
+            placeholder="分享你的健身心得..."
             maxlength="1000"
             show-word-limit
           />
@@ -127,30 +114,22 @@
       </el-form>
       <template #footer>
         <el-button @click="editDialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="updating" @click="handleUpdatePost">
-          更新
-        </el-button>
+        <el-button type="primary" :loading="updating" @click="handleUpdatePost">更新</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/store/modules/auth'
-import {
-  ArrowLeft,
-  MoreFilled,
-  Edit,
-  Delete,
-  ChatLineRound
-} from '@element-plus/icons-vue'
-import { getDynamicById, updateDynamic, deleteDynamic } from '@/api/community'
-import { getComments, createComment } from '@/api/comment'
+import { ArrowLeft, ChatLineRound, Delete, Edit, MoreFilled } from '@element-plus/icons-vue'
+import { deleteDynamic, getDynamicById, updateDynamic } from '@/api/community'
+import { createComment, getComments } from '@/api/comment'
 import LikeButton from '@/components/community/LikeButton.vue'
 import CommentList from '@/components/community/CommentList.vue'
-import { showSuccess, showError, showWarning, confirmDelete } from '@/utils/feedback'
+import { confirmDelete, showError, showSuccess, showWarning } from '@/utils/feedback'
 
 const route = useRoute()
 const router = useRouter()
@@ -171,15 +150,25 @@ const editForm = ref({
 
 const currentUser = computed(() => authStore.currentUser)
 
+const getEntityUserId = (entity) => {
+  if (!entity) return null
+  return entity.id ?? entity.userId ?? entity.user?.id ?? entity.user?.userId ?? null
+}
+
+const currentUserId = computed(() => getEntityUserId(currentUser.value))
+const postOwnerId = computed(() => getEntityUserId(post.value?.user || post.value))
+
 const isOwnPost = computed(() => {
-  return currentUser.value?.id === post.value?.user?.id
+  if (currentUserId.value == null || postOwnerId.value == null) return false
+  return String(currentUserId.value) === String(postOwnerId.value)
 })
 
 const imageList = computed(() => {
-  // 打印图片 imageList 列表以便调试
-  console.log("图片 imageList：" + JSON.stringify(post.value?.imageUrls));
   if (!post.value?.imageUrls) return []
-  return post.value.imageUrls.split(',').filter(url => url.trim())
+  return post.value.imageUrls
+    .split(',')
+    .map((url) => url.trim())
+    .filter(Boolean)
 })
 
 onMounted(() => {
@@ -190,8 +179,7 @@ onMounted(() => {
 const loadPost = async () => {
   loading.value = true
   try {
-    const postId = route.params.id
-    post.value = await getDynamicById(postId)
+    post.value = await getDynamicById(route.params.id)
   } catch (error) {
     showError('加载动态详情失败')
     router.push('/community')
@@ -202,50 +190,56 @@ const loadPost = async () => {
 
 const loadComments = async () => {
   try {
-    const postId = route.params.id
-    comments.value = await getComments(postId)
+    comments.value = await getComments(route.params.id)
   } catch (error) {
     showError('加载评论失败')
   }
 }
 
-// 汉化后的时间格式函数
 const formatTime = (timestamp) => {
   if (!timestamp) return ''
-  
+
   const date = new Date(timestamp)
   const now = new Date()
   const diff = now - date
-  
+
   const minutes = Math.floor(diff / 60000)
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
-  
+
   if (minutes < 1) return '刚刚'
   if (minutes < 60) return `${minutes}分钟前`
   if (hours < 24) return `${hours}小时前`
   if (days < 7) return `${days}天前`
-  
-  return date.toLocaleDateString()
+
+  return date.toLocaleDateString('zh-CN')
 }
 
 const goBack = () => {
   router.push('/community')
 }
 
+const guardOwnerPermission = () => {
+  if (isOwnPost.value) return true
+  showWarning('只有当前动态作者才可以编辑或删除')
+  return false
+}
+
 const handleCommand = async (command) => {
+  if (!guardOwnerPermission()) return
+
   if (command === 'edit') {
     editForm.value = {
-      content: post.value.content,
-      imageUrls: post.value.imageUrls || ''
+      content: post.value?.content || '',
+      imageUrls: post.value?.imageUrls || ''
     }
     editDialogVisible.value = true
-  } else if (command === 'delete') {
+    return
+  }
+
+  if (command === 'delete') {
     try {
-      // 这里的 confirmDelete 假设是通用的确认框，文案在调用处可定制，
-      // 如果 utils/feedback 中的 confirmDelete 固定了英文，需要去改那个文件
-      await confirmDelete('这条动态') 
-      
+      await confirmDelete('这条动态')
       await deleteDynamic(post.value.id)
       showSuccess('动态删除成功')
       router.push('/community')
@@ -258,6 +252,11 @@ const handleCommand = async (command) => {
 }
 
 const handleUpdatePost = async () => {
+  if (!guardOwnerPermission()) {
+    editDialogVisible.value = false
+    return
+  }
+
   if (!editForm.value.content.trim()) {
     showWarning('请输入动态内容')
     return
@@ -269,10 +268,9 @@ const handleUpdatePost = async () => {
       content: editForm.value.content,
       imageUrls: editForm.value.imageUrls
     })
-    
     showSuccess('动态更新成功')
     editDialogVisible.value = false
-    loadPost()
+    await loadPost()
   } catch (error) {
     showError('更新动态失败')
   } finally {
@@ -299,11 +297,8 @@ const handleSubmitComment = async () => {
       content: commentContent.value,
       dynamicId: post.value.id
     })
-    
     showSuccess('评论发表成功')
     commentContent.value = ''
-    
-    // Reload comments and update comment count
     await loadComments()
     post.value.commentCount = comments.value.length
   } catch (error) {
@@ -314,16 +309,15 @@ const handleSubmitComment = async () => {
 }
 
 const handleLikeUpdate = (liked) => {
-  post.value.liked = liked
+  if (post.value) post.value.liked = liked
 }
 
 const handleLikeCountUpdate = (count) => {
-  post.value.likeCount = count
+  if (post.value) post.value.likeCount = count
 }
 </script>
 
 <style scoped>
-/* 样式保持不变 */
 .post-detail {
   max-width: 800px;
   margin: 0 auto;

@@ -3,6 +3,10 @@
   <div class="diet-records-container">
     <el-card class="header-card">
       <div class="header-content">
+          <el-button class="back-btn" text @click="goBack">
+        <el-icon><ArrowLeft /></el-icon>
+        返回
+      </el-button>
         <h2>饮食记录</h2>
         <div class="header-actions">
           <el-date-picker
@@ -196,6 +200,13 @@ const dailySummary = ref({
   totalCalories: 0,
   mealCount: 0
 })
+
+import { useRouter } from 'vue-router'
+const router = useRouter();
+
+const goBack = () => {
+  router.back()
+}
 
 const formRef = ref(null)
 const formData = ref({

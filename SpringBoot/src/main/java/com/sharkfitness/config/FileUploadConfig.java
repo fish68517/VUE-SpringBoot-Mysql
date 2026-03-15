@@ -28,6 +28,9 @@ public class FileUploadConfig {
     @Value("${file.max-size.video:104857600}")  // 100MB default
     private long maxVideoSize;
 
+    @Value("${file.max-size.document:20971520}") // 20MB default
+    private long maxDocumentSize;
+
     /**
      * Configure multipart file upload settings
      */
@@ -50,6 +53,7 @@ public class FileUploadConfig {
         createDirectoryIfNotExists(uploadPath);
         createDirectoryIfNotExists(uploadPath + "/images");
         createDirectoryIfNotExists(uploadPath + "/static/videos");
+        createDirectoryIfNotExists(uploadPath + "/documents");
         createDirectoryIfNotExists(uploadPath + "/avatars");
     }
 

@@ -6,11 +6,15 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-@Builder // Lombok annotation for the builder pattern, useful for mapping
+@Builder
 public class TrainingFeedbackDto {
     private Long id;
     private Long planId;
     private String content;
     private Integer rating;
     private LocalDate feedbackDate;
+    private String feeling;
+    private String imageUrls;
+    private String videoUrls;
+    private String documentUrls;
 }
