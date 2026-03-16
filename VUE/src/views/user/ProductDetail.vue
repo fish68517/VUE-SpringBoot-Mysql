@@ -73,7 +73,7 @@
 
         <!-- 商品详情和评价 -->
         <div class="detail-tabs">
-          <div class="tabs-header" v-if="false">
+          <div class="tabs-header" >
             <button
               :class="{ active: activeTab === 'detail' }"
               @click="activeTab = 'detail'"
@@ -226,7 +226,7 @@ const goToReviewForm = () => {
     router.push("/login");
     return;
   }
-  router.push(`/review/form/${product.value.id}`);
+  router.push(`/user/review/form/${product.value.id}`);
 };
 
 onMounted(() => {

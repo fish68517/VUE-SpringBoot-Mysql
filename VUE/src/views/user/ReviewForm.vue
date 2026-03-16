@@ -29,12 +29,12 @@
         <div class="form-group">
           <label class="form-label">评价内容 <span class="required">*</span></label>
           <textarea
-            v-model="content"
+            v-model="contentText"
             class="form-textarea"
             placeholder="请输入您的评价内容（至少10个字符）"
             rows="6"
           ></textarea>
-          <p class="char-count">{{ content.length }}/500</p>
+          <p class="char-count">{{ contentText.length }}/500</p>
         </div>
 
         <!-- 图片上传 -->
@@ -68,8 +68,8 @@
         <!-- 提交按钮 -->
         <div class="form-actions">
           <button type="button" class="btn-cancel" @click="goBack">取消</button>
-          <button type="submit" class="btn-submit" :disabled="submitting">
-            {{ submitting ? "提交中..." : "提交评价" }}
+          <button type="submit" class="btn-submit" :disabled="submitting || uploading">
+            {{ submitting || uploading ? "提交中..." : "提交评价" }}
           </button>
         </div>
       </form>
@@ -81,7 +81,8 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
-import { createReview, getProductReviews } from "@/api/review";
+import { createReview } from "@/api/review";
+import { uploadImage } from "@/api/upload";
 import { getProductDetail } from "@/api/product";
 import { useUserStore } from "@/store/userStore";
 
@@ -92,50 +93,72 @@ const userStore = useUserStore();
 const fileInput = ref(null);
 const product = ref(null);
 const rating = ref(5);
-const content = ref("");
+const contentText = ref("");
 const uploadedImages = ref([]);
 const submitting = ref(false);
+const uploading = ref(false);
 
 const triggerFileInput = () => {
   fileInput.value?.click();
 };
 
-const handleImageSelect = (event) => {
+const getServerImageUrl = (imageName) => `http://localhost:8080/images/${imageName}`;
+
+const extractImageName = (uploadedResult) => {
+  if (!uploadedResult) return "";
+  const cleanPath = String(uploadedResult).split("?")[0];
+  const index = cleanPath.lastIndexOf("/");
+  return index >= 0 ? cleanPath.substring(index + 1) : cleanPath;
+};
+
+const handleImageSelect = async (event) => {
   const files = Array.from(event.target.files || []);
-  
-  // 检查总数量
+
   if (uploadedImages.value.length + files.length > 5) {
-    ElMessage.error("最多只能上传5张图片");
+    ElMessage.error("最多只能上传 5 张图片");
+    event.target.value = "";
     return;
   }
 
-  // 处理每个文件
-  files.forEach((file) => {
-    // 检查文件大小
-    if (file.size > 2 * 1024 * 1024) {
-      ElMessage.error(`${file.name} 超过2MB限制`);
-      return;
+  uploading.value = true;
+  let successCount = 0;
+
+  try {
+    for (const file of files) {
+      if (file.size > 2 * 1024 * 1024) {
+        ElMessage.error(`${file.name} 超过2MB限制`);
+        continue;
+      }
+
+      if (!file.type.startsWith("image/")) {
+        ElMessage.error(`${file.name} 不是有效的图片文件`);
+        continue;
+      }
+
+      try {
+        const uploadedResult = await uploadImage(file);
+        const imageName = extractImageName(uploadedResult);
+        if (!imageName) {
+          throw new Error("invalid upload response");
+        }
+
+        uploadedImages.value.push({
+          imageName,
+          preview: getServerImageUrl(imageName)
+        });
+        successCount++;
+      } catch (error) {
+        ElMessage.error(`${file.name} 上传失败`);
+      }
     }
 
-    // 检查文件类型
-    if (!file.type.startsWith("image/")) {
-      ElMessage.error(`${file.name} 不是有效的图片文件`);
-      return;
+    if (successCount > 0) {
+      ElMessage.success(`已成功上传 ${successCount} 张图片`);
     }
-
-    // 创建预览
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      uploadedImages.value.push({
-        file,
-        preview: e.target.result
-      });
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // 重置input
-  event.target.value = "";
+  } finally {
+    uploading.value = false;
+    event.target.value = "";
+  }
 };
 
 const removeImage = (index) => {
@@ -143,18 +166,17 @@ const removeImage = (index) => {
 };
 
 const submitReview = async () => {
-  // 验证
   if (rating.value < 1 || rating.value > 5) {
     ElMessage.error("请选择评分");
     return;
   }
 
-  if (!content.value || content.value.length < 10) {
+  if (!contentText.value || contentText.value.length < 10) {
     ElMessage.error("评价内容至少需要10个字符");
     return;
   }
 
-  if (content.value.length > 500) {
+  if (contentText.value.length > 500) {
     ElMessage.error("评价内容不能超过500个字符");
     return;
   }
@@ -162,29 +184,27 @@ const submitReview = async () => {
   submitting.value = true;
 
   try {
-    // 处理图片
-    let imagesJson = null;
-    if (uploadedImages.value.length > 0) {
-      const imageUrls = uploadedImages.value.map((img) => img.preview);
-      imagesJson = JSON.stringify(imageUrls);
-    }
+    const imagesJson =
+      uploadedImages.value.length > 0
+        ? JSON.stringify(uploadedImages.value.map((img) => img.imageName))
+        : null;
 
-    // 构建请求数据
+    const queryOrderId = route.query.orderId ? Number(route.query.orderId) : 1;
+    const paramOrderId = route.params.orderId ? Number(route.params.orderId) : 1;
+
     const reviewData = {
       userId: userStore.userInfo.id,
-      productId: parseInt(route.params.productId),
-      orderId: route.params.orderId ? parseInt(route.params.orderId) : null,
+      productId: Number(route.params.productId),
+      orderId: paramOrderId || queryOrderId,
       rating: rating.value,
-      content: content.value,
+      content: contentText.value,
       images: imagesJson
     };
 
-    // 提交评价
     await createReview(reviewData);
     ElMessage.success("评价提交成功");
 
-    // 返回商品详情页
-    router.push(`/product/${route.params.productId}`);
+    router.push(`/user/product/${route.params.productId}`);
   } catch (error) {
     console.error("提交评价失败:", error);
     ElMessage.error("提交评价失败，请重试");
@@ -478,3 +498,4 @@ onMounted(() => {
   }
 }
 </style>
+

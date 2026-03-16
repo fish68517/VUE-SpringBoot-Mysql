@@ -5,8 +5,8 @@
       <div v-for="review in reviews" :key="review.id" class="review-item">
         <div class="review-header">
           <div class="reviewer-info">
-            <img v-if="review.userAvatar" :src="review.userAvatar" :alt="review.userNickname" class="avatar" />
-            <div v-else class="avatar-placeholder">{{ review.userNickname?.charAt(0) || 'U' }}</div>
+            <!-- <img v-if="review.userAvatar" :src="review.userAvatar" :alt="review.userNickname" class="avatar" />
+            <div v-else class="avatar-placeholder">{{ review.userNickname?.charAt(0) || 'U' }}</div> -->
             <span class="reviewer-name">{{ review.userNickname || '匿名用户' }}</span>
           </div>
           <div class="review-rating">
@@ -19,7 +19,7 @@
           <img
             v-for="(img, index) in parseImages(review.images)"
             :key="index"
-            :src="img"
+            :src="getReviewImageUrl(img)"
             :alt="`评价图片${index + 1}`"
             class="review-image"
           />
@@ -32,10 +32,10 @@
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { getProductReviews } from "@/api/review";
 
-defineProps({
+const props = defineProps({
   productId: {
     type: Number,
     required: true
@@ -66,6 +66,21 @@ const parseImages = (imagesJson) => {
   } catch (e) {
     return [];
   }
+};
+
+const getReviewImageUrl = (img) => {
+  if (!img) return "";
+  const value = String(img);
+
+  if (value.startsWith("http://") || value.startsWith("https://") || value.startsWith("data:image")) {
+    return value;
+  }
+
+  if (value.startsWith("/images/")) {
+    return `http://localhost:8080${value}`;
+  }
+
+  return `http://localhost:8080/images/${value}`;
 };
 
 const formatDate = (dateString) => {
@@ -203,3 +218,4 @@ onMounted(() => {
   font-size: 12px;
 }
 </style>
+
