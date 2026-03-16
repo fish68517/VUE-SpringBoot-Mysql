@@ -105,7 +105,7 @@ public class CoachController {
         if (!coachStudentRepository.existsByCoachIdAndStudentId(currentUser.getId(), studentId)) {
             throw new BusinessException(403, "You do not have access to this student's data");
         }
-        
+//        
         // Validate days parameter
         if (days <= 0 || days > 365) {
             throw new BusinessException(400, "Days parameter must be between 1 and 365");

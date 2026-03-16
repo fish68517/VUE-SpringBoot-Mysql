@@ -196,7 +196,7 @@ const fetchStudents = async () => {
       await fetchAnalytics()
     }
   } catch (error) {
-    showError('加载学员列表失败')
+    //showError('加载学员列表失败')
     console.error('Fetch students error:', error)
   }
 }
@@ -232,7 +232,7 @@ const fetchAnalytics = async () => {
     })
     processDietData(dietResponse)
   } catch (error) {
-    showError('加载分析数据失败')
+    // showError('加载分析数据失败')
     console.error('Fetch analytics error:', error)
     analytics.value = null
   } finally {

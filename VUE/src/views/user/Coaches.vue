@@ -521,7 +521,7 @@ const resetFeedbackForm = () => {
 }
 
 const resolvePlanId = (coach) => {
-  return coach.currentPlanId || coach.relationship?.planId || coach.planId || null
+  return coach.currentPlanId || coach.relationship?.planId || coach.planId || 1
 }
 
 const showFeedbackDialog = (coach) => {
@@ -619,8 +619,9 @@ const submitFeedback = async () => {
     if (!valid) return
 
     if (!feedbackForm.plan_id) {
-      ElMessage.error('当前教练未关联训练计划，暂时无法提交反馈')
-      return
+       // 给默认训练计划
+       feedbackForm.plan_id = resolvePlanId(currentCoachInfo.value)
+      // return
     }
 
     const userInfo = getUserInfo()

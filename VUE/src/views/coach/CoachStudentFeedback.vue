@@ -67,7 +67,7 @@
                   <el-rate v-model="item.rating" disabled show-score text-color="#ff9900" />
                   <el-tag size="small" type="info">{{ getFeelingText(item.feeling) }}</el-tag>
                 </div>
-                <div class="meta-right">
+                <div class="meta-right" v-if="false">
                   <el-button type="danger" link :icon="Delete" @click="handleDelete(item)">删除</el-button>
                 </div>
               </div>
