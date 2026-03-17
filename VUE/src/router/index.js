@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '../store'
+import { ElMessage } from 'element-plus'
 
 const routes = [
   {
@@ -32,6 +32,12 @@ const routes = [
     path: '/works',
     name: 'CreativeWorks',
     component: () => import('../pages/CreativeWorks.vue')
+  },
+  {
+    path: '/pattern-generator',
+    name: 'PatternGenerator',
+    component: () => import('../pages/PatternGenerator.vue'),
+    meta: { requiresAuth: true }
   },
   {
     path: '/login',
@@ -114,6 +120,11 @@ router.beforeEach((to, from, next) => {
 
   // 如果访问的是根路径且未登录，强制去登录页 (你之前的要求)
   if (to.path === '/' && !token) {
+    return next('/login')
+  }
+
+  if (to.meta.requiresAuth && !token) {
+    ElMessage.warning('请先登录后再访问该页面')
     return next('/login')
   }
 

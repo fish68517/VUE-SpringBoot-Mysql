@@ -18,6 +18,7 @@
         <router-link to="/patterns" @click="mobileMenuOpen = false">资源库</router-link>
         <router-link to="/science" @click="mobileMenuOpen = false">科普</router-link>
         <router-link to="/works" @click="mobileMenuOpen = false">原创作品</router-link>
+        <router-link v-if="isLoggedIn" to="/pattern-generator" @click="mobileMenuOpen = false">纹样生成器</router-link>
         <div v-if="isLoggedIn" class="user-menu">
           <router-link to="/user-center" @click="mobileMenuOpen = false">个人中心</router-link>
           <router-link v-if="isAdmin" to="/admin" @click="mobileMenuOpen = false">后台</router-link>
