@@ -91,4 +91,35 @@ public class StatisticsServiceImpl implements StatisticsService {
         
         return result;
     }
+
+    @Override
+    public Map<String, Map<String, Object>> getProductStatisticsByCategory() {
+        Map<String, Map<String, Object>> result = new HashMap<>();
+
+        List<Category> categories = categoryRepository.findAll();
+        List<Product> products = productRepository.findAll();
+
+        Map<Long, List<Product>> productsByCategory = products.stream()
+                .filter(p -> p.getCategoryId() != null)
+                .collect(Collectors.groupingBy(Product::getCategoryId));
+
+        for (Category category : categories) {
+            List<Product> categoryProducts = productsByCategory.getOrDefault(category.getId(), Collections.emptyList());
+
+            long stock = categoryProducts.stream()
+                    .mapToLong(p -> p.getStock() == null ? 0 : p.getStock())
+                    .sum();
+
+            long sales = categoryProducts.stream()
+                    .mapToLong(p -> p.getSales() == null ? 0 : p.getSales())
+                    .sum();
+
+            Map<String, Object> stats = new HashMap<>();
+            stats.put("stock", stock);
+            stats.put("sales", sales);
+            result.put(category.getName(), stats);
+        }
+
+        return result;
+    }
 }

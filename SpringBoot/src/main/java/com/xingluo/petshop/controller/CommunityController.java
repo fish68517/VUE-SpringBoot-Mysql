@@ -5,7 +5,9 @@ import com.xingluo.petshop.common.ApiResponse;
 import com.xingluo.petshop.dto.*;
 import com.xingluo.petshop.entity.CommunityPost;
 import com.xingluo.petshop.entity.CommunityReply;
+import com.xingluo.petshop.entity.User;
 import com.xingluo.petshop.repository.CommunityPostRepository;
+import com.xingluo.petshop.repository.UserRepository;
 import com.xingluo.petshop.service.CommunityPostService;
 import com.xingluo.petshop.service.CommunityReplyService;
 import com.xingluo.petshop.service.PostLikeService;
@@ -30,6 +32,7 @@ public class CommunityController {
     private final CommunityPostService communityPostService;
     private final CommunityReplyService communityReplyService;
     private final PostLikeService postLikeService;
+    private final UserRepository userRepository;
 
     @Autowired
     private CommunityPostRepository communityPostRepository;
@@ -170,6 +173,12 @@ public class CommunityController {
         if (post.getUser() != null) {
             vo.setUsername(post.getUser().getUsername());
             vo.setUserAvatar(post.getUser().getAvatar());
+        } else {
+            User user = userRepository.findById(post.getUserId()).orElse(null);
+            if (user != null) {
+                vo.setUsername(user.getUsername());
+                vo.setUserAvatar(user.getAvatar());
+            }
         }
         
         return vo;
@@ -190,6 +199,12 @@ public class CommunityController {
         if (reply.getUser() != null) {
             vo.setUsername(reply.getUser().getUsername());
             vo.setUserAvatar(reply.getUser().getAvatar());
+        } else {
+            User user = userRepository.findById(reply.getUserId()).orElse(null);
+            if (user != null) {
+                vo.setUsername(user.getUsername());
+                vo.setUserAvatar(user.getAvatar());
+            }
         }
         
         return vo;

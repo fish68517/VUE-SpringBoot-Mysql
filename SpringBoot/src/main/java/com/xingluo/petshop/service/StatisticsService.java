@@ -62,4 +62,10 @@ public interface StatisticsService {
      * @return Map<分类名称, Map<"productCount"|"salesAmount", 值>>
      */
     Map<String, Map<String, Object>> getCategoryStatistics();
+
+    /**
+     * 统计各分类商品库存与销量
+     * @return Map<分类名称, Map<"stock"|"sales", 值>>
+     */
+    Map<String, Map<String, Object>> getProductStatisticsByCategory();
 }

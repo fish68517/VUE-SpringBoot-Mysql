@@ -5,13 +5,16 @@ import com.xingluo.petshop.dto.OrderItemVO;
 import com.xingluo.petshop.dto.OrderVO;
 import com.xingluo.petshop.entity.Order;
 import com.xingluo.petshop.entity.OrderItem;
+import com.xingluo.petshop.entity.User;
 import com.xingluo.petshop.repository.OrderItemRepository;
+import com.xingluo.petshop.repository.UserRepository;
 import com.xingluo.petshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -24,6 +27,7 @@ public class ShopOrderController {
 
     private final OrderService orderService;
     private final OrderItemRepository orderItemRepository;
+    private final UserRepository userRepository;
 
     /**
      * 实体转 OrderVO
@@ -31,6 +35,11 @@ public class ShopOrderController {
     private OrderVO convertToOrderVO(Order order) {
         OrderVO vo = new OrderVO();
         BeanUtils.copyProperties(order, vo);
+
+        if (order.getUserId() != null) {
+            Optional<User> userOptional = userRepository.findById(order.getUserId());
+            userOptional.ifPresent(user -> vo.setUsername(user.getUsername()));
+        }
 
         // 处理关联的店铺名称 (如果存在)
         if (order.getShop() != null) {

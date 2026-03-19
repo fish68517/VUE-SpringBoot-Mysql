@@ -29,3 +29,14 @@ export function deletePet(id, userId) {
     params: { userId }
   });
 }
+
+// 上传宠物头像
+export function uploadPetAvatar(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  return request.post("/pet/avatar", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+}

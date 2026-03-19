@@ -13,6 +13,7 @@ public class OrderVO {
     private Long id;
     private String orderNo;
     private Long userId;
+    private String username;
     private Long shopId;
     private String shopName; // 额外字段
     private BigDecimal totalAmount;

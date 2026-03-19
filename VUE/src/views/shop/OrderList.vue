@@ -39,7 +39,7 @@
         <tbody>
           <tr v-for="order in orders" :key="order.id">
             <td class="order-no">{{ order.orderNo }}</td>
-            <td>{{ order.user?.nickname || "未知用户" }}</td>
+            <td>{{ order.username || `用户#${order.userId}` }}</td>
             <td>¥{{ order.totalAmount }}</td>
             <td>{{ order.orderItems?.length || 0 }}</td>
             <td>

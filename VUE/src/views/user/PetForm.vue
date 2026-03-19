@@ -1,8 +1,8 @@
-<template>
+﻿<template>
   <el-dialog
     v-model="visible"
     :title="isEdit ? '编辑宠物档案' : '添加宠物档案'"
-    width="500px"
+    width="520px"
     @close="handleClose"
   >
     <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
@@ -34,20 +34,23 @@
 
       <el-form-item label="头像">
         <div class="avatar-upload-section">
-          <div v-if="form.avatar" class="avatar-preview">
-            <img :src="form.avatar" alt="宠物头像" class="avatar-img" />
-            <el-button type="danger" size="small" @click="handleRemoveAvatar">删除</el-button>
+          <img
+            :src="avatarPreviewUrl"
+            alt="宠物头像"
+            class="avatar-img"
+            @error="handlePreviewError"
+          />
+          <div class="avatar-actions">
+            <el-upload
+              :show-file-list="false"
+              :http-request="handleAvatarUpload"
+              accept="image/*"
+            >
+              <el-button type="primary" :loading="uploading">上传头像</el-button>
+            </el-upload>
+            <el-button text @click="handleRemoveAvatar">使用默认图</el-button>
+            <p class="upload-tip">图片将保存到 SpringBoot/uploads/pets，数据库保存文件名</p>
           </div>
-          <el-upload
-            v-else
-            action="http://localhost:8080/api/pet/avatar"
-            :headers="uploadHeaders"
-            :on-success="handleAvatarSuccess"
-            :on-error="handleAvatarError"
-            :show-file-list="false"
-          >
-            <el-button type="primary">上传头像</el-button>
-          </el-upload>
         </div>
       </el-form-item>
     </el-form>
@@ -55,17 +58,18 @@
     <template #footer>
       <el-button @click="handleClose">取消</el-button>
       <el-button type="primary" @click="handleSubmit" :loading="loading">
-        {{ isEdit ? '更新' : '添加' }}
+        {{ isEdit ? "更新" : "添加" }}
       </el-button>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
-import { createPet, updatePet } from "@/api/pet";
+import { createPet, updatePet, uploadPetAvatar } from "@/api/pet";
 import { useUserStore } from "@/store/userStore";
+import defaultPetImage from "@/assets/bg.jpg";
 
 const props = defineProps({
   visible: {
@@ -83,6 +87,7 @@ const emit = defineEmits(["update:visible", "success"]);
 const userStore = useUserStore();
 const formRef = ref(null);
 const loading = ref(false);
+const uploading = ref(false);
 const isEdit = ref(false);
 
 const form = ref({
@@ -92,10 +97,6 @@ const form = ref({
   gender: "",
   avatar: ""
 });
-
-const uploadHeaders = computed(() => ({
-  Authorization: userStore.token
-}));
 
 const rules = {
   name: [
@@ -111,23 +112,31 @@ const visible = computed({
   set: (val) => emit("update:visible", val)
 });
 
+const avatarPreviewUrl = computed(() => {
+  if (!form.value.avatar) return defaultPetImage;
+  if (form.value.avatar.startsWith("http")) return form.value.avatar;
+  return `http://localhost:8080/uploads/${form.value.avatar}`;
+});
+
 watch(
-  () => props.petData,
-  (newVal) => {
-    if (newVal) {
+  () => props.visible,
+  (val) => {
+    if (!val) return;
+    if (props.petData) {
       isEdit.value = true;
       form.value = {
-        name: newVal.name || "",
-        species: newVal.species || "",
-        age: newVal.age || null,
-        gender: newVal.gender || "",
-        avatar: newVal.avatar || ""
+        name: props.petData.name || "",
+        species: props.petData.species || "",
+        age: props.petData.age ?? null,
+        gender: props.petData.gender || "",
+        avatar: props.petData.avatar || ""
       };
     } else {
       isEdit.value = false;
       resetForm();
     }
-  }
+  },
+  { immediate: true }
 );
 
 function resetForm() {
@@ -145,9 +154,41 @@ function handleClose() {
   resetForm();
 }
 
+async function handleAvatarUpload(options) {
+  try {
+    const file = options.file;
+    if (!file?.type?.startsWith("image/")) {
+      ElMessage.warning("请选择图片文件");
+      return;
+    }
+
+    uploading.value = true;
+    const avatarPath = await uploadPetAvatar(file);
+    form.value.avatar = avatarPath;
+    options.onSuccess?.(avatarPath);
+    ElMessage.success("头像上传成功");
+  } catch (error) {
+    console.error(error);
+    options.onError?.(error);
+    ElMessage.error(error.message || "头像上传失败");
+  } finally {
+    uploading.value = false;
+  }
+}
+
+function handlePreviewError(event) {
+  const img = event?.target;
+  if (!img || img.dataset.fallbackApplied === "1") return;
+  img.dataset.fallbackApplied = "1";
+  img.src = defaultPetImage;
+}
+
+function handleRemoveAvatar() {
+  form.value.avatar = "";
+}
+
 async function handleSubmit() {
   if (!formRef.value) return;
-
   const valid = await formRef.value.validate().catch(() => false);
   if (!valid) return;
 
@@ -178,38 +219,33 @@ async function handleSubmit() {
     loading.value = false;
   }
 }
-
-function handleAvatarSuccess(response) {
-  form.value.avatar = response.data;
-  ElMessage.success("头像上传成功");
-}
-
-function handleAvatarError(error) {
-  ElMessage.error("头像上传失败");
-}
-
-function handleRemoveAvatar() {
-  form.value.avatar = "";
-}
 </script>
 
 <style scoped>
 .avatar-upload-section {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.avatar-preview {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .avatar-img {
-  width: 80px;
-  height: 80px;
-  border-radius: 4px;
+  width: 86px;
+  height: 86px;
+  border-radius: 8px;
   object-fit: cover;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+}
+
+.avatar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upload-tip {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
 }
 </style>

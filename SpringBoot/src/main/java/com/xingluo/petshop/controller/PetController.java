@@ -8,9 +8,14 @@ import com.xingluo.petshop.entity.Pet;
 import com.xingluo.petshop.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +28,9 @@ import java.util.stream.Collectors;
 public class PetController {
     
     private final PetService petService;
+
+    private static final String PET_UPLOAD_DIR =
+            System.getProperty("user.dir") + "/uploads/pets/";
     
     /**
      * 创建宠物档案
@@ -97,6 +105,40 @@ public class PetController {
                                        @RequestParam Long userId) {
         petService.deletePet(id, userId);
         return ApiResponse.ok(null);
+    }
+
+    /**
+     * 上传宠物头像（保存到 uploads/pets）
+     * POST /api/pet/avatar
+     */
+    @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<String> uploadPetAvatar(@RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return (ApiResponse<String>) ApiResponse.error("上传文件不能为空");
+        }
+
+        File uploadDir = new File(PET_UPLOAD_DIR);
+        if (!uploadDir.exists() && !uploadDir.mkdirs()) {
+            return (ApiResponse<String>) ApiResponse.error("创建宠物图片目录失败");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        String suffix = ".jpg";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        String newFilename = UUID.randomUUID().toString().replace("-", "") + suffix;
+        File target = new File(uploadDir, newFilename);
+
+        try {
+            file.transferTo(target);
+        } catch (IOException e) {
+            return (ApiResponse<String>) ApiResponse.error("宠物图片上传失败: " + e.getMessage());
+        }
+
+        // 仅保存相对路径到数据库
+        return ApiResponse.ok("pets/" + newFilename);
     }
     
     /**

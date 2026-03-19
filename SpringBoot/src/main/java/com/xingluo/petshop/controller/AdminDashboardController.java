@@ -98,4 +98,14 @@ public class AdminDashboardController {
         Map<String, Map<String, Object>> categoryStats = statisticsService.getCategoryStatistics();
         return ApiResponse.ok(categoryStats);
     }
+
+    /**
+     * 获取分类商品库存与销量统计
+     * GET /api/admin/dashboard/product
+     */
+    @GetMapping("/product")
+    public ApiResponse<Map<String, Map<String, Object>>> getProductStatistics() {
+        Map<String, Map<String, Object>> productStats = statisticsService.getProductStatisticsByCategory();
+        return ApiResponse.ok(productStats);
+    }
 }

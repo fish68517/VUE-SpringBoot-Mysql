@@ -13,6 +13,10 @@ export function getDashboardCategory() {
   return request.get("/admin/dashboard/category");
 }
 
+export function getDashboardProduct() {
+  return request.get("/admin/dashboard/product");
+}
+
 // users
 export function getUserList(params) {
   return request.get("/admin/user/list", { params });

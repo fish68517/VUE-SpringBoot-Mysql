@@ -20,7 +20,7 @@
       <div v-if="loading" class="loading">加载中...</div>
       <div v-else-if="filteredOrders.length === 0" class="empty-state">
         <p>暂无订单</p>
-        <router-link to="/products" class="btn-continue-shopping">继续购物</router-link>
+        <router-link to="/user/home" class="btn-continue-shopping">继续购物</router-link>
       </div>
       <div v-else class="orders-list">
         <div v-for="order in filteredOrders" :key="order.id" class="order-card">

@@ -1,71 +1,56 @@
-<template>
+﻿<template>
   <div class="post-detail-page">
     <div class="container">
-      <!-- 返回按钮 -->
       <router-link to="/user/community" class="btn-back">← 返回列表</router-link>
 
-      <!-- 加载状态 -->
       <div v-if="loading" class="loading">加载中...</div>
 
-      <!-- 帖子不存在 -->
       <div v-else-if="!post" class="not-found">
         <p>帖子不存在或已被删除</p>
-        <router-link to="/uers/community" class="btn-back-home">返回社区</router-link>
+        <router-link to="/user/community" class="btn-back-home">返回社区</router-link>
       </div>
 
-      <!-- 帖子详情 -->
       <div v-else class="post-detail">
-        <!-- 帖子头部 -->
         <div class="post-header">
           <div class="user-info">
-            <img :src="post.userAvatar || '/default-avatar.png'" :alt="post.userName" class="user-avatar" />
+            <img
+              :src="getAvatarUrl(post.userAvatar)"
+              :alt="post.username || '用户'"
+              class="user-avatar"
+              @error="handleAvatarError"
+            />
             <div class="user-details">
-              <p class="user-name">{{ post.userName }}</p>
+              <p class="user-name">{{ post.username || `用户${post.userId}` }}</p>
               <p class="post-time">{{ formatDate(post.createTime) }}</p>
             </div>
           </div>
-          <button
-            v-if="isOwnPost"
-            @click="deletePostAction"
-            class="btn-delete"
-          >
-            删除
-          </button>
+          <button v-if="isOwnPost" @click="deletePostAction" class="btn-delete">删除</button>
         </div>
 
-        <!-- 帖子内容 -->
         <div class="post-content">
           <h1 class="post-title">{{ post.title }}</h1>
           <p class="post-text">{{ post.content }}</p>
-          <div v-if="post.images && post.images.length > 0" class="post-images">
+          <div v-if="post.imageList.length > 0" class="post-images">
             <img
-              v-for="(image, index) in post.images"
+              v-for="(image, index) in post.imageList"
               :key="index"
-              :src="image"
+              :src="getImageUrl(image)"
               :alt="post.title"
               class="post-image"
+              @error="handlePostImageError"
             />
           </div>
         </div>
 
-        <!-- 帖子统计和操作 -->
         <div class="post-actions">
-          <div class="post-stats">
-            <span class="stat-item">
-              <i class="icon">👁</i>
-              {{ post.views || 0 }}
-            </span>
-            <span class="stat-item">
-              <i class="icon">💬</i>
-              {{ replies.length }}
-            </span>
-            <span class="stat-item">
-              <i class="icon">❤</i>
-              {{ post.likes || 0 }}
-            </span>
+          <div class="post-stats" v-if="false">
+            <span class="stat-item">浏览 {{ post.views || 0 }}</span>
+            <span class="stat-item">评论 {{ replies.length }}</span>
+            <span class="stat-item">点赞 {{ post.likes || 0 }}</span>
           </div>
           <button
-            v-if="userStore.isLogin"
+
+            v-if="false"
             @click="toggleLikeAction"
             class="btn-like"
             :class="{ liked: isLiked }"
@@ -74,11 +59,9 @@
           </button>
         </div>
 
-        <!-- 评论区 -->
         <div class="comments-section">
           <h2 class="comments-title">评论 ({{ replies.length }})</h2>
 
-          <!-- 发布评论表单 -->
           <div v-if="userStore.isLogin" class="comment-form">
             <textarea
               v-model="newComment"
@@ -86,11 +69,7 @@
               class="comment-input"
               rows="3"
             ></textarea>
-            <button
-              @click="submitComment"
-              class="btn-submit-comment"
-              :disabled="!newComment.trim()"
-            >
+            <button @click="submitComment" class="btn-submit-comment" :disabled="!newComment.trim()">
               发布评论
             </button>
           </div>
@@ -98,16 +77,20 @@
             <p>请 <router-link to="/login">登录</router-link> 后发表评论</p>
           </div>
 
-          <!-- 评论列表 -->
           <div v-if="replies.length === 0" class="no-comments">
             <p>暂无评论，来发表第一条评论吧</p>
           </div>
           <div v-else class="comments-list">
             <div v-for="reply in replies" :key="reply.id" class="comment-item">
-              <img :src="reply.userAvatar || '/default-avatar.png'" :alt="reply.userName" class="comment-avatar" />
+              <img
+                :src="getAvatarUrl(reply.userAvatar)"
+                :alt="reply.username || '用户'"
+                class="comment-avatar"
+                @error="handleAvatarError"
+              />
               <div class="comment-content">
                 <div class="comment-header">
-                  <p class="comment-user">{{ reply.userName }}</p>
+                  <p class="comment-user">{{ reply.username || `用户${reply.userId}` }}</p>
                   <p class="comment-time">{{ formatDate(reply.createTime) }}</p>
                 </div>
                 <p class="comment-text">{{ reply.content }}</p>
@@ -121,17 +104,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { useUserStore } from "@/store/userStore";
-import {
-  getPostDetail,
-  getPostReplies,
-  createReply,
-  deletePost,
-  toggleLike
-} from "@/api/community";
+import { getPostDetail, getPostReplies, createReply, deletePost, toggleLike } from "@/api/community";
+import defaultImage from "@/assets/bg.jpg";
 
 const router = useRouter();
 const route = useRoute();
@@ -144,32 +122,46 @@ const newComment = ref("");
 const isLiked = ref(false);
 
 const postId = computed(() => route.params.id);
+const isOwnPost = computed(() => userStore.isLogin && Number(userStore.userInfo?.id) === Number(post.value?.userId));
 
-const isOwnPost = computed(() => {
-  return userStore.isLogin && userStore.userInfo?.id === post.value?.userId;
-});
-
-const loadPostDetail = async () => {
-  loading.value = true;
-  try {
-    post.value = await getPostDetail(postId.value);
-
-    if (typeof post.value.images === 'string') {
-        try {
-          post.value.images = JSON.parse(post.value.images);
-        } catch (e) {
-          console.error('解析图片失败', e);
-          post.value.images = [];
-        }
+const parseImages = (images) => {
+  if (!images) return [];
+  if (Array.isArray(images)) return images;
+  if (typeof images === "string") {
+    try {
+      const parsed = JSON.parse(images);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
     }
-  
-    await loadReplies();
-  } catch (error) {
-    console.error("加载帖子详情失败:", error);
-    ElMessage.error("加载帖子详情失败");
-  } finally {
-    loading.value = false;
   }
+  return [];
+};
+
+const getAvatarUrl = (src) => {
+  if (!src) return defaultImage;
+  if (src.startsWith("http")) return src;
+  return `http://localhost:8080/uploads/${src}`;
+};
+
+const getImageUrl = (src) => {
+  if (!src) return defaultImage;
+  if (src.startsWith("http")) return src;
+  return `http://localhost:8080/uploads/${src}`;
+};
+
+const handleAvatarError = (event) => {
+  const img = event?.target;
+  if (!img || img.dataset.fallbackApplied === "1") return;
+  img.dataset.fallbackApplied = "1";
+  img.src = defaultImage;
+};
+
+const handlePostImageError = (event) => {
+  const img = event?.target;
+  if (!img || img.dataset.fallbackApplied === "1") return;
+  img.dataset.fallbackApplied = "1";
+  img.src = defaultImage;
 };
 
 const loadReplies = async () => {
@@ -180,6 +172,24 @@ const loadReplies = async () => {
   }
 };
 
+const loadPostDetail = async () => {
+  loading.value = true;
+  try {
+    const detail = await getPostDetail(postId.value);
+    post.value = {
+      ...detail,
+      imageList: parseImages(detail.images)
+    };
+    isLiked.value = Boolean(detail.isLiked);
+    await loadReplies();
+  } catch (error) {
+    console.error("加载帖子详情失败:", error);
+    ElMessage.error("加载帖子详情失败");
+  } finally {
+    loading.value = false;
+  }
+};
+
 const submitComment = async () => {
   if (!newComment.value.trim()) {
     ElMessage.warning("请输入评论内容");
@@ -187,7 +197,6 @@ const submitComment = async () => {
   }
 
   try {
-    // 需要给 createReply 增加 UserId
     await createReply({
       postId: postId.value,
       content: newComment.value,
@@ -206,11 +215,9 @@ const toggleLikeAction = async () => {
   try {
     await toggleLike(postId.value);
     isLiked.value = !isLiked.value;
-    if (isLiked.value) {
-      post.value.likes = (post.value.likes || 0) + 1;
-    } else {
-      post.value.likes = Math.max(0, (post.value.likes || 0) - 1);
-    }
+    post.value.likes = isLiked.value
+      ? (post.value.likes || 0) + 1
+      : Math.max(0, (post.value.likes || 0) - 1);
   } catch (error) {
     console.error("点赞失败:", error);
     ElMessage.error("点赞失败");
@@ -238,8 +245,7 @@ const deletePostAction = async () => {
 
 const formatDate = (dateString) => {
   if (!dateString) return "";
-  const date = new Date(dateString);
-  return date.toLocaleDateString("zh-CN") + " " + date.toLocaleTimeString("zh-CN");
+  return new Date(dateString).toLocaleString("zh-CN");
 };
 
 onMounted(() => {
@@ -265,12 +271,6 @@ onMounted(() => {
   margin-bottom: 20px;
   color: #667eea;
   text-decoration: none;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.btn-back:hover {
-  color: #764ba2;
 }
 
 .loading,
@@ -280,30 +280,16 @@ onMounted(() => {
   background: white;
   border-radius: 8px;
   color: #999;
-  font-size: 16px;
-}
-
-.not-found {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
 }
 
 .btn-back-home {
   display: inline-block;
+  margin-top: 12px;
   padding: 10px 24px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   text-decoration: none;
   border-radius: 4px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.btn-back-home:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .post-detail {
@@ -325,7 +311,7 @@ onMounted(() => {
 .user-info {
   display: flex;
   gap: 12px;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .user-avatar {
@@ -333,13 +319,6 @@ onMounted(() => {
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
-  background: #f0f0f0;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 }
 
 .user-name {
@@ -350,7 +329,7 @@ onMounted(() => {
 }
 
 .post-time {
-  margin: 0;
+  margin: 4px 0 0;
   font-size: 12px;
   color: #999;
 }
@@ -361,33 +340,21 @@ onMounted(() => {
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 13px;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-delete:hover {
-  background: #ff5252;
-}
-
-.post-content {
-  margin-bottom: 20px;
 }
 
 .post-title {
-  margin: 0 0 15px 0;
+  margin: 0 0 15px;
   font-size: 24px;
   color: #333;
-  font-weight: 600;
 }
 
 .post-text {
-  margin: 0 0 15px 0;
+  margin: 0;
   font-size: 15px;
   color: #666;
   line-height: 1.8;
   white-space: pre-wrap;
-  word-break: break-word;
 }
 
 .post-images {
@@ -402,7 +369,6 @@ onMounted(() => {
   height: 150px;
   border-radius: 4px;
   object-fit: cover;
-  background: #f0f0f0;
 }
 
 .post-actions {
@@ -412,24 +378,14 @@ onMounted(() => {
   padding: 15px 0;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
-  margin-bottom: 30px;
+  margin: 20px 0 30px;
 }
 
 .post-stats {
   display: flex;
   gap: 20px;
+  color: #777;
   font-size: 13px;
-  color: #999;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.icon {
-  font-style: normal;
 }
 
 .btn-like {
@@ -438,15 +394,7 @@ onMounted(() => {
   color: #667eea;
   border: 1px solid #667eea;
   border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-like:hover {
-  background: #667eea;
-  color: white;
 }
 
 .btn-like.liked {
@@ -455,15 +403,8 @@ onMounted(() => {
   border-color: #ff6b6b;
 }
 
-.comments-section {
-  margin-top: 30px;
-}
-
 .comments-title {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  color: #333;
-  font-weight: 600;
+  margin: 0 0 20px;
 }
 
 .comment-form {
@@ -478,33 +419,17 @@ onMounted(() => {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
-  font-family: inherit;
-  resize: vertical;
   margin-bottom: 10px;
-}
-
-.comment-input:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+  resize: vertical;
 }
 
 .btn-submit-comment {
   padding: 8px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #667eea;
   color: white;
   border: none;
   border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.btn-submit-comment:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
 }
 
 .btn-submit-comment:disabled {
@@ -512,30 +437,12 @@ onMounted(() => {
   cursor: not-allowed;
 }
 
-.login-prompt {
+.login-prompt,
+.no-comments {
   padding: 15px;
   background: #f9f9f9;
   border-radius: 4px;
-  text-align: center;
   color: #666;
-  font-size: 14px;
-}
-
-.login-prompt a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.login-prompt a:hover {
-  color: #764ba2;
-}
-
-.no-comments {
-  text-align: center;
-  padding: 30px 20px;
-  color: #999;
-  font-size: 14px;
 }
 
 .comments-list {
@@ -557,25 +464,17 @@ onMounted(() => {
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
-  background: #f0f0f0;
-  flex-shrink: 0;
-}
-
-.comment-content {
-  flex: 1;
 }
 
 .comment-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   margin-bottom: 8px;
 }
 
 .comment-user {
   margin: 0;
   font-size: 13px;
-  color: #333;
   font-weight: 600;
 }
 
@@ -587,44 +486,8 @@ onMounted(() => {
 
 .comment-text {
   margin: 0;
-  font-size: 13px;
   color: #666;
   line-height: 1.6;
   white-space: pre-wrap;
-  word-break: break-word;
-}
-
-@media (max-width: 768px) {
-  .post-detail {
-    padding: 20px;
-  }
-
-  .post-header {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .post-title {
-    font-size: 20px;
-  }
-
-  .post-images {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .post-actions {
-    flex-direction: column;
-    gap: 15px;
-    align-items: flex-start;
-  }
-
-  .comment-item {
-    gap: 10px;
-  }
-
-  .comment-avatar {
-    width: 35px;
-    height: 35px;
-  }
 }
 </style>

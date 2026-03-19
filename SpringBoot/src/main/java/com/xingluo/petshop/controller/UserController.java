@@ -12,7 +12,13 @@ import com.xingluo.petshop.service.ShopService;
 import com.xingluo.petshop.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 /**
  * 用户控制器
@@ -120,6 +126,46 @@ public class UserController {
         // 转换为VO返回
         UserVO userVO = convertToVO(updatedUser);
         return ApiResponse.ok(userVO);
+    }
+
+    /**
+     * 上传用户头像，文件保存到 SpringBoot/uploads/user，并将文件引用保存到 user.avatar
+     */
+    @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<String> uploadAvatar(
+            @RequestParam Long userId,
+            @RequestParam("file") MultipartFile file) {
+
+        if (file == null || file.isEmpty()) {
+            return (ApiResponse<String>) ApiResponse.error("上传文件不能为空");
+        }
+
+        String originalFilename = file.getOriginalFilename();
+        String suffix = ".jpg";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+        }
+
+        String newFilename = UUID.randomUUID().toString().replace("-", "") + suffix;
+        String uploadRoot = System.getProperty("user.dir") + "/uploads/user/";
+        File uploadDir = new File(uploadRoot);
+        if (!uploadDir.exists() && !uploadDir.mkdirs()) {
+            return (ApiResponse<String>) ApiResponse.error("创建上传目录失败");
+        }
+
+        File dest = new File(uploadDir, newFilename);
+        try {
+            file.transferTo(dest);
+        } catch (IOException e) {
+            return (ApiResponse<String>) ApiResponse.error("头像上传失败: " + e.getMessage());
+        }
+
+        String avatarPath = "user/" + newFilename;
+        User user = new User();
+        user.setAvatar(avatarPath);
+        userService.updateUser(userId, user);
+
+        return ApiResponse.ok(avatarPath);
     }
 
     /**

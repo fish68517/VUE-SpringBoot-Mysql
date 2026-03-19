@@ -41,15 +41,28 @@
         <p><b>发布时间：</b>{{ formatDate(selectedPost.createTime) }}</p>
         <p><b>内容：</b></p>
         <div class="content">{{ selectedPost.content }}</div>
+        <p><b>帖子图片：</b></p>
+        <div v-if="selectedPostImages.length > 0" class="detail-images">
+          <img
+            v-for="(image, index) in selectedPostImages"
+            :key="index"
+            :src="getImageUrl(image)"
+            alt="帖子图片"
+            class="detail-image"
+            @error="handlePostImageError"
+          />
+        </div>
+        <div v-else class="no-image">暂无图片</div>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import * as adminApi from "@/api/admin";
+import defaultPostImage from "@/assets/bg.jpg";
 
 const postList = ref([]);
 const loading = ref(false);
@@ -58,6 +71,34 @@ const pageSize = ref(10);
 const total = ref(0);
 const detailDialogVisible = ref(false);
 const selectedPost = ref(null);
+
+const parseImages = (images) => {
+  if (!images) return [];
+  if (Array.isArray(images)) return images;
+  if (typeof images === "string") {
+    try {
+      const parsed = JSON.parse(images);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+const selectedPostImages = computed(() => parseImages(selectedPost.value?.images));
+
+const getImageUrl = (src) => {
+  if (!src) return defaultPostImage;
+  if (src.startsWith("http")) return src;
+  return `http://localhost:8080/uploads/${src}`;
+};
+
+const handlePostImageError = (event) => {
+  const img = event?.target;
+  if (!img || img.dataset.fallbackApplied === "1") return;
+  img.dataset.fallbackApplied = "1";
+  img.src = defaultPostImage;
+};
 
 const fetchPostList = async () => {
   loading.value = true;
@@ -147,5 +188,25 @@ h1 {
   white-space: pre-wrap;
   line-height: 1.6;
   color: #666;
+}
+
+.detail-images {
+  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.detail-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.no-image {
+  color: #999;
+  margin-top: 8px;
 }
 </style>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="pet-list-container">
     <el-card class="pet-card">
       <template #header>
@@ -8,28 +8,23 @@
         </div>
       </template>
 
-      <!-- 宠物列表 -->
-      <div v-if="petList.length > 0" class="pet-list">
+      <div v-if="petList.length > 0" class="pet-list" v-loading="loading">
         <div v-for="pet in petList" :key="pet.id" class="pet-card-item">
           <div class="pet-avatar">
-            <img v-if="pet.avatar" :src="getImageUrl(pet.avatar)" :alt="pet.name" class="avatar-img" />
-            <div v-else class="avatar-placeholder">
-              <span>{{ pet.species }}</span>
-            </div>
+            <img
+              :src="getPetAvatarUrl(pet.avatar)"
+              :alt="pet.name"
+              class="avatar-img"
+              @error="handleAvatarError"
+            />
           </div>
 
           <div class="pet-info">
             <h3 class="pet-name">{{ pet.name }}</h3>
             <div class="pet-details">
-              <span class="detail-item">
-                <strong>种类：</strong>{{ pet.species }}
-              </span>
-              <span class="detail-item">
-                <strong>年龄：</strong>{{ pet.age !== null ? pet.age + '岁' : '未知' }}
-              </span>
-              <span class="detail-item">
-                <strong>性别：</strong>{{ pet.gender }}
-              </span>
+              <span class="detail-item"><strong>种类：</strong>{{ pet.species || '未知' }}</span>
+              <span class="detail-item"><strong>年龄：</strong>{{ pet.age !== null ? `${pet.age}岁` : '未知' }}</span>
+              <span class="detail-item"><strong>性别：</strong>{{ pet.gender || '未知' }}</span>
             </div>
           </div>
 
@@ -40,29 +35,24 @@
         </div>
       </div>
 
-      <!-- 空状态 -->
-      <div v-else class="empty-state">
+      <div v-else class="empty-state" v-loading="loading">
         <div class="empty-icon">🐾</div>
         <p>还没有添加宠物档案</p>
         <el-button type="primary" @click="handleAddPet">立即添加</el-button>
       </div>
     </el-card>
 
-    <!-- 宠物表单对话框 -->
-    <PetForm
-      v-model:visible="formVisible"
-      :petData="selectedPet"
-      @success="loadPetList"
-    />
+    <PetForm v-model:visible="formVisible" :petData="selectedPet" @success="loadPetList" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getPetList, deletePet } from "@/api/pet";
 import { useUserStore } from "@/store/userStore";
 import PetForm from "./PetForm.vue";
+import defaultPetImage from "@/assets/bg.jpg";
 
 const userStore = useUserStore();
 const petList = ref([]);
@@ -70,12 +60,18 @@ const formVisible = ref(false);
 const selectedPet = ref(null);
 const loading = ref(false);
 
-// 处理图片 src:"products/p1.jpg" 加载 springboot目录下的 uploads/products/p1.jpg
-const getImageUrl = (src) => {
-  console.log("图片路径：" + src);  // 图片路径：products/p1.jpg
+const getPetAvatarUrl = (src) => {
+  if (!src) return defaultPetImage;
+  if (src.startsWith("http")) return src;
   return `http://localhost:8080/uploads/${src}`;
 };
 
+const handleAvatarError = (event) => {
+  const img = event?.target;
+  if (!img || img.dataset.fallbackApplied === "1") return;
+  img.dataset.fallbackApplied = "1";
+  img.src = defaultPetImage;
+};
 
 onMounted(() => {
   loadPetList();
@@ -123,9 +119,7 @@ function handleDeletePet(petId) {
         ElMessage.error(error.message || "删除失败");
       }
     })
-    .catch(() => {
-      // 用户取消删除
-    });
+    .catch(() => {});
 }
 </script>
 
@@ -159,12 +153,6 @@ function handleDeletePet(petId) {
   border: 1px solid #ebeef5;
   border-radius: 4px;
   background-color: #fafafa;
-  transition: all 0.3s ease;
-}
-
-.pet-card-item:hover {
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
 }
 
 .pet-avatar {
@@ -178,18 +166,6 @@ function handleDeletePet(petId) {
   object-fit: cover;
 }
 
-.avatar-placeholder {
-  width: 100px;
-  height: 100px;
-  background-color: #f5f7fa;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #909399;
-  font-size: 12px;
-}
-
 .pet-info {
   flex: 1;
   display: flex;
@@ -198,7 +174,7 @@ function handleDeletePet(petId) {
 }
 
 .pet-name {
-  margin: 0 0 10px 0;
+  margin: 0 0 10px;
   font-size: 18px;
   color: #303133;
 }

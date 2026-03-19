@@ -95,7 +95,7 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public List<Coupon> getExchangeableCoupons() {
-        return couponRepository.findExchangeableCoupons(LocalDateTime.now());
+        return couponRepository.findExchangeableCoupons();
     }
     
     @Override

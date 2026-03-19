@@ -19,3 +19,14 @@ export function updateUserProfile(userId, data) {
     params: { userId }
   });
 }
+
+export function uploadUserAvatar(userId, file) {
+  const formData = new FormData();
+  formData.append("file", file);
+  return request.post("/user/avatar", formData, {
+    params: { userId },
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+}

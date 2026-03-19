@@ -7,6 +7,25 @@
         </div>
       </template>
 
+      <div class="avatar-section">
+        <div class="avatar-preview">
+          <img v-if="avatarUrl" :src="avatarUrl" alt="头像" class="avatar-img" />
+          <div v-else class="avatar-placeholder">暂无头像</div>
+        </div>
+        <div class="avatar-actions">
+          <el-upload
+            :show-file-list="false"
+            :http-request="handleAvatarUpload"
+            accept="image/*"
+          >
+            <el-button type="primary" :loading="uploadingAvatar">上传头像</el-button>
+          </el-upload>
+          <p class="avatar-tip">图片将上传到 SpringBoot/uploads/user 目录</p>
+        </div>
+      </div>
+
+      <el-divider />
+
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
         <el-form-item label="用户名">
           <el-input v-model="form.username" disabled />
@@ -44,12 +63,13 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
 import { ElMessage } from "element-plus";
-import { getUserProfile, updateUserProfile } from "@/api/user";
+import { getUserProfile, updateUserProfile, uploadUserAvatar } from "@/api/user";
 import { useUserStore } from "@/store/userStore";
 
 const userStore = useUserStore();
 const formRef = ref(null);
 const loading = ref(false);
+const uploadingAvatar = ref(false);
 
 const form = ref({
   username: "",
@@ -63,9 +83,12 @@ const form = ref({
 
 const originalForm = ref({});
 
-const uploadHeaders = computed(() => ({
-  Authorization: userStore.token
-}));
+const avatarUrl = computed(() => {
+  const avatar = form.value.avatar;
+  if (!avatar) return "";
+  if (avatar.startsWith("http")) return avatar;
+  return `http://localhost:8080/uploads/${avatar}`;
+});
 
 const validateEmail = (rule, value, callback) => {
   if (!value) return callback();
@@ -105,14 +128,39 @@ const refreshProfile = async () => {
   const userId = userStore.userInfo?.id;
   if (!userId) return;
   const latest = await getUserProfile(userId);
-  userStore.setUserInfo({
-    ...userStore.userInfo,
-    ...latest
-  });
-  fillForm({
-    ...userStore.userInfo,
-    ...latest
-  });
+  userStore.setUserInfo({ ...userStore.userInfo, ...latest });
+  fillForm({ ...userStore.userInfo, ...latest });
+};
+
+const handleAvatarUpload = async (options) => {
+  try {
+    const userId = userStore.userInfo?.id;
+    if (!userId) {
+      ElMessage.error("用户信息异常，请重新登录");
+      return;
+    }
+
+    const file = options.file;
+    if (!file?.type?.startsWith("image/")) {
+      ElMessage.warning("请选择图片文件");
+      return;
+    }
+
+    uploadingAvatar.value = true;
+    const avatarPath = await uploadUserAvatar(userId, file);
+    form.value.avatar = avatarPath;
+    userStore.setUserInfo({ ...userStore.userInfo, avatar: avatarPath });
+    await refreshProfile();
+
+    options.onSuccess?.(avatarPath);
+    ElMessage.success("头像上传成功");
+  } catch (error) {
+    console.error(error);
+    options.onError?.(error);
+    ElMessage.error(error.message || "头像上传失败");
+  } finally {
+    uploadingAvatar.value = false;
+  }
 };
 
 onMounted(async () => {
@@ -150,23 +198,12 @@ function handleUpdate() {
 function handleReset() {
   form.value = JSON.parse(JSON.stringify(originalForm.value));
 }
-
-function handleAvatarSuccess(response) {
-  const newAvatarUrl = response.data;
-  form.value.avatar = newAvatarUrl;
-  userStore.setUserInfo({ ...userStore.userInfo, avatar: newAvatarUrl });
-  ElMessage.success("头像上传成功");
-}
-
-function handleAvatarError() {
-  ElMessage.error("头像上传失败");
-}
 </script>
 
 <style scoped>
 .profile-container {
   padding: 20px;
-  max-width: 800px;
+  max-width: 860px;
   margin: 0 auto;
 }
 
@@ -178,5 +215,39 @@ function handleAvatarError() {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.avatar-preview {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.avatar-tip {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: #6b7280;
 }
 </style>
