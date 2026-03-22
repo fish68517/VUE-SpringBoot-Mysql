@@ -1,6 +1,7 @@
 package com.animal.model;
 
 import lombok.Data;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -16,6 +17,7 @@ public class Recipe {
     private String image;
     private Integer cookingTime;
     private String difficulty;
+    private BigDecimal price;
     private Date createdAt;
 
     private String taste;

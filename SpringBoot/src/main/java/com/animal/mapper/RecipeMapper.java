@@ -16,13 +16,13 @@ public interface RecipeMapper {
     @Select("SELECT * FROM recipe WHERE category_id = #{categoryId}")
     List<Recipe> findByCategoryId(Integer categoryId);
 
-    @Insert("INSERT INTO recipe(category_id, merchant_id, window_id, name, description, ingredients, steps, cooking_time, image, difficulty) " +
-            "VALUES(#{categoryId}, #{merchantId}, #{windowId}, #{name}, #{description}, #{ingredients}, #{steps}, #{cookingTime}, #{image}, #{difficulty})")
+    @Insert("INSERT INTO recipe(category_id, merchant_id, window_id, name, description, ingredients, steps, cooking_time, image, difficulty, price) " +
+            "VALUES(#{categoryId}, #{merchantId}, #{windowId}, #{name}, #{description}, #{ingredients}, #{steps}, #{cookingTime}, #{image}, #{difficulty}, #{price})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(Recipe recipe);
 
     @Update("UPDATE recipe SET category_id = #{categoryId}, window_id = #{windowId}, name = #{name}, description = #{description}, ingredients = #{ingredients}, " +
-            "steps = #{steps}, cooking_time = #{cookingTime}, image = #{image}, difficulty = #{difficulty} WHERE id = #{id}")
+            "steps = #{steps}, cooking_time = #{cookingTime}, image = #{image}, difficulty = #{difficulty}, price = #{price} WHERE id = #{id}")
     int update(Recipe recipe);
 
     @Delete("DELETE FROM recipe WHERE id = #{id}")

@@ -54,9 +54,7 @@
                 {{ getWindowName(recipe.windowId || recipe.categoryId) }}：等待 {{ getWaitingCount(recipe.windowId || recipe.categoryId) }} 人
               </p>
               <div class="bottom">
-                <el-tag :type="getDifficultyType(recipe.difficulty)" size="small">
-                  {{ recipe.difficulty || '简单' }}
-                </el-tag>
+                <span class="price">￥{{ formatPrice(recipe.price) }}</span>
                 <div class="actions">
                   <el-button
                     :type="recipe.isFavorite ? 'danger' : 'default'"
@@ -171,6 +169,11 @@ export default {
       return windowMap.value?.[windowId] || `窗口${windowId}`
     }
 
+    const formatPrice = (price) => {
+      const value = Number(price || 0)
+      return Number.isNaN(value) ? '0.00' : value.toFixed(2)
+    }
+
     const searchRecipes = async () => {
       if (!searchKey.value.trim()) {
         getRecipes()
@@ -210,11 +213,6 @@ export default {
       router.push(`/user/recipe/${recipe.id}`)
     }
 
-    const getDifficultyType = (difficulty) => {
-      const types = { 简单: 'success', 中等: 'warning', 困难: 'danger' }
-      return types[difficulty] || 'info'
-    }
-
     onMounted(async () => {
       await getCategories()
       await getRecipes()
@@ -239,7 +237,7 @@ export default {
       toggleFavorite,
       viewRecipe,
       getImageUrl,
-      getDifficultyType,
+      formatPrice,
       getWaitingCount,
       getWindowName
     }
@@ -263,5 +261,6 @@ export default {
 .description { color: #909399; font-size: 13px; margin: 8px 0; min-height: 34px; }
 .wait-count { color: #e67e22; font-size: 12px; margin: 4px 0 8px; }
 .bottom { display: flex; justify-content: space-between; align-items: center; }
+.price { color: #e67e22; font-size: 16px; font-weight: 700; }
 .actions { display: flex; gap: 8px; align-items: center; }
 </style>

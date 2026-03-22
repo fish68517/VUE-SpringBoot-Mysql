@@ -20,7 +20,11 @@
 
       <el-table :data="orders" stripe v-loading="loading">
         <el-table-column prop="orderNo" label="订单号" width="180" />
-        <el-table-column prop="pickupCode" label="取餐码" width="120" />
+        <el-table-column prop="pickupCode" label="取餐码" width="120">
+          <template #default="{ row }">
+            {{ shouldShowPickupCode(row) ? (row.pickupCode || '-') : '-' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="totalAmount" label="金额" width="120" />
         <el-table-column prop="status" label="状态" width="120">
           <template #default="{ row }">
@@ -32,12 +36,9 @@
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="260" fixed="right">
+        <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleViewDetails(row)">查看详情</el-button>
-            <!-- <el-button type="success" link @click="handleUpdateStatus(row, '已付款')">接单</el-button>
-            <el-button type="success" link @click="handleUpdateStatus(row, '已完成')">完成</el-button>
-            <el-button type="danger" link @click="handleUpdateStatus(row, '已取消')">取消</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -72,7 +73,7 @@
           </div>
           <div class="info-item">
             <span class="label">取餐码：</span>
-            <span>{{ currentOrder.pickupCode || '-' }}</span>
+            <span>{{ shouldShowPickupCode(currentOrder) ? (currentOrder.pickupCode || '-') : '-' }}</span>
           </div>
           <div class="info-item" v-if="currentOrder.remark">
             <span class="label">订单备注：</span>
@@ -88,7 +89,7 @@
           <el-table-column prop="price" label="单价" width="120" />
         </el-table>
 
-        <div class="order-total">总计：{{ currentOrder.totalAmount }}</div>
+        <div class="order-total">总计：￥{{ currentOrder.totalAmount }}</div>
       </template>
     </el-dialog>
   </div>
@@ -142,6 +143,10 @@ export default {
         已取消: 'info'
       }
       return types[status] || 'info'
+    }
+
+    const shouldShowPickupCode = (order) => {
+      return ['已付款', '已完成'].includes(order?.status)
     }
 
     const handleSearch = () => {
@@ -205,6 +210,7 @@ export default {
       detailsVisible,
       currentOrder,
       getStatusType,
+      shouldShowPickupCode,
       handleSearch,
       handleSizeChange,
       handleCurrentChange,

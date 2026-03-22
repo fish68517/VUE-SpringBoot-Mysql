@@ -12,7 +12,10 @@
           <span class="order-no">订单号：{{ order.orderNo }}</span>
           <el-tag :type="getStatusType(order.status)">{{ order.status }}</el-tag>
         </div>
-        <div class="pickup-code">取餐码：<b>{{ order.pickupCode || '-' }}</b></div>
+
+        <div class="pickup-code" v-if="shouldShowPickupCode(order)">
+          取餐码：<b>{{ order.pickupCode || '-' }}</b>
+        </div>
         <div class="pickup-code" v-if="order.remark">订单备注：{{ order.remark }}</div>
 
         <div class="order-items">
@@ -26,7 +29,7 @@
         </div>
 
         <div class="order-footer">
-          <span class="total">总计：{{ order.totalAmount }}</span>
+          <span class="total">总计：￥{{ order.totalAmount }}</span>
           <div class="actions">
             <el-button v-if="order.status === '待付款'" type="primary" @click="payOrder(order)">立即支付</el-button>
             <el-button v-if="order.status === '待付款'" @click="cancelOrder(order)">取消订单</el-button>
@@ -57,8 +60,17 @@ export default {
     }
 
     const getStatusType = (status) => {
-      const types = { 待付款: 'warning', 已付款: 'primary', 已完成: 'success', 已取消: 'info' }
+      const types = {
+        待付款: 'warning',
+        已付款: 'primary',
+        已完成: 'success',
+        已取消: 'info'
+      }
       return types[status] || 'info'
+    }
+
+    const shouldShowPickupCode = (order) => {
+      return ['已付款', '已完成'].includes(order?.status)
     }
 
     const payOrder = async (order) => {
@@ -83,7 +95,14 @@ export default {
 
     onMounted(getOrders)
 
-    return { orders, getStatusType, payOrder, cancelOrder, getImageUrl }
+    return {
+      orders,
+      getStatusType,
+      shouldShowPickupCode,
+      payOrder,
+      cancelOrder,
+      getImageUrl
+    }
   }
 }
 </script>

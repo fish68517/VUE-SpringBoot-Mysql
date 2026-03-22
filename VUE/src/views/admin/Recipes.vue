@@ -5,7 +5,6 @@
         <div class="header">
           <div class="left">
             <span class="title">菜品管理</span>
-
           </div>
           <div class="right">
             <el-button type="primary" @click="handleAdd">添加菜品</el-button>
@@ -13,7 +12,6 @@
         </div>
       </template>
 
-      <!-- 搜索栏 -->
       <div class="search-bar">
         <el-input
           v-model="searchQuery"
@@ -27,16 +25,11 @@
         </el-input>
       </div>
 
-      <!-- 菜品列表 -->
       <el-table :data="recipes" stripe v-loading="loading">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column label="图片" width="120">
           <template #default="{ row }">
-            <el-image
-                :src="getImageUrl(row.image)"
-                fit="cover"
-                class="item-image"
-            >
+            <el-image :src="getImageUrl(row.image)" fit="cover" class="item-image">
               <template #error>
                 <div class="image-error">
                   <el-icon><PictureIcon /></el-icon>
@@ -64,19 +57,17 @@
             {{ row.cookingTime }}分钟
           </template>
         </el-table-column>
+        <el-table-column prop="price" label="价格" width="120">
+          <template #default="{ row }">￥{{ formatPrice(row.price) }}</template>
+        </el-table-column>
         <el-table-column label="操作" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" link @click="handleEdit(row)">
-              编辑
-            </el-button>
-            <el-button type="danger" link @click="handleDelete(row)">
-              删除
-            </el-button>
+            <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
+            <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
       <div class="pagination">
         <el-pagination
           v-model:current-page="currentPage"
@@ -90,18 +81,12 @@
       </div>
     </el-card>
 
-    <!-- 菜品表单对话框 -->
     <el-dialog
       :title="dialogType === 'add' ? '添加菜品' : '编辑菜品'"
       v-model="dialogVisible"
       width="700px"
     >
-      <el-form
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="100px"
-      >
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="名称" prop="name">
           <el-input v-model="form.name" />
         </el-form-item>
@@ -119,11 +104,12 @@
           <el-upload
             class="recipe-uploader"
             action="/api/upload/image"
-            :headers="uploadHeaders"  :show-file-list="false"
+            :headers="uploadHeaders"
+            :show-file-list="false"
             :on-success="handleImageSuccess"
             :before-upload="beforeImageUpload"
           >
-            <img v-if="form.image" :src="getImageUrl(form.image)" class="uploaded-image">
+            <img v-if="form.image" :src="getImageUrl(form.image)" class="uploaded-image" />
             <el-icon v-else class="upload-icon"><Plus /></el-icon>
           </el-upload>
         </el-form-item>
@@ -131,14 +117,28 @@
           <el-input v-model="form.description" type="textarea" :rows="2" />
         </el-form-item>
         <el-form-item label="食材" prop="ingredients">
-          <el-input v-model="form.ingredients" type="textarea" :rows="3" placeholder="每种食材一行，包含用量" />
+          <el-input
+            v-model="form.ingredients"
+            type="textarea"
+            :rows="3"
+            placeholder="每种食材一行，包含用量"
+          />
         </el-form-item>
         <el-form-item label="步骤" prop="steps">
-          <el-input v-model="form.steps" type="textarea" :rows="4" placeholder="每个步骤一行" />
+          <el-input
+            v-model="form.steps"
+            type="textarea"
+            :rows="4"
+            placeholder="每个步骤一行"
+          />
         </el-form-item>
         <el-form-item label="烹饪时间" prop="cookingTime">
           <el-input-number v-model="form.cookingTime" :min="1" :max="180" />
           <span class="unit">分钟</span>
+        </el-form-item>
+        <el-form-item label="价格" prop="price">
+          <el-input-number v-model="form.price" :min="0" :step="1" :precision="2" />
+          <span class="unit">元</span>
         </el-form-item>
         <el-form-item label="难度" prop="difficulty">
           <el-select v-model="form.difficulty">
@@ -153,35 +153,30 @@
         <el-button type="primary" @click="handleSubmit">确定</el-button>
       </template>
     </el-dialog>
-
-
-
   </div>
 </template>
 
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Picture as PictureIcon } from '@element-plus/icons-vue'
 import { recipeApi } from '@/api/networkApi'
 import { getImageUrl } from '@/utils/image'
 
 export default {
   components: {
-    Plus
+    Plus,
+    PictureIcon
   },
-  
   setup() {
     const loading = ref(false)
     const recipes = ref([])
     const categories = ref([])
     const searchQuery = ref('')
-    const selectedCategory = ref(null)
     const currentPage = ref(1)
     const pageSize = ref(10)
     const total = ref(0)
-    
-    // 菜品表单相关
+
     const dialogVisible = ref(false)
     const dialogType = ref('add')
     const formRef = ref(null)
@@ -193,55 +188,30 @@ export default {
       ingredients: '',
       steps: '',
       cookingTime: 30,
+      price: 0,
       difficulty: '中等'
     })
 
     const rules = {
-      name: [
-        { required: true, message: '请输入菜品名称', trigger: 'blur' }
-      ],
-      categoryId: [
-        { required: true, message: '请选择分类', trigger: 'change' }
-      ],
-      image: [
-        { required: true, message: '请上传图片', trigger: 'change' }
-      ],
-      ingredients: [
-        { required: true, message: '请输入食材', trigger: 'blur' }
-      ],
-      steps: [
-        { required: true, message: '请输入烹饪步骤', trigger: 'blur' }
-      ]
+      name: [{ required: true, message: '请输入菜品名称', trigger: 'blur' }],
+      categoryId: [{ required: true, message: '请选择分类', trigger: 'change' }],
+      image: [{ required: true, message: '请上传图片', trigger: 'change' }],
+      ingredients: [{ required: true, message: '请输入食材', trigger: 'blur' }],
+      steps: [{ required: true, message: '请输入步骤', trigger: 'blur' }],
+      price: [{ required: true, message: '请输入价格', trigger: 'change' }]
     }
 
-    // 分类管理相关
-    const categoryDialogVisible = ref(false)
-    const categoryFormRef = ref(null)
-    const categoryForm = ref({
-      name: '',
-      description: '',
-      sortOrder: 0
-    })
-
-    const categoryRules = {
-      name: [
-        { required: true, message: '请输入分类名称', trigger: 'blur' }
-      ]
-    }
-
-    // 获取菜品列表
     const getRecipes = async () => {
       loading.value = true
       try {
         const params = {
           page: currentPage.value,
           pageSize: pageSize.value,
-          query: searchQuery.value,
-          categoryId: selectedCategory.value
+          query: searchQuery.value
         }
         const { data, total: totalCount } = await recipeApi.getRecipeList(params)
-        recipes.value = data
-        total.value = totalCount
+        recipes.value = data || []
+        total.value = totalCount || 0
       } catch (error) {
         ElMessage.error('获取菜品列表失败')
       } finally {
@@ -249,17 +219,15 @@ export default {
       }
     }
 
-    // 获取分类列表
     const getCategories = async () => {
       try {
         const data = await recipeApi.getCategories()
-        categories.value = data
+        categories.value = data || []
       } catch (error) {
         ElMessage.error('获取分类失败')
       }
     }
 
-    // 工具方法
     const getCategoryName = (categoryId) => {
       const category = categories.value.find(c => c.id === categoryId)
       return category ? category.name : '-'
@@ -267,20 +235,19 @@ export default {
 
     const getDifficultyType = (difficulty) => {
       const types = {
-        '简单': 'success',
-        '中等': 'warning',
-        '困难': 'danger'
+        简单: 'success',
+        中等: 'warning',
+        困难: 'danger'
       }
       return types[difficulty] || 'info'
     }
 
-    // 事件处理方法
-    const handleSearch = () => {
-      currentPage.value = 1
-      getRecipes()
+    const formatPrice = (price) => {
+      const value = Number(price || 0)
+      return Number.isNaN(value) ? '0.00' : value.toFixed(2)
     }
 
-    const handleCategoryChange = () => {
+    const handleSearch = () => {
       currentPage.value = 1
       getRecipes()
     }
@@ -295,9 +262,7 @@ export default {
       getRecipes()
     }
 
-    // 菜品表单相关方法
-    const handleAdd = () => {
-      dialogType.value = 'add'
+    const resetForm = () => {
       form.value = {
         name: '',
         categoryId: null,
@@ -306,14 +271,23 @@ export default {
         ingredients: '',
         steps: '',
         cookingTime: 30,
+        price: 0,
         difficulty: '中等'
       }
+    }
+
+    const handleAdd = () => {
+      dialogType.value = 'add'
+      resetForm()
       dialogVisible.value = true
     }
 
     const handleEdit = (row) => {
       dialogType.value = 'edit'
-      form.value = { ...row }
+      form.value = {
+        ...row,
+        price: row.price === null || row.price === undefined ? 0 : Number(row.price)
+      }
       dialogVisible.value = true
     }
 
@@ -330,7 +304,6 @@ export default {
       }
     }
 
-    // 1. 定义上传请求头，动态获取 Token
     const uploadHeaders = computed(() => {
       const token = localStorage.getItem('token')
       return {
@@ -338,18 +311,9 @@ export default {
       }
     })
 
-    // 2. 修改图片上传成功的处理回调
     const handleImageSuccess = (response) => {
-      // 因为 Spring Boot 返回的数据结构是 Result 对象，通常带有 code 和 data
-      // 例如：{ code: 200, message: '上传成功', data: { url: '/image/pet/xxxxx.jpg' } }
-      if (response.code === 200 && response.data) {
-        // 成功后，将生成的后端 URL 赋值给表单，图片会立刻在前端回显
-        // form.value.image = response.data.url
-        // url: "/image/pet/740b11f8-1390-4400-b557-99c615fa1dfd.jpg" 
-        // 获取 /image/pet/ 具体名称
+      if (response.code === 200 && response.data?.url) {
         form.value.image = response.data.url.split('/').pop()
-        // 打印
-        console.log("上传成功：",response.data.url.split('/').pop())
         ElMessage.success('图片上传成功')
       } else {
         ElMessage.error(response.message || '图片上传失败')
@@ -361,40 +325,39 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isImage) {
-        ElMessage.error('只能上传图片文件!')
+        ElMessage.error('只能上传图片文件')
       }
       if (!isLt2M) {
-        ElMessage.error('图片大小不能超过 2MB!')
+        ElMessage.error('图片大小不能超过 2MB')
       }
       return isImage && isLt2M
     }
 
     const handleSubmit = async () => {
       if (!formRef.value) return
-      // 打印表单数据
-      console.log("更新：",JSON.stringify(form.value))
       await formRef.value.validate(async (valid) => {
-        if (valid) {
-          try {
-            if (dialogType.value === 'add') {
-              await recipeApi.createRecipe(form.value)
-              ElMessage.success('添加成功')
-            } else {
-              await recipeApi.updateRecipe(form.value)
-              ElMessage.success('更新成功')
-            }
-            dialogVisible.value = false
-            getRecipes()
-          } catch (error) {
-            // 打印 error
-            console.log("error:",error)
-            ElMessage.error(dialogType.value === 'add' ? '添加失败' : '更新失败')
+        if (!valid) return
+
+        const payload = {
+          ...form.value,
+          price: Number(form.value.price || 0)
+        }
+
+        try {
+          if (dialogType.value === 'add') {
+            await recipeApi.createRecipe(payload)
+            ElMessage.success('添加成功')
+          } else {
+            await recipeApi.updateRecipe(payload)
+            ElMessage.success('更新成功')
           }
+          dialogVisible.value = false
+          getRecipes()
+        } catch (error) {
+          ElMessage.error(dialogType.value === 'add' ? '添加失败' : '更新失败')
         }
       })
     }
-
-
 
     onMounted(() => {
       getCategories()
@@ -406,7 +369,6 @@ export default {
       recipes,
       categories,
       searchQuery,
-      selectedCategory,
       currentPage,
       pageSize,
       total,
@@ -415,14 +377,10 @@ export default {
       formRef,
       form,
       rules,
-      categoryDialogVisible,
-      categoryFormRef,
-      categoryForm,
-      categoryRules,
       getCategoryName,
       getDifficultyType,
+      formatPrice,
       handleSearch,
-      handleCategoryChange,
       handleSizeChange,
       handleCurrentChange,
       handleAdd,
@@ -433,7 +391,6 @@ export default {
       handleSubmit,
       getImageUrl,
       uploadHeaders
-      
     }
   }
 }
@@ -461,11 +418,6 @@ export default {
   margin: 20px 0;
   width: 300px;
 }
-.recipe-image {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-}
 .pagination {
   margin-top: 20px;
   display: flex;
@@ -484,7 +436,7 @@ export default {
   align-items: center;
 }
 .recipe-uploader:hover {
-  border-color: #409EFF;
+  border-color: #409eff;
 }
 .uploaded-image {
   width: 100%;
@@ -499,13 +451,17 @@ export default {
   margin-left: 10px;
   color: #666;
 }
-.dialog-footer {
-  margin-top: 20px;
-  text-align: right;
-}
 .item-image {
   width: 80px;
   height: 80px;
   object-fit: cover;
 }
-</style> 
+.image-error {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #909399;
+}
+</style>
