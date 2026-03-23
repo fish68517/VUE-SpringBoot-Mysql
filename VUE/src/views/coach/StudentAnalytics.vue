@@ -19,13 +19,13 @@
               >
                 <el-option
                   v-for="student in students"
-                  :key="student.student.id"
-                  :label="student.student.username"
-                  :value="student.student.id"
+                  :key="student.id || student.studentId"
+                  :label="student.student?.username || `Student ${student.studentId}`"
+                  :value="student.studentId"
                 >
                   <div class="student-option">
 
-                    <span>{{ student.student.username }}</span>
+                    <span>{{ student.student?.username || `Student ${student.studentId}` }}</span>
                   </div>
                 </el-option>
               </el-select>
@@ -94,7 +94,7 @@
                   <TrendCharts />
                 </el-icon>
                 <div class="stat-info">
-                  <div class="stat-value">{{ analytics.checkInFrequency || 0 }}%</div>
+                  <div class="stat-value">{{ formatFrequency(analytics.checkInFrequency) }}%</div>
                   <div class="stat-label">打卡频率</div>
                 </div>
               </div>
@@ -188,12 +188,25 @@ const fetchStudents = async () => {
     const response = await getMyStudents()
     // 打印 response
     console.log('获取学生列表成功，学生数：', JSON.stringify(response))
-    students.value = response
-    
-    // Auto-select first student if available
-    if (students.value.length > 0 && !selectedStudentId.value) {
-      selectedStudentId.value = students.value[0].id
+    students.value = (response || [])
+      .map(item => ({
+        ...item,
+        studentId: item?.student?.id ?? item?.studentId
+      }))
+      .filter(item => item.studentId != null)
+
+    // Auto-select first valid student if needed
+    const hasSelectedStudent = students.value.some(item => String(item.studentId) === String(selectedStudentId.value))
+    if (!hasSelectedStudent) {
+      selectedStudentId.value = students.value[0]?.studentId ?? null
+    }
+
+    if (selectedStudentId.value) {
       await fetchAnalytics()
+    } else {
+      analytics.value = null
+      chartData.checkIns = []
+      chartData.calories = []
     }
   } catch (error) {
     //showError('加载学员列表失败')
@@ -282,6 +295,11 @@ const getProgressColor = (percentage) => {
   if (percentage >= 80) return '#67C23A'
   if (percentage >= 50) return '#E6A23C'
   return '#F56C6C'
+}
+
+const formatFrequency = (value) => {
+  const numericValue = Number(value)
+  return Number.isFinite(numericValue) ? numericValue.toFixed(2) : '0.00'
 }
 
 onMounted(() => {

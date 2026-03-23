@@ -25,15 +25,15 @@
             >
               <el-option
                 v-for="studentAnCoachs in students"
-                :key="studentAnCoachs.id"
-                :label="studentAnCoachs.student.username"
-                :value="studentAnCoachs.id"
+                :key="studentAnCoachs.id || studentAnCoachs.studentId"
+                :label="studentAnCoachs.student?.username || `Student ${studentAnCoachs.studentId}`"
+                :value="studentAnCoachs.studentId"
               >
                 <div class="student-option">
-                  <el-avatar :src="studentAnCoachs.avatar" :size="30">
-                    {{ studentAnCoachs.student.username.charAt(0).toUpperCase() }}
+                  <el-avatar :src="studentAnCoachs.student?.avatar || studentAnCoachs.avatar" :size="30">
+                    {{ (studentAnCoachs.student?.username || '').charAt(0).toUpperCase() }}
                   </el-avatar>
-                  <span>{{ studentAnCoachs.student.username }}</span>
+                  <span>{{ studentAnCoachs.student?.username || `Student ${studentAnCoachs.studentId}` }}</span>
                 </div>
               </el-option>
             </el-select>
@@ -264,7 +264,12 @@ const rules = {
 const fetchStudents = async () => {
   try {
     const response = await getMyStudents()
-    students.value = response
+    students.value = (response || [])
+      .map(item => ({
+        ...item,
+        studentId: item?.student?.id ?? item?.studentId
+      }))
+      .filter(item => item.studentId != null && item?.status !== 0 && item?.status !== '0')
     // 打印获取到的学生列表以便调试
     console.log('获取学生列表成功，学生数：', students.value.length)
     // 打印学生列表详情
