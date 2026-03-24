@@ -493,6 +493,13 @@ INSERT INTO `training_feedback` VALUES (7, 1, 10, 3, '2026-01-01', 4, NULL, '你
 INSERT INTO `training_feedback` VALUES (8, 1, 10, 3, '2026-01-02', 2, NULL, '刚刚好是不是', '2525252', '2026-01-01', '2026-01-01 22:58:10', NULL, NULL, NULL);
 INSERT INTO `training_feedback` VALUES (10, 1, 5, 2, '2026-03-15', 5, 'normal', '10000', '知道了', '2026-03-15', '2026-03-15 11:39:21', '/documents/93535098-dfe8-40ee-9ab7-1f66186980a2.docx', '/images/31aacf0b-2cd8-4f67-b7cb-2fbb29742da7.jpeg', '/static/videos/edbddb59-1f7a-4d95-8e91-acfdf54ca89a.mp4');
 
+ALTER TABLE `training_feedback`
+  ADD COLUMN IF NOT EXISTS `coach_reply_image_urls` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '教练回复图片';
+ALTER TABLE `training_feedback`
+  ADD COLUMN IF NOT EXISTS `coach_reply_video_urls` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '教练回复视频';
+ALTER TABLE `training_feedback`
+  ADD COLUMN IF NOT EXISTS `coach_reply_document_urls` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '教练回复文档';
+
 -- ----------------------------
 -- Table structure for training_plan
 -- ----------------------------

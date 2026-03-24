@@ -65,6 +65,11 @@ public class TrainingFeedbackService {
                 .imageUrls(feedback.getImageUrls())
                 .videoUrls(feedback.getVideoUrls())
                 .documentUrls(feedback.getDocumentUrls())
+                .coachReply(feedback.getCoachReply())
+                .replyAt(feedback.getReplyAt())
+                .coachReplyImageUrls(feedback.getCoachReplyImageUrls())
+                .coachReplyVideoUrls(feedback.getCoachReplyVideoUrls())
+                .coachReplyDocumentUrls(feedback.getCoachReplyDocumentUrls())
                 .build();
     }
 
@@ -81,6 +86,9 @@ public class TrainingFeedbackService {
         // 更新 content
         feedbackRepository.findById((long) id).ifPresent(existingFeedback -> {
             existingFeedback.setCoachReply(feedback.getCoachReply());
+            existingFeedback.setCoachReplyImageUrls(feedback.getCoachReplyImageUrls());
+            existingFeedback.setCoachReplyVideoUrls(feedback.getCoachReplyVideoUrls());
+            existingFeedback.setCoachReplyDocumentUrls(feedback.getCoachReplyDocumentUrls());
             existingFeedback.setReplyAt(feedback.getReplyAt());
             feedbackRepository.save(existingFeedback);
         });

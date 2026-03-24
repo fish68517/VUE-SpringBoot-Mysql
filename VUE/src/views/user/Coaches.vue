@@ -98,6 +98,10 @@
             <el-icon><Money /></el-icon> {{ getRelationStatus(coach) === 'expired' ? '续费' : '开通会员' }}
           </el-button>
 
+          <el-button type="info" plain size="small" @click.stop="goToCoachFeedback(coach)">
+            <el-icon><ChatLineSquare /></el-icon> 查看教练反馈
+          </el-button>
+
           <el-button @click.stop="showCoachDetails(coach)" size="small" plain>查看详情</el-button>
         </div>
       </el-card>
@@ -293,6 +297,7 @@ import { useRouter } from 'vue-router'
 import {
   ArrowLeft,
   Calendar,
+  ChatLineSquare,
   Money,
   Plus,
   Search,
@@ -454,6 +459,14 @@ const goToTrainingPlan = (coach) => {
   router.push({
     name: 'CreateTrainingPlanStudent',
     params: { coachId: coach.id }
+  })
+}
+
+const goToCoachFeedback = (coach) => {
+  router.push({
+    name: 'CoachFeedbackList',
+    params: { coachId: coach.id },
+    query: { coachName: coach.username || '' }
   })
 }
 

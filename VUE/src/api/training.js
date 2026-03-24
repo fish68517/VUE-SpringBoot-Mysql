@@ -83,10 +83,10 @@ export function deleteTrainingPlan(id) {
 }
 
 // ==========================================
-//  下面的代码不需要再次 import request
+// APIs for coach/student feedback
 // ==========================================
 
-// 获取某学员在该教练下的反馈列表
+// Get feedback list for a student under current coach
 export function getFeedbackListByStudent(params) {
   return request({
     url: '/training-feedback/list',
@@ -98,19 +98,22 @@ export function getFeedbackListByStudent(params) {
   })
 }
 
-// 教练回复反馈
+// Coach replies to feedback
 export function replyFeedback(data) {
   return request({
     url: '/training-feedback/reply',
     method: 'post',
     data: {
-      id: data.id,          // 反馈ID
-      coach_reply: data.coach_reply // 回复内容
+      id: data.id,
+      coach_reply: data.coach_reply,
+      coach_reply_image_urls: data.coach_reply_image_urls || '',
+      coach_reply_video_urls: data.coach_reply_video_urls || '',
+      coach_reply_document_urls: data.coach_reply_document_urls || ''
     }
   })
 }
 
-// 删除反馈
+// Delete feedback
 export function deleteFeedback(id) {
   return request({
     url: `/training-feedback/${id}`,

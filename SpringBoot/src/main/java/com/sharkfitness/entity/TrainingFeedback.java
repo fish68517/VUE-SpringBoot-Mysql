@@ -57,6 +57,18 @@ public class TrainingFeedback {
     @Column(name = "coach_reply")
     private String coachReply;
 
+    @Lob
+    @Column(name = "coach_reply_image_urls")
+    private String coachReplyImageUrls;
+
+    @Lob
+    @Column(name = "coach_reply_video_urls")
+    private String coachReplyVideoUrls;
+
+    @Lob
+    @Column(name = "coach_reply_document_urls")
+    private String coachReplyDocumentUrls;
+
     @Column(name = "reply_at")
     private LocalDate replyAt;
 }

@@ -21,7 +21,7 @@ public class CreateFeedbackRequest {
     private Integer rating;
 
     @NotNull(message = "反馈日期不能为空")
-    @FutureOrPresent(message = "反馈日期不能是未来日期")
+
     private LocalDate feedbackDate;
 
     private Long studentId;

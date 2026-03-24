@@ -136,12 +136,62 @@
               </div>
 
               <div class="reply-section">
-                <div v-if="item.coachReply" class="reply-box answered">
+                <div v-if="hasCoachReply(item)" class="reply-box answered">
                   <div class="reply-header">
                     <span class="coach-label"><el-icon><Avatar /></el-icon> 我的回复：</span>
                     <span class="reply-time">{{ formatDate(item.replyAt, true) }}</span>
                   </div>
-                  <div class="reply-content">{{ item.coachReply }}</div>
+                  <div class="reply-content" v-if="item.coachReply">{{ item.coachReply }}</div>
+                  <div v-if="item.coachReplyImageUrls.length > 0" class="attachment-block">
+                    <div class="attachment-title">
+                      <el-icon><Picture /></el-icon>
+                      <span>图片（{{ item.coachReplyImageUrls.length }}）</span>
+                    </div>
+                    <div class="image-grid">
+                      <el-image
+                        v-for="(url, index) in item.coachReplyImageUrls"
+                        :key="`${item.id}-coach-img-${index}`"
+                        :src="url"
+                        :preview-src-list="item.coachReplyImageUrls"
+                        :initial-index="index"
+                        fit="cover"
+                        class="feedback-image"
+                      />
+                    </div>
+                  </div>
+                  <div v-if="item.coachReplyVideoUrls.length > 0" class="attachment-block">
+                    <div class="attachment-title">
+                      <el-icon><VideoPlay /></el-icon>
+                      <span>视频（{{ item.coachReplyVideoUrls.length }}）</span>
+                    </div>
+                    <div class="video-list">
+                      <video
+                        v-for="(url, index) in item.coachReplyVideoUrls"
+                        :key="`${item.id}-coach-video-${index}`"
+                        :src="url"
+                        controls
+                        class="feedback-video"
+                      />
+                    </div>
+                  </div>
+                  <div v-if="item.coachReplyDocumentUrls.length > 0" class="attachment-block">
+                    <div class="attachment-title">
+                      <el-icon><Document /></el-icon>
+                      <span>文档（{{ item.coachReplyDocumentUrls.length }}）</span>
+                    </div>
+                    <div class="doc-list">
+                      <el-link
+                        v-for="(url, index) in item.coachReplyDocumentUrls"
+                        :key="`${item.id}-coach-doc-${index}`"
+                        :href="url"
+                        target="_blank"
+                        type="primary"
+                        class="doc-link"
+                      >
+                        {{ getFileName(url) }}
+                      </el-link>
+                    </div>
+                  </div>
                   <el-button type="primary" link size="small" @click="openReplyDialog(item)">修改回复</el-button>
                 </div>
 
@@ -171,6 +221,46 @@
             placeholder="请输入给学员的建议或鼓励..."
           />
         </el-form-item>
+        <el-form-item label="上传图片">
+          <el-upload
+            list-type="picture-card"
+            :limit="6"
+            :http-request="handleReplyImageUpload"
+            :on-remove="handleReplyImageRemove"
+            :before-upload="beforeReplyImageUpload"
+            :file-list="replyImageFileList"
+            accept="image/*"
+          >
+            <el-icon><Picture /></el-icon>
+          </el-upload>
+          <div class="upload-tip">支持 jpg/png/webp，单张不超过 5MB</div>
+        </el-form-item>
+        <el-form-item label="上传视频">
+          <el-upload
+            :limit="2"
+            :http-request="handleReplyVideoUpload"
+            :on-remove="handleReplyVideoRemove"
+            :before-upload="beforeReplyVideoUpload"
+            :file-list="replyVideoFileList"
+            accept="video/*"
+          >
+            <el-button type="primary" plain :loading="uploadingReplyVideo">上传视频</el-button>
+          </el-upload>
+          <div class="upload-tip">支持 mp4/mov/avi，单个不超过 100MB</div>
+        </el-form-item>
+        <el-form-item label="上传文档">
+          <el-upload
+            :limit="3"
+            :http-request="handleReplyDocumentUpload"
+            :on-remove="handleReplyDocumentRemove"
+            :before-upload="beforeReplyDocumentUpload"
+            :file-list="replyDocumentFileList"
+            accept=".pdf,.doc,.docx,.txt"
+          >
+            <el-button type="primary" plain :loading="uploadingReplyDocument">上传文档</el-button>
+          </el-upload>
+          <div class="upload-tip">支持 pdf/doc/docx/txt，单个不超过 20MB</div>
+        </el-form-item>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -198,6 +288,7 @@ import {
 import { getUserInfo } from '@/utils/auth.js'
 import { getMyStudents } from '@/api/coach.js'
 import { deleteFeedback, getFeedbackListByStudent, replyFeedback } from '@/api/training.js'
+import { uploadDocument, uploadImage, uploadVideo } from '@/api/upload.js'
 
 const loadingStudents = ref(false)
 const loadingFeedback = ref(false)
@@ -212,6 +303,11 @@ const currentReplyItem = ref(null)
 const replyForm = reactive({
   content: ''
 })
+const uploadingReplyVideo = ref(false)
+const uploadingReplyDocument = ref(false)
+const replyImageFileList = ref([])
+const replyVideoFileList = ref([])
+const replyDocumentFileList = ref([])
 
 
 const router = useRouter();
@@ -249,6 +345,31 @@ const splitUrls = (raw) => {
     .map((v) => toAbsoluteUrl(v))
 }
 
+const normalizeUploadedUrl = (res) => {
+  if (!res) return ''
+  if (typeof res === 'string') return res
+  if (res.url) return res.url
+  if (res.data?.url) return res.data.url
+  return ''
+}
+
+const mapFilesFromUrls = (urls) => {
+  return (urls || []).map((url) => ({
+    name: getFileName(url),
+    url
+  }))
+}
+
+const hasCoachReply = (item) => {
+  if (!item) return false
+  return Boolean(
+    item.coachReply ||
+    (item.coachReplyImageUrls && item.coachReplyImageUrls.length > 0) ||
+    (item.coachReplyVideoUrls && item.coachReplyVideoUrls.length > 0) ||
+    (item.coachReplyDocumentUrls && item.coachReplyDocumentUrls.length > 0)
+  )
+}
+
 const normalizeStudent = (item) => {
   const profile = item.student || item.user || item
   return {
@@ -270,6 +391,9 @@ const normalizeFeedbackItem = (item) => {
     feeling: item.feeling || 'normal',
     content: item.content || '',
     coachReply: item.coachReply || item.coach_reply || '',
+    coachReplyImageUrls: splitUrls(item.coachReplyImageUrls || item.coach_reply_image_urls),
+    coachReplyVideoUrls: splitUrls(item.coachReplyVideoUrls || item.coach_reply_video_urls),
+    coachReplyDocumentUrls: splitUrls(item.coachReplyDocumentUrls || item.coach_reply_document_urls),
     replyAt: item.replyAt || item.reply_at || null,
     imageUrls: splitUrls(item.imageUrls || item.image_urls),
     videoUrls: splitUrls(item.videoUrls || item.video_urls),
@@ -323,12 +447,115 @@ const selectStudent = async (student) => {
 const openReplyDialog = (item) => {
   currentReplyItem.value = item
   replyForm.content = item.coachReply || ''
+  replyImageFileList.value = mapFilesFromUrls(item.coachReplyImageUrls)
+  replyVideoFileList.value = mapFilesFromUrls(item.coachReplyVideoUrls)
+  replyDocumentFileList.value = mapFilesFromUrls(item.coachReplyDocumentUrls)
   replyDialogVisible.value = true
 }
 
+const beforeReplyImageUpload = (file) => {
+  const isLt5M = file.size / 1024 / 1024 < 5
+  if (!isLt5M) ElMessage.error('图片大小不能超过 5MB')
+  return isLt5M
+}
+
+const beforeReplyVideoUpload = (file) => {
+  const isLt100M = file.size / 1024 / 1024 < 100
+  if (!isLt100M) ElMessage.error('视频大小不能超过 100MB')
+  return isLt100M
+}
+
+const beforeReplyDocumentUpload = (file) => {
+  const isLt20M = file.size / 1024 / 1024 < 20
+  if (!isLt20M) ElMessage.error('文档大小不能超过 20MB')
+  return isLt20M
+}
+
+const handleReplyImageUpload = async ({ file, onSuccess, onError }) => {
+  try {
+    const res = await uploadImage(file)
+    const url = normalizeUploadedUrl(res)
+    if (!url) throw new Error('Image upload url is empty')
+    replyImageFileList.value.push({ name: file.name, url: toAbsoluteUrl(url) })
+    onSuccess?.(res)
+  } catch (error) {
+    ElMessage.error('图片上传失败')
+    onError?.(error)
+  }
+}
+
+const handleReplyVideoUpload = async ({ file, onSuccess, onError }) => {
+  uploadingReplyVideo.value = true
+  try {
+    const res = await uploadVideo(file)
+    const url = normalizeUploadedUrl(res)
+    if (!url) throw new Error('Video upload url is empty')
+    replyVideoFileList.value.push({ name: file.name, url: toAbsoluteUrl(url) })
+    onSuccess?.(res)
+  } catch (error) {
+    ElMessage.error('视频上传失败')
+    onError?.(error)
+  } finally {
+    uploadingReplyVideo.value = false
+  }
+}
+
+const handleReplyDocumentUpload = async ({ file, onSuccess, onError }) => {
+  uploadingReplyDocument.value = true
+  try {
+    const res = await uploadDocument(file)
+    const url = normalizeUploadedUrl(res)
+    if (!url) throw new Error('Document upload url is empty')
+    replyDocumentFileList.value.push({ name: file.name, url: toAbsoluteUrl(url) })
+    onSuccess?.(res)
+  } catch (error) {
+    ElMessage.error('文档上传失败')
+    onError?.(error)
+  } finally {
+    uploadingReplyDocument.value = false
+  }
+}
+
+const handleReplyImageRemove = (file) => {
+  replyImageFileList.value = replyImageFileList.value.filter((item) => item.url !== file.url)
+}
+
+const handleReplyVideoRemove = (file) => {
+  replyVideoFileList.value = replyVideoFileList.value.filter((item) => item.url !== file.url)
+}
+
+const handleReplyDocumentRemove = (file) => {
+  replyDocumentFileList.value = replyDocumentFileList.value.filter((item) => item.url !== file.url)
+}
+
+const toStoredUrl = (url) => {
+  if (!url) return ''
+  const base = getStaticBaseUrl()
+  if (base && url.startsWith(base)) {
+    return url.substring(base.length) || '/'
+  }
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    try {
+      return new URL(url).pathname || url
+    } catch (_) {
+      return url
+    }
+  }
+  return url
+}
+
 const submitReply = async () => {
-  if (!replyForm.content.trim()) {
-    ElMessage.warning('请输入回复内容')
+  const coachReply = (replyForm.content || '').trim()
+  const imageUrls = replyImageFileList.value.map((item) => toStoredUrl(item.url)).filter(Boolean)
+  const videoUrls = replyVideoFileList.value.map((item) => toStoredUrl(item.url)).filter(Boolean)
+  const documentUrls = replyDocumentFileList.value.map((item) => toStoredUrl(item.url)).filter(Boolean)
+
+  if (!coachReply && imageUrls.length === 0 && videoUrls.length === 0 && documentUrls.length === 0) {
+    ElMessage.warning('请输入回复内容或上传至少一个附件')
+    return
+  }
+  if (!currentReplyItem.value?.id) {
+    ElMessage.error('当前反馈项无效，请刷新后重试')
     return
   }
 
@@ -336,7 +563,10 @@ const submitReply = async () => {
   try {
     await replyFeedback({
       id: currentReplyItem.value.id,
-      coach_reply: replyForm.content
+      coach_reply: coachReply,
+      coach_reply_image_urls: imageUrls.join(','),
+      coach_reply_video_urls: videoUrls.join(','),
+      coach_reply_document_urls: documentUrls.join(',')
     })
 
     ElMessage.success('回复成功')

@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -85,12 +84,21 @@ public class TrainingFeedbackController {
     @PostMapping("/reply")
     public ResponseEntity<Boolean> replyFeedback(@RequestBody Map<String, Object> params) {
         Long id = Long.valueOf(params.get("id").toString());
-        String content = (String) params.get("coach_reply");
+        String content = params.get("coach_reply") == null ? null : params.get("coach_reply").toString();
+        String coachReplyImageUrls = params.get("coach_reply_image_urls") == null
+                ? null : params.get("coach_reply_image_urls").toString();
+        String coachReplyVideoUrls = params.get("coach_reply_video_urls") == null
+                ? null : params.get("coach_reply_video_urls").toString();
+        String coachReplyDocumentUrls = params.get("coach_reply_document_urls") == null
+                ? null : params.get("coach_reply_document_urls").toString();
 
         TrainingFeedback feedback = new TrainingFeedback();
         feedback.setId(id);
         feedback.setCoachReply(content);
-        feedback.setReplyAt(LocalDate.from(LocalDateTime.now()));
+        feedback.setCoachReplyImageUrls(coachReplyImageUrls);
+        feedback.setCoachReplyVideoUrls(coachReplyVideoUrls);
+        feedback.setCoachReplyDocumentUrls(coachReplyDocumentUrls);
+        feedback.setReplyAt(LocalDate.now());
 
         feedbackService.updateById(feedback);
         return ResponseEntity.ok(true);

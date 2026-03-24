@@ -99,6 +99,12 @@ const router = createRouter({
       meta: { requiresAuth: true, roles: ['user', 'coach', 'admin'] }
     },
     {
+      path: '/coaches/:coachId/feedback',
+      name: 'CoachFeedbackList',
+      component: () => import('@/views/user/CoachFeedbackList.vue'),
+      meta: { requiresAuth: true, roles: ['user', 'coach', 'admin'] }
+    },
+    {
       path: '/diet',
       name: 'DietRecords',
       component: () => import('@/views/user/DietRecords.vue'),

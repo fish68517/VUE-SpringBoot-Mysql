@@ -17,4 +17,9 @@ public class TrainingFeedbackDto {
     private String imageUrls;
     private String videoUrls;
     private String documentUrls;
+    private String coachReply;
+    private LocalDate replyAt;
+    private String coachReplyImageUrls;
+    private String coachReplyVideoUrls;
+    private String coachReplyDocumentUrls;
 }
