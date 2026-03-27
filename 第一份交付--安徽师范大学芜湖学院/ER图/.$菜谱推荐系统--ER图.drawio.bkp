@@ -1,0 +1,358 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="kOAJLswYXegMdKenkosb">
+    <mxGraphModel dx="1426" dy="841" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="e_user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="user" vertex="1">
+          <mxGeometry height="40" width="80" x="200" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="e_recipe" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="recipe" vertex="1">
+          <mxGeometry height="40" width="80" x="710" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="e_category" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="category" vertex="1">
+          <mxGeometry height="40" width="80" x="690" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="e_order" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="order" vertex="1">
+          <mxGeometry height="40" width="80" x="200" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="e_comment" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="comment" vertex="1">
+          <mxGeometry height="40" width="80" x="700" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="r_favorite" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="favorite" vertex="1">
+          <mxGeometry height="40" width="80" x="450" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="r_cart" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="cart" vertex="1">
+          <mxGeometry height="40" width="80" x="450" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="r_review" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="review" vertex="1">
+          <mxGeometry height="40" width="80" x="440" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="r_contains" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="属于" vertex="1">
+          <mxGeometry height="40" width="80" x="700" y="275" as="geometry" />
+        </mxCell>
+        <mxCell id="r_place" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="下单" vertex="1">
+          <mxGeometry height="40" width="80" x="200" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="r_include" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="order_detail" vertex="1">
+          <mxGeometry height="40" width="80" x="480" y="584.5" as="geometry" />
+        </mxCell>
+        <mxCell id="r_write" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="发布" vertex="1">
+          <mxGeometry height="40" width="80" x="440" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="r_belong" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="针对" vertex="1">
+          <mxGeometry height="40" width="80" x="730" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="r_like" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="comment_like" vertex="1">
+          <mxGeometry height="40" width="80" x="390" y="790" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_u_fav" edge="1" parent="1" source="e_user" style="endArrow=none;html=1;rounded=0;" target="r_favorite">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_u_fav" connectable="0" parent="edge_u_fav" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="M" vertex="1">
+          <mxGeometry relative="1" x="-0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_fav_r" edge="1" parent="1" source="r_favorite" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_fav_r" connectable="0" parent="edge_fav_r" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="N" vertex="1">
+          <mxGeometry relative="1" x="0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_u_cart" edge="1" parent="1" source="e_user" style="endArrow=none;html=1;rounded=0;" target="r_cart">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_u_cart" connectable="0" parent="edge_u_cart" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="M" vertex="1">
+          <mxGeometry relative="1" x="-0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_cart_r" edge="1" parent="1" source="r_cart" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_cart_r" connectable="0" parent="edge_cart_r" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="N" vertex="1">
+          <mxGeometry relative="1" x="0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_u_rev" edge="1" parent="1" source="e_user" style="endArrow=none;html=1;rounded=0;" target="r_review">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_u_rev" connectable="0" parent="edge_u_rev" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="M" vertex="1">
+          <mxGeometry relative="1" x="-0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_rev_r" edge="1" parent="1" source="r_review" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_rev_r" connectable="0" parent="edge_rev_r" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="N" vertex="1">
+          <mxGeometry relative="1" x="0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_cat_con" edge="1" parent="1" source="e_category" style="endArrow=none;html=1;rounded=0;" target="r_contains">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_cat_con" connectable="0" parent="edge_cat_con" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_con_r" edge="1" parent="1" source="r_contains" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_con_r" connectable="0" parent="edge_con_r" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="N" vertex="1">
+          <mxGeometry relative="1" x="0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_u_place" edge="1" parent="1" source="e_user" style="endArrow=none;html=1;rounded=0;" target="r_place">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_u_place" connectable="0" parent="edge_u_place" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_place_o" edge="1" parent="1" source="r_place" style="endArrow=none;html=1;rounded=0;" target="e_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_place_o" connectable="0" parent="edge_place_o" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="N" vertex="1">
+          <mxGeometry relative="1" x="0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_o_inc" edge="1" parent="1" source="e_order" style="endArrow=none;html=1;rounded=0;" target="r_include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_o_inc" connectable="0" parent="edge_o_inc" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="M" vertex="1">
+          <mxGeometry relative="1" x="-0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_inc_r" edge="1" parent="1" source="r_include" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_inc_r" connectable="0" parent="edge_inc_r" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="N" vertex="1">
+          <mxGeometry relative="1" x="0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_u_wr" edge="1" parent="1" source="e_user" style="endArrow=none;html=1;rounded=0;" target="r_write">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_u_wr" connectable="0" parent="edge_u_wr" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1" vertex="1">
+          <mxGeometry relative="1" x="-0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_wr_c" edge="1" parent="1" source="r_write" style="endArrow=none;html=1;rounded=0;" target="e_comment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_wr_c" connectable="0" parent="edge_wr_c" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="N" vertex="1">
+          <mxGeometry relative="1" x="0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_c_bel" edge="1" parent="1" source="e_comment" style="endArrow=none;html=1;rounded=0;" target="r_belong">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_c_bel" connectable="0" parent="edge_c_bel" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="N" vertex="1">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_bel_r" edge="1" parent="1" source="r_belong" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_bel_r" connectable="0" parent="edge_bel_r" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="1" vertex="1">
+          <mxGeometry relative="1" x="0.3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_u_lk" edge="1" parent="1" source="e_user" style="endArrow=none;html=1;rounded=0;" target="r_like">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_u_lk" connectable="0" parent="edge_u_lk" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="M" vertex="1">
+          <mxGeometry relative="1" x="-0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_lk_c" edge="1" parent="1" source="r_like" style="endArrow=none;html=1;rounded=0;" target="e_comment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="label_lk_c" connectable="0" parent="edge_lk_c" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="N" vertex="1">
+          <mxGeometry relative="1" x="0.5" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a_u_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="用户ID" vertex="1">
+          <mxGeometry height="40" width="80" x="50" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_id" edge="1" parent="1" source="a_u_id" style="endArrow=none;html=1;rounded=0;" target="e_user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u_name" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="用户名" vertex="1">
+          <mxGeometry height="40" width="80" x="100" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_name" edge="1" parent="1" source="a_u_name" style="endArrow=none;html=1;rounded=0;" target="e_user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u_pwd" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="密码" vertex="1">
+          <mxGeometry height="40" width="80" x="200" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_pwd" edge="1" parent="1" source="a_u_pwd" style="endArrow=none;html=1;rounded=0;" target="e_user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u_role" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="角色" vertex="1">
+          <mxGeometry height="40" width="80" x="300" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_role" edge="1" parent="1" source="a_u_role" style="endArrow=none;html=1;rounded=0;" target="e_user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u_bmi" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="BMI指数" vertex="1">
+          <mxGeometry height="40" width="80" x="50" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_bmi" edge="1" parent="1" source="a_u_bmi" style="endArrow=none;html=1;rounded=0;" target="e_user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u_taste" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="口味偏好" vertex="1">
+          <mxGeometry height="40" width="80" x="50" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="l_u_taste" edge="1" parent="1" source="a_u_taste" style="endArrow=none;html=1;rounded=0;" target="e_user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="食谱ID" vertex="1">
+          <mxGeometry height="40" width="80" x="850" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="l_r_id" edge="1" parent="1" source="a_r_id" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r_name" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="食谱名称" vertex="1">
+          <mxGeometry height="40" width="80" x="880" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="l_r_name" edge="1" parent="1" source="a_r_name" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r_price" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="价格" vertex="1">
+          <mxGeometry height="40" width="80" x="850" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="l_r_price" edge="1" parent="1" source="a_r_price" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r_diff" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="难度" vertex="1">
+          <mxGeometry height="40" width="80" x="780" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="l_r_diff" edge="1" parent="1" source="a_r_diff" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r_time" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="烹饪时间" vertex="1">
+          <mxGeometry height="40" width="80" x="640" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="l_r_time" edge="1" parent="1" source="a_r_time" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r_taste" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="口味" vertex="1">
+          <mxGeometry height="40" width="80" x="780" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="l_r_taste" edge="1" parent="1" source="a_r_taste" style="endArrow=none;html=1;rounded=0;" target="e_recipe">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_cat_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="分类ID" vertex="1">
+          <mxGeometry height="40" width="80" x="600" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l_cat_id" edge="1" parent="1" source="a_cat_id" style="endArrow=none;html=1;rounded=0;" target="e_category">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_cat_name" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="分类名" vertex="1">
+          <mxGeometry height="40" width="80" x="700" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="l_cat_name" edge="1" parent="1" source="a_cat_name" style="endArrow=none;html=1;rounded=0;" target="e_category">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_cat_sort" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="排序" vertex="1">
+          <mxGeometry height="40" width="80" x="800" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="l_cat_sort" edge="1" parent="1" source="a_cat_sort" style="endArrow=none;html=1;rounded=0;" target="e_category">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="订单ID" vertex="1">
+          <mxGeometry height="40" width="80" x="50" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="l_o_id" edge="1" parent="1" source="a_o_id" style="endArrow=none;html=1;rounded=0;" target="e_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o_no" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="订单号" vertex="1">
+          <mxGeometry height="40" width="80" x="30" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="l_o_no" edge="1" parent="1" source="a_o_no" style="endArrow=none;html=1;rounded=0;" target="e_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o_amt" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="总金额" vertex="1">
+          <mxGeometry height="40" width="80" x="100" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="l_o_amt" edge="1" parent="1" source="a_o_amt" style="endArrow=none;html=1;rounded=0;" target="e_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o_status" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="状态" vertex="1">
+          <mxGeometry height="40" width="80" x="200" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="l_o_status" edge="1" parent="1" source="a_o_status" style="endArrow=none;html=1;rounded=0;" target="e_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_c_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="评论ID" vertex="1">
+          <mxGeometry height="40" width="80" x="850" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="l_c_id" edge="1" parent="1" source="a_c_id" style="endArrow=none;html=1;rounded=0;" target="e_comment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_c_content" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="评论内容" vertex="1">
+          <mxGeometry height="40" width="80" x="880" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="l_c_content" edge="1" parent="1" source="a_c_content" style="endArrow=none;html=1;rounded=0;" target="e_comment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_c_rate" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="评分" vertex="1">
+          <mxGeometry height="40" width="80" x="830" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="l_c_rate" edge="1" parent="1" source="a_c_rate" style="endArrow=none;html=1;rounded=0;" target="e_comment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_c_likes" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="点赞数" vertex="1">
+          <mxGeometry height="40" width="80" x="720" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="l_c_likes" edge="1" parent="1" source="a_c_likes" style="endArrow=none;html=1;rounded=0;" target="e_comment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_cart_qty" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="数量" vertex="1">
+          <mxGeometry height="40" width="80" x="500" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="l_cart_qty" edge="1" parent="1" source="a_cart_qty" style="endArrow=none;html=1;rounded=0;" target="r_cart">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_rev_rate" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="评分" vertex="1">
+          <mxGeometry height="40" width="80" x="580" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="l_rev_rate" edge="1" parent="1" source="a_rev_rate" style="endArrow=none;html=1;rounded=0;" target="r_review">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_inc_qty" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="数量" vertex="1">
+          <mxGeometry height="40" width="80" x="390" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="l_inc_qty" edge="1" parent="1" source="a_inc_qty" style="endArrow=none;html=1;rounded=0;" target="r_include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_inc_price" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="单价" vertex="1">
+          <mxGeometry height="40" width="80" x="490" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="l_inc_price" edge="1" parent="1" source="a_inc_price" style="endArrow=none;html=1;rounded=0;" target="r_include">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
