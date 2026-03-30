@@ -43,6 +43,10 @@ public class TaskViewModel extends ViewModel {
         fetchUserTasks();
     }
 
+    public void refreshTasks() {
+        fetchUserTasks();
+    }
+
     private void fetchUserTasks() {
         isLoading.setValue(true); // 开始加载，通知UI显示进度条
 

@@ -1,58 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="4dp">
+    android:layout_marginStart="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="#FFFDFE"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="3dp"
+    app:strokeColor="#E8DEF8"
+    app:strokeWidth="1dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="18dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <View
-                android:id="@+id/view_habit_color"
-                android:layout_width="8dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="12dp"
-                tools:background="#409EFF"/>
-
-            <TextView
-                android:id="@+id/text_view_habit_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                tools:text="每天阅读半小时" />
-
-        </LinearLayout>
+        <View
+            android:id="@+id/view_habit_color"
+            android:layout_width="10dp"
+            android:layout_height="0dp"
+            android:background="#7E57C2"
+            app:layout_constraintBottom_toBottomOf="@id/btn_habit_stats"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/text_view_habit_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="早起"
+            android:textColor="#17121F"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/text_view_habit_status"
+            app:layout_constraintStart_toEndOf="@id/view_habit_color"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_view_habit_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tag_background_blue"
+            android:gravity="center"
+            android:minWidth="70dp"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="6dp"
+            android:text="进行中"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/text_view_habit_frequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:text="频率: 每日"
+            android:textColor="#4F378B"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/view_habit_color"
+            app:layout_constraintTop_toBottomOf="@id/text_view_habit_name" />
+
+        <TextView
+            android:id="@+id/text_view_habit_reminder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="10dp"
+            android:text="提醒时间: 07:00"
+            android:textColor="#6B6276"
+            android:textSize="13sp"
+            app:layout_constraintStart_toEndOf="@id/text_view_habit_frequency"
+            app:layout_constraintTop_toBottomOf="@id/text_view_habit_name" />
+
+        <TextView
+            android:visibility="gone"
             android:id="@+id/text_view_habit_streak"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            tools:text="已连续打卡：15 天" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="14dp"
+            android:text="连续打卡: 5 天"
+            android:textColor="#17121F"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/view_habit_color"
+            app:layout_constraintTop_toBottomOf="@id/text_view_habit_frequency" />
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/text_view_habit_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            tools:text="总计打卡：102 次" />
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="14dp"
+            android:text="累计完成: 12 次"
+            android:textColor="#17121F"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/text_view_habit_streak"
+            app:layout_constraintTop_toBottomOf="@id/text_view_habit_frequency" />
 
-    </LinearLayout>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/text_view_habit_record_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="12dp"
+            android:text="点击卡片查看每日 / 每周签到记录"
+            android:textColor="#7B7386"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/view_habit_color"
+            app:layout_constraintTop_toBottomOf="@id/text_view_habit_streak" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_habit_status"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="修改状态"
+            android:textAllCaps="false"
+            android:textColor="#4F378B"
+            android:textStyle="bold"
+            app:cornerRadius="18dp"
+            app:layout_constraintEnd_toStartOf="@id/btn_habit_stats"
+            app:layout_constraintStart_toEndOf="@id/view_habit_color"
+            app:layout_constraintTop_toBottomOf="@id/text_view_habit_record_hint"
+            app:strokeColor="#CBB8F6"
+            app:strokeWidth="1dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_habit_stats"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:text="成果视图"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:backgroundTint="#7E57C2"
+            app:cornerRadius="18dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_habit_status"
+            app:layout_constraintTop_toBottomOf="@id/text_view_habit_record_hint" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </com.google.android.material.card.MaterialCardView>

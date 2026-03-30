@@ -5,11 +5,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.archive.app.R;
 import com.archive.app.model.HabitCheckin;
+import com.archive.app.util.CheckinStatusHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +49,8 @@ public class CheckinAdapter extends RecyclerView.Adapter<CheckinAdapter.ViewHold
         holder.note.setText(item.getCheckinNoteText() == null || item.getCheckinNoteText().isEmpty()
                 ? "无备注" : item.getCheckinNoteText());
 
-        // 状态显示
-        if ("completed".equals(item.getCheckinStatusEnum())) {
-            holder.status.setText("已完成");
-            holder.status.setTextColor(0xFF67C23A); // Green
-        } else {
-            holder.status.setText("跳过");
-            holder.status.setTextColor(0xFFE6A23C); // Orange
-        }
+        holder.status.setText(CheckinStatusHelper.getDisplayText(item.getCheckinStatusEnum()));
+        holder.status.setTextColor(CheckinStatusHelper.getDisplayColor(item.getCheckinStatusEnum()));
 
         holder.btnEdit.setOnClickListener(v -> {
             if (listener != null) listener.onEdit(item);
@@ -71,10 +67,13 @@ public class CheckinAdapter extends RecyclerView.Adapter<CheckinAdapter.ViewHold
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView date, note, status;
-        ImageButton btnEdit, btnDelete;
+        TextView date;
+        TextView note;
+        TextView status;
+        ImageButton btnEdit;
+        ImageButton btnDelete;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             date = itemView.findViewById(R.id.tv_checkin_date);
             note = itemView.findViewById(R.id.tv_checkin_note);

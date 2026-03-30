@@ -28,14 +28,16 @@ import Header from '../components/Header.vue'; // 复用之前的 Header
   height: 100vh;
 }
 .el-header {
-  background-color: #B3C0D1;
-  color: #333;
+  background: var(--app-header-bg);
+  color: var(--app-text-color);
   line-height: 60px;
+  border-bottom: 1px solid var(--app-border-color);
 }
 .el-aside {
-  background-color: #1f2d3d; /* Admin主题色 */
+  background: var(--app-aside-bg);
 }
 .el-main {
-  background-color: #f0f2f5; /* Admin背景色 */
+  background: var(--app-page-bg);
+  color: var(--app-text-color);
 }
 </style>

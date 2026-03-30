@@ -1,10 +1,12 @@
 package com.archive.app.view.adapter;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,7 +19,7 @@ import java.util.List;
 
 public class AchievementAdapter extends RecyclerView.Adapter<AchievementAdapter.AchievementViewHolder> {
 
-    private List<Achievement> achievements = new ArrayList<>();
+    private final List<Achievement> achievements = new ArrayList<>();
 
     @NonNull
     @Override
@@ -32,17 +34,18 @@ public class AchievementAdapter extends RecyclerView.Adapter<AchievementAdapter.
         holder.name.setText(currentAchievement.getAchieveNameText());
         holder.description.setText(currentAchievement.getAchieveDescriptionText());
 
-        Glide.with(holder.itemView.getContext())
-                .load(currentAchievement.getAchieveIconUrl())
-                .placeholder(R.mipmap.ic_launcher) // 默认图片
-                .into(holder.icon);
+        String iconUrl = currentAchievement.getAchieveIconUrl();
+        if (TextUtils.isEmpty(iconUrl)) {
+            holder.icon.setImageResource(R.drawable.ic_default);
+        } else {
+            Glide.with(holder.itemView.getContext())
+                    .load(iconUrl)
+                    .placeholder(R.drawable.ic_default)
+                    .error(R.drawable.ic_default)
+                    .into(holder.icon);
+        }
 
-         //如果徽章未获得，设置灰度效果
-         if (!currentAchievement.isEarned()) {
-             holder.itemView.setAlpha(0.5f);
-         } else {
-             holder.itemView.setAlpha(1.0f);
-         }
+        holder.itemView.setAlpha(currentAchievement.isEarned() ? 1.0f : 0.5f);
     }
 
     @Override
@@ -51,7 +54,10 @@ public class AchievementAdapter extends RecyclerView.Adapter<AchievementAdapter.
     }
 
     public void setAchievements(List<Achievement> achievements) {
-        this.achievements = achievements;
+        this.achievements.clear();
+        if (achievements != null) {
+            this.achievements.addAll(achievements);
+        }
         notifyDataSetChanged();
     }
 
@@ -60,7 +66,7 @@ public class AchievementAdapter extends RecyclerView.Adapter<AchievementAdapter.
         private final TextView name;
         private final TextView description;
 
-        public AchievementViewHolder(@NonNull View itemView) {
+        AchievementViewHolder(@NonNull View itemView) {
             super(itemView);
             icon = itemView.findViewById(R.id.image_view_ach_icon);
             name = itemView.findViewById(R.id.text_view_ach_name);

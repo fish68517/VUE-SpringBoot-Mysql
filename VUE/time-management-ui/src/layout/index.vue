@@ -4,12 +4,12 @@
       <el-aside width="200px">
         <SideBar />
       </el-aside>
-      
+
       <el-container>
         <el-header>
           <Header />
         </el-header>
-        
+
         <el-main>
           <router-view></router-view>
         </el-main>
@@ -24,23 +24,25 @@ import Header from '../components/Header.vue';
 </script>
 
 <style scoped>
-.common-layout, .el-container {
-  height: 100vh; /* 让布局占满整个屏幕高度 */
+.common-layout,
+.el-container {
+  height: 100vh;
 }
 
 .el-header {
-  background-color: #B3C0D1;
-  color: #333;
+  background: var(--app-header-bg);
+  color: var(--app-text-color);
   line-height: 60px;
+  border-bottom: 1px solid var(--app-border-color);
 }
 
 .el-aside {
-  background-color: #304156;
-  color: #333;
+  background: var(--app-aside-bg);
+  color: var(--app-text-color);
 }
 
 .el-main {
-  background-color: #E9EEF3;
-  color: #333;
+  background: var(--app-page-bg);
+  color: var(--app-text-color);
 }
 </style>

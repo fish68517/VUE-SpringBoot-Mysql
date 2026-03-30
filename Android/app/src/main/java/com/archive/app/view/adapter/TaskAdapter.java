@@ -1,30 +1,46 @@
 package com.archive.app.view.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.archive.app.MyApplication;
 import com.archive.app.R;
 import com.archive.app.model.TaskFocus;
-import com.archive.app.view.activity.TaskEditorActivity;
-import com.google.gson.Gson;
+import com.archive.app.util.TaskStatusHelper;
+import com.archive.app.util.TaskTimerStore;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
 
-    private List<TaskFocus> tasks = new ArrayList<>();
-    private Context context;
+    public interface OnTaskActionListener {
+        void onEdit(TaskFocus task);
+        void onTimer(TaskFocus task);
+    }
 
+    private final List<TaskFocus> tasks = new ArrayList<>();
+    private Context context;
+    private OnTaskActionListener listener;
+
+    public void setOnTaskActionListener(OnTaskActionListener listener) {
+        this.listener = listener;
+    }
+
+    public void setTasks(List<TaskFocus> taskList, Context context) {
+        this.tasks.clear();
+        if (taskList != null) {
+            this.tasks.addAll(taskList);
+        }
+        this.context = context;
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
@@ -38,37 +54,30 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         TaskFocus currentTask = tasks.get(position);
         holder.title.setText(currentTask.getTaskTitleText());
         holder.description.setText(currentTask.getTaskDescriptionText());
+        holder.deadline.setText(buildDeadlineText(currentTask.getTaskDeadlineTimestamp()));
+        holder.mode.setText(buildModeText(currentTask));
+        holder.category.setText(currentTask.getTaskCategoryCode() == null || currentTask.getTaskCategoryCode().isEmpty()
+                ? "未分类" : currentTask.getTaskCategoryCode());
 
-        // 格式化日期显示
-        String deadline = "截止: " + (currentTask.getTaskDeadlineTimestamp() != null ? currentTask.getTaskDeadlineTimestamp().replace("T", " ") : "无");
-        holder.deadline.setText(deadline);
-
-        holder.status.setText(currentTask.getTaskStatusEnum());
-
-        // 根据任务状态设置标签颜色
+        holder.status.setText(TaskStatusHelper.getDisplayText(currentTask.getTaskStatusEnum()));
         GradientDrawable background = (GradientDrawable) holder.status.getBackground();
-        switch (currentTask.getTaskStatusEnum()) {
-            case "completed":
-                background.setColor(Color.parseColor("#67C23A")); // 绿色
-                break;
-            case "in_progress":
-                background.setColor(Color.parseColor("#409EFF")); // 蓝色
-                break;
-            case "pending":
-                background.setColor(Color.parseColor("#E6A23C")); // 黄色
-                break;
-            default:
-                background.setColor(Color.GRAY);
-                break;
-        }
+        background.setColor(TaskStatusHelper.getColor(currentTask.getTaskStatusEnum()));
+
+        boolean hasTimerSnapshot = context != null
+                && currentTask.getTaskFocusId() != null
+                && TaskTimerStore.hasSnapshot(context, currentTask.getTaskFocusId());
+        holder.timerButton.setText(hasTimerSnapshot ? "继续专注" : "专注计时");
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, TaskEditorActivity.class);
-            // 传递对象需要序列化，这里简单用Gson转Json
-            intent.putExtra("task_json", new Gson().toJson(currentTask));
-            // FLAG_ACTIVITY_NEW_TASK
-            // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            if (listener != null) {
+                listener.onEdit(currentTask);
+            }
+        });
+
+        holder.timerButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onTimer(currentTask);
+            }
         });
     }
 
@@ -77,10 +86,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return tasks.size();
     }
 
-    public void setTasks(List<TaskFocus> tasks, Context context) {
-        this.tasks = tasks;
-        this.context = context;
-        notifyDataSetChanged();
+    private String buildDeadlineText(String deadline) {
+        String display = deadline != null ? deadline.replace("T", " ") : "未设置";
+        return "截止: " + display;
+    }
+
+    private String buildModeText(TaskFocus task) {
+        int focus = task.getTaskFocusDurationMins() == null || task.getTaskFocusDurationMins() <= 0
+                ? 30 : task.getTaskFocusDurationMins();
+        int rest = task.getTaskBreakDurationMins() == null || task.getTaskBreakDurationMins() < 0
+                ? 5 : task.getTaskBreakDurationMins();
+        return "专注 " + focus + " 分钟 / 休息 " + rest + " 分钟";
     }
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {
@@ -88,13 +104,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         private final TextView description;
         private final TextView deadline;
         private final TextView status;
+        private final TextView mode;
+        private final TextView category;
+        private final TextView timerButton;
 
-        public TaskViewHolder(@NonNull View itemView) {
+        TaskViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.text_view_task_title);
             description = itemView.findViewById(R.id.text_view_task_description);
             deadline = itemView.findViewById(R.id.text_view_task_deadline);
             status = itemView.findViewById(R.id.tag_task_status);
+            mode = itemView.findViewById(R.id.text_view_task_mode);
+            category = itemView.findViewById(R.id.text_view_task_category);
+            timerButton = itemView.findViewById(R.id.btn_task_timer);
         }
     }
 }
