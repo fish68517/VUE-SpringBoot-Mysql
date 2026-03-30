@@ -1,0 +1,109 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram id="ot5IwlScKAgqTbfEOikK" name="第 1 页">
+    <mxGraphModel dx="1783" dy="1051" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="um_controller" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="用户管理Controller" vertex="1">
+          <mxGeometry height="220" width="590" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="um_controller_body" parent="um_controller" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ page(params : Map&lt;String,Object&gt;) : R&lt;br&gt;+ info(id : Long) : R&lt;br&gt;+ save(user : 用户Entity) : R&lt;br&gt;+ update(user : 用户Entity) : R&lt;br&gt;+ changeStatus(id : Long, status : String) : R&lt;br&gt;+ resetPassword(id : Long) : R&lt;br&gt;+ detailProfile(userId : Long) : R&lt;br&gt;+ delete(ids : Long[]) : R" vertex="1">
+          <mxGeometry height="186" width="590" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="um_serviceImpl" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="用户管理ServiceImpl" vertex="1">
+          <mxGeometry height="200" width="450" x="900" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="um_serviceImpl_body" parent="um_serviceImpl" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ queryPage(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ selectById(id : Long) : 用户Entity&lt;br&gt;+ insert(user : 用户Entity) : void&lt;br&gt;+ updateById(user : 用户Entity) : void&lt;br&gt;+ changeStatus(id : Long, status : String) : void&lt;br&gt;+ resetPassword(id : Long) : void&lt;br&gt;+ deleteBatchIds(ids : Long[]) : void" vertex="1">
+          <mxGeometry height="166" width="450" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="um_service" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="用户管理Service" vertex="1">
+          <mxGeometry height="210" width="510" x="520" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="um_service_body" parent="um_service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ queryPage(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ selectById(id : Long) : 用户Entity&lt;br&gt;+ insert(user : 用户Entity) : void&lt;br&gt;+ updateById(user : 用户Entity) : void&lt;br&gt;+ changeStatus(id : Long, status : String) : void&lt;br&gt;+ resetPassword(id : Long) : void&lt;br&gt;+ detailProfile(userId : Long) : Map&lt;String,Object&gt;&lt;br&gt;+ deleteBatchIds(ids : Long[]) : void" vertex="1">
+          <mxGeometry height="176" width="510" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="um_user" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="用户Entity" vertex="1">
+          <mxGeometry height="220" width="320" x="50" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="um_user_body" parent="um_user" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- username : String&lt;br&gt;- passwordHash : String&lt;br&gt;- phone : String&lt;br&gt;- email : String&lt;br&gt;- role : String&lt;br&gt;- status : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="186" width="320" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="um_profile" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="求职者资料Entity" vertex="1">
+          <mxGeometry height="240" width="320" x="410" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="um_profile_body" parent="um_profile" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- userId : Long&lt;br&gt;- realName : String&lt;br&gt;- gender : String&lt;br&gt;- age : Integer&lt;br&gt;- city : String&lt;br&gt;- skills : String&lt;br&gt;- resumeFile : String&lt;br&gt;- verifyStatus : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="206" width="320" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="um_company" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="企业Entity" vertex="1">
+          <mxGeometry height="240" width="320" x="770" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="um_company_body" parent="um_company" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- merchantUserId : Long&lt;br&gt;- name : String&lt;br&gt;- licenseNo : String&lt;br&gt;- address : String&lt;br&gt;- contactName : String&lt;br&gt;- contactPhone : String&lt;br&gt;- verifyStatus : String&lt;br&gt;- rejectReason : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="206" width="320" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="um_userDao" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="用户Dao" vertex="1">
+          <mxGeometry height="150" width="400" x="1120" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="um_userDao_body" parent="um_userDao" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ selectList(page : Pagination, params : Map&lt;String,Object&gt;) : List&lt;用户Entity&gt;&lt;br&gt;+ selectById(id : Long) : 用户Entity&lt;br&gt;+ insert(user : 用户Entity) : int&lt;br&gt;+ updateById(user : 用户Entity) : int&lt;br&gt;+ updateStatus(id : Long, status : String) : int&lt;br&gt;+ deleteBatchIds(ids : Long[]) : int" vertex="1">
+          <mxGeometry height="116" width="400" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="um_profileDao" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="求职者资料Dao" vertex="1">
+          <mxGeometry height="120" width="400" x="1120" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="um_profileDao_body" parent="um_profileDao" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ selectByUserId(userId : Long) : 求职者资料Entity&lt;br&gt;+ updateById(profile : 求职者资料Entity) : int" vertex="1">
+          <mxGeometry height="86" width="400" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="um_companyDao" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="企业Dao" vertex="1">
+          <mxGeometry height="120" width="400" x="1120" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="um_companyDao_body" parent="um_companyDao" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ selectByMerchantUserId(userId : Long) : 企业Entity&lt;br&gt;+ updateById(company : 企业Entity) : int" vertex="1">
+          <mxGeometry height="86" width="400" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="um_e1" edge="1" parent="1" source="um_controller" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" target="um_service" value="用户管理Service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="um_e2" edge="1" parent="1" source="um_serviceImpl" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=block;endFill=0;html=1;" target="um_service" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="um_e3" edge="1" parent="1" source="um_service" style="strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;entryX=0.005;entryY=0.345;entryDx=0;entryDy=0;entryPerimeter=0;" target="um_userDao_body" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="um_e4" edge="1" parent="1" source="um_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" target="um_profileDao" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1550" y="330" />
+              <mxPoint x="1550" y="600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="um_e5" edge="1" parent="1" source="um_service" style="strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;edgeStyle=orthogonalEdgeStyle;" target="um_companyDao" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1580" y="310" />
+              <mxPoint x="1580" y="760" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="um_e6" edge="1" parent="1" source="um_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" target="um_user" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="um_e7" edge="1" parent="1" source="um_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" target="um_profile" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="um_e8" edge="1" parent="1" source="um_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" target="um_company" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="um_e9" edge="1" parent="1" source="um_profile" style="strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" target="um_user_body" value="user_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="um_e10" edge="1" parent="1" source="um_company" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" target="um_user" value="merchant_user_id">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="930" y="890" />
+              <mxPoint x="210" y="890" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

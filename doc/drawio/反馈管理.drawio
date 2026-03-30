@@ -1,0 +1,90 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram id="8trKVLJBh6Fv52FjTiOJ" name="第 1 页">
+    <mxGraphModel dx="1783" dy="1051" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="fb_controller" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="反馈Controller" vertex="1">
+          <mxGeometry height="210" width="570" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_controller_body" parent="fb_controller" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ page(params : Map&lt;String,Object&gt;) : R&lt;br&gt;+ info(id : Long) : R&lt;br&gt;+ save(complaint : 反馈Entity) : R&lt;br&gt;+ submitComplaint(targetType : String, targetId : Long, content : String) : R&lt;br&gt;+ handleComplaint(id : Long, result : String, status : String) : R&lt;br&gt;+ delete(ids : Long[]) : R" vertex="1">
+          <mxGeometry height="176" width="570" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_serviceImpl" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="反馈ServiceImpl" vertex="1">
+          <mxGeometry height="190" width="430" x="910" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_serviceImpl_body" parent="fb_serviceImpl" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ queryPage(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ selectById(id : Long) : 反馈Entity&lt;br&gt;+ submit(complaint : 反馈Entity) : void&lt;br&gt;+ handle(id : Long, adminId : Long, result : String, status : String) : void&lt;br&gt;+ deleteBatchIds(ids : Long[]) : void" vertex="1">
+          <mxGeometry height="156" width="430" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_service" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="反馈Service" vertex="1">
+          <mxGeometry height="190" width="500" x="520" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_service_body" parent="fb_service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ queryPage(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ selectById(id : Long) : 反馈Entity&lt;br&gt;+ submit(complaint : 反馈Entity) : void&lt;br&gt;+ handle(id : Long, adminId : Long, result : String, status : String) : void&lt;br&gt;+ deleteBatchIds(ids : Long[]) : void&lt;br&gt;+ checkTarget(targetType : String, targetId : Long) : boolean" vertex="1">
+          <mxGeometry height="156" width="500" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_entity" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="反馈Entity" vertex="1">
+          <mxGeometry height="290" width="330" x="40" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_entity_body" parent="fb_entity" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- fromUserId : Long&lt;br&gt;- targetType : String&lt;br&gt;- targetId : Long&lt;br&gt;- type : String&lt;br&gt;- content : String&lt;br&gt;- evidenceImg : String&lt;br&gt;- status : String&lt;br&gt;- result : String&lt;br&gt;- handlerAdminId : Long&lt;br&gt;- handleTime : Date&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="256" width="330" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_user" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="用户Entity" vertex="1">
+          <mxGeometry height="220" width="300" x="40" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_user_body" parent="fb_user" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- username : String&lt;br&gt;- phone : String&lt;br&gt;- email : String&lt;br&gt;- role : String&lt;br&gt;- status : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="186" width="300" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_job" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="岗位Entity" vertex="1">
+          <mxGeometry height="240" width="290" x="400" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_job_body" parent="fb_job" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- companyId : Long&lt;br&gt;- title : String&lt;br&gt;- category : String&lt;br&gt;- salaryAmount : BigDecimal&lt;br&gt;- workCity : String&lt;br&gt;- headcount : Integer&lt;br&gt;- status : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="206" width="290" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_company" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="企业Entity" vertex="1">
+          <mxGeometry height="230" width="300" x="740" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_company_body" parent="fb_company" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- merchantUserId : Long&lt;br&gt;- name : String&lt;br&gt;- licenseNo : String&lt;br&gt;- address : String&lt;br&gt;- contactName : String&lt;br&gt;- contactPhone : String&lt;br&gt;- verifyStatus : String" vertex="1">
+          <mxGeometry height="196" width="300" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_dao" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="反馈Dao" vertex="1">
+          <mxGeometry height="200" width="430" x="1090" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_dao_body" parent="fb_dao" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ selectList(page : Pagination, params : Map&lt;String,Object&gt;) : List&lt;反馈Entity&gt;&lt;br&gt;+ selectById(id : Long) : 反馈Entity&lt;br&gt;+ insert(complaint : 反馈Entity) : int&lt;br&gt;+ updateHandle(id : Long, adminId : Long, result : String, status : String) : int&lt;br&gt;+ deleteBatchIds(ids : Long[]) : int" vertex="1">
+          <mxGeometry height="166" width="430" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_e1" edge="1" parent="1" source="fb_controller" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" target="fb_service" value="反馈Service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_e2" edge="1" parent="1" source="fb_serviceImpl" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=block;endFill=0;html=1;" target="fb_service" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_e3" edge="1" parent="1" source="fb_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" target="fb_dao" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_e4" edge="1" parent="1" source="fb_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" target="fb_entity" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_e5" edge="1" parent="1" source="fb_entity" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" target="fb_user" value="from_user_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_e6" edge="1" parent="1" source="fb_entity" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" target="fb_user" value="handler_admin_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fb_e7" edge="1" parent="1" source="fb_entity" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" target="fb_job" value="target_id(JOB)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="545" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="fb_e8" edge="1" parent="1" source="fb_entity" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" target="fb_company" value="target_id(COMPANY)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="890" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

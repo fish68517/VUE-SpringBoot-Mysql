@@ -1,0 +1,82 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="nj7C20vh7UbSDvYPZkpg">
+    <mxGraphModel dx="2605" dy="1565" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ca_controller" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="内容审核Controller" vertex="1">
+          <mxGeometry height="200" width="560" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_controller_body" parent="ca_controller" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ page(params : Map&lt;String,Object&gt;) : R&lt;br&gt;+ detail(id : Long, type : String) : R&lt;br&gt;+ auditCompany(companyId : Long, verifyStatus : String, rejectReason : String) : R&lt;br&gt;+ auditProfile(profileId : Long, verifyStatus : String, rejectReason : String) : R&lt;br&gt;+ listPending(params : Map&lt;String,Object&gt;) : R" vertex="1">
+          <mxGeometry height="166" width="560" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_serviceImpl" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="内容审核ServiceImpl" vertex="1">
+          <mxGeometry height="180" width="430" x="890" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_serviceImpl_body" parent="ca_serviceImpl" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ queryPending(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ getCompanyById(id : Long) : 企业Entity&lt;br&gt;+ getProfileById(id : Long) : 求职者资料Entity&lt;br&gt;+ auditCompany(companyId : Long, verifyStatus : String, rejectReason : String) : void&lt;br&gt;+ auditProfile(profileId : Long, verifyStatus : String, rejectReason : String) : void" vertex="1">
+          <mxGeometry height="146" width="430" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_service" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="内容审核Service" vertex="1">
+          <mxGeometry height="210" width="500" x="520" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_service_body" parent="ca_service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ queryPending(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ getCompanyById(id : Long) : 企业Entity&lt;br&gt;+ getProfileById(id : Long) : 求职者资料Entity&lt;br&gt;+ auditCompany(companyId : Long, verifyStatus : String, rejectReason : String) : void&lt;br&gt;+ auditProfile(profileId : Long, verifyStatus : String, rejectReason : String) : void&lt;br&gt;+ updateAuditResult(type : String, id : Long, verifyStatus : String, rejectReason : String) : void" vertex="1">
+          <mxGeometry height="176" width="500" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_company" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="企业Entity" vertex="1">
+          <mxGeometry height="250" width="320" x="40" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_company_body" parent="ca_company" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- merchantUserId : Long&lt;br&gt;- name : String&lt;br&gt;- licenseNo : String&lt;br&gt;- licenseImg : String&lt;br&gt;- address : String&lt;br&gt;- contactName : String&lt;br&gt;- contactPhone : String&lt;br&gt;- verifyStatus : String&lt;br&gt;- rejectReason : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="216" width="320" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_profile" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="求职者资料Entity" vertex="1">
+          <mxGeometry height="280" width="350" x="440" y="584" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_profile_body" parent="ca_profile" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- userId : Long&lt;br&gt;- realName : String&lt;br&gt;- gender : String&lt;br&gt;- age : Integer&lt;br&gt;- city : String&lt;br&gt;- skills : String&lt;br&gt;- availableTimeDesc : String&lt;br&gt;- resumeFile : String&lt;br&gt;- idCardFront : String&lt;br&gt;- idCardBack : String&lt;br&gt;- verifyStatus : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="246" width="350" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_user" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="用户Entity" vertex="1">
+          <mxGeometry height="180" width="300" x="40" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_user_body" parent="ca_user" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- username : String&lt;br&gt;- phone : String&lt;br&gt;- email : String&lt;br&gt;- role : String&lt;br&gt;- status : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="146" width="300" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_companyDao" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="企业Dao" vertex="1">
+          <mxGeometry height="150" width="420" x="1080" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_companyDao_body" parent="ca_companyDao" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ selectPendingList(params : Map&lt;String,Object&gt;) : List&lt;企业Entity&gt;&lt;br&gt;+ selectById(id : Long) : 企业Entity&lt;br&gt;+ updateAudit(companyId : Long, verifyStatus : String, rejectReason : String) : int&lt;br&gt;+ selectByMerchantUserId(userId : Long) : 企业Entity" vertex="1">
+          <mxGeometry height="116" width="420" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_profileDao" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="求职者资料Dao" vertex="1">
+          <mxGeometry height="150" width="420" x="1000" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_profileDao_body" parent="ca_profileDao" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ selectPendingList(params : Map&lt;String,Object&gt;) : List&lt;求职者资料Entity&gt;&lt;br&gt;+ selectById(id : Long) : 求职者资料Entity&lt;br&gt;+ updateAudit(profileId : Long, verifyStatus : String) : int&lt;br&gt;+ selectByUserId(userId : Long) : 求职者资料Entity" vertex="1">
+          <mxGeometry height="116" width="420" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_e1" edge="1" parent="1" source="ca_controller" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;" target="ca_service" value="内容审核Service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_e2" edge="1" parent="1" source="ca_serviceImpl" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=block;endFill=0;html=1;" target="ca_service" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_e3" edge="1" parent="1" source="ca_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" target="ca_companyDao" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_e4" edge="1" parent="1" source="ca_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" target="ca_profileDao" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_e5" edge="1" parent="1" source="ca_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" target="ca_company" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_e6" edge="1" parent="1" source="ca_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" target="ca_profile" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_e7" edge="1" parent="1" source="ca_company" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" target="ca_user" value="merchant_user_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_e8" edge="1" parent="1" source="ca_profile" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" target="ca_user" value="user_id">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

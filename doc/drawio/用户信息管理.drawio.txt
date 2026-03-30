@@ -1,0 +1,108 @@
+<mxfile host="app.diagrams.net" modified="2026-03-30T00:00:00.000Z" agent="ChatGPT" version="24.7.17">
+
+
+
+  <diagram id="userManageDiagram" name="（5）管理用户信息用例类图">
+    <mxGraphModel dx="1660" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="um_controller" value="用户管理Controller" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="590" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_controller_body" value="+ page(params : Map&lt;String,Object&gt;) : R&lt;br&gt;+ info(id : Long) : R&lt;br&gt;+ save(user : 用户Entity) : R&lt;br&gt;+ update(user : 用户Entity) : R&lt;br&gt;+ changeStatus(id : Long, status : String) : R&lt;br&gt;+ resetPassword(id : Long) : R&lt;br&gt;+ detailProfile(userId : Long) : R&lt;br&gt;+ delete(ids : Long[]) : R" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" vertex="1" parent="um_controller">
+          <mxGeometry x="0" y="34" width="590" height="186" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="um_serviceImpl" value="用户管理ServiceImpl" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" vertex="1" parent="1">
+          <mxGeometry x="900" y="40" width="450" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_serviceImpl_body" value="+ queryPage(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ selectById(id : Long) : 用户Entity&lt;br&gt;+ insert(user : 用户Entity) : void&lt;br&gt;+ updateById(user : 用户Entity) : void&lt;br&gt;+ changeStatus(id : Long, status : String) : void&lt;br&gt;+ resetPassword(id : Long) : void&lt;br&gt;+ deleteBatchIds(ids : Long[]) : void" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" vertex="1" parent="um_serviceImpl">
+          <mxGeometry x="0" y="34" width="450" height="166" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="um_service" value="用户管理Service" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="300" width="510" height="210" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_service_body" value="+ queryPage(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ selectById(id : Long) : 用户Entity&lt;br&gt;+ insert(user : 用户Entity) : void&lt;br&gt;+ updateById(user : 用户Entity) : void&lt;br&gt;+ changeStatus(id : Long, status : String) : void&lt;br&gt;+ resetPassword(id : Long) : void&lt;br&gt;+ detailProfile(userId : Long) : Map&lt;String,Object&gt;&lt;br&gt;+ deleteBatchIds(ids : Long[]) : void" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" vertex="1" parent="um_service">
+          <mxGeometry x="0" y="34" width="510" height="176" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="um_user" value="用户Entity" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="340" width="320" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_user_body" value="- id : Long&lt;br&gt;- username : String&lt;br&gt;- passwordHash : String&lt;br&gt;- phone : String&lt;br&gt;- email : String&lt;br&gt;- role : String&lt;br&gt;- status : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" vertex="1" parent="um_user">
+          <mxGeometry x="0" y="34" width="320" height="186" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="um_profile" value="求职者资料Entity" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" vertex="1" parent="1">
+          <mxGeometry x="410" y="600" width="320" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_profile_body" value="- id : Long&lt;br&gt;- userId : Long&lt;br&gt;- realName : String&lt;br&gt;- gender : String&lt;br&gt;- age : Integer&lt;br&gt;- city : String&lt;br&gt;- skills : String&lt;br&gt;- resumeFile : String&lt;br&gt;- verifyStatus : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" vertex="1" parent="um_profile">
+          <mxGeometry x="0" y="34" width="320" height="206" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="um_company" value="企业Entity" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" vertex="1" parent="1">
+          <mxGeometry x="770" y="600" width="320" height="240" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_company_body" value="- id : Long&lt;br&gt;- merchantUserId : Long&lt;br&gt;- name : String&lt;br&gt;- licenseNo : String&lt;br&gt;- address : String&lt;br&gt;- contactName : String&lt;br&gt;- contactPhone : String&lt;br&gt;- verifyStatus : String&lt;br&gt;- rejectReason : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" vertex="1" parent="um_company">
+          <mxGeometry x="0" y="34" width="320" height="206" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="um_userDao" value="用户Dao" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="340" width="400" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_userDao_body" value="+ selectList(page : Pagination, params : Map&lt;String,Object&gt;) : List&lt;用户Entity&gt;&lt;br&gt;+ selectById(id : Long) : 用户Entity&lt;br&gt;+ insert(user : 用户Entity) : int&lt;br&gt;+ updateById(user : 用户Entity) : int&lt;br&gt;+ updateStatus(id : Long, status : String) : int&lt;br&gt;+ deleteBatchIds(ids : Long[]) : int" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" vertex="1" parent="um_userDao">
+          <mxGeometry x="0" y="34" width="400" height="116" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="um_profileDao" value="求职者资料Dao" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="540" width="400" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_profileDao_body" value="+ selectByUserId(userId : Long) : 求职者资料Entity&lt;br&gt;+ updateById(profile : 求职者资料Entity) : int" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" vertex="1" parent="um_profileDao">
+          <mxGeometry x="0" y="34" width="400" height="86" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="um_companyDao" value="企业Dao" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="700" width="400" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_companyDao_body" value="+ selectByMerchantUserId(userId : Long) : 企业Entity&lt;br&gt;+ updateById(company : 企业Entity) : int" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" vertex="1" parent="um_companyDao">
+          <mxGeometry x="0" y="34" width="400" height="86" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="um_e1" value="用户管理Service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" edge="1" parent="1" source="um_controller" target="um_service">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_e2" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=block;endFill=0;html=1;" edge="1" parent="1" source="um_serviceImpl" target="um_service">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_e3" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" edge="1" parent="1" source="um_service" target="um_userDao">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_e4" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" edge="1" parent="1" source="um_service" target="um_profileDao">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_e5" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" edge="1" parent="1" source="um_service" target="um_companyDao">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_e6" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" edge="1" parent="1" source="um_service" target="um_user">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_e7" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" edge="1" parent="1" source="um_service" target="um_profile">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_e8" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" edge="1" parent="1" source="um_service" target="um_company">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_e9" value="user_id" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" edge="1" parent="1" source="um_profile" target="um_user">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="um_e10" value="merchant_user_id" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;fontFamily=Microsoft YaHei;fontSize=13;" edge="1" parent="1" source="um_company" target="um_user">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+</mxfile>

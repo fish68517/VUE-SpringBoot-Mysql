@@ -1,0 +1,100 @@
+<mxfile host="app.diagrams.net" modified="2026-03-30T00:00:00.000Z" agent="ChatGPT" version="24.7.17">
+  <diagram id="jobManageClass" name="求职管理类图">
+    <mxGraphModel dx="1660" dy="920" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- 求职Controller -->
+        <mxCell id="controller" value="求职Controller" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="620" height="210" as="geometry"/>
+        </mxCell>
+        <mxCell id="controller_body" value="+ page(params : Map&lt;String,Object&gt;, request : HttpServletRequest) : R&lt;br&gt;+ info(id : Long, request : HttpServletRequest) : R&lt;br&gt;+ save(application : 求职Entity, request : HttpServletRequest) : R&lt;br&gt;+ update(application : 求职Entity, request : HttpServletRequest) : R&lt;br&gt;+ delete(ids : Long[]) : R&lt;br&gt;+ list(params : Map&lt;String,Object&gt;, request : HttpServletRequest) : R&lt;br&gt;+ detail(id : Long, request : HttpServletRequest) : R&lt;br&gt;+ apply(jobPostId : Long, request : HttpServletRequest) : R&lt;br&gt;+ cancel(id : Long, reason : String, request : HttpServletRequest) : R" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="controller">
+          <mxGeometry x="0" y="34" width="620" height="176" as="geometry"/>
+        </mxCell>
+
+        <!-- 求职ServiceImpl -->
+        <mxCell id="serviceImpl" value="求职ServiceImpl" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="830" y="40" width="470" height="170" as="geometry"/>
+        </mxCell>
+        <mxCell id="serviceImpl_body" value="+ queryPage(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ selectById(id : Long) : 求职Entity&lt;br&gt;+ insert(application : 求职Entity) : void&lt;br&gt;+ updateStatus(id : Long, status : String, note : String) : void&lt;br&gt;+ cancel(id : Long, reason : String) : void&lt;br&gt;+ checkIn(id : Long) : void&lt;br&gt;+ finish(id : Long) : void&lt;br&gt;+ settle(id : Long) : void" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="serviceImpl">
+          <mxGeometry x="0" y="34" width="470" height="136" as="geometry"/>
+        </mxCell>
+
+        <!-- 求职Service -->
+        <mxCell id="service" value="求职Service" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="500" y="300" width="500" height="185" as="geometry"/>
+        </mxCell>
+        <mxCell id="service_body" value="+ queryPage(params : Map&lt;String,Object&gt;) : PageUtils&lt;br&gt;+ selectById(id : Long) : 求职Entity&lt;br&gt;+ insert(application : 求职Entity) : void&lt;br&gt;+ updateStatus(id : Long, status : String, note : String) : void&lt;br&gt;+ cancel(id : Long, reason : String) : void&lt;br&gt;+ checkIn(id : Long) : void&lt;br&gt;+ finish(id : Long) : void&lt;br&gt;+ settle(id : Long) : void&lt;br&gt;+ deleteBatchIds(ids : Long[]) : void" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="service">
+          <mxGeometry x="0" y="34" width="500" height="151" as="geometry"/>
+        </mxCell>
+
+        <!-- 求职Entity -->
+        <mxCell id="entity" value="求职Entity" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="340" width="390" height="300" as="geometry"/>
+        </mxCell>
+        <mxCell id="entity_body" value="- serialVersionUID : long = 1L&lt;br&gt;- id : Long&lt;br&gt;- jobPostId : Long&lt;br&gt;- jobseekerUserId : Long&lt;br&gt;- status : String&lt;br&gt;- applyTime : Date&lt;br&gt;- merchantNote : String&lt;br&gt;- cancelReason : String&lt;br&gt;- checkinTime : Date&lt;br&gt;- finishTime : Date&lt;br&gt;- settleTime : Date&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="entity">
+          <mxGeometry x="0" y="34" width="390" height="266" as="geometry"/>
+        </mxCell>
+
+        <!-- 求职Dao -->
+        <mxCell id="dao" value="求职Dao" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="780" y="560" width="560" height="165" as="geometry"/>
+        </mxCell>
+        <mxCell id="dao_body" value="+ selectListView(page : Pagination, params : Map&lt;String,Object&gt;) : List&lt;求职View&gt;&lt;br&gt;+ selectInfo(id : Long) : 求职Entity&lt;br&gt;+ countByJobAndUser(jobPostId : Long, jobseekerUserId : Long) : int&lt;br&gt;+ insert(application : 求职Entity) : int&lt;br&gt;+ updateStatus(id : Long, status : String, note : String) : int&lt;br&gt;+ deleteBatchIds(ids : Long[]) : int" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="dao">
+          <mxGeometry x="0" y="34" width="560" height="131" as="geometry"/>
+        </mxCell>
+
+        <!-- 岗位Entity -->
+        <mxCell id="jobEntity" value="岗位Entity" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="710" width="300" height="185" as="geometry"/>
+        </mxCell>
+        <mxCell id="jobEntity_body" value="- id : Long&lt;br&gt;- companyId : Long&lt;br&gt;- title : String&lt;br&gt;- category : String&lt;br&gt;- salaryAmount : BigDecimal&lt;br&gt;- salaryUnit : String&lt;br&gt;- settlementType : String&lt;br&gt;- workCity : String&lt;br&gt;- startTime : Date&lt;br&gt;- endTime : Date&lt;br&gt;- headcount : Integer&lt;br&gt;- appliedCount : Integer&lt;br&gt;- status : String" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="jobEntity">
+          <mxGeometry x="0" y="34" width="300" height="151" as="geometry"/>
+        </mxCell>
+
+        <!-- 用户Entity -->
+        <mxCell id="userEntity" value="用户Entity" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;shadow=0;" vertex="1" parent="1">
+          <mxGeometry x="380" y="730" width="300" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="userEntity_body" value="- id : Long&lt;br&gt;- username : String&lt;br&gt;- phone : String&lt;br&gt;- email : String&lt;br&gt;- role : String&lt;br&gt;- status : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;overflow=hidden;" vertex="1" parent="userEntity">
+          <mxGeometry x="0" y="34" width="300" height="126" as="geometry"/>
+        </mxCell>
+
+        <!-- 连线 -->
+        <mxCell id="edge1" value="求职Service" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;strokeWidth=2;endArrow=classic;endFill=1;fontFamily=Microsoft YaHei;fontSize=13;" edge="1" parent="1" source="controller" target="service">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=block;endFill=0;" edge="1" parent="1" source="serviceImpl" target="service">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="service" target="dao">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="controller" target="entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="service" target="entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;endFill=1;" edge="1" parent="1" source="dao" target="entity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge7" value="job_post_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;strokeWidth=2;endArrow=classic;endFill=1;fontFamily=Microsoft YaHei;fontSize=13;" edge="1" parent="1" source="entity" target="jobEntity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edge8" value="jobseeker_user_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;strokeWidth=2;endArrow=classic;endFill=1;fontFamily=Microsoft YaHei;fontSize=13;" edge="1" parent="1" source="entity" target="userEntity">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

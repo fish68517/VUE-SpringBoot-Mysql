@@ -1,0 +1,52 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="RcJwxGkCaEfl6nqmyjkr">
+    <mxGraphModel dx="1901" dy="1121" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="pc_controller" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="个人中心Controller" vertex="1">
+          <mxGeometry height="220" width="580" x="30" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_controller_body" parent="pc_controller" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ profile(userId : Long) : R&lt;br&gt;+ updateProfile(profile : 求职者资料Entity) : R&lt;br&gt;+ changePassword(userId : Long, oldPwd : String, newPwd : String) : R&lt;br&gt;+ myApplications(userId : Long) : R&lt;br&gt;+ myMessages(userId : Long) : R&lt;br&gt;+ myReviews(userId : Long) : R&lt;br&gt;+ markMessageRead(id : Long) : R" vertex="1">
+          <mxGeometry height="186" width="580" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_serviceImpl" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="个人中心ServiceImpl" vertex="1">
+          <mxGeometry height="210" width="460" x="930" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_serviceImpl_body" parent="pc_serviceImpl" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ getUserCenterInfo(userId : Long) : Map&lt;String,Object&gt;&lt;br&gt;+ updateProfile(profile : 求职者资料Entity) : void&lt;br&gt;+ changePassword(userId : Long, oldPwd : String, newPwd : String) : void&lt;br&gt;+ listApplications(userId : Long) : List&lt;求职Entity&gt;&lt;br&gt;+ listMessages(userId : Long) : List&lt;消息Entity&gt;&lt;br&gt;+ listReviews(userId : Long) : List&lt;评价Entity&gt;" vertex="1">
+          <mxGeometry height="176" width="460" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_service" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="个人中心Service" vertex="1">
+          <mxGeometry height="210" width="520" x="510" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_service_body" parent="pc_service" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ getUserCenterInfo(userId : Long) : Map&lt;String,Object&gt;&lt;br&gt;+ updateProfile(profile : 求职者资料Entity) : void&lt;br&gt;+ changePassword(userId : Long, oldPwd : String, newPwd : String) : void&lt;br&gt;+ listApplications(userId : Long) : List&lt;求职Entity&gt;&lt;br&gt;+ listMessages(userId : Long) : List&lt;消息Entity&gt;&lt;br&gt;+ listReviews(userId : Long) : List&lt;评价Entity&gt;&lt;br&gt;+ markMessageRead(id : Long) : void" vertex="1">
+          <mxGeometry height="176" width="520" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_user" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="用户Entity" vertex="1">
+          <mxGeometry height="240" width="280" x="120" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_user_body" parent="pc_user" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="- id : Long&lt;br&gt;- username : String&lt;br&gt;- passwordHash : String&lt;br&gt;- phone : String&lt;br&gt;- email : String&lt;br&gt;- role : String&lt;br&gt;- status : String&lt;br&gt;- createTime : Date&lt;br&gt;- updateTime : Date" vertex="1">
+          <mxGeometry height="206" width="280" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_userDao" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=34;rounded=0;fillColor=#F4E6B0;swimlaneFillColor=#FFF2CC;strokeColor=#666666;fontColor=#333333;fontFamily=Microsoft YaHei;html=1;" value="用户Dao" vertex="1">
+          <mxGeometry height="130" width="360" x="1150" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_userDao_body" parent="pc_userDao" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=8;spacingTop=8;fontSize=14;fontFamily=Microsoft YaHei;whiteSpace=wrap;" value="+ selectById(id : Long) : 用户Entity&lt;br&gt;+ updateById(user : 用户Entity) : int&lt;br&gt;+ updatePassword(userId : Long, passwordHash : String) : int" vertex="1">
+          <mxGeometry height="96" width="360" y="34" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_e1" edge="1" parent="1" source="pc_controller" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" target="pc_service" value="个人中心Service">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_e2" edge="1" parent="1" source="pc_serviceImpl" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=block;endFill=0;html=1;" target="pc_service" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_e3" edge="1" parent="1" source="pc_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;endArrow=classic;html=1;" target="pc_userDao" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pc_e8" edge="1" parent="1" source="pc_service" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#666666;strokeWidth=2;dashed=1;endArrow=classic;html=1;" target="pc_user" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
