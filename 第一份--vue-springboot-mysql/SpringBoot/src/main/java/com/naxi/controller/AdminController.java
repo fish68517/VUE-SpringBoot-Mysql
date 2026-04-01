@@ -1,0 +1,395 @@
+package com.naxi.controller;
+
+import com.naxi.common.ApiResponse;
+import com.naxi.entity.AdminAuditLog;
+import com.naxi.entity.CreativeWork;
+import com.naxi.entity.Permission;
+import com.naxi.entity.Pattern;
+import com.naxi.entity.Role;
+import com.naxi.entity.SystemLog;
+import com.naxi.entity.SystemSetting;
+import com.naxi.entity.User;
+import com.naxi.repository.CreativeWorkRepository;
+import com.naxi.repository.PatternRepository;
+import com.naxi.repository.UserRepository;
+import com.naxi.service.SystemService;
+import com.naxi.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/admin")
+public class AdminController {
+    @Autowired
+    private SystemService systemService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PatternRepository patternRepository;
+
+    @Autowired
+    private CreativeWorkRepository creativeWorkRepository;
+
+    /**
+     * 获取当前管理员ID（从请求头或session中获取）
+     * 实际应用中应该从认证信息中获取
+     */
+    private Long getCurrentAdminId() {
+        // 这里简化处理，实际应该从认证信息中获取
+        // 可以从请求头、JWT token或session中获取
+        return 1L; // 默认返回1，实际应该从认证系统获取
+    }
+
+    /**
+     * 获取仪表板统计数据
+     * 需求: 36.1
+     */
+    @GetMapping("/dashboard/statistics")
+    public ApiResponse<?> getDashboardStatistics() {
+        try {
+            Map<String, Object> statistics = new HashMap<>();
+            
+            // 获取用户总数
+            long totalUsers = userRepository.count();
+            statistics.put("totalUsers", totalUsers);
+            
+            // 获取纹样总数
+            long totalPatterns = patternRepository.count();
+            statistics.put("totalPatterns", totalPatterns);
+            
+            // 获取原创作品总数
+            long totalWorks = creativeWorkRepository.count();
+            statistics.put("totalWorks", totalWorks);
+            
+            // 获取待审核作品数
+            long pendingWorks = creativeWorkRepository.countByStatus(CreativeWork.WorkStatus.PENDING);
+            statistics.put("pendingWorks", pendingWorks);
+            
+            // 获取已审核通过的作品数
+            long approvedWorks = creativeWorkRepository.countByStatus(CreativeWork.WorkStatus.APPROVED);
+            statistics.put("approvedWorks", approvedWorks);
+            
+            return ApiResponse.success("获取仪表板统计数据成功", statistics);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "获取仪表板统计数据失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取系统日志
+     * 需求: 24.1
+     */
+    @GetMapping("/logs")
+    public ApiResponse<?> getSystemLogs(
+            @RequestParam(required = false) String logLevel,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<SystemLog> logsPage;
+
+            if (logLevel != null && !logLevel.isEmpty()) {
+                try {
+                    SystemLog.LogLevel level = SystemLog.LogLevel.valueOf(logLevel);
+                    logsPage = systemService.getSystemLogs(level, pageable);
+                } catch (IllegalArgumentException e) {
+                    return ApiResponse.error(400, "无效的日志级别");
+                }
+            } else {
+                logsPage = systemService.getSystemLogs(null, pageable);
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("content", logsPage.getContent());
+            response.put("totalElements", logsPage.getTotalElements());
+            response.put("totalPages", logsPage.getTotalPages());
+            response.put("currentPage", page);
+            response.put("pageSize", size);
+
+            return ApiResponse.success("获取系统日志成功", response);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "获取系统日志失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取系统参数
+     * 需求: 24.1
+     */
+    @GetMapping("/settings")
+    public ApiResponse<?> getSystemSettings() {
+        try {
+            List<SystemSetting> settings = systemService.getAllSystemSettings();
+            return ApiResponse.success("获取系统参数成功", settings);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "获取系统参数失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 更新系统参数
+     * 需求: 24.1
+     * 支持单个参数更新或批量参数更新
+     */
+    @PutMapping("/settings")
+    public ApiResponse<?> updateSystemSettings(@RequestBody Object requestBody) {
+        try {
+            List<SystemSetting> updatedSettings = new java.util.ArrayList<>();
+
+            // 处理数组形式的批量更新
+            if (requestBody instanceof java.util.List) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, String>> settingsList = (List<Map<String, String>>) requestBody;
+                
+                for (Map<String, String> setting : settingsList) {
+                    String settingKey = setting.get("settingKey");
+                    String settingValue = setting.get("settingValue");
+                    String description = setting.get("description");
+
+                    if (settingKey == null || settingKey.trim().isEmpty()) {
+                        return ApiResponse.error(400, "参数key不能为空");
+                    }
+                    if (settingValue == null || settingValue.trim().isEmpty()) {
+                        return ApiResponse.error(400, "参数值不能为空");
+                    }
+
+                    SystemSetting updatedSetting = systemService.updateSystemSetting(settingKey, settingValue, description);
+                    updatedSettings.add(updatedSetting);
+                }
+            } 
+            // 处理单个参数更新
+            else if (requestBody instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, String> request = (Map<String, String>) requestBody;
+                String settingKey = request.get("settingKey");
+                String settingValue = request.get("settingValue");
+                String description = request.get("description");
+
+                if (settingKey == null || settingKey.trim().isEmpty()) {
+                    return ApiResponse.error(400, "参数key不能为空");
+                }
+                if (settingValue == null || settingValue.trim().isEmpty()) {
+                    return ApiResponse.error(400, "参数值不能为空");
+                }
+
+                SystemSetting updatedSetting = systemService.updateSystemSetting(settingKey, settingValue, description);
+                updatedSettings.add(updatedSetting);
+            } else {
+                return ApiResponse.error(400, "请求体格式不正确");
+            }
+
+            // 记录管理员操作日志
+            Long adminId = getCurrentAdminId();
+            systemService.recordAdminAuditLog(
+                adminId,
+                "UPDATE",
+                "SystemSetting",
+                null,
+                "更新系统参数，共更新 " + updatedSettings.size() + " 个参数"
+            );
+
+            return ApiResponse.success("更新系统参数成功", updatedSettings);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "更新系统参数失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取用户列表
+     * 需求: 24.1
+     */
+    @GetMapping("/users")
+    public ApiResponse<?> getUserList(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            // 获取所有用户（实际应该使用分页查询，这里简化处理）
+            List<User> users = userService.getAllUsers();
+            
+            // 手动分页处理
+            int start = page * size;
+            int end = Math.min(start + size, users.size());
+            List<User> pageContent = users.subList(start, end);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("content", pageContent);
+            response.put("totalElements", users.size());
+            response.put("totalPages", (users.size() + size - 1) / size);
+            response.put("currentPage", page);
+            response.put("pageSize", size);
+
+            return ApiResponse.success("获取用户列表成功", response);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "获取用户列表失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 禁用/启用用户
+     * 需求: 24.1
+     */
+    @PutMapping("/users/{id}/status")
+    public ApiResponse<?> updateUserStatus(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            String status = request.get("status");
+
+            if (status == null || status.trim().isEmpty()) {
+                return ApiResponse.error(400, "状态不能为空");
+            }
+
+            User user;
+            if ("disabled".equalsIgnoreCase(status)) {
+                user = userService.disableUser(id);
+            } else if ("active".equalsIgnoreCase(status)) {
+                user = userService.enableUser(id);
+            } else {
+                return ApiResponse.error(400, "无效的状态值");
+            }
+
+            // 记录管理员操作日志
+            Long adminId = getCurrentAdminId();
+            systemService.recordAdminAuditLog(
+                adminId,
+                "UPDATE",
+                "User",
+                id,
+                "更新用户状态为: " + status
+            );
+
+            return ApiResponse.success("更新用户状态成功", user);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.error(400, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.error(500, "更新用户状态失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取管理员操作日志
+     * 需求: 24.2
+     */
+    @GetMapping("/audit-logs")
+    public ApiResponse<?> getAdminAuditLogs(
+            @RequestParam(required = false) Long adminId,
+            @RequestParam(required = false) String operationType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<AdminAuditLog> auditLogsPage = systemService.getAdminAuditLogs(adminId, operationType, pageable);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("content", auditLogsPage.getContent());
+            response.put("totalElements", auditLogsPage.getTotalElements());
+            response.put("totalPages", auditLogsPage.getTotalPages());
+            response.put("currentPage", page);
+            response.put("pageSize", size);
+
+            return ApiResponse.success("获取管理员操作日志成功", response);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "获取管理员操作日志失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取角色列表
+     * 需求: 24.2
+     */
+    @GetMapping("/roles")
+    public ApiResponse<?> getRoleList() {
+        try {
+            List<Role> roles = systemService.getAllRoles();
+            return ApiResponse.success("获取角色列表成功", roles);
+        } catch (Exception e) {
+            return ApiResponse.error(500, "获取角色列表失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 创建角色
+     * 需求: 24.2
+     */
+    @PostMapping("/roles")
+    public ApiResponse<?> createRole(@RequestBody Map<String, String> request) {
+        try {
+            String roleName = request.get("roleName");
+            String description = request.get("description");
+
+            if (roleName == null || roleName.trim().isEmpty()) {
+                return ApiResponse.error(400, "角色名称不能为空");
+            }
+
+            Role createdRole = systemService.createRole(roleName, description);
+
+            // 记录管理员操作日志
+            Long adminId = getCurrentAdminId();
+            systemService.recordAdminAuditLog(
+                adminId,
+                "CREATE",
+                "Role",
+                createdRole.getId(),
+                "创建角色: " + roleName
+            );
+
+            return ApiResponse.success("创建角色成功", createdRole);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.error(400, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.error(500, "创建角色失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 更新角色权限
+     * 需求: 24.2
+     */
+    @PutMapping("/roles/{id}")
+    public ApiResponse<?> updateRolePermissions(@PathVariable Long id, @RequestBody Map<String, Object> request) {
+        try {
+            @SuppressWarnings("unchecked")
+            List<String> permissionNames = (List<String>) request.get("permissionNames");
+
+            if (permissionNames == null) {
+                return ApiResponse.error(400, "权限列表不能为空");
+            }
+
+            systemService.updateRolePermissions(id, permissionNames);
+            
+            // 返回更新后的角色和权限信息
+            Role role = systemService.getRoleById(id);
+            List<Permission> permissions = systemService.getRolePermissions(id);
+
+            // 记录管理员操作日志
+            Long adminId = getCurrentAdminId();
+            systemService.recordAdminAuditLog(
+                adminId,
+                "UPDATE",
+                "Role",
+                id,
+                "更新角色权限，共分配 " + permissionNames.size() + " 个权限"
+            );
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("role", role);
+            response.put("permissions", permissions);
+
+            return ApiResponse.success("更新角色权限成功", response);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.error(400, e.getMessage());
+        } catch (Exception e) {
+            return ApiResponse.error(500, "更新角色权限失败: " + e.getMessage());
+        }
+    }
+}
