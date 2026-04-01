@@ -843,8 +843,9 @@ onMounted(() => {
 coped>
 .admin-interactions-page {
   padding: var(--spacing-lg);
-  background-color: var(--bg-secondary);
+  background-color: #f4f7fb;
   min-height: 100vh;
+  color: #24425c;
 }
 
 .page-header {
@@ -852,9 +853,10 @@ coped>
 }
 
 .page-header h1 {
-  color: var(--primary-color);
+  color: #1d527c;
   margin: 0;
-  font-size: var(--font-size-2xl);
+  font-size: 32px;
+  letter-spacing: 0.02em;
 }
 
 /* 标签页 */
@@ -870,20 +872,20 @@ coped>
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 700;
+  color: #5a7087;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .tab-button:hover {
-  color: var(--primary-color);
+  color: #1d527c;
 }
 
 .tab-button.active {
-  color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
+  color: #1d527c;
+  border-bottom-color: #1d527c;
 }
 
 .tab-content {
@@ -907,14 +909,14 @@ coped>
 }
 
 .section-header h2 {
-  color: var(--primary-color);
+  color: #1d527c;
   margin: 0;
-  font-size: var(--font-size-xl);
+  font-size: 24px;
 }
 
 /* 表格 */
 .table-container {
-  background-color: var(--bg-primary);
+  background-color: #ffffff;
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -927,20 +929,22 @@ coped>
 }
 
 .interactions-table thead {
-  background-color: var(--primary-color);
+  background-color: #1d527c;
   color: white;
 }
 
 .interactions-table th {
   padding: var(--spacing-md);
   text-align: left;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 15px;
   border-bottom: 2px solid var(--border-color);
 }
 
 .interactions-table td {
   padding: var(--spacing-md);
   border-bottom: 1px solid var(--border-color);
+  font-size: 15px;
 }
 
 .interaction-row:hover {
@@ -1037,8 +1041,8 @@ coped>
   padding: var(--spacing-md) var(--spacing-lg);
   border: none;
   border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
@@ -1047,12 +1051,12 @@ coped>
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
+  background-color: #1d527c;
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--primary-dark);
+  background-color: #153f63;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -1141,7 +1145,8 @@ coped>
 
 .modal-header h2 {
   margin: 0;
-  color: var(--primary-color);
+  color: #1d527c;
+  font-size: 24px;
 }
 
 .modal-close {
@@ -1177,8 +1182,9 @@ coped>
 }
 
 .detail-item label {
-  font-weight: 600;
-  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 15px;
+  color: #24425c;
 }
 
 .detail-item span {
@@ -1211,26 +1217,27 @@ coped>
 .form-group label {
   display: block;
   margin-bottom: var(--spacing-sm);
-  font-weight: 600;
-  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 15px;
+  color: #24425c;
 }
 
 .form-textarea {
   width: 100%;
   padding: var(--spacing-md);
-  border: 1px solid var(--border-color);
+  border: 1px solid #c9d8e6;
   border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
+  font-size: 15px;
+  background-color: #f9fbfd;
+  color: #24425c;
   font-family: inherit;
   resize: vertical;
 }
 
 .form-textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  border-color: #1d527c;
+  box-shadow: 0 0 0 3px rgba(29, 82, 124, 0.12);
 }
 
 /* 投票统计 */

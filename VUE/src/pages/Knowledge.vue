@@ -1,15 +1,45 @@
 <template>
   <div class="knowledge-page">
-    <!-- 页面标题 -->
-    <div class="page-header">
-      <h1>知识科普</h1>
-      <p>学习文山壮族刺绣的非遗知识</p>
-    </div>
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="hero-kicker">{{ copy.heroKicker }}</span>
+        <h1>{{ copy.title }}</h1>
+        <p>{{ copy.subtitle }}</p>
+      </div>
 
-    <!-- 分类筛选 -->
-    <div class="filter-section">
-      <div class="filter-group">
-        <label>分类筛选：</label>
+      <div class="hero-stats">
+        <div class="hero-stat-card">
+          <span class="hero-stat-label">{{ copy.totalArticles }}</span>
+          <strong>{{ totalItems || knowledge.length }}</strong>
+        </div>
+        <div class="hero-stat-card">
+          <span class="hero-stat-label">{{ copy.totalCategories }}</span>
+          <strong>{{ categories.length }}</strong>
+        </div>
+        <div class="hero-stat-card">
+          <span class="hero-stat-label">{{ copy.currentFilter }}</span>
+          <strong>{{ currentCategoryName }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="filter-panel">
+      <div class="filter-header">
+        <div>
+          <h2>{{ copy.filterTitle }}</h2>
+          <p>{{ copy.filterSubtitle }}</p>
+        </div>
+      </div>
+
+      <div class="filter-chips">
+        <button
+          class="filter-btn"
+          :class="{ active: selectedCategory === '' }"
+          @click="selectCategory('')"
+        >
+          {{ copy.allCategories }}
+        </button>
+
         <button
           v-for="cat in categories"
           :key="cat"
@@ -19,23 +49,14 @@
         >
           {{ cat }}
         </button>
-        <button
-          class="filter-btn"
-          :class="{ active: selectedCategory === '' }"
-          @click="selectCategory('')"
-        >
-          全部
-        </button>
       </div>
-    </div>
+    </section>
 
-    <!-- 加载状态 -->
     <div v-if="isLoading" class="loading-container">
       <div class="spinner"></div>
-      <p>加载知识中...</p>
+      <p>{{ copy.loading }}</p>
     </div>
 
-    <!-- 知识列表 -->
     <div v-else-if="knowledge.length > 0" class="knowledge-container">
       <div class="knowledge-list">
         <router-link
@@ -44,19 +65,27 @@
           :to="`/knowledge/${article.id}`"
           class="knowledge-card"
         >
-          <div class="knowledge-header">
-            <h3 class="knowledge-title">{{ article.title }}</h3>
-            <span class="knowledge-category">{{ article.category }}</span>
+          <div class="knowledge-card-top">
+            <span class="knowledge-category">{{ article.category || copy.defaultCategory }}</span>
+            <span class="knowledge-views">{{ copy.viewsPrefix }} {{ article.viewCount || 0 }}</span>
           </div>
-          <p class="knowledge-excerpt">{{ article.content.substring(0, 150) }}...</p>
+
+          <div class="knowledge-main">
+            <h3 class="knowledge-title">{{ article.title }}</h3>
+            <p class="knowledge-excerpt">{{ getExcerpt(article.content) }}</p>
+          </div>
+
           <div class="knowledge-footer">
-            <span class="knowledge-author">作者：{{ article.author }}</span>
-            <span class="knowledge-views">👁️ {{ article.viewCount }}</span>
+            <div class="knowledge-meta">
+              <span>{{ copy.authorPrefix }} {{ article.author || copy.defaultAuthor }}</span>
+              <span class="meta-divider"></span>
+              <span>{{ getReadingTime(article.content) }}</span>
+            </div>
+            <span class="knowledge-link">{{ copy.readMore }}</span>
           </div>
         </router-link>
       </div>
 
-      <!-- 分页 -->
       <Pagination
         :current-page="currentPage"
         :total-pages="totalPages"
@@ -65,19 +94,45 @@
       />
     </div>
 
-    <!-- 空状态 -->
     <div v-else class="empty-state">
-      <div class="empty-icon">📚</div>
-      <p>暂无知识内容</p>
+      <div class="empty-icon">{{ copy.emptyIcon }}</div>
+      <h3>{{ copy.emptyTitle }}</h3>
+      <p>{{ copy.emptyText }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Pagination } from '../components'
 import { KnowledgeService } from '../services'
 import { useToast } from '../utils/useToast'
+
+const copy = {
+  title: '\u77e5\u8bc6\u79d1\u666e',
+  subtitle:
+    '\u4ece\u5206\u7c7b\u77e5\u8bc6\u3001\u523a\u7ee3\u6280\u6cd5\u5230\u6587\u5316\u80cc\u666f\uff0c\u96c6\u4e2d\u4e86\u89e3\u6587\u5c71\u523a\u7ee3\u7684\u5173\u952e\u5185\u5bb9\u3002',
+  heroKicker: '\u975e\u9057\u77e5\u8bc6\u9605\u8bfb',
+  totalArticles: '\u6587\u7ae0\u603b\u6570',
+  totalCategories: '\u5206\u7c7b\u6570\u91cf',
+  currentFilter: '\u5f53\u524d\u7b5b\u9009',
+  filterTitle: '\u5206\u7c7b\u7b5b\u9009',
+  filterSubtitle:
+    '\u6309\u4e3b\u9898\u5feb\u901f\u6d4f\u89c8\uff0c\u627e\u5230\u4f60\u60f3\u4e86\u89e3\u7684\u523a\u7ee3\u77e5\u8bc6\u3002',
+  allCategories: '\u5168\u90e8',
+  loading: '\u6b63\u5728\u52a0\u8f7d\u77e5\u8bc6\u5185\u5bb9...',
+  defaultCategory: '\u672a\u5206\u7c7b',
+  defaultAuthor: '\u672a\u77e5',
+  authorPrefix: '\u4f5c\u8005',
+  viewsPrefix: '\u6d4f\u89c8',
+  readMore: '\u67e5\u770b\u8be6\u60c5',
+  emptyIcon: '\u77e5',
+  emptyTitle: '\u6682\u65e0\u77e5\u8bc6\u5185\u5bb9',
+  emptyText: '\u53ef\u4ee5\u5207\u6362\u5206\u7c7b\u518d\u8bd5\u4e00\u4e0b\uff0c\u6216\u7a0d\u540e\u518d\u6765\u67e5\u770b\u3002',
+  loadError: '\u52a0\u8f7d\u77e5\u8bc6\u5185\u5bb9\u5931\u8d25\uff0c\u8bf7\u91cd\u8bd5',
+  allFilterName: '\u5168\u90e8',
+  minutesReadSuffix: '\u5206\u949f\u9605\u8bfb',
+}
 
 const knowledge = ref([])
 const categories = ref([])
@@ -89,7 +144,10 @@ const isLoading = ref(false)
 
 const { error } = useToast()
 
-// 加载分类列表
+const currentCategoryName = computed(() => {
+  return selectedCategory.value || copy.allFilterName
+})
+
 const loadCategories = async () => {
   try {
     const response = await KnowledgeService.getCategories()
@@ -99,47 +157,56 @@ const loadCategories = async () => {
   }
 }
 
-// 加载知识列表
 const loadKnowledge = async () => {
   isLoading.value = true
+
   try {
     const params = {
       pageNum: currentPage.value,
       pageSize: 10,
     }
 
-    // 如果选择了分类，添加到参数中
     if (selectedCategory.value) {
       params.category = selectedCategory.value
     }
 
-    const response = await KnowledgeService.getKnowledge(params)
-    const data = response
-
+    const data = await KnowledgeService.getKnowledge(params)
     knowledge.value = data.items || []
     totalPages.value = data.totalPages || 1
     totalItems.value = data.total || 0
   } catch (err) {
     console.error('Failed to load knowledge:', err)
-    error('加载知识内容失败，请重试')
+    error(copy.loadError)
   } finally {
     isLoading.value = false
   }
 }
 
-// 选择分类
 const selectCategory = (category) => {
   selectedCategory.value = category
-  currentPage.value = 1 // 重置到第一页
+  currentPage.value = 1
   loadKnowledge()
 }
 
-// 处理分页变化
 const handlePageChange = (newPage) => {
   currentPage.value = newPage
   loadKnowledge()
-  // 滚动到顶部
   window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const getExcerpt = (content) => {
+  if (!content) {
+    return ''
+  }
+
+  const cleanContent = String(content).replace(/\s+/g, ' ').trim()
+  return cleanContent.length > 150 ? `${cleanContent.slice(0, 150)}...` : cleanContent
+}
+
+const getReadingTime = (content) => {
+  const textLength = String(content || '').replace(/\s+/g, '').length
+  const minutes = Math.max(1, Math.ceil(textLength / 220))
+  return `${minutes} ${copy.minutesReadSuffix}`
 }
 
 onMounted(() => {
@@ -153,87 +220,147 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
-  padding: var(--spacing-lg);
-  max-width: 1000px;
+  max-width: 1120px;
   margin: 0 auto;
+  padding: var(--spacing-lg);
 }
 
-/* 页面标题 */
-.page-header {
-  text-align: center;
-  margin-bottom: var(--spacing-lg);
+.hero-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  gap: var(--spacing-lg);
+  padding: 32px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.2), transparent 30%),
+    linear-gradient(135deg, #005db9 0%, #0f4d90 55%, #16365f 100%);
+  box-shadow: 0 22px 48px rgba(0, 71, 141, 0.22);
 }
 
-.page-header h1 {
-  font-size: var(--font-size-2xl);
-  color: var(--primary-color);
-  margin-bottom: var(--spacing-sm);
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #ffffff;
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: var(--font-size-sm);
   font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
-.page-header p {
-  font-size: var(--font-size-lg);
+.hero-content h1 {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.hero-content p {
+  max-width: 620px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 16px;
+  line-height: 1.85;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.hero-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+}
+
+.hero-stat-card strong {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.hero-stat-label {
+  color: rgba(255, 255, 255, 0.74);
+  font-size: var(--font-size-sm);
+}
+
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.filter-header h2 {
+  margin: 0 0 8px;
+  color: var(--text-primary);
+  font-size: 22px;
+}
+
+.filter-header p {
+  margin: 0;
   color: var(--text-secondary);
 }
 
-/* 分类筛选 */
-.filter-section {
-  background-color: var(--bg-primary);
-  padding: var(--spacing-lg);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.filter-group {
+.filter-chips {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
   flex-wrap: wrap;
-}
-
-.filter-group label {
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
+  gap: 12px;
 }
 
 .filter-btn {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  transition: all 0.3s ease;
-  white-space: nowrap;
+  padding: 10px 16px;
+  border: 1px solid #d7e2ef;
+  border-radius: 999px;
+  background: #f8fbff;
+  color: #34506d;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .filter-btn:hover {
   border-color: var(--primary-color);
   color: var(--primary-color);
+  background: rgba(0, 102, 204, 0.06);
 }
 
 .filter-btn.active {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(0, 102, 204, 0.18);
 }
 
-/* 加载状态 */
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-2xl);
   gap: var(--spacing-lg);
+  padding: calc(var(--spacing-xl) * 2);
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border: 4px solid var(--border-color);
   border-top-color: var(--primary-color);
   border-radius: 50%;
@@ -246,12 +373,6 @@ onMounted(() => {
   }
 }
 
-.loading-container p {
-  color: var(--text-secondary);
-  font-size: var(--font-size-lg);
-}
-
-/* 知识列表 */
 .knowledge-container {
   display: flex;
   flex-direction: column;
@@ -261,145 +382,170 @@ onMounted(() => {
 .knowledge-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: 18px;
 }
 
 .knowledge-card {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  background-color: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
-  text-decoration: none;
+  gap: 18px;
+  padding: 24px 26px;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(249, 251, 255, 0.98));
+  border: 1px solid #e6edf5;
   color: var(--text-primary);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border-left: 4px solid var(--primary-color);
+  text-decoration: none;
+  box-shadow: 0 14px 32px rgba(15, 59, 105, 0.07);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .knowledge-card:hover {
-  transform: translateX(8px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: rgba(0, 102, 204, 0.26);
+  box-shadow: 0 20px 38px rgba(15, 59, 105, 0.12);
 }
 
-.knowledge-header {
+.knowledge-card-top {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
   gap: var(--spacing-md);
-}
-
-.knowledge-title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-  flex: 1;
-  line-height: 1.4;
+  flex-wrap: wrap;
 }
 
 .knowledge-category {
-  display: inline-block;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  background-color: var(--primary-light);
-  color: white;
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-sm);
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(0, 102, 204, 0.08);
+  color: var(--primary-color);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.knowledge-views {
+  color: var(--text-light);
+  font-size: 13px;
   font-weight: 600;
-  white-space: nowrap;
+}
+
+.knowledge-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.knowledge-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 26px;
+  line-height: 1.35;
+  font-weight: 800;
 }
 
 .knowledge-excerpt {
   margin: 0;
   color: var(--text-secondary);
-  line-height: 1.6;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  line-height: 1.9;
+  font-size: 15px;
 }
 
 .knowledge-footer {
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.knowledge-meta {
+  display: flex;
   align-items: center;
-  font-size: var(--font-size-sm);
+  gap: 12px;
+  flex-wrap: wrap;
   color: var(--text-light);
+  font-size: 14px;
 }
 
-.knowledge-author {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+.meta-divider {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #c3cada;
 }
 
-.knowledge-views {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+.knowledge-link {
+  color: var(--primary-color);
+  font-weight: 700;
 }
 
-/* 空状态 */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: var(--spacing-2xl);
-  gap: var(--spacing-lg);
-  background-color: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
+  gap: 12px;
+  padding: 52px 24px;
+  border-radius: 22px;
+  background: var(--bg-primary);
   box-shadow: var(--shadow-sm);
+  text-align: center;
 }
 
 .empty-icon {
-  font-size: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(0, 102, 204, 0.08);
+  color: var(--primary-color);
+  font-size: 24px;
+  font-weight: 800;
 }
 
+.empty-state h3,
 .empty-state p {
-  font-size: var(--font-size-lg);
-  color: var(--text-secondary);
   margin: 0;
 }
 
-/* 响应式设计 */
+.empty-state p {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 900px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .knowledge-page {
     gap: var(--spacing-lg);
     padding: var(--spacing-md);
   }
 
-  .page-header h1 {
-    font-size: var(--font-size-xl);
-  }
-
-  .filter-group {
-    gap: var(--spacing-sm);
-  }
-
-  .filter-btn {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: var(--font-size-sm);
-  }
-
+  .hero-section,
+  .filter-panel,
   .knowledge-card {
-    padding: var(--spacing-md);
+    padding: 20px;
+    border-radius: 18px;
   }
 
-  .knowledge-header {
-    flex-direction: column;
-    gap: var(--spacing-sm);
+  .hero-content h1 {
+    font-size: 32px;
   }
 
   .knowledge-title {
-    font-size: var(--font-size-base);
+    font-size: 22px;
   }
 
   .knowledge-footer {
     flex-direction: column;
-    gap: var(--spacing-sm);
+    align-items: flex-start;
   }
 }
 </style>

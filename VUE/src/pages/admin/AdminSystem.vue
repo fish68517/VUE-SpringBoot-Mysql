@@ -491,8 +491,9 @@ onMounted(() => {
 <style scoped>
 .admin-system-page {
   padding: var(--spacing-lg);
-  background-color: var(--bg-secondary);
+  background-color: #f4f7fb;
   min-height: 100vh;
+  color: #24425c;
 }
 
 .page-header {
@@ -500,9 +501,10 @@ onMounted(() => {
 }
 
 .page-header h1 {
-  color: var(--primary-color);
+  color: #1d527c;
   margin: 0;
-  font-size: var(--font-size-2xl);
+  font-size: 32px;
+  letter-spacing: 0.02em;
 }
 
 /* 标签页 */
@@ -518,20 +520,20 @@ onMounted(() => {
   background: none;
   border: none;
   border-bottom: 3px solid transparent;
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 700;
+  color: #5a7087;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .tab-button:hover {
-  color: var(--primary-color);
+  color: #1d527c;
 }
 
 .tab-button.active {
-  color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
+  color: #1d527c;
+  border-bottom-color: #1d527c;
 }
 
 .tab-content {
@@ -552,14 +554,14 @@ onMounted(() => {
 }
 
 .section-header h2 {
-  color: var(--primary-color);
+  color: #1d527c;
   margin: 0;
-  font-size: var(--font-size-xl);
+  font-size: 24px;
 }
 
 /* 网站设置 */
 .settings-card {
-  background-color: var(--bg-primary);
+  background-color: #ffffff;
   border-radius: var(--border-radius-md);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
@@ -573,27 +575,28 @@ onMounted(() => {
 .form-group label {
   display: block;
   margin-bottom: var(--spacing-sm);
-  font-weight: 600;
-  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 15px;
+  color: #24425c;
 }
 
 .form-input,
 .form-textarea {
   width: 100%;
   padding: var(--spacing-md);
-  border: 1px solid var(--border-color);
+  border: 1px solid #c9d8e6;
   border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
+  font-size: 15px;
+  background-color: #f9fbfd;
+  color: #24425c;
   font-family: inherit;
 }
 
 .form-input:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  border-color: #1d527c;
+  box-shadow: 0 0 0 3px rgba(29, 82, 124, 0.12);
 }
 
 .form-actions {
@@ -624,8 +627,8 @@ onMounted(() => {
 
 .card-header h3 {
   margin: 0 0 var(--spacing-sm) 0;
-  color: var(--primary-color);
-  font-size: var(--font-size-lg);
+  color: #1d527c;
+  font-size: 20px;
 }
 
 .card-description {
@@ -666,7 +669,7 @@ onMounted(() => {
 
 /* 统计分析 */
 .statistics-container {
-  background-color: var(--bg-primary);
+  background-color: #ffffff;
   border-radius: var(--border-radius-md);
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
@@ -698,14 +701,14 @@ onMounted(() => {
 }
 
 .stat-label {
-  color: var(--text-secondary);
-  font-size: var(--font-size-sm);
+  color: #60778e;
+  font-size: 14px;
   margin-bottom: var(--spacing-xs);
 }
 
 .stat-value {
-  color: var(--primary-color);
-  font-size: var(--font-size-2xl);
+  color: #1d527c;
+  font-size: 32px;
   font-weight: 700;
 }
 
@@ -767,8 +770,8 @@ onMounted(() => {
   padding: var(--spacing-md) var(--spacing-lg);
   border: none;
   border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
@@ -777,12 +780,12 @@ onMounted(() => {
 }
 
 .btn-primary {
-  background-color: var(--primary-color);
+  background-color: #1d527c;
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: var(--primary-dark);
+  background-color: #153f63;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -849,7 +852,8 @@ onMounted(() => {
 
 .modal-header h2 {
   margin: 0;
-  color: var(--primary-color);
+  color: #1d527c;
+  font-size: 24px;
 }
 
 .modal-close {

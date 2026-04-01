@@ -1,41 +1,87 @@
 <template>
   <div class="artworks-page">
-    <!-- 页面标题 -->
-    <div class="page-header">
-      <h1>刺绣展示</h1>
-      <p>欣赏文山壮族刺绣的精美作品</p>
-    </div>
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="hero-kicker">{{ copy.heroKicker }}</span>
+        <h1>{{ copy.title }}</h1>
+        <p>{{ copy.subtitle }}</p>
 
-    <!-- 分类筛选 -->
-    <div class="filter-section">
-      <div class="filter-group">
-        <label>分类筛选：</label>
-        <button
-          v-for="cat in categories"
-          :key="cat"
-          class="filter-btn"
-          :class="{ active: selectedCategory === cat }"
-          @click="selectCategory(cat)"
-        >
-          {{ cat }}
-        </button>
+        <div class="hero-stats">
+          <div class="hero-stat-card">
+            <span>{{ copy.totalArtworks }}</span>
+            <strong>{{ totalItems || artworks.length }}</strong>
+          </div>
+          <div class="hero-stat-card">
+            <span>{{ copy.totalCategories }}</span>
+            <strong>{{ categories.length }}</strong>
+          </div>
+          <div class="hero-stat-card">
+            <span>{{ copy.currentFilter }}</span>
+            <strong>{{ currentCategoryName }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="featuredArtwork" class="hero-feature-card">
+        <div class="hero-feature-media">
+          <img
+            :src="featuredArtwork.imageUrl"
+            :alt="featuredArtwork.title"
+            class="hero-feature-image"
+          />
+          <span class="hero-feature-badge">
+            {{ featuredArtwork.category || copy.defaultCategory }}
+          </span>
+        </div>
+
+        <div class="hero-feature-body">
+          <span class="hero-feature-label">{{ copy.featuredLabel }}</span>
+          <h2>{{ featuredArtwork.title }}</h2>
+          <p>{{ getExcerpt(featuredArtwork.description, 90) }}</p>
+
+          <div class="hero-feature-meta">
+            <span>{{ copy.creatorPrefix }} {{ getArtworkCreator(featuredArtwork) }}</span>
+            <span class="meta-divider"></span>
+            <span>{{ copy.viewsPrefix }} {{ featuredArtwork.viewCount || 0 }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="filter-panel">
+      <div class="filter-header">
+        <div>
+          <h2>{{ copy.filterTitle }}</h2>
+          <p>{{ copy.filterSubtitle }}</p>
+        </div>
+      </div>
+
+      <div class="filter-chips">
         <button
           class="filter-btn"
           :class="{ active: selectedCategory === '' }"
           @click="selectCategory('')"
         >
-          全部
+          {{ copy.allCategories }}
+        </button>
+
+        <button
+          v-for="category in categories"
+          :key="category"
+          class="filter-btn"
+          :class="{ active: selectedCategory === category }"
+          @click="selectCategory(category)"
+        >
+          {{ category }}
         </button>
       </div>
-    </div>
+    </section>
 
-    <!-- 加载状态 -->
     <div v-if="isLoading" class="loading-container">
       <div class="spinner"></div>
-      <p>加载作品中...</p>
+      <p>{{ copy.loading }}</p>
     </div>
 
-    <!-- 作品列表（网格布局） -->
     <div v-else-if="artworks.length > 0" class="artworks-container">
       <div class="artworks-grid">
         <router-link
@@ -44,24 +90,37 @@
           :to="`/artworks/${artwork.id}`"
           class="artwork-card"
         >
-          <div class="artwork-image-wrapper">
+          <div class="artwork-card-media">
             <img :src="artwork.imageUrl" :alt="artwork.title" class="artwork-image" />
-            <div class="artwork-overlay">
-              <span class="view-btn">查看详情</span>
+            <div class="artwork-card-overlay">
+              <span>{{ copy.viewDetail }}</span>
             </div>
           </div>
-          <div class="artwork-info">
+
+          <div class="artwork-card-body">
+            <div class="artwork-card-top">
+              <span class="artwork-category">{{ artwork.category || copy.defaultCategory }}</span>
+              <span class="artwork-technique">{{ getArtworkTechnique(artwork) }}</span>
+            </div>
+
             <h3 class="artwork-title">{{ artwork.title }}</h3>
-            <p class="artwork-category">{{ artwork.category }}</p>
-            <div class="artwork-stats">
-              <span class="stat">👁️ {{ artwork.viewCount }}</span>
-              <span class="stat">❤️ {{ artwork.collectCount }}</span>
+            <p class="artwork-description">{{ getExcerpt(artwork.description, 120) }}</p>
+
+            <div class="artwork-card-footer">
+              <div class="artwork-meta">
+                <span>{{ copy.creatorPrefix }} {{ getArtworkCreator(artwork) }}</span>
+                <span class="meta-divider"></span>
+                <span>{{ copy.viewsPrefix }} {{ artwork.viewCount || 0 }}</span>
+                <span class="meta-divider"></span>
+                <span>{{ copy.collectPrefix }} {{ artwork.collectCount || 0 }}</span>
+              </div>
+
+              <span class="artwork-link">{{ copy.viewDetail }}</span>
             </div>
           </div>
         </router-link>
       </div>
 
-      <!-- 分页 -->
       <Pagination
         :current-page="currentPage"
         :total-pages="totalPages"
@@ -70,19 +129,45 @@
       />
     </div>
 
-    <!-- 空状态 -->
     <div v-else class="empty-state">
-      <div class="empty-icon">🎨</div>
-      <p>暂无作品</p>
+      <div class="empty-icon">{{ copy.emptyIcon }}</div>
+      <h3>{{ copy.emptyTitle }}</h3>
+      <p>{{ copy.emptyText }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Pagination } from '../components'
 import { ArtworkService } from '../services'
 import { useToast } from '../utils/useToast'
+
+const copy = {
+  title: '刺绣作品',
+  subtitle: '集中浏览文山刺绣作品，按分类快速筛选，查看每件作品的创作者、技法与人气数据。',
+  heroKicker: '作品展示',
+  totalArtworks: '作品数量',
+  totalCategories: '分类数量',
+  currentFilter: '当前筛选',
+  featuredLabel: '本页精选',
+  filterTitle: '作品分类',
+  filterSubtitle: '按题材或工艺浏览作品，快速找到你想查看的内容。',
+  allCategories: '全部',
+  loading: '正在加载作品列表...',
+  creatorPrefix: '创作者',
+  viewsPrefix: '浏览',
+  collectPrefix: '收藏',
+  viewDetail: '查看详情',
+  defaultCategory: '未分类',
+  defaultCreator: '未知创作者',
+  defaultTechnique: '传统技法',
+  allFilterName: '全部',
+  emptyIcon: '绣',
+  emptyTitle: '暂无作品',
+  emptyText: '可以切换分类再试一下，或稍后回来查看最新作品。',
+  loadError: '加载作品失败，请稍后重试',
+}
 
 const artworks = ref([])
 const categories = ref([])
@@ -94,7 +179,9 @@ const isLoading = ref(false)
 
 const { error } = useToast()
 
-// 加载分类列表
+const currentCategoryName = computed(() => selectedCategory.value || copy.allFilterName)
+const featuredArtwork = computed(() => artworks.value[0] || null)
+
 const loadCategories = async () => {
   try {
     const response = await ArtworkService.getCategories()
@@ -104,48 +191,59 @@ const loadCategories = async () => {
   }
 }
 
-// 加载作品列表
 const loadArtworks = async () => {
   isLoading.value = true
+
   try {
     const params = {
       pageNum: currentPage.value,
       pageSize: 12,
     }
 
-    // 如果选择了分类，添加到参数中
     if (selectedCategory.value) {
       params.category = selectedCategory.value
     }
 
-    const response = await ArtworkService.getArtworks(params)
-    console.log('Loaded artworks:', response)
-    const data = response
-
+    const data = await ArtworkService.getArtworks(params)
     artworks.value = data.items || []
     totalPages.value = data.totalPages || 1
     totalItems.value = data.total || 0
   } catch (err) {
     console.error('Failed to load artworks:', err)
-    error('加载作品失败，请重试')
+    error(copy.loadError)
   } finally {
     isLoading.value = false
   }
 }
 
-// 选择分类
 const selectCategory = (category) => {
   selectedCategory.value = category
-  currentPage.value = 1 // 重置到第一页
+  currentPage.value = 1
   loadArtworks()
 }
 
-// 处理分页变化
 const handlePageChange = (newPage) => {
   currentPage.value = newPage
   loadArtworks()
-  // 滚动到顶部
   window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+const getArtworkCreator = (artwork) => {
+  return artwork.creator || copy.defaultCreator
+}
+
+const getArtworkTechnique = (artwork) => {
+  return artwork.technique || copy.defaultTechnique
+}
+
+const getExcerpt = (value, maxLength = 120) => {
+  const content = String(value || '').replace(/\s+/g, ' ').trim()
+
+  if (!content) {
+    return ''
+  }
+
+  return content.length > maxLength ? `${content.slice(0, maxLength)}...` : content
 }
 
 onMounted(() => {
@@ -159,87 +257,229 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
-  padding: var(--spacing-lg);
-  max-width: 1400px;
+  max-width: 1180px;
   margin: 0 auto;
+  padding: var(--spacing-lg);
 }
 
-/* 页面标题 */
-.page-header {
-  text-align: center;
-  margin-bottom: var(--spacing-lg);
+.hero-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: var(--spacing-lg);
+  padding: 32px;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 28%),
+    linear-gradient(135deg, #8f2d1e 0%, #b8472f 40%, #e58d49 100%);
+  box-shadow: 0 24px 48px rgba(143, 45, 30, 0.22);
 }
 
-.page-header h1 {
-  font-size: var(--font-size-2xl);
-  color: var(--primary-color);
-  margin-bottom: var(--spacing-sm);
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  color: #ffffff;
+}
+
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.hero-content h1 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.15;
+  font-weight: 800;
+}
+
+.hero-content p {
+  max-width: 620px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.85;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.hero-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+}
+
+.hero-stat-card span {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.hero-stat-card strong {
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.hero-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 248, 243, 0.94);
+  box-shadow: 0 18px 34px rgba(94, 21, 10, 0.18);
+}
+
+.hero-feature-media {
+  position: relative;
+  min-height: 240px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.hero-feature-image {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-feature-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #8f2d1e;
+  font-size: 12px;
   font-weight: 700;
 }
 
-.page-header p {
-  font-size: var(--font-size-lg);
+.hero-feature-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hero-feature-label {
+  color: #b8472f;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.hero-feature-body h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.35;
+  color: #40211c;
+}
+
+.hero-feature-body p {
+  margin: 0;
+  color: #6b4e48;
+  line-height: 1.8;
+}
+
+.hero-feature-meta,
+.artwork-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--text-light);
+  font-size: 13px;
+}
+
+.meta-divider {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #d0b6aa;
+}
+
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-md);
+}
+
+.filter-header h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  color: var(--text-primary);
+}
+
+.filter-header p {
+  margin: 0;
   color: var(--text-secondary);
 }
 
-/* 分类筛选 */
-.filter-section {
-  background-color: var(--bg-primary);
-  padding: var(--spacing-lg);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-.filter-group {
+.filter-chips {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
   flex-wrap: wrap;
-}
-
-.filter-group label {
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
+  gap: 12px;
 }
 
 .filter-btn {
-  padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  cursor: pointer;
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  transition: all 0.3s ease;
-  white-space: nowrap;
+  padding: 10px 16px;
+  border: 1px solid #ead8cf;
+  border-radius: 999px;
+  background: #fff7f3;
+  color: #8f4b3d;
+  font-size: 15px;
+  font-weight: 600;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
 .filter-btn:hover {
-  border-color: var(--primary-color);
-  color: var(--primary-color);
+  transform: translateY(-1px);
+  border-color: #c86d52;
+  color: #b8472f;
 }
 
 .filter-btn.active {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
+  border-color: transparent;
+  background: linear-gradient(135deg, #b8472f, #e58d49);
+  color: #ffffff;
+  box-shadow: 0 10px 22px rgba(184, 71, 47, 0.18);
 }
 
-/* 加载状态 */
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-2xl);
   gap: var(--spacing-lg);
+  padding: calc(var(--spacing-xl) * 2);
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border: 4px solid var(--border-color);
   border-top-color: var(--primary-color);
   border-radius: 50%;
@@ -252,12 +492,6 @@ onMounted(() => {
   }
 }
 
-.loading-container p {
-  color: var(--text-secondary);
-  font-size: var(--font-size-lg);
-}
-
-/* 作品网格 */
 .artworks-container {
   display: flex;
   flex-direction: column;
@@ -266,172 +500,205 @@ onMounted(() => {
 
 .artworks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 20px;
 }
 
 .artwork-card {
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
-  text-decoration: none;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff, #fcf8f5);
+  border: 1px solid #f0e3dc;
   color: var(--text-primary);
-  transition: all 0.3s ease;
-  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 16px 32px rgba(77, 41, 29, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .artwork-card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-5px);
+  border-color: rgba(184, 71, 47, 0.28);
+  box-shadow: 0 22px 40px rgba(77, 41, 29, 0.14);
 }
 
-.artwork-image-wrapper {
+.artwork-card-media {
   position: relative;
-  width: 100%;
-  height: 200px;
   overflow: hidden;
-  background-color: var(--bg-secondary);
+  background: #f4ece6;
 }
 
 .artwork-image {
   width: 100%;
-  height: 100%;
+  height: 260px;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  display: block;
+  transition: transform 0.35s ease;
 }
 
 .artwork-card:hover .artwork-image {
   transform: scale(1.05);
 }
 
-.artwork-overlay {
+.artwork-card-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(180deg, rgba(48, 25, 18, 0.1), rgba(48, 25, 18, 0.62));
+  color: #ffffff;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
-.artwork-card:hover .artwork-overlay {
+.artwork-card:hover .artwork-card-overlay {
   opacity: 1;
 }
 
-.view-btn {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--primary-color);
-  color: white;
-  border-radius: var(--border-radius-md);
-  font-weight: 600;
-  font-size: var(--font-size-base);
-}
-
-.artwork-info {
-  padding: var(--spacing-lg);
+.artwork-card-body {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-  flex: 1;
+  gap: 14px;
+  padding: 22px;
+  min-height: 240px;
 }
 
-.artwork-title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.artwork-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.artwork-category,
+.artwork-technique {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .artwork-category {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
+  background: rgba(184, 71, 47, 0.1);
+  color: #b8472f;
+}
+
+.artwork-technique {
+  background: #fff4e8;
+  color: #a35d25;
+}
+
+.artwork-title {
   margin: 0;
+  font-size: 24px;
+  line-height: 1.35;
+  color: var(--text-primary);
 }
 
-.artwork-stats {
-  display: flex;
-  gap: var(--spacing-lg);
-  font-size: var(--font-size-sm);
+.artwork-description {
+  margin: 0;
   color: var(--text-secondary);
+  line-height: 1.85;
+  font-size: 15px;
 }
 
-.stat {
+.artwork-card-footer {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-top: auto;
 }
 
-/* 空状态 */
+.artwork-link {
+  color: #b8472f;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: var(--spacing-2xl);
-  gap: var(--spacing-lg);
-  background-color: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
+  gap: 12px;
+  padding: 52px 24px;
+  border-radius: 22px;
+  background: var(--bg-primary);
   box-shadow: var(--shadow-sm);
+  text-align: center;
 }
 
 .empty-icon {
-  font-size: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(184, 71, 47, 0.1);
+  color: #b8472f;
+  font-size: 24px;
+  font-weight: 800;
 }
 
+.empty-state h3,
 .empty-state p {
-  font-size: var(--font-size-lg);
-  color: var(--text-secondary);
   margin: 0;
 }
 
-/* 响应式设计 */
+.empty-state p {
+  color: var(--text-secondary);
+}
+
+@media (max-width: 960px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .artworks-page {
     gap: var(--spacing-lg);
     padding: var(--spacing-md);
   }
 
-  .page-header h1 {
-    font-size: var(--font-size-xl);
+  .hero-section,
+  .filter-panel {
+    padding: 20px;
+    border-radius: 18px;
   }
 
-  .filter-group {
-    gap: var(--spacing-sm);
-  }
-
-  .filter-btn {
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: var(--font-size-sm);
+  .hero-content h1 {
+    font-size: 34px;
   }
 
   .artworks-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--spacing-md);
+    grid-template-columns: 1fr;
   }
 
-  .artwork-image-wrapper {
-    height: 150px;
-  }
-
-  .artwork-info {
-    padding: var(--spacing-md);
-    gap: var(--spacing-sm);
+  .artwork-card-body {
+    padding: 18px;
+    min-height: auto;
   }
 
   .artwork-title {
-    font-size: var(--font-size-base);
+    font-size: 22px;
+  }
+
+  .artwork-card-footer {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>

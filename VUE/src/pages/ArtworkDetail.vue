@@ -1,263 +1,402 @@
 <template>
   <div class="artwork-detail-page">
-    <!-- 返回按钮 -->
-    <router-link to="/artworks" class="back-link">← 返回作品列表</router-link>
+    <router-link to="/artworks" class="back-link">&larr; {{ copy.backToList }}</router-link>
 
-    <!-- 加载状态 000-->
     <div v-if="isLoading" class="loading-container">
       <div class="spinner"></div>
-      <p>加载作品详情中...</p>
+      <p>{{ copy.loading }}</p>
     </div>
 
-    <!-- 作品详情内容 -->
     <div v-else-if="artwork" class="detail-container">
-      <!-- 作品图片和基本信息 -->
-      <div class="artwork-main">
+      <section class="artwork-main">
         <div class="artwork-image-section">
-          <img :src="artwork.imageUrl" :alt="artwork.title" class="artwork-image" />
-          <button
-            class="collect-btn"
-            :class="{ collected: isCollected }"
-            @click="toggleCollect"
-            :disabled="!isLoggedIn"
-            :title="isLoggedIn ? (isCollected ? '取消收藏' : '收藏作品') : '请先登录'"
-          >
-            {{ isCollected ? '❤️ 已收藏' : '🤍 收藏' }}
-          </button>
+          <div class="artwork-image-shell">
+            <img :src="artwork.imageUrl" :alt="artwork.title" class="artwork-image" />
+          </div>
         </div>
 
         <div class="artwork-info-section">
-          <h1 class="artwork-title">{{ artwork.title }}</h1>
-
-          <div class="artwork-meta">
-            <div class="meta-item">
-              <span class="meta-label">分类：</span>
-              <span class="meta-value">{{ artwork.category }}</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">创作者：</span>
-              <span class="meta-value">{{ artwork.creator }}</span>
-            </div>
-            <div class="meta-item">
-              <span class="meta-label">刺绣技法：</span>
-              <span class="meta-value">{{ artwork.technique }}</span>
-            </div>
+          <div class="artwork-heading">
+            <span class="section-kicker">{{ copy.detailKicker }}</span>
+            <h1 class="artwork-title">{{ artwork.title }}</h1>
           </div>
 
-          <div class="artwork-stats">
-            <div class="stat-item">
-              <span class="stat-icon">👁️</span>
-              <span class="stat-text">{{ artwork.viewCount }} 次浏览</span>
+          <div class="artwork-description-card">
+            <div class="description-header">
+              <span class="description-badge">{{ copy.descriptionTitle }}</span>
             </div>
-            <div class="stat-item">
-              <span class="stat-icon">❤️</span>
-              <span class="stat-text">{{ artwork.collectCount }} 人收藏</span>
-            </div>
+            <p class="description-text">{{ artwork.description || copy.emptyDescription }}</p>
           </div>
 
-          <div class="artwork-description">
-            <h3>作品描述</h3>
-            <p>{{ artwork.description }}</p>
+          <div class="artwork-secondary-panel">
+            <div class="artwork-meta">
+              <div class="meta-item">
+                <span class="meta-label">{{ copy.categoryLabel }}</span>
+                <span class="meta-value">{{ artwork.category || copy.emptyCategory }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">{{ copy.creatorLabel }}</span>
+                <span class="meta-value">{{ artwork.creator || copy.emptyCreator }}</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">{{ copy.techniqueLabel }}</span>
+                <span class="meta-value">{{ artwork.technique || copy.emptyTechnique }}</span>
+              </div>
+            </div>
+
+            <div class="artwork-actions-row">
+              <div class="artwork-stats">
+                <div class="stat-item">
+                  <span class="stat-label">{{ copy.viewLabel }}</span>
+                  <span class="stat-value">{{ artwork.viewCount || 0 }}</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">{{ copy.collectLabel }}</span>
+                  <span class="stat-value">{{ artwork.collectCount || 0 }}</span>
+                </div>
+              </div>
+
+              <button
+                class="collect-btn"
+                :class="{ collected: isCollected }"
+                @click="toggleCollect"
+                :disabled="!isLoggedIn"
+                :title="collectTitle"
+              >
+                {{ isCollected ? copy.collectedButton : copy.collectButton }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- 评论区 -->
-      <div class="comments-section">
-        <h2>评论区</h2>
-
-        <!-- 发布评论表单 -->
-        <div v-if="isLoggedIn" class="comment-form">
-          <textarea
-            v-model="newComment"
-            placeholder="分享你的想法..."
-            class="comment-input"
-            rows="4"
-          ></textarea>
-          <button
-            @click="submitComment"
-            class="submit-btn"
-            :disabled="!newComment.trim() || isSubmittingComment"
-          >
-            {{ isSubmittingComment ? '发布中...' : '发布评论' }}
-          </button>
+      <section class="comments-section">
+        <div class="comments-header">
+          <div>
+            <span class="section-kicker">{{ copy.commentsKicker }}</span>
+            <h2>{{ copy.commentsTitle }}</h2>
+            <p class="comments-subtitle">{{ copy.commentsSubtitle }}</p>
+          </div>
+          <div class="comments-count">{{ commentTotal }} {{ copy.commentsCountSuffix }}</div>
         </div>
 
-        <!-- 未登录提示 -->
+        <div v-if="isLoggedIn" class="comment-form-card">
+          <div class="comment-avatar comment-avatar--composer">
+            {{ getUserInitial(authStore.user?.username || authStore.user?.id) }}
+          </div>
+
+          <div class="comment-form-main">
+            <div class="comment-form-head">
+              <strong>{{ copy.publishComment }}</strong>
+              <span>{{ copy.commentRule }}</span>
+            </div>
+
+            <textarea
+              v-model="newComment"
+              :placeholder="copy.commentPlaceholder"
+              class="comment-input"
+              rows="5"
+              :maxlength="COMMENT_LIMIT"
+            ></textarea>
+
+            <div class="comment-form-footer">
+              <span class="comment-hint">{{ newComment.trim().length }}/{{ COMMENT_LIMIT }}</span>
+              <button
+                @click="submitComment"
+                class="submit-btn"
+                :disabled="!newComment.trim() || isSubmittingComment"
+              >
+                {{ isSubmittingComment ? copy.submitting : copy.submitComment }}
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div v-else class="login-prompt">
-          <p>请 <router-link to="/login">登录</router-link> 后发表评论</p>
+          <p>
+            {{ copy.loginPromptPrefix }}
+            <router-link to="/login">{{ copy.loginAction }}</router-link>
+            {{ copy.loginPromptSuffix }}
+          </p>
         </div>
 
-        <!-- 评论列表 -->
         <div class="comments-list">
-          <div v-if="comments.length > 0">
-            <div
-              v-for="comment in comments"
-              :key="comment.id"
-              class="comment-item"
-            >
-              <div class="comment-header">
-                <span class="comment-author">{{ comment.userId }}</span>
+          <article
+            v-for="comment in comments"
+            :key="comment.id"
+            class="comment-card"
+          >
+            <div class="comment-avatar">
+              {{ getUserInitial(getCommentAuthor(comment)) }}
+            </div>
+
+            <div class="comment-body">
+              <div class="comment-meta-row">
+                <div class="comment-meta-main">
+                  <span class="comment-author">{{ getCommentAuthor(comment) }}</span>
+                  <span class="comment-meta-dot"></span>
+                  <span class="comment-meta-text">{{ copy.commentMetaText }}</span>
+                </div>
                 <span class="comment-date">{{ formatDate(comment.createdAt) }}</span>
               </div>
+
               <p class="comment-content">{{ comment.content }}</p>
             </div>
-          </div>
-          <div v-else class="no-comments">
-            <p>暂无评论，来发表第一条评论吧！</p>
+          </article>
+
+          <div v-if="comments.length === 0" class="no-comments">
+            <div class="no-comments-icon">{{ copy.emptyCommentsIcon }}</div>
+            <h3>{{ copy.emptyCommentsTitle }}</h3>
+            <p>{{ copy.emptyCommentsText }}</p>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
-    <!-- 错误状态 -->
     <div v-else class="error-state">
-      <div class="error-icon">⚠️</div>
-      <p>作品不存在或已被删除</p>
-      <router-link to="/artworks" class="back-btn">返回作品列表</router-link>
+      <div class="error-icon">!</div>
+      <p>{{ copy.errorMessage }}</p>
+      <router-link to="/artworks" class="back-btn">{{ copy.backToList }}</router-link>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { ArtworkService, CommentService } from '../services'
 import { useAuthStore } from '../stores/authStore'
 import { useToast } from '../utils/useToast'
+
+const COMMENT_LIMIT = 300
+
+const copy = {
+  backToList: '\u8fd4\u56de\u4f5c\u54c1\u5217\u8868',
+  loading: '\u6b63\u5728\u52a0\u8f7d\u4f5c\u54c1\u8be6\u60c5...',
+  detailKicker: '\u4f5c\u54c1\u8be6\u60c5',
+  descriptionTitle: '\u4f5c\u54c1\u63cf\u8ff0',
+  emptyDescription: '\u6682\u65e0\u4f5c\u54c1\u63cf\u8ff0\u3002',
+  categoryLabel: '\u5206\u7c7b',
+  creatorLabel: '\u521b\u4f5c\u8005',
+  techniqueLabel: '\u6280\u6cd5',
+  emptyCategory: '\u672a\u5206\u7c7b',
+  emptyCreator: '\u672a\u77e5',
+  emptyTechnique: '\u6682\u65e0\u4fe1\u606f',
+  viewLabel: '\u6d4f\u89c8',
+  collectLabel: '\u6536\u85cf',
+  collectButton: '\u6536\u85cf\u4f5c\u54c1',
+  collectedButton: '\u5df2\u6536\u85cf',
+  collectTitle: '\u6536\u85cf\u4f5c\u54c1',
+  uncollectTitle: '\u53d6\u6d88\u6536\u85cf',
+  loginFirst: '\u8bf7\u5148\u767b\u5f55',
+  commentsKicker: '\u4ea4\u6d41\u4e92\u52a8',
+  commentsTitle: '\u8bc4\u8bba\u533a',
+  commentsSubtitle:
+    '\u5206\u4eab\u4f60\u5bf9\u8fd9\u4ef6\u4f5c\u54c1\u7684\u770b\u6cd5\uff0c\u7559\u4e0b\u4f60\u7684\u7406\u89e3\u3001\u611f\u53d7\u6216\u5efa\u8bae\u3002',
+  commentsCountSuffix: '\u6761\u8bc4\u8bba',
+  publishComment: '\u53d1\u8868\u8bc4\u8bba',
+  commentRule: '\u7406\u6027\u4ea4\u6d41\uff0c\u6587\u660e\u53d1\u8a00',
+  commentPlaceholder:
+    '\u8bf4\u8bf4\u4f60\u5bf9\u8fd9\u4ef6\u4f5c\u54c1\u7684\u7406\u89e3\u3001\u559c\u6b22\u7684\u7ec6\u8282\uff0c\u6216\u4f60\u60f3\u8865\u5145\u7684\u80cc\u666f\u4fe1\u606f...',
+  submitComment: '\u53d1\u5e03\u8bc4\u8bba',
+  submitting: '\u53d1\u5e03\u4e2d...',
+  loginPromptPrefix: '\u8bf7',
+  loginAction: '\u767b\u5f55',
+  loginPromptSuffix: '\u540e\u53c2\u4e0e\u8bc4\u8bba\u3002',
+  commentMetaText: '\u7528\u6237\u8bc4\u8bba',
+  emptyCommentsIcon: '\u8bc4',
+  emptyCommentsTitle: '\u8fd8\u6ca1\u6709\u8bc4\u8bba',
+  emptyCommentsText: '\u6210\u4e3a\u7b2c\u4e00\u4e2a\u5206\u4eab\u60f3\u6cd5\u7684\u4eba\u3002',
+  errorMessage: '\u4f5c\u54c1\u4e0d\u5b58\u5728\u6216\u5df2\u88ab\u5220\u9664',
+  loadError: '\u52a0\u8f7d\u4f5c\u54c1\u8be6\u60c5\u5931\u8d25',
+  emptyCommentError: '\u8bc4\u8bba\u5185\u5bb9\u4e0d\u80fd\u4e3a\u7a7a',
+  lengthErrorPrefix: '\u8bc4\u8bba\u5185\u5bb9\u4e0d\u80fd\u8d85\u8fc7',
+  lengthErrorSuffix: '\u5b57',
+  submitSuccess: '\u8bc4\u8bba\u53d1\u5e03\u6210\u529f',
+  submitError: '\u8bc4\u8bba\u53d1\u5e03\u5931\u8d25\uff0c\u8bf7\u91cd\u8bd5',
+  uncollectSuccess: '\u5df2\u53d6\u6d88\u6536\u85cf',
+  collectSuccess: '\u6536\u85cf\u6210\u529f',
+  actionError: '\u64cd\u4f5c\u5931\u8d25\uff0c\u8bf7\u91cd\u8bd5',
+  guestInitial: '\u6e38',
+  userPrefix: '\u7528\u6237',
+  minutesAgo: '\u5206\u949f\u524d',
+  hoursAgo: '\u5c0f\u65f6\u524d',
+  daysAgo: '\u5929\u524d',
+}
 
 const route = useRoute()
 const authStore = useAuthStore()
 
 const artwork = ref(null)
 const comments = ref([])
+const commentTotal = ref(0)
 const newComment = ref('')
 const isLoading = ref(false)
 const isSubmittingComment = ref(false)
 const isCollected = ref(false)
 
 const { success, error } = useToast()
-const isLoggedIn = authStore.isLoggedIn
+const isLoggedIn = computed(() => authStore.isLoggedIn)
+const collectTitle = computed(() => {
+  if (!isLoggedIn.value) {
+    return copy.loginFirst
+  }
 
-// 加载作品详情
-const loadArtworkDetail = async () => {
-  isLoading.value = true
+  return isCollected.value ? copy.uncollectTitle : copy.collectTitle
+})
+
+const getCurrentArtworkId = () => route.params.id
+
+const fetchArtworkDetail = async (artworkId) => {
+  const response = await ArtworkService.getArtworkDetail(artworkId)
+  artwork.value = response
+}
+
+const loadCollectStatus = async (artworkId, userId) => {
+  if (!userId) {
+    isCollected.value = false
+    return
+  }
+
+  isCollected.value = await ArtworkService.getCollectStatus(artworkId, userId)
+}
+
+const loadComments = async (artworkId) => {
   try {
-    const artworkId = route.params.id
-    const response = await ArtworkService.getArtworkDetail(artworkId)
-    artwork.value = response
+    const response = await CommentService.getComments({
+      artworkId,
+      pageNum: 1,
+      pageSize: 20,
+    })
 
-    // 记录浏览
+    comments.value = response.items || []
+    commentTotal.value = response.total || comments.value.length
+  } catch (err) {
+    console.error('Failed to load comments:', err)
+    comments.value = []
+    commentTotal.value = 0
+  }
+}
+
+const loadArtworkDetail = async ({ recordView = true } = {}) => {
+  isLoading.value = true
+
+  try {
+    const artworkId = getCurrentArtworkId()
     const userId = authStore.user?.id
-    await ArtworkService.recordView(artworkId, userId)
 
-    // 加载评论
-    await loadComments(artworkId)
-    //  检差是否已收藏
-    isCollected.value = await ArtworkService.getCollectStatus(artworkId, userId)
+    if (recordView) {
+      await ArtworkService.recordView(artworkId, userId)
+    }
 
+    await Promise.all([
+      fetchArtworkDetail(artworkId),
+      loadComments(artworkId),
+      loadCollectStatus(artworkId, userId),
+    ])
   } catch (err) {
     console.error('Failed to load artwork detail:', err)
-    error('加载作品详情失败')
+    error(copy.loadError)
   } finally {
     isLoading.value = false
   }
 }
 
-// 加载评论列表
-const loadComments = async (artworkId) => {
-  try {
-    const response = await CommentService.getComments({
-      artworkId: artworkId,
-      pageNum: 1,
-      pageSize: 20,
-    })
-    comments.value = response.items || []
-  } catch (err) {
-    console.error('Failed to load comments:', err)
-  }
-}
-
-// 提交评论
 const submitComment = async () => {
-  if (!newComment.value.trim()) {
-    error('评论内容不能为空')
+  const content = newComment.value.trim()
+
+  if (!content) {
+    error(copy.emptyCommentError)
+    return
+  }
+
+  if (content.length > COMMENT_LIMIT) {
+    error(`${copy.lengthErrorPrefix} ${COMMENT_LIMIT} ${copy.lengthErrorSuffix}`)
     return
   }
 
   isSubmittingComment.value = true
+
   try {
-    const commentData = {
-      content: newComment.value,
+    await CommentService.postComment({
+      content,
       userId: authStore.user.id,
       artworkId: artwork.value.id,
-    }
+    })
 
-    await CommentService.postComment(commentData)
-    success('评论发布成功')
+    success(copy.submitSuccess)
     newComment.value = ''
-
-    // 重新加载评论列表
     await loadComments(artwork.value.id)
   } catch (err) {
     console.error('Failed to submit comment:', err)
-    error('评论发布失败，请重试')
+    error(copy.submitError)
   } finally {
     isSubmittingComment.value = false
   }
 }
 
-
-
-// 切换收藏状态
 const toggleCollect = async () => {
-  if (!isLoggedIn) {
-    error('请先登录')
+  if (!isLoggedIn.value) {
+    error(copy.loginFirst)
     return
   }
 
   try {
     if (isCollected.value) {
-      // 取消收藏
       await ArtworkService.uncollectArtwork(artwork.value.id, authStore.user.id)
-      isCollected.value = false
-      success('已取消收藏')
+      success(copy.uncollectSuccess)
     } else {
-      // 收藏
       await ArtworkService.collectArtwork(artwork.value.id, authStore.user.id)
-      isCollected.value = true
-      success('收藏成功')
+      success(copy.collectSuccess)
     }
 
-    // 重新加载作品详情以更新收藏数
-    await loadArtworkDetail()
+    await loadArtworkDetail({ recordView: false })
   } catch (err) {
     console.error('Failed to toggle collect:', err)
-    error('操作失败，请重试')
+    error(copy.actionError)
   }
 }
 
-// 格式化日期
+const getCommentAuthor = (comment) => {
+  return comment.username || `${copy.userPrefix} ${comment.userId || ''}`.trim()
+}
+
+const getUserInitial = (value) => {
+  if (!value) {
+    return copy.guestInitial
+  }
+
+  return String(value).trim().slice(0, 1).toUpperCase()
+}
+
 const formatDate = (dateString) => {
   const date = new Date(dateString)
   const now = new Date()
-  const diffTime = Math.abs(now - date)
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  const diff = now.getTime() - date.getTime()
+  const minute = 60 * 1000
+  const hour = 60 * minute
+  const day = 24 * hour
 
-  if (diffDays === 0) {
-    return '今天'
-  } else if (diffDays === 1) {
-    return '昨天'
-  } else if (diffDays < 7) {
-    return `${diffDays}天前`
-  } else {
-    return date.toLocaleDateString('zh-CN')
+  if (diff < hour) {
+    const minutes = Math.max(1, Math.floor(diff / minute))
+    return `${minutes} ${copy.minutesAgo}`
   }
+
+  if (diff < day) {
+    const hours = Math.floor(diff / hour)
+    return `${hours} ${copy.hoursAgo}`
+  }
+
+  if (diff < day * 7) {
+    const days = Math.floor(diff / day)
+    return `${days} ${copy.daysAgo}`
+  }
+
+  return date.toLocaleDateString('zh-CN')
 }
 
 onMounted(() => {
   loadArtworkDetail()
-  
 })
 </script>
 
@@ -266,40 +405,36 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
-  padding: var(--spacing-lg);
   max-width: 1200px;
   margin: 0 auto;
+  padding: var(--spacing-lg);
 }
 
-/* 返回链接 */
 .back-link {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 500;
-  transition: all 0.3s ease;
   width: fit-content;
+  color: var(--primary-color);
+  font-weight: 600;
 }
 
 .back-link:hover {
   gap: var(--spacing-md);
 }
 
-/* 加载状态 */
 .loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-2xl);
   gap: var(--spacing-lg);
+  padding: calc(var(--spacing-xl) * 2) 0;
 }
 
 .spinner {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
   border: 4px solid var(--border-color);
   border-top-color: var(--primary-color);
   border-radius: 50%;
@@ -312,350 +447,550 @@ onMounted(() => {
   }
 }
 
-.loading-container p {
-  color: var(--text-secondary);
-  font-size: var(--font-size-lg);
-}
-
-/* 详情容器 */
 .detail-container {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xl);
 }
 
-/* 作品主要内容 */
 .artwork-main {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
   gap: var(--spacing-xl);
-  background-color: var(--bg-primary);
   padding: var(--spacing-xl);
-  border-radius: var(--border-radius-lg);
+  background:
+    radial-gradient(circle at top right, rgba(0, 102, 204, 0.08), transparent 28%),
+    var(--bg-primary);
+  border-radius: 20px;
   box-shadow: var(--shadow-md);
 }
 
 .artwork-image-section {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-lg);
+}
+
+.artwork-image-shell {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #f4f7fb 100%);
+  border: 1px solid rgba(0, 102, 204, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
 }
 
 .artwork-image {
   width: 100%;
-  height: auto;
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
+  height: 100%;
+  min-height: 420px;
+  border-radius: 14px;
   object-fit: cover;
-}
-
-.collect-btn {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.collect-btn:hover:not(:disabled) {
-  background-color: var(--primary-light);
-  color: white;
-  border-color: var(--primary-light);
-}
-
-.collect-btn.collected {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.collect-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+  display: block;
 }
 
 .artwork-info-section {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  min-width: 0;
+}
+
+.section-kicker {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 102, 204, 0.08);
+  color: var(--primary-color);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.artwork-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .artwork-title {
-  font-size: var(--font-size-2xl);
-  color: var(--text-primary);
   margin: 0;
+  color: var(--text-primary);
+  font-size: 34px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.artwork-description-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(0, 102, 204, 0.1), rgba(51, 133, 221, 0.04));
+  border: 1px solid rgba(0, 102, 204, 0.14);
+  box-shadow: 0 12px 30px rgba(0, 102, 204, 0.08);
+}
+
+.description-header {
+  display: flex;
+  align-items: center;
+}
+
+.description-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--primary-dark);
+  font-size: var(--font-size-sm);
   font-weight: 700;
 }
 
-.artwork-meta {
+.description-text {
+  margin: 0;
+  color: #24405c;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.artwork-secondary-panel {
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: #fafafa;
+  border: 1px solid #ececec;
+}
+
+.artwork-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  background-color: var(--bg-secondary);
-  border-radius: var(--border-radius-md);
 }
 
 .meta-item {
   display: flex;
-  gap: var(--spacing-md);
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
 }
 
 .meta-label {
-  font-weight: 600;
-  color: var(--text-secondary);
-  min-width: 80px;
+  color: var(--text-light);
+  font-size: var(--font-size-sm);
 }
 
 .meta-value {
   color: var(--text-primary);
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.artwork-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 .artwork-stats {
   display: flex;
-  gap: var(--spacing-lg);
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .stat-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
-  color: white;
-  border-radius: var(--border-radius-md);
-  font-weight: 600;
-}
-
-.stat-icon {
-  font-size: 20px;
-}
-
-.artwork-description {
-  padding: var(--spacing-lg);
-  background-color: var(--bg-secondary);
-  border-radius: var(--border-radius-md);
-}
-
-.artwork-description h3 {
-  margin: 0 0 var(--spacing-md) 0;
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.artwork-description p {
-  margin: 0;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
   color: var(--text-secondary);
-  line-height: 1.8;
 }
 
-/* 评论区 */
-.comments-section {
-  background-color: var(--bg-primary);
-  padding: var(--spacing-xl);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
+.stat-label {
+  font-size: var(--font-size-sm);
 }
 
-.comments-section h2 {
-  margin: 0 0 var(--spacing-lg) 0;
+.stat-value {
   color: var(--text-primary);
-  font-size: var(--font-size-xl);
   font-weight: 700;
 }
 
-/* 评论表单 */
-.comment-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-xl);
-  padding: var(--spacing-lg);
-  background-color: var(--bg-secondary);
-  border-radius: var(--border-radius-md);
+.collect-btn {
+  padding: 10px 18px;
+  background: #ffffff;
+  border: 1px solid #d8d8d8;
+  color: var(--text-secondary);
+  font-weight: 700;
 }
 
-.comment-input {
-  padding: var(--spacing-md);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  font-family: inherit;
-  font-size: var(--font-size-base);
-  color: var(--text-primary);
-  background-color: var(--bg-primary);
-  resize: vertical;
-}
-
-.comment-input:focus {
-  outline: none;
+.collect-btn:hover:not(:disabled) {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  color: var(--primary-color);
+  background: rgba(0, 102, 204, 0.04);
 }
 
-.submit-btn {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.collect-btn.collected {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #ffffff;
 }
 
-.submit-btn:hover:not(:disabled) {
-  background-color: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.submit-btn:disabled {
-  opacity: 0.6;
+.collect-btn:disabled {
+  opacity: 0.65;
   cursor: not-allowed;
 }
 
-/* 登录提示 */
+.comments-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+  background: var(--bg-primary);
+  border-radius: 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.comments-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid #efefef;
+}
+
+.comments-header h2 {
+  margin: 10px 0 8px;
+  font-size: 30px;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.comments-subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.comments-count {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(0, 102, 204, 0.08);
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.comment-form-card,
+.comment-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: var(--spacing-md);
+}
+
+.comment-form-card {
+  padding: 22px;
+  background: linear-gradient(180deg, #fbfdff 0%, #f5f9ff 100%);
+  border: 1px solid rgba(0, 102, 204, 0.1);
+  border-radius: 18px;
+}
+
+.comment-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(0, 102, 204, 0.2);
+}
+
+.comment-avatar--composer {
+  margin-top: 4px;
+}
+
+.comment-form-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.comment-form-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.comment-form-head strong {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+}
+
+.comment-form-head span {
+  color: var(--text-light);
+  font-size: var(--font-size-sm);
+}
+
+.comment-input {
+  min-height: 130px;
+  padding: 16px 18px;
+  resize: vertical;
+  line-height: 1.8;
+  background: #ffffff;
+  border: 1px solid #dfe7f1;
+}
+
+.comment-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.comment-hint {
+  color: var(--text-light);
+  font-size: var(--font-size-sm);
+}
+
+.submit-btn {
+  padding: 12px 22px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 12px 24px rgba(0, 102, 204, 0.18);
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .login-prompt {
-  padding: var(--spacing-lg);
-  background-color: var(--bg-secondary);
-  border-radius: var(--border-radius-md);
+  padding: 18px 22px;
+  border-radius: 16px;
+  background: #fafafa;
+  border: 1px dashed #dddddd;
+  color: var(--text-secondary);
   text-align: center;
-  margin-bottom: var(--spacing-xl);
 }
 
 .login-prompt p {
   margin: 0;
-  color: var(--text-secondary);
 }
 
-.login-prompt a {
-  color: var(--primary-color);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.login-prompt a:hover {
-  text-decoration: underline;
-}
-
-/* 评论列表 */
 .comments-list {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
 }
 
-.comment-item {
-  padding: var(--spacing-lg);
-  background-color: var(--bg-secondary);
-  border-radius: var(--border-radius-md);
-  border-left: 4px solid var(--primary-color);
+.comment-card {
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #efefef;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
 }
 
-.comment-header {
+.comment-body {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.comment-meta-row {
+  display: flex;
   align-items: center;
-  margin-bottom: var(--spacing-md);
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.comment-meta-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .comment-author {
-  font-weight: 600;
   color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 700;
 }
 
+.comment-meta-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #c8c8c8;
+}
+
+.comment-meta-text,
 .comment-date {
-  font-size: var(--font-size-sm);
   color: var(--text-light);
+  font-size: var(--font-size-sm);
 }
 
 .comment-content {
   margin: 0;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .no-comments {
-  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 44px 20px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fcfcfc 0%, #f7f7f7 100%);
+  border: 1px dashed #dddddd;
   text-align: center;
-  color: var(--text-light);
 }
 
-/* 错误状态 */
+.no-comments-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0, 102, 204, 0.08);
+  color: var(--primary-color);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.no-comments h3,
+.no-comments p,
+.error-state p {
+  margin: 0;
+}
+
+.no-comments p {
+  color: var(--text-secondary);
+}
+
 .error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-2xl);
   gap: var(--spacing-lg);
-  background-color: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
+  padding: calc(var(--spacing-xl) * 2);
+  background: var(--bg-primary);
+  border-radius: 20px;
   box-shadow: var(--shadow-sm);
 }
 
 .error-icon {
-  font-size: 60px;
-}
-
-.error-state p {
-  font-size: var(--font-size-lg);
-  color: var(--text-secondary);
-  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(255, 51, 51, 0.08);
+  color: var(--error-color);
+  font-size: 28px;
+  font-weight: 700;
 }
 
 .back-btn {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--primary-color);
-  color: white;
-  border-radius: var(--border-radius-md);
-  text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  padding: 12px 20px;
+  background: var(--primary-color);
+  color: #ffffff;
+  font-weight: 700;
 }
 
-.back-btn:hover {
-  background-color: var(--primary-light);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .artwork-detail-page {
-    gap: var(--spacing-lg);
-    padding: var(--spacing-md);
-  }
-
+@media (max-width: 960px) {
   .artwork-main {
     grid-template-columns: 1fr;
+  }
+
+  .artwork-image {
+    min-height: 340px;
+  }
+
+  .artwork-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .artwork-detail-page {
+    padding: var(--spacing-md);
     gap: var(--spacing-lg);
+  }
+
+  .artwork-main,
+  .comments-section {
     padding: var(--spacing-lg);
+    border-radius: 16px;
   }
 
   .artwork-title {
-    font-size: var(--font-size-xl);
+    font-size: 28px;
+  }
+
+  .comments-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .comments-count {
+    width: fit-content;
+  }
+
+  .comment-form-card,
+  .comment-card {
+    grid-template-columns: 1fr;
+  }
+
+  .comment-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+
+  .comment-form-footer,
+  .artwork-actions-row {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .artwork-stats {
-    flex-direction: column;
+    width: 100%;
   }
 
-  .stat-item {
+  .stat-item,
+  .collect-btn,
+  .submit-btn {
     justify-content: center;
-  }
-
-  .comments-section {
-    padding: var(--spacing-lg);
-  }
-
-  .comment-form {
-    padding: var(--spacing-md);
   }
 }
 </style>

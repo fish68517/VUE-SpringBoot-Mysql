@@ -13,16 +13,16 @@
             <div class="carousel-content">
               <h2>{{ carousel.title }}</h2>
               <p>{{ carousel.description }}</p>
-              <router-link :to="carousel.link" class="carousel-btn">了解更多</router-link>
+              <router-link :to="carousel.link" class="carousel-btn">{{ copy.learnMore }}</router-link>
             </div>
           </div>
         </div>
 
-        <button class="carousel-btn-prev" @click="prevCarousel" aria-label="上一张">
-          ❮
+        <button class="carousel-btn-prev" @click="prevCarousel" :aria-label="copy.prevSlide">
+          &#8249;
         </button>
-        <button class="carousel-btn-next" @click="nextCarousel" aria-label="下一张">
-          ❯
+        <button class="carousel-btn-next" @click="nextCarousel" :aria-label="copy.nextSlide">
+          &#8250;
         </button>
 
         <div class="carousel-indicators">
@@ -32,7 +32,7 @@
             class="indicator"
             :class="{ active: currentCarouselIndex === index }"
             @click="currentCarouselIndex = index"
-            :aria-label="`轮播 ${index + 1}`"
+            :aria-label="`${copy.carouselLabel} ${index + 1}`"
           />
         </div>
       </div>
@@ -40,79 +40,113 @@
 
     <section class="features-section">
       <div class="section-header">
-        <h2>核心功能</h2>
-        <p>快速访问平台主要功能</p>
+        <h2>{{ copy.featuresTitle }}</h2>
+        <p>{{ copy.featuresSubtitle }}</p>
       </div>
+
       <div class="features-grid">
         <router-link
-          v-for="feature in features"
+          v-for="feature in decoratedFeatures"
           :key="feature.id"
           :to="feature.link"
           class="feature-card"
         >
-          <div class="feature-icon">
-            <img :src="feature.iconUrl" :alt="feature.name" />
+          <div class="feature-media">
+            <img :src="feature.assetIcon" :alt="feature.name" />
           </div>
-          <h3>{{ feature.name }}</h3>
-          <p>{{ feature.description }}</p>
+          <div class="feature-text">
+            <span class="feature-kicker">{{ copy.featureEntry }}</span>
+            <h3>{{ feature.name }}</h3>
+            <p>{{ feature.description }}</p>
+            <span class="feature-link">{{ copy.enterNow }}</span>
+          </div>
         </router-link>
       </div>
     </section>
 
     <section class="announcements-section">
       <div class="section-header">
-        <h2>最新动态</h2>
-        <p>了解平台最新活动和公告</p>
+        <h2>{{ copy.newsTitle }}</h2>
+        <p>{{ copy.newsSubtitle }}</p>
       </div>
-      <div class="announcements-list">
-        <div
-          v-for="announcement in announcements"
-          :key="announcement.id"
-          class="announcement-item"
-          :class="announcement.type"
-        >
-          <div class="announcement-badge">{{ announcement.type === 'announcement' ? '公告' : '活动' }}</div>
-          <div class="announcement-content">
-            <h3>{{ announcement.title }}</h3>
-            <p>{{ announcement.content }}</p>
-            <span class="announcement-date">{{ formatDate(announcement.createdAt) }}</span>
+
+      <div v-if="announcements.length > 0" class="announcements-layout">
+        <article class="announcement-highlight" :class="primaryAnnouncement.type">
+          <div class="announcement-highlight-top">
+            <span class="announcement-badge">{{ getAnnouncementTypeLabel(primaryAnnouncement.type) }}</span>
+            <span class="announcement-time">{{ formatDate(primaryAnnouncement.createdAt) }}</span>
           </div>
+
+          <h3>{{ primaryAnnouncement.title }}</h3>
+          <p>{{ primaryAnnouncement.content }}</p>
+
+          <div class="announcement-highlight-footer">
+            <div class="announcement-meta-list">
+              <span class="announcement-meta-chip">{{ copy.hotTopic }}</span>
+              <span class="announcement-meta-chip">{{ secondaryAnnouncements.length + 1 }} {{ copy.newsItems }}</span>
+            </div>
+            <router-link :to="primaryAnnouncementLink" class="announcement-cta">
+              {{ copy.viewRelated }}
+            </router-link>
+          </div>
+        </article>
+
+        <div class="announcement-side-list">
+          <article
+            v-for="announcement in secondaryAnnouncements"
+            :key="announcement.id"
+            class="announcement-side-item"
+            :class="announcement.type"
+          >
+            <div class="announcement-side-head">
+              <span class="announcement-badge subtle">{{ getAnnouncementTypeLabel(announcement.type) }}</span>
+              <span class="announcement-time">{{ formatDate(announcement.createdAt) }}</span>
+            </div>
+            <h4>{{ announcement.title }}</h4>
+            <p>{{ announcement.content }}</p>
+          </article>
         </div>
+      </div>
+
+      <div v-else class="announcements-empty">
+        <div class="announcements-empty-icon">{{ copy.emptyNewsIcon }}</div>
+        <h3>{{ copy.emptyNewsTitle }}</h3>
+        <p>{{ copy.emptyNewsText }}</p>
       </div>
     </section>
 
     <section class="statistics-section">
       <div class="section-header">
-        <h2>平台数据</h2>
-        <p>实时平台运营数据</p>
+        <h2>{{ copy.statsTitle }}</h2>
+        <p>{{ copy.statsSubtitle }}</p>
       </div>
       <div class="statistics-grid">
         <div class="stat-card">
-          <div class="stat-icon">👥</div>
+          <div class="stat-icon">U</div>
           <div class="stat-content">
             <div class="stat-value">{{ statistics.totalUsers || 0 }}</div>
-            <div class="stat-label">注册用户</div>
+            <div class="stat-label">{{ copy.totalUsers }}</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">🎨</div>
+          <div class="stat-icon">A</div>
           <div class="stat-content">
             <div class="stat-value">{{ statistics.totalArtworks || 0 }}</div>
-            <div class="stat-label">作品总数</div>
+            <div class="stat-label">{{ copy.totalArtworks }}</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">📚</div>
+          <div class="stat-icon">K</div>
           <div class="stat-content">
             <div class="stat-value">{{ statistics.totalKnowledge || 0 }}</div>
-            <div class="stat-label">知识文章</div>
+            <div class="stat-label">{{ copy.totalKnowledge }}</div>
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon">👁️</div>
+          <div class="stat-icon">V</div>
           <div class="stat-content">
             <div class="stat-value">{{ formatNumber(statistics.totalVisits || 0) }}</div>
-            <div class="stat-label">总浏览量</div>
+            <div class="stat-label">{{ copy.totalVisits }}</div>
           </div>
         </div>
       </div>
@@ -121,9 +155,57 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import featureArtworks from '../assets/home/feature-artworks.svg'
+import featureKnowledge from '../assets/home/feature-knowledge.svg'
+import featureCommunity from '../assets/home/feature-community.svg'
+import featureUser from '../assets/home/feature-user.svg'
 import { HomeService } from '../services'
 import { useToast } from '../utils/useToast'
+
+const copy = {
+  learnMore: '\u4e86\u89e3\u66f4\u591a',
+  prevSlide: '\u4e0a\u4e00\u5f20',
+  nextSlide: '\u4e0b\u4e00\u5f20',
+  carouselLabel: '\u8f6e\u64ad',
+  featuresTitle: '\u6838\u5fc3\u529f\u80fd',
+  featuresSubtitle: '\u4ece\u9996\u9875\u76f4\u8fbe\u5e73\u53f0\u4e3b\u8981\u7248\u5757\uff0c\u66f4\u5feb\u627e\u5230\u4f60\u60f3\u770b\u7684\u5185\u5bb9\u3002',
+  featureEntry: '\u529f\u80fd\u5165\u53e3',
+  enterNow: '\u7acb\u5373\u8fdb\u5165',
+  newsTitle: '\u6700\u65b0\u52a8\u6001',
+  newsSubtitle: '\u6c47\u603b\u5e73\u53f0\u516c\u544a\u3001\u8fd1\u671f\u5185\u5bb9\u66f4\u65b0\u4e0e\u70ed\u70b9\u6d3b\u52a8\u3002',
+  hotTopic: '\u672c\u5468\u5173\u6ce8',
+  newsItems: '\u6761\u52a8\u6001',
+  viewRelated: '\u67e5\u770b\u76f8\u5173\u5185\u5bb9',
+  emptyNewsIcon: '\u65b0',
+  emptyNewsTitle: '\u6682\u65e0\u6700\u65b0\u52a8\u6001',
+  emptyNewsText: '\u540e\u7eed\u6709\u65b0\u516c\u544a\u6216\u6d3b\u52a8\u65f6\u4f1a\u5728\u8fd9\u91cc\u5c55\u793a\u3002',
+  statsTitle: '\u5e73\u53f0\u6570\u636e',
+  statsSubtitle: '\u5b9e\u65f6\u4e86\u89e3\u5e73\u53f0\u5f53\u524d\u7684\u5185\u5bb9\u4e0e\u8bbf\u95ee\u60c5\u51b5\u3002',
+  totalUsers: '\u6ce8\u518c\u7528\u6237',
+  totalArtworks: '\u4f5c\u54c1\u603b\u6570',
+  totalKnowledge: '\u77e5\u8bc6\u6587\u7ae0',
+  totalVisits: '\u603b\u6d4f\u89c8\u91cf',
+  homeLoadError: '\u52a0\u8f7d\u9996\u9875\u6570\u636e\u5931\u8d25',
+  announcementLabel: '\u516c\u544a',
+  activityLabel: '\u6d3b\u52a8',
+}
+
+const featureAssetMap = {
+  '/artworks': featureArtworks,
+  '/knowledge': featureKnowledge,
+  '/community': featureCommunity,
+  '/user': featureUser,
+  '\u523a\u7ee3\u5c55\u793a': featureArtworks,
+  '\u77e5\u8bc6\u79d1\u666e': featureKnowledge,
+  '\u4e92\u52a8\u4ea4\u6d41': featureCommunity,
+  '\u7528\u6237\u4e2d\u5fc3': featureUser,
+}
+
+const featureAnnouncementLinkMap = {
+  announcement: '/home',
+  activity: '/community',
+}
 
 const carousels = ref([])
 const features = ref([])
@@ -132,15 +214,29 @@ const statistics = ref({})
 const currentCarouselIndex = ref(0)
 const carouselInterval = ref(null)
 
-const { showToast } = useToast()
+const { error } = useToast()
 
-// 加载首页数据
-// 加载首页数据
-// 修改 Home.vue 中的 loadHomeData 函数
+const decoratedFeatures = computed(() => {
+  return features.value.map((feature) => ({
+    ...feature,
+    assetIcon: featureAssetMap[feature.link] || featureAssetMap[feature.name] || featureArtworks,
+  }))
+})
+
+const primaryAnnouncement = computed(() => {
+  return announcements.value[0] || {}
+})
+
+const secondaryAnnouncements = computed(() => {
+  return announcements.value.slice(1, 4)
+})
+
+const primaryAnnouncementLink = computed(() => {
+  return featureAnnouncementLinkMap[primaryAnnouncement.value.type] || '/community'
+})
+
 const loadHomeData = async () => {
   try {
-    console.log('--- 开始请求首页数据 ---')
-    // 并行请求所有数据
     const [carouselRes, featuresRes, announcementsRes, statisticsRes] = await Promise.all([
       HomeService.getCarousel(),
       HomeService.getFeatures(),
@@ -148,82 +244,91 @@ const loadHomeData = async () => {
       HomeService.getStatistics(),
     ])
 
-    // 因为你的 src/services/api.js 拦截器中已经写了：
-    
-    // 所以这里的 res 直接就是后端返回的那个数组或对象，没有任何包装！
-
-    // 打印出来确认一下：
-    console.log('1. 轮播图:', carouselRes)
-    console.log('2. 核心功能:', featuresRes)
-    console.log('3. 最新动态:', announcementsRes)
-    console.log('4. 统计数据:', statisticsRes)
-
-    // 直接赋值！使用 || 提供后备空值防止模板报错
     carousels.value = carouselRes || []
     features.value = featuresRes || []
     announcements.value = announcementsRes || []
     statistics.value = statisticsRes || {}
-
-  } catch (error) {
-    console.error('加载首页数据失败，错误信息:', error)
-    showToast('加载首页数据失败', 'error')
+  } catch (loadError) {
+    console.error('Failed to load home data:', loadError)
+    error(copy.homeLoadError)
   }
 }
-// 轮播控制
+
 const nextCarousel = () => {
-  if (carousels.value.length === 0) return;
+  if (carousels.value.length === 0) {
+    return
+  }
+
   currentCarouselIndex.value = (currentCarouselIndex.value + 1) % carousels.value.length
 }
 
 const prevCarousel = () => {
-  if (carousels.value.length === 0) return;
+  if (carousels.value.length === 0) {
+    return
+  }
+
   currentCarouselIndex.value =
     (currentCarouselIndex.value - 1 + carousels.value.length) % carousels.value.length
 }
 
-// 自动轮播
 const startAutoCarousel = () => {
   if (carousels.value.length > 1) {
     carouselInterval.value = setInterval(() => {
       nextCarousel()
-    }, 5000) // 每5秒切换一次
+    }, 5000)
   }
 }
 
 const stopAutoCarousel = () => {
   if (carouselInterval.value) {
     clearInterval(carouselInterval.value)
+    carouselInterval.value = null
   }
 }
 
-// 格式化日期
 const formatDate = (dateString) => {
-  if (!dateString) return '';
+  if (!dateString) {
+    return ''
+  }
+
   const date = new Date(dateString)
   const now = new Date()
   const diffTime = Math.abs(now - date)
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
 
   if (diffDays === 0) {
-    return '今天'
-  } else if (diffDays === 1) {
-    return '昨天'
-  } else if (diffDays < 7) {
-    return `${diffDays}天前`
-  } else {
-    return date.toLocaleDateString('zh-CN')
+    return '\u4eca\u5929'
   }
+
+  if (diffDays === 1) {
+    return '\u6628\u5929'
+  }
+
+  if (diffDays < 7) {
+    return `${diffDays} \u5929\u524d`
+  }
+
+  return date.toLocaleDateString('zh-CN')
 }
 
-// 格式化数字
 const formatNumber = (num) => {
-  if (!num) return '0';
-  if (num >= 1000000) {
-    return (num / 1000000).toFixed(1) + 'M'
-  } else if (num >= 1000) {
-    return (num / 1000).toFixed(1) + 'K'
+  if (!num) {
+    return '0'
   }
+
+  if (num >= 1000000) {
+    return `${(num / 1000000).toFixed(1)}M`
+  }
+
+  if (num >= 1000) {
+    return `${(num / 1000).toFixed(1)}K`
+  }
+
   return num.toString()
+}
+
+const getAnnouncementTypeLabel = (type) => {
+  return type === 'announcement' ? copy.announcementLabel : copy.activityLabel
 }
 
 onMounted(async () => {
@@ -237,7 +342,6 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 保持你原有的 CSS 样式不变 */
 .home-page {
   display: flex;
   flex-direction: column;
@@ -247,7 +351,6 @@ onUnmounted(() => {
   margin: 0 auto;
 }
 
-/* 轮播展示区 */
 .carousel-section {
   width: 100%;
 }
@@ -256,7 +359,7 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 400px;
-  border-radius: var(--border-radius-lg);
+  border-radius: 22px;
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   background-color: var(--bg-primary);
@@ -301,13 +404,13 @@ onUnmounted(() => {
   justify-content: center;
   align-items: flex-start;
   padding: var(--spacing-xl);
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.64) 0%, rgba(0, 0, 0, 0.12) 52%, rgba(0, 0, 0, 0) 100%);
   z-index: 2;
   color: white;
 }
 
 .carousel-content h2 {
-  font-size: var(--font-size-2xl);
+  font-size: 36px;
   margin-bottom: var(--spacing-md);
   font-weight: 700;
 }
@@ -315,8 +418,8 @@ onUnmounted(() => {
 .carousel-content p {
   font-size: var(--font-size-lg);
   margin-bottom: var(--spacing-lg);
-  max-width: 500px;
-  line-height: 1.6;
+  max-width: 540px;
+  line-height: 1.75;
 }
 
 .carousel-content .carousel-btn {
@@ -336,7 +439,6 @@ onUnmounted(() => {
   box-shadow: var(--shadow-md);
 }
 
-/* 轮播控制按钮 */
 .carousel-btn-prev,
 .carousel-btn-next {
   position: absolute;
@@ -345,11 +447,11 @@ onUnmounted(() => {
   z-index: 3;
   width: 50px;
   height: 50px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.45);
   color: white;
   border: none;
   border-radius: 50%;
-  font-size: var(--font-size-xl);
+  font-size: 34px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -359,7 +461,7 @@ onUnmounted(() => {
 
 .carousel-btn-prev:hover,
 .carousel-btn-next:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 .carousel-btn-prev {
@@ -370,7 +472,6 @@ onUnmounted(() => {
   right: var(--spacing-lg);
 }
 
-/* 轮播指示点 */
 .carousel-indicators {
   position: absolute;
   bottom: var(--spacing-lg);
@@ -397,8 +498,9 @@ onUnmounted(() => {
   border-radius: 6px;
 }
 
-/* 核心功能导航 */
-.features-section {
+.features-section,
+.announcements-section,
+.statistics-section {
   width: 100%;
 }
 
@@ -408,7 +510,7 @@ onUnmounted(() => {
 }
 
 .section-header h2 {
-  font-size: var(--font-size-2xl);
+  font-size: 32px;
   color: var(--primary-color);
   margin-bottom: var(--spacing-sm);
   font-weight: 700;
@@ -421,133 +523,243 @@ onUnmounted(() => {
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: var(--spacing-lg);
 }
 
 .feature-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: var(--spacing-lg);
-  background-color: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
+  gap: 18px;
+  padding: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 250, 255, 0.98));
+  border-radius: 24px;
+  box-shadow: 0 16px 36px rgba(10, 56, 103, 0.08);
   text-decoration: none;
   color: var(--text-primary);
   transition: all 0.3s ease;
-  border: 2px solid transparent;
+  border: 1px solid #e4edf8;
 }
 
 .feature-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-color);
+  box-shadow: 0 24px 44px rgba(10, 56, 103, 0.12);
+  border-color: rgba(0, 102, 204, 0.22);
 }
 
-.feature-icon {
-  width: 80px;
-  height: 80px;
-  margin-bottom: var(--spacing-lg);
+.feature-media {
+  width: 100%;
+  height: 180px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #eef6ff 0%, #f8fbff 100%);
+}
+
+.feature-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.feature-text {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
-  border-radius: var(--border-radius-lg);
+  flex-direction: column;
+  gap: 10px;
 }
 
-.feature-icon img {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
+.feature-kicker {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0, 102, 204, 0.08);
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 
 .feature-card h3 {
-  font-size: var(--font-size-lg);
-  margin-bottom: var(--spacing-sm);
-  font-weight: 600;
+  font-size: 24px;
+  margin: 0;
+  font-weight: 700;
 }
 
 .feature-card p {
-  font-size: var(--font-size-sm);
+  font-size: 15px;
   color: var(--text-secondary);
-  text-align: center;
-  line-height: 1.6;
+  line-height: 1.8;
+  margin: 0;
 }
 
-/* 最新活动公告区 */
-.announcements-section {
-  width: 100%;
+.feature-link {
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 700;
 }
 
-.announcements-list {
+.announcements-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: var(--spacing-lg);
+}
+
+.announcement-highlight,
+.announcement-side-item,
+.announcements-empty {
+  background: var(--bg-primary);
+  border-radius: 24px;
+  box-shadow: 0 16px 38px rgba(10, 56, 103, 0.08);
+  border: 1px solid #e7eef7;
+}
+
+.announcement-highlight {
+  padding: 28px;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(255, 177, 74, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.98));
 }
 
-.announcement-item {
+.announcement-highlight.activity {
+  background:
+    radial-gradient(circle at top right, rgba(255, 102, 0, 0.1), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 248, 243, 0.98));
+}
+
+.announcement-highlight-top,
+.announcement-side-head {
   display: flex;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background-color: var(--bg-primary);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-md);
-  border-left: 4px solid var(--primary-color);
-  transition: all 0.3s ease;
-}
-
-.announcement-item:hover {
-  box-shadow: var(--shadow-lg);
-  transform: translateX(4px);
-}
-
-.announcement-item.activity {
-  border-left-color: var(--accent-color);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 .announcement-badge {
-  display: inline-block;
-  padding: var(--spacing-sm) var(--spacing-md);
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: 999px;
   background-color: var(--primary-color);
   color: white;
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  white-space: nowrap;
-  height: fit-content;
+  font-size: 13px;
+  font-weight: 700;
 }
 
-.announcement-item.activity .announcement-badge {
+.announcement-badge.subtle {
+  background: rgba(0, 102, 204, 0.08);
+  color: var(--primary-color);
+}
+
+.announcement-side-item.activity .announcement-badge.subtle,
+.announcement-highlight.activity .announcement-badge {
   background-color: var(--accent-color);
+  color: #ffffff;
 }
 
-.announcement-content {
-  flex: 1;
+.announcement-highlight h3 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.35;
 }
 
-.announcement-content h3 {
-  font-size: var(--font-size-lg);
-  margin-bottom: var(--spacing-sm);
-  color: var(--text-primary);
+.announcement-highlight p,
+.announcement-side-item p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.85;
+}
+
+.announcement-time {
+  color: var(--text-light);
+  font-size: 13px;
   font-weight: 600;
 }
 
-.announcement-content p {
-  font-size: var(--font-size-base);
+.announcement-highlight-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.announcement-meta-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.announcement-meta-chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #f3f7fc;
+  color: #48627c;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.announcement-cta {
+  color: var(--primary-color);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.announcement-side-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.announcement-side-item {
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.announcement-side-item h4 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+.announcements-empty {
+  padding: 48px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+}
+
+.announcements-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 102, 204, 0.08);
+  color: var(--primary-color);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.announcements-empty h3,
+.announcements-empty p {
+  margin: 0;
+}
+
+.announcements-empty p {
   color: var(--text-secondary);
-  margin-bottom: var(--spacing-sm);
-  line-height: 1.6;
-}
-
-.announcement-date {
-  font-size: var(--font-size-sm);
-  color: var(--text-light);
-}
-
-/* 平台数据统计区 */
-.statistics-section {
-  width: 100%;
 }
 
 .statistics-grid {
@@ -562,7 +774,7 @@ onUnmounted(() => {
   gap: var(--spacing-lg);
   padding: var(--spacing-lg);
   background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
-  border-radius: var(--border-radius-lg);
+  border-radius: 22px;
   color: white;
   box-shadow: var(--shadow-md);
   transition: all 0.3s ease;
@@ -574,9 +786,16 @@ onUnmounted(() => {
 }
 
 .stat-icon {
-  font-size: 40px;
+  font-size: 28px;
   min-width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  background: rgba(255, 255, 255, 0.16);
+  font-weight: 800;
 }
 
 .stat-content {
@@ -594,7 +813,12 @@ onUnmounted(() => {
   opacity: 0.9;
 }
 
-/* 响应式设计 */
+@media (max-width: 960px) {
+  .announcements-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .home-page {
     gap: var(--spacing-lg);
@@ -602,7 +826,7 @@ onUnmounted(() => {
   }
 
   .carousel-container {
-    height: 250px;
+    height: 260px;
   }
 
   .carousel-content {
@@ -610,7 +834,7 @@ onUnmounted(() => {
   }
 
   .carousel-content h2 {
-    font-size: var(--font-size-xl);
+    font-size: 28px;
   }
 
   .carousel-content p {
@@ -621,28 +845,35 @@ onUnmounted(() => {
   .carousel-btn-next {
     width: 40px;
     height: 40px;
-    font-size: var(--font-size-lg);
-  }
-
-  .features-grid {
-    grid-template-columns: 1fr;
+    font-size: 28px;
   }
 
   .section-header h2 {
-    font-size: var(--font-size-xl);
+    font-size: 28px;
   }
 
+  .features-grid,
   .statistics-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
+  }
+
+  .feature-media {
+    height: 160px;
+  }
+
+  .announcement-highlight,
+  .announcement-side-item,
+  .announcements-empty {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .announcement-highlight h3 {
+    font-size: 24px;
   }
 
   .stat-card {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .stat-icon {
-    min-width: auto;
+    flex-direction: row;
   }
 }
 </style>

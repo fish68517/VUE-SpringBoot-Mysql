@@ -130,7 +130,7 @@ const handleRegister = async () => {
   align-items: center;
   justify-content: center;
   min-height: calc(100vh - 60px);
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #eef4fb 0%, #d9e6f4 45%, #c4d6ea 100%);
   padding: var(--spacing-lg);
 }
 
@@ -145,19 +145,20 @@ const handleRegister = async () => {
   padding: 36px 40px !important;   /* 关键：增大内边距 */
   border-radius: 14px;
   box-sizing: border-box;
+  box-shadow: 0 18px 36px rgba(29, 82, 124, 0.12);
 }
 
 .register-title {
-  font-size: var(--font-size-2xl);
-  color: var(--primary-color);
+  font-size: 34px;
+  color: #1d527c;
   margin-bottom: var(--spacing-sm);
   text-align: center;
   font-weight: 700;
 }
 
 .register-subtitle {
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
+  font-size: 15px;
+  color: #60778e;
   text-align: center;
   margin-bottom: var(--spacing-xl);
 }
@@ -175,33 +176,35 @@ const handleRegister = async () => {
 }
 
 .form-label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 700;
+  color: #24425c;
 }
 
 .form-input {
   padding: var(--spacing-md);
-  border: 1px solid var(--border-color);
+  border: 1px solid #c9d8e6;
   border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
+  font-size: 15px;
   transition: all 0.3s ease;
+  color: #24425c;
+  background: #f9fbfd;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+  border-color: #1d527c;
+  box-shadow: 0 0 0 3px rgba(29, 82, 124, 0.12);
 }
 
 .register-btn {
   padding: var(--spacing-md);
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: linear-gradient(135deg, #1d527c 0%, #153f63 100%);
   color: white;
   border: none;
   border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -219,19 +222,19 @@ const handleRegister = async () => {
 .register-footer {
   text-align: center;
   margin-top: var(--spacing-lg);
-  font-size: var(--font-size-sm);
-  color: var(--text-secondary);
+  font-size: 14px;
+  color: #60778e;
 }
 
 .login-link {
-  color: var(--primary-color);
+  color: #1d527c;
   text-decoration: none;
   font-weight: 600;
   transition: all 0.3s ease;
 }
 
 .login-link:hover {
-  color: var(--primary-dark);
+  color: #153f63;
   text-decoration: underline;
 }
 
