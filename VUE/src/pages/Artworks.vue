@@ -2,8 +2,8 @@
   <div class="artworks-page">
     <!-- 页面标题 -->
     <div class="page-header">
-      <h1>作品展示</h1>
-      <p>欣赏壮族刺绣的精美作品</p>
+      <h1>刺绣展示</h1>
+      <p>欣赏文山壮族刺绣的精美作品</p>
     </div>
 
     <!-- 分类筛选 -->

@@ -1,7 +1,7 @@
 {
   "name": "zhuang-embroidery-platform",
   "version": "1.0.0",
-  "description": "文山壮族刺绣网站系统 - Vue 前端",
+  "description": "文山文山壮族刺绣网站系统 - Vue 前端",
   "type": "module",
   "scripts": {
     "dev": "vite",

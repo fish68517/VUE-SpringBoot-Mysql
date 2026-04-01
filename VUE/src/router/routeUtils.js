@@ -8,7 +8,7 @@
 export const getFrontendRoutes = () => {
   return [
     { path: '/', name: 'Home', label: '首页' },
-    { path: '/artworks', name: 'Artworks', label: '作品展示' },
+    { path: '/artworks', name: 'Artworks', label: '刺绣展示' },
     { path: '/knowledge', name: 'Knowledge', label: '知识科普' },
     { path: '/community', name: 'Community', label: '互动交流' },
     { path: '/user', name: 'UserCenter', label: '用户中心' },
@@ -45,5 +45,5 @@ export const isAdminRequired = (route) => {
  * 获取路由标题
  */
 export const getRouteTitle = (route) => {
-  return route.meta?.title || '壮族刺绣网站'
+  return route.meta?.title || '文山壮族刺绣网站'
 }

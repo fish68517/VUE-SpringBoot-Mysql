@@ -35,14 +35,14 @@ public class AdminResourceController {
     // ==================== 作品管理接口 ====================
 
     /**
-     * 上传作品
+     * 上传资源
      *
      * @param request 作品创建请求
      * @return 作品响应
      */
     @PostMapping("/artworks")
     public ApiResponse<ArtworkResponse> uploadArtwork(@RequestBody ArtworkCreateRequest request) {
-        log.info("上传作品: title={}", request.getTitle());
+        log.info("上传资源: title={}", request.getTitle());
 
         try {
             ArtworkResponse response = artworkService.createArtwork(request);

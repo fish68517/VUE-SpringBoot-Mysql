@@ -7,7 +7,7 @@ export default {
     return apiClient.get('/admin/resources/artworks', { params })
   },
 
-  // 上传作品
+  // 上传资源
   uploadArtwork(artworkData) {
     return apiClient.post('/admin/resources/artworks', artworkData)
   },

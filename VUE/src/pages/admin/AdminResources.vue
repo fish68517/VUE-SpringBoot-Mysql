@@ -21,7 +21,7 @@
       <div class="section-header">
         <h2>作品管理</h2>
         <button class="btn btn-primary" @click="showArtworkUploadModal = true">
-          <span>➕</span> 上传作品
+          <span>➕</span> 上传资源
         </button>
       </div>
 
@@ -252,7 +252,7 @@
     <div class="modal-overlay" v-if="showArtworkUploadModal || showArtworkEditModal" @click.self="closeArtworkModals">
       <div class="admin-modal">
         <div class="modal-header">
-          <h2>{{ showArtworkEditModal ? '编辑作品' : '上传作品' }}</h2>
+          <h2>{{ showArtworkEditModal ? '编辑作品' : '上传资源' }}</h2>
           <button @click="closeArtworkModals" class="modal-close">×</button>
         </div>
         <div class="modal-body">

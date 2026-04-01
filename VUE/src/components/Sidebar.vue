@@ -1,7 +1,7 @@
 <template>
   <aside class="sidebar">
     <div class="logo">
-      <h1>壮族刺绣</h1>
+      <h1>文山壮族刺绣</h1>
     </div>
     <nav class="nav-menu">
       <div class="nav-section" v-if="!authStore.isAdmin">
@@ -12,7 +12,7 @@
         </router-link>
         <router-link to="/artworks" class="nav-item" :class="{ active: isActive('/artworks') }">
           <span class="icon">🎨</span>
-          <span>作品展示</span>
+          <span>刺绣展示</span>
         </router-link>
         <router-link to="/knowledge" class="nav-item" :class="{ active: isActive('/knowledge') }">
           <span class="icon">📚</span>

@@ -38,20 +38,20 @@ public class HomeController {
 
         List<CarouselResponse> carousels = new ArrayList<>();
 
-        // 轮播 1：壮族刺绣简介
+        // 轮播 1：文山壮族刺绣简介
         carousels.add(CarouselResponse.builder()
                 .id(1L)
-                .title("壮族刺绣文化")
+                .title("文山壮族刺绣文化")
                 .description("探索壮族非遗刺绣的精妙工艺与文化内涵")
                 .imageUrl("/images/carousel/embroidery-culture.jpg")
                 .link("/artworks")
                 .order(1)
                 .build());
 
-        // 轮播 2：作品展示
+        // 轮播 2：刺绣展示
         carousels.add(CarouselResponse.builder()
                 .id(2L)
-                .title("精美作品展示")
+                .title("精美刺绣展示")
                 .description("欣赏传统工艺与现代审美的完美结合")
                 .imageUrl("/images/carousel/artwork-showcase.jpg")
                 .link("/artworks")
@@ -83,11 +83,11 @@ public class HomeController {
 
         List<FeatureResponse> features = new ArrayList<>();
 
-        // 功能 1：作品展示
+        // 功能 1：刺绣展示
         features.add(FeatureResponse.builder()
                 .id(1L)
-                .name("作品展示")
-                .description("浏览壮族刺绣作品，了解不同类型和风格")
+                .name("刺绣展示")
+                .description("浏览文山壮族刺绣作品，了解不同类型和风格")
                 .iconUrl("/images/features/artwork-icon.png")
                 .link("/artworks")
                 .order(1)
@@ -141,8 +141,8 @@ public class HomeController {
         // 公告 1：平台上线
         announcements.add(AnnouncementResponse.builder()
                 .id(1L)
-                .title("文山壮族刺绣网站平台正式上线")
-                .content("欢迎访问文山壮族刺绣网站平台，这是一个专门为传承和展示壮族非遗刺绣文化而设计的综合性网络平台。")
+                .title("文山文山壮族刺绣网站平台正式上线")
+                .content("欢迎访问文山文山壮族刺绣网站平台，这是一个专门为传承和展示壮族非遗刺绣文化而设计的综合性网络平台。")
                 .type("announcement")
                 .createdAt(LocalDateTime.now().minusDays(7))
                 .order(1)
@@ -152,7 +152,7 @@ public class HomeController {
         announcements.add(AnnouncementResponse.builder()
                 .id(2L)
                 .title("新作品发布：传统刺绣工艺展")
-                .content("本周新发布了多件传统刺绣工艺作品，欢迎大家前往作品展示区欣赏。")
+                .content("本周新发布了多件传统刺绣工艺作品，欢迎大家前往刺绣展示区欣赏。")
                 .type("activity")
                 .createdAt(LocalDateTime.now().minusDays(3))
                 .order(2)
@@ -162,7 +162,7 @@ public class HomeController {
         announcements.add(AnnouncementResponse.builder()
                 .id(3L)
                 .title("刺绣技法知识分享")
-                .content("本周在知识科普区分享了关于壮族刺绣基本针法的详细教程，欢迎学习。")
+                .content("本周在知识科普区分享了关于文山壮族刺绣基本针法的详细教程，欢迎学习。")
                 .type("activity")
                 .createdAt(LocalDateTime.now().minusDays(1))
                 .order(3)

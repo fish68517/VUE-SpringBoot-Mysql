@@ -24,7 +24,7 @@ const frontendRoutes = [
     path: '/artworks',
     name: 'Artworks',
     component: Artworks,
-    meta: { requiresAuth: false, title: '作品展示' },
+    meta: { requiresAuth: false, title: '刺绣展示' },
   },
   {
     path: '/artworks/:id',
@@ -132,7 +132,7 @@ router.beforeEach((to, from, next) => {
 
   // 更新页面标题
   if (to.meta.title) {
-    document.title = `${to.meta.title} - 壮族刺绣网站`
+    document.title = `${to.meta.title} - 文山壮族刺绣网站`
   }
 
   next()

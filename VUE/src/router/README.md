@@ -11,7 +11,7 @@
 | 路径 | 名称 | 组件 | 认证要求 | 说明 |
 |------|------|------|---------|------|
 | `/` | Home | Home.vue | 否 | 首页 |
-| `/artworks` | Artworks | Artworks.vue | 否 | 作品展示列表 |
+| `/artworks` | Artworks | Artworks.vue | 否 | 刺绣展示列表 |
 | `/artworks/:id` | ArtworkDetail | ArtworkDetail.vue | 否 | 作品详情页 |
 | `/knowledge` | Knowledge | Knowledge.vue | 否 | 知识科普列表 |
 | `/knowledge/:id` | KnowledgeDetail | KnowledgeDetail.vue | 否 | 知识详情页 |

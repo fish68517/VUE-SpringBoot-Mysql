@@ -1,8 +1,8 @@
-# 设计文档 - 文山壮族刺绣网站系统
+# 设计文档 - 文山文山壮族刺绣网站系统
 
 ## 概述
 
-文山壮族刺绣网站系统是一个前后分离的 Web 应用，采用 SpringBoot 后端 + Vue 前端的架构。系统分为前台用户界面和后台管理界面两部分，通过 RESTful API 进行通信。所有接口无需复杂认证，支持直接访问。
+文山文山壮族刺绣网站系统是一个前后分离的 Web 应用，采用 SpringBoot 后端 + Vue 前端的架构。系统分为前台用户界面和后台管理界面两部分，通过 RESTful API 进行通信。所有接口无需复杂认证，支持直接访问。
 
 **技术栈**：
 - 后端：SpringBoot + MySQL
@@ -145,7 +145,7 @@ POST /api/admin/messages         - 发送消息推送
 #### 10. 资源管理接口（后台）
 
 ```
-POST /api/admin/artworks         - 上传作品
+POST /api/admin/artworks         - 上传资源
 PUT  /api/admin/artworks/:id     - 编辑作品
 DELETE /api/admin/artworks/:id   - 删除作品
 POST /api/admin/artworks/:id/approve - 审核作品
@@ -337,7 +337,7 @@ GET  /api/admin/statistics       - 获取访问统计数据
    - 最新活动公告
    - 平台数据统计
 
-2. **作品展示** (`/artworks`)
+2. **刺绣展示** (`/artworks`)
    - 分类筛选
    - 作品列表（网格/列表视图）
    - 作品详情页面
