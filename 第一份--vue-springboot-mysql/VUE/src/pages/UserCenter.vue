@@ -303,7 +303,8 @@ const loadUserData = async () => {
   try {
     const userId = userStore.user?.id
     if (!userId) {
-      router.push('/login')
+      ElMessage.warning('此功能需要登录才能访问')
+      router.push('/home')
       return
     }
 

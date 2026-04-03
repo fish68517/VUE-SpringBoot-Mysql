@@ -1,28 +1,22 @@
 <template>
   <div class="pattern-detail">
-   
-
-    <!-- Back Navigation -->
     <div class="back-nav">
       <button @click="goBack" class="back-btn">
-        <span class="icon">←</span> 返回列表
+        <span class="icon">←</span>
+        返回列表
       </button>
     </div>
 
-    <!-- Loading State -->
     <div v-if="loading" class="loading-container">
       <el-skeleton :rows="5" animated />
     </div>
 
-    <!-- Pattern Detail Content -->
     <div v-else-if="pattern" class="detail-container">
-      <!-- Main Content -->
       <div class="detail-main">
-        <!-- Image Section -->
         <div class="image-section">
           <img :src="pattern.imageUrl" :alt="pattern.name" class="pattern-image" />
           <div class="image-actions">
-            <button 
+            <button
               v-if="isLoggedIn"
               :class="['collect-btn', { collected: isCollected }]"
               @click="toggleCollection"
@@ -31,46 +25,35 @@
               <span class="icon">♥</span>
               {{ isCollected ? '已收藏' : '收藏' }}
             </button>
-            <button 
-              v-if="false"
+            <button
               class="download-btn"
               @click="downloadPattern"
               :disabled="downloadLoading"
             >
               <span class="icon">⬇</span>
-              {{ downloadLoading ? '下载中...' : '下载' }}
+              {{ downloadLoading ? '下载中...' : '下载图片' }}
             </button>
           </div>
         </div>
 
-        <!-- Info Section -->
         <div class="info-section">
-          <!-- Basic Info -->
           <div class="basic-info">
             <h1>{{ pattern.name }}</h1>
             <div class="meta-info">
               <span class="category">{{ pattern.category }}</span>
               <span class="stats">
-                <span>👁 {{ pattern.viewCount || 0 }} 次浏览</span>
-                <span>⬇ {{ pattern.downloadCount || 0 }} 次下载</span>
-                <span>♥ {{ pattern.collectionCount || 0 }} 次收藏</span>
+                <span>浏览 {{ pattern.viewCount || 0 }}</span>
+                <span>下载 {{ pattern.downloadCount || 0 }}</span>
+                <span>收藏 {{ pattern.collectionCount || 0 }}</span>
               </span>
             </div>
           </div>
 
-          <!-- Cultural Background -->
           <div class="section">
             <h2>文化背景</h2>
             <p class="content">{{ pattern.culturalBackground || '暂无信息' }}</p>
           </div>
 
-          <!-- Application Scenarios -->
-          <div class="section" v-if="false">
-            <h2>应用场景</h2>
-            <p class="content">{{ pattern.applicationScenarios || '暂无信息' }}</p>
-          </div>
-
-          <!-- Description -->
           <div v-if="pattern.description" class="section">
             <h2>纹样描述</h2>
             <p class="content">{{ pattern.description }}</p>
@@ -78,21 +61,18 @@
         </div>
       </div>
 
-      <!-- Sidebar -->
       <div class="detail-sidebar">
-        <!-- Login Prompt -->
         <div v-if="!isLoggedIn" class="login-prompt">
-          <p>登录后可以收藏和评论</p>
+          <p>登录后可以收藏、评论并记录操作历史</p>
           <router-link to="/login" class="login-link">立即登录</router-link>
         </div>
 
-        <!-- Quick Stats -->
         <div class="quick-stats">
           <div class="stat-item">
             <div class="stat-value">{{ pattern.viewCount || 0 }}</div>
             <div class="stat-label">浏览</div>
           </div>
-          <div class="stat-item" v-if="false">
+          <div class="stat-item">
             <div class="stat-value">{{ pattern.downloadCount || 0 }}</div>
             <div class="stat-label">下载</div>
           </div>
@@ -104,20 +84,15 @@
       </div>
     </div>
 
-    <!-- Error State -->
     <div v-else class="error-container">
       <p>纹样不存在或加载失败</p>
       <button @click="goBack" class="back-btn">返回列表</button>
     </div>
 
-   
-
-    <!-- Comments Section -->
     <div v-if="pattern" class="comments-section">
       <CommentList :patternId="pattern.id" :patternName="pattern.name" />
     </div>
 
-    <!-- Questions Section -->
     <div v-if="pattern" class="questions-section">
       <QuestionList :patternId="pattern.id" :patternName="pattern.name" />
     </div>
@@ -125,50 +100,37 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '../store'
+import { ElMessage } from 'element-plus'
 import { patternAPI, collectionAPI } from '../services/api'
 import { operationLogService } from '../services/operationLog'
-import { ElMessage } from 'element-plus'
-import Header from '../components/Header.vue'
-import Footer from '../components/Footer.vue'
+import { useUserStore } from '../store'
 import CommentList from '../components/CommentList.vue'
 import QuestionList from '../components/QuestionList.vue'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
-
-// State
 const pattern = ref(null)
-const userData = ref(null)
 const loading = ref(false)
 const isCollected = ref(false)
 const collectingLoading = ref(false)
 const downloadLoading = ref(false)
 
-const userStore = useUserStore()
-
-// Computed
 const isLoggedIn = computed(() => userStore.isLoggedIn)
 
-// Methods
 const fetchPattern = async () => {
   loading.value = true
   try {
     const patternId = route.params.id
     const response = await patternAPI.getPattern(patternId)
     pattern.value = response.data || response
-    
-    // Record view operation
+
     if (isLoggedIn.value && pattern.value) {
       operationLogService.recordView(pattern.value.id, pattern.value.name)
-    }
-    
-    // Check if collected
-    if (isLoggedIn.value) {
-      checkIfCollected()
+      await checkIfCollected()
     }
   } catch (error) {
     console.error('Failed to fetch pattern:', error)
@@ -179,18 +141,17 @@ const fetchPattern = async () => {
 }
 
 const checkIfCollected = async () => {
+  if (!pattern.value || !userStore.user?.id) {
+    isCollected.value = false
+    return
+  }
 
-   // 直接解析，如果不满足条件则默认为空对象
-  const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
-  const userId = userInfo.id;
   try {
     const collections = await collectionAPI.getCollections({
       patternId: pattern.value.id,
-      userId: userId
+      userId: userStore.user.id
     })
-    console.log("收藏列表：" + JSON.stringify(collections));
-    isCollected.value = collections && collections.data.length > 0
-    console.log("收藏状态：" + isCollected.value);
+    isCollected.value = !!(collections?.data?.length)
   } catch (error) {
     console.error('Failed to check collection status:', error)
   }
@@ -202,50 +163,40 @@ const toggleCollection = async () => {
     router.push('/login')
     return
   }
- 
 
-  // 直接解析，如果不满足条件则默认为空对象
-  const userInfo = JSON.parse(localStorage.getItem('user') || '{}');
-  const userId = userInfo.id;
-
-  if (!userId) {
-    ElMessage.warning('请先登录');
-    return;
+  if (!userStore.user?.id || !pattern.value) {
+    ElMessage.warning('请先登录')
+    return
   }
 
-   // 将 const 改为 let
-  // 打印开始收藏
-  console.log('开始收藏。。。。。', JSON.stringify(userData))
   collectingLoading.value = true
   try {
     if (isCollected.value) {
-      // Delete collection
       const collections = await collectionAPI.getCollections({
         patternId: pattern.value.id,
-        userId: userId
+        userId: userStore.user.id
       })
-      if (collections && collections.data.length > 0) {
+
+      if (collections?.data?.length) {
         await collectionAPI.deleteCollection(collections.data[0].id)
-        isCollected.value = false
-        pattern.value.collectionCount = Math.max(0, (pattern.value.collectionCount || 1) - 1)
-        ElMessage.success('已取消收藏')
-        
-        // Record collection operation
-        operationLogService.recordCollection(pattern.value.id, pattern.value.name, 'remove')
       }
-    } else {
-      // Add collection
-      await collectionAPI.addCollection({
-        patternId: pattern.value.id,
-        userId: userId
-      })
-      isCollected.value = true
-      pattern.value.collectionCount = (pattern.value.collectionCount || 0) + 1
-      ElMessage.success('收藏成功')
-      
-      // Record collection operation
-      operationLogService.recordCollection(pattern.value.id, pattern.value.name, 'add')
+
+      isCollected.value = false
+      pattern.value.collectionCount = Math.max(0, (pattern.value.collectionCount || 1) - 1)
+      ElMessage.success('已取消收藏')
+      operationLogService.recordCollection(pattern.value.id, pattern.value.name, 'remove')
+      return
     }
+
+    await collectionAPI.addCollection({
+      patternId: pattern.value.id,
+      userId: userStore.user.id
+    })
+
+    isCollected.value = true
+    pattern.value.collectionCount = (pattern.value.collectionCount || 0) + 1
+    ElMessage.success('收藏成功')
+    operationLogService.recordCollection(pattern.value.id, pattern.value.name, 'add')
   } catch (error) {
     console.error('Failed to toggle collection:', error)
     ElMessage.error('操作失败，请重试')
@@ -255,26 +206,32 @@ const toggleCollection = async () => {
 }
 
 const downloadPattern = async () => {
+  if (!pattern.value) {
+    return
+  }
+
   downloadLoading.value = true
   try {
     const response = await patternAPI.downloadPattern(pattern.value.id)
-    
-    // If response contains a download URL
-    if (response && response.downloadUrl) {
-      window.open(response.downloadUrl, '_blank')
-    } else if (response && response.data && response.data.downloadUrl) {
-      window.open(response.data.downloadUrl, '_blank')
-    } else if (pattern.value.downloadUrl) {
-      window.open(pattern.value.downloadUrl, '_blank')
-    } else {
+    const downloadUrl = response?.data || pattern.value.downloadUrl || pattern.value.imageUrl
+
+    if (!downloadUrl) {
       ElMessage.error('下载链接不可用')
+      return
     }
-    
-    // Update download count
+
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.target = '_blank'
+    link.rel = 'noopener'
+    link.download = `${pattern.value.name || 'pattern'}.jpg`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
     pattern.value.downloadCount = (pattern.value.downloadCount || 0) + 1
-    ElMessage.success('下载开始')
-    
-    // Record download operation
+    ElMessage.success('已开始下载')
+
     if (isLoggedIn.value) {
       operationLogService.recordDownload(pattern.value.id, pattern.value.name)
     }
@@ -290,7 +247,6 @@ const goBack = () => {
   router.back()
 }
 
-// Lifecycle
 onMounted(() => {
   fetchPattern()
 })
@@ -304,7 +260,6 @@ onMounted(() => {
   flex-direction: column;
 }
 
-/* Back Navigation */
 .back-nav {
   background-color: white;
   padding: 1rem;
@@ -337,7 +292,6 @@ onMounted(() => {
   font-size: 1.2rem;
 }
 
-/* Loading Container */
 .loading-container {
   flex: 1;
   max-width: 1400px;
@@ -346,7 +300,6 @@ onMounted(() => {
   padding: 2rem 1rem;
 }
 
-/* Detail Container */
 .detail-container {
   flex: 1;
   max-width: 1400px;
@@ -358,7 +311,6 @@ onMounted(() => {
   gap: 2rem;
 }
 
-/* Main Content */
 .detail-main {
   background-color: white;
   border-radius: 8px;
@@ -366,7 +318,6 @@ onMounted(() => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Image Section */
 .image-section {
   position: relative;
   background-color: #f9f9f9;
@@ -445,7 +396,6 @@ onMounted(() => {
   font-size: 1.2rem;
 }
 
-/* Info Section */
 .info-section {
   padding: 2rem;
 }
@@ -483,6 +433,7 @@ onMounted(() => {
   gap: 1.5rem;
   font-size: 0.95rem;
   color: #666;
+  flex-wrap: wrap;
 }
 
 .stats span {
@@ -491,7 +442,6 @@ onMounted(() => {
   gap: 0.3rem;
 }
 
-/* Sections */
 .section {
   margin-bottom: 2rem;
 }
@@ -512,7 +462,6 @@ onMounted(() => {
   word-break: break-word;
 }
 
-/* Sidebar */
 .detail-sidebar {
   display: flex;
   flex-direction: column;
@@ -572,7 +521,6 @@ onMounted(() => {
   color: #666;
 }
 
-/* Error Container */
 .error-container {
   flex: 1;
   display: flex;
@@ -588,7 +536,6 @@ onMounted(() => {
   color: #666;
 }
 
-/* Responsive Design */
 @media (max-width: 1199px) {
   .detail-container {
     grid-template-columns: 1fr 280px;
@@ -638,10 +585,7 @@ onMounted(() => {
     gap: 1rem;
   }
 
-  .login-prompt {
-    flex: 1;
-  }
-
+  .login-prompt,
   .quick-stats {
     flex: 1;
   }
@@ -712,7 +656,6 @@ onMounted(() => {
 
   .quick-stats {
     padding: 1.25rem;
-    grid-template-columns: repeat(3, 1fr);
   }
 
   .stat-value {
@@ -800,10 +743,6 @@ onMounted(() => {
     font-size: 0.85rem;
   }
 
-  .stats span {
-    gap: 0.2rem;
-  }
-
   .section {
     margin-bottom: 1.25rem;
   }
@@ -834,7 +773,6 @@ onMounted(() => {
 
   .quick-stats {
     padding: 1.25rem;
-    grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
   }
 
@@ -846,10 +784,7 @@ onMounted(() => {
     font-size: 0.8rem;
   }
 
-  .comments-section {
-    padding: 0 0.75rem 1.5rem 0.75rem;
-  }
-
+  .comments-section,
   .questions-section {
     padding: 0 0.75rem 1.5rem 0.75rem;
   }
@@ -925,10 +860,6 @@ onMounted(() => {
     align-items: flex-start;
   }
 
-  .stats span {
-    gap: 0.2rem;
-  }
-
   .section {
     margin-bottom: 1rem;
   }
@@ -959,7 +890,6 @@ onMounted(() => {
 
   .quick-stats {
     padding: 1rem;
-    grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
   }
 
@@ -971,10 +901,7 @@ onMounted(() => {
     font-size: 0.7rem;
   }
 
-  .comments-section {
-    padding: 0 0.5rem 1rem 0.5rem;
-  }
-
+  .comments-section,
   .questions-section {
     padding: 0 0.5rem 1rem 0.5rem;
   }

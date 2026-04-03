@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-01T00:00:00.000Z" agent="ChatGPT" version="24.7.17" type="device" compressed="false">
+  <diagram id="naxi_uml" name="数据库UML类图">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="r" value="&amp;lt;b&amp;gt;roles 角色表&amp;lt;/b&amp;gt;&amp;lt;hr/&amp;gt;id : bigint PK&amp;lt;br/&amp;gt;role_name : varchar(50)&amp;lt;br/&amp;gt;description : varchar(255)&amp;lt;br/&amp;gt;created_at : timestamp" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="u" value="&amp;lt;b&amp;gt;users 用户表&amp;lt;/b&amp;gt;&amp;lt;hr/&amp;gt;id : bigint PK&amp;lt;br/&amp;gt;username : varchar(50)&amp;lt;br/&amp;gt;password : varchar(255)&amp;lt;br/&amp;gt;email : varchar(100)&amp;lt;br/&amp;gt;nickname : varchar(100)&amp;lt;br/&amp;gt;status : enum(ACTIVE,DISABLED)&amp;lt;br/&amp;gt;role_id : bigint FK&amp;lt;br/&amp;gt;created_at / updated_at" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="320" y="40" width="260" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="pms" value="&amp;lt;b&amp;gt;permissions 权限表&amp;lt;/b&amp;gt;&amp;lt;hr/&amp;gt;id : bigint PK&amp;lt;br/&amp;gt;role_id : bigint FK&amp;lt;br/&amp;gt;permission_name : varchar(100)&amp;lt;br/&amp;gt;created_at : timestamp" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="640" y="60" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="pt" value="&amp;lt;b&amp;gt;patterns 纹样表&amp;lt;/b&amp;gt;&amp;lt;hr/&amp;gt;id : bigint PK&amp;lt;br/&amp;gt;name : varchar(100)&amp;lt;br/&amp;gt;category : enum&amp;lt;br/&amp;gt;description : text&amp;lt;br/&amp;gt;cultural_background : text&amp;lt;br/&amp;gt;image_url : varchar(255)&amp;lt;br/&amp;gt;download_url : varchar(255)&amp;lt;br/&amp;gt;application_scenarios : text&amp;lt;br/&amp;gt;view_count / download_count / collection_count&amp;lt;br/&amp;gt;created_at / updated_at" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="320" y="300" width="280" height="210" as="geometry"/>
+        </mxCell>
+        <mxCell id="col" value="&amp;lt;b&amp;gt;collections 收藏表&amp;lt;/b&amp;gt;&amp;lt;hr/&amp;gt;id : bigint PK&amp;lt;br/&amp;gt;user_id : bigint FK&amp;lt;br/&amp;gt;pattern_id : bigint FK&amp;lt;br/&amp;gt;created_at : timestamp&amp;lt;br/&amp;gt;unique(user_id, pattern_id)" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="330" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="com" value="&amp;lt;b&amp;gt;comments 评论表&amp;lt;/b&amp;gt;&amp;lt;hr/&amp;gt;id : bigint PK&amp;lt;br/&amp;gt;user_id : bigint FK&amp;lt;br/&amp;gt;pattern_id : bigint FK&amp;lt;br/&amp;gt;content : text&amp;lt;br/&amp;gt;created_at / updated_at" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="40" y="490" width="220" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="q" value="&amp;lt;b&amp;gt;questions 提问表&amp;lt;/b&amp;gt;&amp;lt;hr/&amp;gt;id : bigint PK&amp;lt;br/&amp;gt;user_id : bigint FK&amp;lt;br/&amp;gt;pattern_id : bigint FK&amp;lt;br/&amp;gt;title : varchar(200)&amp;lt;br/&amp;gt;content : text&amp;lt;br/&amp;gt;created_at / updated_at" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="320" y="560" width="250" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="cw" value="&amp;lt;b&amp;gt;creative_works 原创作品表&amp;lt;/b&amp;gt;&amp;lt;hr/&amp;gt;id : bigint PK&amp;lt;br/&amp;gt;user_id : bigint FK&amp;lt;br/&amp;gt;title : varchar(200)&amp;lt;br/&amp;gt;description : text&amp;lt;br/&amp;gt;image_url : varchar(255)&amp;lt;br/&amp;gt;status : enum(PENDING,APPROVED,REJECTED)&amp;lt;br/&amp;gt;like_count : int&amp;lt;br/&amp;gt;created_at / updated_at" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="650" y="330" width="250" height="155" as="geometry"/>
+        </mxCell>
+        <mxCell id="aal" value="&amp;lt;b&amp;gt;admin_audit_logs 管理审计表&amp;lt;/b&amp;gt;&amp;lt;hr/&amp;gt;id : bigint PK&amp;lt;br/&amp;gt;admin_id : bigint FK&amp;lt;br/&amp;gt;operation_type : varchar(50)&amp;lt;br/&amp;gt;target_type : varchar(50)&amp;lt;br/&amp;gt;target_id : bigint&amp;lt;br/&amp;gt;details : text&amp;lt;br/&amp;gt;created_at : timestamp" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="650" y="540" width="250" height="145" as="geometry"/>
+        </mxCell>
+        <mxCell id="er1" value="role_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="u" target="r">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="er2" value="role_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="pms" target="r">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="er3" value="user_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="col" target="u">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="er4" value="pattern_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="col" target="pt">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="er5" value="user_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="com" target="u">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="er6" value="pattern_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="com" target="pt">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="er7" value="user_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="q" target="u">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="er8" value="pattern_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="q" target="pt">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="er9" value="user_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="cw" target="u">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="er10" value="admin_id" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeWidth=1.2;" edge="1" parent="1" source="aal" target="u">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

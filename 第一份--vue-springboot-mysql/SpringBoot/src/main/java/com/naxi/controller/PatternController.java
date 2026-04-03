@@ -25,7 +25,7 @@ public class PatternController {
      */
     private Long getCurrentAdminId() {
         // 这里简化处理，实际应该从认证信息中获取
-        return 1L; // 默认返回1，实际应该从认证系统获取
+        return 1L;
     }
 
     /**
@@ -38,7 +38,7 @@ public class PatternController {
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Pattern> patterns;
-        
+
         if (category != null && !category.isEmpty()) {
             try {
                 Pattern.PatternCategory patternCategory = Pattern.PatternCategory.valueOf(category);
@@ -78,10 +78,9 @@ public class PatternController {
         if (pattern.getImageUrl() == null || pattern.getImageUrl().isEmpty()) {
             return ApiResponse.error(400, "纹样图片URL不能为空");
         }
-        
+
         Pattern savedPattern = patternService.savePattern(pattern);
 
-        // 记录管理员操作日志
         Long adminId = getCurrentAdminId();
         systemService.recordAdminAuditLog(
             adminId,
@@ -101,7 +100,6 @@ public class PatternController {
     public ApiResponse<?> updatePattern(@PathVariable Long id, @RequestBody Pattern pattern) {
         Pattern updatedPattern = patternService.updatePattern(id, pattern);
         if (updatedPattern != null) {
-            // 记录管理员操作日志
             Long adminId = getCurrentAdminId();
             systemService.recordAdminAuditLog(
                 adminId,
@@ -127,7 +125,6 @@ public class PatternController {
         }
         patternService.deletePattern(id);
 
-        // 记录管理员操作日志
         Long adminId = getCurrentAdminId();
         systemService.recordAdminAuditLog(
             adminId,
@@ -141,7 +138,7 @@ public class PatternController {
     }
 
     /**
-     * 搜索纹样（按名称、文化内涵关键词）
+     * 搜索纹样（按名称、文化内容关键词）
      */
     @GetMapping("/search")
     public ApiResponse<?> searchPatterns(
@@ -149,14 +146,14 @@ public class PatternController {
             @RequestParam(required = false) String category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        
+
         if (keyword == null || keyword.isEmpty()) {
             return ApiResponse.error(400, "搜索关键词不能为空");
         }
-        
+
         Pageable pageable = PageRequest.of(page, size);
         Page<Pattern> patterns;
-        
+
         if (category != null && !category.isEmpty()) {
             try {
                 Pattern.PatternCategory patternCategory = Pattern.PatternCategory.valueOf(category);
@@ -167,7 +164,7 @@ public class PatternController {
         } else {
             patterns = patternService.searchPatterns(keyword, pageable);
         }
-        
+
         return ApiResponse.success(patterns);
     }
 
@@ -180,14 +177,18 @@ public class PatternController {
         if (pattern == null) {
             return ApiResponse.error(2001, "纹样不存在");
         }
-        
-        if (pattern.getDownloadUrl() == null || pattern.getDownloadUrl().isEmpty()) {
+
+        String downloadTarget = pattern.getDownloadUrl();
+        if (downloadTarget == null || downloadTarget.isEmpty()) {
+            downloadTarget = pattern.getImageUrl();
+        }
+
+        if (downloadTarget == null || downloadTarget.isEmpty()) {
             return ApiResponse.error(400, "纹样下载链接不可用");
         }
-        
-        // 记录下载量
+
         patternService.incrementDownloadCount(id);
-        
-        return ApiResponse.success("下载链接", pattern.getDownloadUrl());
+
+        return ApiResponse.success("下载链接", downloadTarget);
     }
 }

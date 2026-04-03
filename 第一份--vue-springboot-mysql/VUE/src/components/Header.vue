@@ -16,13 +16,19 @@
         <router-link to="/patterns" @click="mobileMenuOpen = false">资源库</router-link>
         <router-link to="/science" @click="mobileMenuOpen = false">科普</router-link>
         <router-link to="/works" @click="mobileMenuOpen = false">原创作品</router-link>
-        <div v-if="isLoggedIn" class="user-menu">
-          <router-link to="/user-center" @click="mobileMenuOpen = false">个人中心</router-link>
-          <router-link v-if="isAdmin" to="/admin" @click="mobileMenuOpen = false">后台</router-link>
-          <button @click="logout">退出</button>
+
+        <div class="user-menu">
+          <button type="button" class="nav-link-button" @click="handleUserCenterClick">
+            个人中心
+          </button>
+          <router-link v-if="isLoggedIn && isAdmin" to="/admin" @click="mobileMenuOpen = false">
+            后台
+          </router-link>
+          <button v-if="isLoggedIn" type="button" @click="logout">退出</button>
         </div>
-        <div v-else class="auth-links">
-          <router-link to="/login" @click="mobileMenuOpen = false">登录</router-link>
+
+        <div v-if="!isLoggedIn" class="auth-links">
+          <router-link to="/login" @click="mobileMenuOpen = false">用户登录</router-link>
           <router-link to="/register" @click="mobileMenuOpen = false">注册</router-link>
         </div>
       </nav>
@@ -33,6 +39,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '../store'
 
 const router = useRouter()
@@ -41,6 +48,17 @@ const mobileMenuOpen = ref(false)
 
 const isLoggedIn = computed(() => userStore.isLoggedIn)
 const isAdmin = computed(() => userStore.isAdmin)
+
+const handleUserCenterClick = () => {
+  mobileMenuOpen.value = false
+
+  if (!isLoggedIn.value) {
+    ElMessage.warning('此功能需要登录才能访问')
+    return
+  }
+
+  router.push('/user-center')
+}
 
 const logout = () => {
   userStore.logout()
@@ -112,6 +130,18 @@ button:hover {
   background-color: #ff5252;
 }
 
+.nav-link-button {
+  background: none;
+  color: white;
+  padding: 0;
+  border-radius: 0;
+}
+
+.nav-link-button:hover {
+  background: none;
+  color: #ddd;
+}
+
 .mobile-menu-toggle {
   display: none;
   background: none;
@@ -167,7 +197,8 @@ button:hover {
     gap: 0.75rem;
   }
 
-  .nav a {
+  .nav a,
+  .nav-link-button {
     font-size: 0.95rem;
   }
 
@@ -216,11 +247,14 @@ button:hover {
     max-height: 500px;
   }
 
-  .nav a {
+  .nav a,
+  .nav-link-button {
     display: block;
+    width: 100%;
     padding: 0.75rem 1rem;
     border-bottom: 1px solid #444;
     font-size: 0.9rem;
+    text-align: left;
   }
 
   .nav a:last-child {
@@ -236,13 +270,14 @@ button:hover {
   }
 
   .user-menu a,
-  .auth-links a {
+  .auth-links a,
+  .user-menu .nav-link-button {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid #444;
     display: block;
   }
 
-  .user-menu button {
+  .user-menu button:not(.nav-link-button) {
     width: 100%;
     margin: 0;
     border-radius: 0;
@@ -272,7 +307,8 @@ button:hover {
     height: 2.5px;
   }
 
-  .nav a {
+  .nav a,
+  .nav-link-button {
     font-size: 0.8rem;
     padding: 0.6rem 0.8rem;
   }
@@ -283,11 +319,12 @@ button:hover {
   }
 
   .user-menu a,
-  .auth-links a {
+  .auth-links a,
+  .user-menu .nav-link-button {
     padding: 0.6rem 0.8rem;
   }
 
-  .user-menu button {
+  .user-menu button:not(.nav-link-button) {
     padding: 0.6rem 0.8rem;
   }
 }

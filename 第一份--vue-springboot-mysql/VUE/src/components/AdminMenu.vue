@@ -60,7 +60,7 @@ const handleLogout = () => {
 }
 
 .brand-title {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.5px;
   line-height: 1.2;
@@ -68,7 +68,7 @@ const handleLogout = () => {
 
 .brand-subtitle {
   margin-top: 6px;
-  font-size: 12px;
+  font-size: 14px;
   opacity: 0.8;
 }
 
@@ -82,11 +82,11 @@ const handleLogout = () => {
 .nav-item {
   display: flex;
   align-items: center;
-  padding: 10px 12px;
+  padding: 11px 12px;
   border-radius: 10px;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.92);
-  font-size: 14px;
+  font-size: 25px;
   font-weight: 600;
   transition: background-color 0.18s ease, transform 0.12s ease, color 0.18s ease;
 }
@@ -103,18 +103,18 @@ const handleLogout = () => {
 
 .sidebar-footer {
   margin-top: auto;
-  padding: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 50px;
+  border-top: 10px solid rgba(255, 255, 255, 0.14);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 20px;
 }
 
 .footer-status {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 14px;
   opacity: 0.9;
 }
 
@@ -133,9 +133,10 @@ const handleLogout = () => {
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+  margin-top: -6px;
   transition: background-color 0.2s ease, transform 0.12s ease;
 }
 

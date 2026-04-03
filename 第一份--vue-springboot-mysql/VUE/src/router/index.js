@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: '/home'
   },
   {
     path: '/patterns',
@@ -34,14 +34,12 @@ const routes = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import('../pages/Login.vue'),
-    meta: { hideHeader: true }
+    component: () => import('../pages/Login.vue')
   },
   {
     path: '/register',
     name: 'Register',
-    component: () => import('../pages/Register.vue'),
-    meta: { hideHeader: true }
+    component: () => import('../pages/Register.vue')
   },
   {
     path: '/user-center',
@@ -107,33 +105,26 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   const userInfo = JSON.parse(localStorage.getItem('user') || '{}')
+  const isAdmin = userInfo.roleId === 1 || userInfo.roleId === 2
 
-  if (to.path === '/' && token) {
-    if (userInfo.roleId === 1 || userInfo.roleId === 2) {
-      return next('/admin')
+  if (to.meta.requiresAdmin) {
+    if (!token) {
+      ElMessage.warning('此功能需要登录才能访问')
+      return next(from.fullPath && from.fullPath !== to.fullPath ? from.fullPath : '/home')
     }
-    return next('/home')
-  }
 
-  if (to.path === '/' && !token) {
-    return next('/login')
+    if (!isAdmin) {
+      ElMessage.warning('权限不足，无法进入管理后台')
+      return next(from.fullPath && from.fullPath !== to.fullPath ? from.fullPath : '/home')
+    }
   }
 
   if (to.meta.requiresAuth && !token) {
-    ElMessage.warning('请先登录后再访问该页面')
-    return next('/login')
+    ElMessage.warning('此功能需要登录才能访问')
+    return next(from.fullPath && from.fullPath !== to.fullPath ? from.fullPath : '/home')
   }
 
-  if (to.meta.requiresAdmin) {
-    if (token && (userInfo.roleId === 1 || userInfo.roleId === 2)) {
-      next()
-    } else {
-      ElMessage.warning('权限不足，无法进入管理后台')
-      next('/')
-    }
-  } else {
-    next()
-  }
+  next()
 })
 
 export default router
