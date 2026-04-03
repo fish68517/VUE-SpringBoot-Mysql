@@ -56,11 +56,19 @@
                 </div>
               </div>
 
+              <router-link
+                v-if="!isLoggedIn"
+                :to="loginTarget"
+                class="collect-btn collect-btn--link"
+                :title="collectTitle"
+              >
+                登录后收藏
+              </router-link>
               <button
+                v-else
                 class="collect-btn"
                 :class="{ collected: isCollected }"
                 @click="toggleCollect"
-                :disabled="!isLoggedIn"
                 :title="collectTitle"
               >
                 {{ isCollected ? copy.collectedButton : copy.collectButton }}
@@ -115,9 +123,12 @@
         <div v-else class="login-prompt">
           <p>
             {{ copy.loginPromptPrefix }}
-            <router-link to="/login">{{ copy.loginAction }}</router-link>
+            {{ copy.loginAction }}
             {{ copy.loginPromptSuffix }}
           </p>
+          <router-link :to="loginTarget" class="login-prompt__action">
+            去登录后评论
+          </router-link>
         </div>
 
         <div class="comments-list">
@@ -237,6 +248,12 @@ const isCollected = ref(false)
 
 const { success, error } = useToast()
 const isLoggedIn = computed(() => authStore.isLoggedIn)
+const loginTarget = computed(() => ({
+  path: '/login',
+  query: {
+    redirect: route.fullPath || `/artworks/${route.params.id}`,
+  },
+}))
 const collectTitle = computed(() => {
   if (!isLoggedIn.value) {
     return copy.loginFirst
@@ -632,6 +649,13 @@ onMounted(() => {
   font-weight: 700;
 }
 
+.collect-btn--link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .collect-btn:hover:not(:disabled) {
   border-color: var(--primary-color);
   color: var(--primary-color);
@@ -795,6 +819,21 @@ onMounted(() => {
 
 .login-prompt p {
   margin: 0;
+}
+
+.login-prompt__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 14px;
+  padding: 12px 22px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 12px 24px rgba(0, 102, 204, 0.18);
 }
 
 .comments-list {

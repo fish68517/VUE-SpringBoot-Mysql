@@ -64,57 +64,6 @@
       </div>
     </section>
 
-    <section class="announcements-section">
-      <div class="section-header">
-        <h2>{{ copy.newsTitle }}</h2>
-        <p>{{ copy.newsSubtitle }}</p>
-      </div>
-
-      <div v-if="announcements.length > 0" class="announcements-layout">
-        <article class="announcement-highlight" :class="primaryAnnouncement.type">
-          <div class="announcement-highlight-top">
-            <span class="announcement-badge">{{ getAnnouncementTypeLabel(primaryAnnouncement.type) }}</span>
-            <span class="announcement-time">{{ formatDate(primaryAnnouncement.createdAt) }}</span>
-          </div>
-
-          <h3>{{ primaryAnnouncement.title }}</h3>
-          <p>{{ primaryAnnouncement.content }}</p>
-
-          <div class="announcement-highlight-footer">
-            <div class="announcement-meta-list">
-              <span class="announcement-meta-chip">{{ copy.hotTopic }}</span>
-              <span class="announcement-meta-chip">{{ secondaryAnnouncements.length + 1 }} {{ copy.newsItems }}</span>
-            </div>
-            <router-link :to="primaryAnnouncementLink" class="announcement-cta">
-              {{ copy.viewRelated }}
-            </router-link>
-          </div>
-        </article>
-
-        <div class="announcement-side-list">
-          <article
-            v-for="announcement in secondaryAnnouncements"
-            :key="announcement.id"
-            class="announcement-side-item"
-            :class="announcement.type"
-          >
-            <div class="announcement-side-head">
-              <span class="announcement-badge subtle">{{ getAnnouncementTypeLabel(announcement.type) }}</span>
-              <span class="announcement-time">{{ formatDate(announcement.createdAt) }}</span>
-            </div>
-            <h4>{{ announcement.title }}</h4>
-            <p>{{ announcement.content }}</p>
-          </article>
-        </div>
-      </div>
-
-      <div v-else class="announcements-empty">
-        <div class="announcements-empty-icon">{{ copy.emptyNewsIcon }}</div>
-        <h3>{{ copy.emptyNewsTitle }}</h3>
-        <p>{{ copy.emptyNewsText }}</p>
-      </div>
-    </section>
-
     <section class="statistics-section">
       <div class="section-header">
         <h2>{{ copy.statsTitle }}</h2>
@@ -172,14 +121,6 @@ const copy = {
   featuresSubtitle: '\u4ece\u9996\u9875\u76f4\u8fbe\u5e73\u53f0\u4e3b\u8981\u7248\u5757\uff0c\u66f4\u5feb\u627e\u5230\u4f60\u60f3\u770b\u7684\u5185\u5bb9\u3002',
   featureEntry: '\u529f\u80fd\u5165\u53e3',
   enterNow: '\u7acb\u5373\u8fdb\u5165',
-  newsTitle: '\u6700\u65b0\u52a8\u6001',
-  newsSubtitle: '\u6c47\u603b\u5e73\u53f0\u516c\u544a\u3001\u8fd1\u671f\u5185\u5bb9\u66f4\u65b0\u4e0e\u70ed\u70b9\u6d3b\u52a8\u3002',
-  hotTopic: '\u672c\u5468\u5173\u6ce8',
-  newsItems: '\u6761\u52a8\u6001',
-  viewRelated: '\u67e5\u770b\u76f8\u5173\u5185\u5bb9',
-  emptyNewsIcon: '\u65b0',
-  emptyNewsTitle: '\u6682\u65e0\u6700\u65b0\u52a8\u6001',
-  emptyNewsText: '\u540e\u7eed\u6709\u65b0\u516c\u544a\u6216\u6d3b\u52a8\u65f6\u4f1a\u5728\u8fd9\u91cc\u5c55\u793a\u3002',
   statsTitle: '\u5e73\u53f0\u6570\u636e',
   statsSubtitle: '\u5b9e\u65f6\u4e86\u89e3\u5e73\u53f0\u5f53\u524d\u7684\u5185\u5bb9\u4e0e\u8bbf\u95ee\u60c5\u51b5\u3002',
   totalUsers: '\u6ce8\u518c\u7528\u6237',
@@ -187,8 +128,6 @@ const copy = {
   totalKnowledge: '\u77e5\u8bc6\u6587\u7ae0',
   totalVisits: '\u603b\u6d4f\u89c8\u91cf',
   homeLoadError: '\u52a0\u8f7d\u9996\u9875\u6570\u636e\u5931\u8d25',
-  announcementLabel: '\u516c\u544a',
-  activityLabel: '\u6d3b\u52a8',
 }
 
 const featureAssetMap = {
@@ -202,14 +141,8 @@ const featureAssetMap = {
   '\u7528\u6237\u4e2d\u5fc3': featureUser,
 }
 
-const featureAnnouncementLinkMap = {
-  announcement: '/home',
-  activity: '/community',
-}
-
 const carousels = ref([])
 const features = ref([])
-const announcements = ref([])
 const statistics = ref({})
 const currentCarouselIndex = ref(0)
 const carouselInterval = ref(null)
@@ -223,30 +156,16 @@ const decoratedFeatures = computed(() => {
   }))
 })
 
-const primaryAnnouncement = computed(() => {
-  return announcements.value[0] || {}
-})
-
-const secondaryAnnouncements = computed(() => {
-  return announcements.value.slice(1, 4)
-})
-
-const primaryAnnouncementLink = computed(() => {
-  return featureAnnouncementLinkMap[primaryAnnouncement.value.type] || '/community'
-})
-
 const loadHomeData = async () => {
   try {
-    const [carouselRes, featuresRes, announcementsRes, statisticsRes] = await Promise.all([
+    const [carouselRes, featuresRes, statisticsRes] = await Promise.all([
       HomeService.getCarousel(),
       HomeService.getFeatures(),
-      HomeService.getAnnouncements(),
       HomeService.getStatistics(),
     ])
 
     carousels.value = carouselRes || []
     features.value = featuresRes || []
-    announcements.value = announcementsRes || []
     statistics.value = statisticsRes || {}
   } catch (loadError) {
     console.error('Failed to load home data:', loadError)
@@ -286,31 +205,6 @@ const stopAutoCarousel = () => {
   }
 }
 
-const formatDate = (dateString) => {
-  if (!dateString) {
-    return ''
-  }
-
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffTime = Math.abs(now - date)
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-
-  if (diffDays === 0) {
-    return '\u4eca\u5929'
-  }
-
-  if (diffDays === 1) {
-    return '\u6628\u5929'
-  }
-
-  if (diffDays < 7) {
-    return `${diffDays} \u5929\u524d`
-  }
-
-  return date.toLocaleDateString('zh-CN')
-}
-
 const formatNumber = (num) => {
   if (!num) {
     return '0'
@@ -326,11 +220,6 @@ const formatNumber = (num) => {
 
   return num.toString()
 }
-
-const getAnnouncementTypeLabel = (type) => {
-  return type === 'announcement' ? copy.announcementLabel : copy.activityLabel
-}
-
 onMounted(async () => {
   await loadHomeData()
   startAutoCarousel()
@@ -499,7 +388,6 @@ onUnmounted(() => {
 }
 
 .features-section,
-.announcements-section,
 .statistics-section {
   width: 100%;
 }
@@ -601,167 +489,6 @@ onUnmounted(() => {
   font-weight: 700;
 }
 
-.announcements-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-  gap: var(--spacing-lg);
-}
-
-.announcement-highlight,
-.announcement-side-item,
-.announcements-empty {
-  background: var(--bg-primary);
-  border-radius: 24px;
-  box-shadow: 0 16px 38px rgba(10, 56, 103, 0.08);
-  border: 1px solid #e7eef7;
-}
-
-.announcement-highlight {
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  background:
-    radial-gradient(circle at top right, rgba(255, 177, 74, 0.12), transparent 28%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 251, 255, 0.98));
-}
-
-.announcement-highlight.activity {
-  background:
-    radial-gradient(circle at top right, rgba(255, 102, 0, 0.1), transparent 28%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 248, 243, 0.98));
-}
-
-.announcement-highlight-top,
-.announcement-side-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
-}
-
-.announcement-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background-color: var(--primary-color);
-  color: white;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.announcement-badge.subtle {
-  background: rgba(0, 102, 204, 0.08);
-  color: var(--primary-color);
-}
-
-.announcement-side-item.activity .announcement-badge.subtle,
-.announcement-highlight.activity .announcement-badge {
-  background-color: var(--accent-color);
-  color: #ffffff;
-}
-
-.announcement-highlight h3 {
-  margin: 0;
-  font-size: 30px;
-  line-height: 1.35;
-}
-
-.announcement-highlight p,
-.announcement-side-item p {
-  margin: 0;
-  color: var(--text-secondary);
-  line-height: 1.85;
-}
-
-.announcement-time {
-  color: var(--text-light);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.announcement-highlight-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
-  margin-top: auto;
-}
-
-.announcement-meta-list {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.announcement-meta-chip {
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: #f3f7fc;
-  color: #48627c;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.announcement-cta {
-  color: var(--primary-color);
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.announcement-side-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.announcement-side-item {
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.announcement-side-item h4 {
-  margin: 0;
-  font-size: 20px;
-  line-height: 1.45;
-}
-
-.announcements-empty {
-  padding: 48px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-  text-align: center;
-}
-
-.announcements-empty-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 102, 204, 0.08);
-  color: var(--primary-color);
-  font-size: 24px;
-  font-weight: 800;
-}
-
-.announcements-empty h3,
-.announcements-empty p {
-  margin: 0;
-}
-
-.announcements-empty p {
-  color: var(--text-secondary);
-}
-
 .statistics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -813,12 +540,6 @@ onUnmounted(() => {
   opacity: 0.9;
 }
 
-@media (max-width: 960px) {
-  .announcements-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 768px) {
   .home-page {
     gap: var(--spacing-lg);
@@ -859,17 +580,6 @@ onUnmounted(() => {
 
   .feature-media {
     height: 160px;
-  }
-
-  .announcement-highlight,
-  .announcement-side-item,
-  .announcements-empty {
-    padding: 20px;
-    border-radius: 18px;
-  }
-
-  .announcement-highlight h3 {
-    font-size: 24px;
   }
 
   .stat-card {

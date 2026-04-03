@@ -11,7 +11,7 @@
     <packaging>jar</packaging>
 
     <name>Zhuang Embroidery Platform</name>
-    <description>文山文山壮族刺绣网站系统</description>
+    <description>文山壮族刺绣网站系统</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

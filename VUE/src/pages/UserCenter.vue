@@ -1,5 +1,6 @@
 <template>
   <div class="user-center-page">
+    <template v-if="isLoggedIn">
     <section class="hero-section">
       <div class="hero-main">
         <div class="hero-avatar">{{ userInitial }}</div>
@@ -320,11 +321,46 @@
         </div>
       </div>
     </section>
+    </template>
+
+    <section v-else class="guest-access-shell">
+      <LoginRequiredCard
+        badge="游客访问用户中心"
+        title="请登录后访问用户中心"
+        description="个人资料、收藏作品、浏览记录和意见反馈都依赖当前登录用户的信息。游客可以先浏览首页、作品、知识和社区内容，登录后再继续管理个人内容。"
+        :redirect="loginRedirect"
+        button-text="去登录"
+        secondary-text="先去浏览内容"
+        secondary-target="/home"
+      />
+
+      <div class="guest-feature-grid">
+        <article class="guest-feature-card">
+          <span class="guest-feature-card__badge">个人资料</span>
+          <h3>登录后可编辑邮箱与个人简介</h3>
+          <p>用户中心会同步展示你的会员编号、联系邮箱和自我介绍，便于后续社区互动与个人信息维护。</p>
+        </article>
+
+        <article class="guest-feature-card">
+          <span class="guest-feature-card__badge">我的收藏</span>
+          <h3>登录后可保存喜欢的刺绣作品</h3>
+          <p>作品收藏会按用户维度保存，便于后续快速回看与继续浏览，这部分内容游客无法直接生成。</p>
+        </article>
+
+        <article class="guest-feature-card">
+          <span class="guest-feature-card__badge">浏览记录与反馈</span>
+          <h3>登录后可查看历史并提交专属反馈</h3>
+          <p>浏览记录和反馈都需要关联当前用户身份，登录后才能获取你的历史记录并提交个人意见。</p>
+        </article>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import LoginRequiredCard from '../components/LoginRequiredCard.vue'
 import Pagination from '../components/Pagination.vue'
 import { ArtworkService, FeedbackService, KnowledgeService, UserService } from '../services'
 import { useAuthStore } from '../stores/authStore'
@@ -411,6 +447,7 @@ const copy = {
 }
 
 const authStore = useAuthStore()
+const route = useRoute()
 const { success, error } = useToast()
 
 const tabs = [
@@ -456,6 +493,8 @@ const feedbackForm = ref({
 })
 const isSubmittingFeedback = ref(false)
 
+const isLoggedIn = computed(() => authStore.isLoggedIn && Boolean(authStore.user?.id))
+const loginRedirect = computed(() => route.fullPath || '/user')
 const displayName = computed(() => userInfo.value.username || authStore.user?.username || '--')
 const displayBio = computed(() => userInfo.value.bio || '补充一段简介，让其他用户更快认识你。')
 const userInitial = computed(() => String(displayName.value).trim().slice(0, 1).toUpperCase() || 'U')
@@ -654,6 +693,10 @@ const formatDate = (dateString) => {
 }
 
 onMounted(() => {
+  if (!isLoggedIn.value) {
+    return
+  }
+
   loadUserInfo()
   loadCollections()
   loadViewHistory()
@@ -668,6 +711,57 @@ onMounted(() => {
   max-width: 1180px;
   margin: 0 auto;
   padding: var(--spacing-lg);
+}
+
+.guest-access-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.guest-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.guest-feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  border: 1px solid #e1ebf5;
+  box-shadow: 0 16px 30px rgba(15, 59, 105, 0.06);
+}
+
+.guest-feature-card__badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(0, 102, 204, 0.08);
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.guest-feature-card h3,
+.guest-feature-card p {
+  margin: 0;
+}
+
+.guest-feature-card h3 {
+  color: var(--text-primary);
+  font-size: 22px;
+  line-height: 1.4;
+}
+
+.guest-feature-card p {
+  color: var(--text-secondary);
+  line-height: 1.8;
 }
 
 .hero-section {
@@ -1184,6 +1278,10 @@ onMounted(() => {
   .hero-section,
   .profile-pane,
   .feedback-pane {
+    grid-template-columns: 1fr;
+  }
+
+  .guest-feature-grid {
     grid-template-columns: 1fr;
   }
 }

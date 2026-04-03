@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * 文山文山壮族刺绣网站系统 - 主应用入口
+ * 文山壮族刺绣网站系统 - 主应用入口
  */
 @SpringBootApplication
 public class ZhuangEmbroideryApplication {

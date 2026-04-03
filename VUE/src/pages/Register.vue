@@ -3,9 +3,9 @@
     <div class="register-container">
       <div class="register-card">
         <h1 class="register-title">用户注册</h1>
-        <p class="register-subtitle">创建新账户以开始使用平台</p>
+        <p class="register-subtitle">创建新账号后即可收藏作品、参与评论和使用个人中心。</p>
 
-        <form @submit.prevent="handleRegister" class="register-form">
+        <form class="register-form" @submit.prevent="handleRegister">
           <div class="form-group">
             <label for="username" class="form-label">用户名</label>
             <input
@@ -37,7 +37,7 @@
               v-model="form.password"
               type="password"
               class="form-input"
-              placeholder="请输入密码（至少6个字符）"
+              placeholder="请输入密码（至少6位）"
               required
             />
           </div>
@@ -60,7 +60,10 @@
         </form>
 
         <div class="register-footer">
-          <p>已有账户？<router-link to="/login" class="login-link">立即登录</router-link></p>
+          <p>
+            已有账号？
+            <router-link to="/login" class="login-link">立即登录</router-link>
+          </p>
         </div>
       </div>
     </div>
@@ -85,19 +88,18 @@ const form = ref({
 const isLoading = ref(false)
 
 const handleRegister = async () => {
-  // 验证表单
   if (!form.value.username || !form.value.email || !form.value.password || !form.value.confirmPassword) {
     error('请填写所有字段')
     return
   }
 
   if (form.value.username.length < 3 || form.value.username.length > 20) {
-    error('用户名长度应为3-20个字符')
+    error('用户名长度应为 3 到 20 个字符')
     return
   }
 
   if (form.value.password.length < 6) {
-    error('密码长度至少为6个字符')
+    error('密码长度至少为 6 位')
     return
   }
 
@@ -107,6 +109,7 @@ const handleRegister = async () => {
   }
 
   isLoading.value = true
+
   try {
     await UserService.register({
       username: form.value.username,
@@ -117,6 +120,7 @@ const handleRegister = async () => {
     success('注册成功，请登录')
     router.push({ name: 'Login' })
   } catch (err) {
+    console.error(err)
     error(err.response?.message || '注册失败，请稍后重试')
   } finally {
     isLoading.value = false
@@ -129,9 +133,9 @@ const handleRegister = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 60px);
-  background: linear-gradient(135deg, #eef4fb 0%, #d9e6f4 45%, #c4d6ea 100%);
+  min-height: calc(100vh - 120px);
   padding: var(--spacing-lg);
+  background: linear-gradient(135deg, #eef4fb 0%, #d9e6f4 45%, #c4d6ea 100%);
 }
 
 .register-container {
@@ -140,27 +144,26 @@ const handleRegister = async () => {
 }
 
 .register-card {
-   background: white;
-  /* 卡片整体留白：让内容别贴边 */
-  padding: 36px 40px !important;   /* 关键：增大内边距 */
+  padding: 36px 40px;
   border-radius: 14px;
+  background: #ffffff;
   box-sizing: border-box;
   box-shadow: 0 18px 36px rgba(29, 82, 124, 0.12);
 }
 
 .register-title {
-  font-size: 34px;
-  color: #1d527c;
   margin-bottom: var(--spacing-sm);
+  color: #1d527c;
+  font-size: 34px;
   text-align: center;
   font-weight: 700;
 }
 
 .register-subtitle {
-  font-size: 15px;
-  color: #60778e;
-  text-align: center;
   margin-bottom: var(--spacing-xl);
+  color: #60778e;
+  font-size: 15px;
+  text-align: center;
 }
 
 .register-form {
@@ -176,19 +179,19 @@ const handleRegister = async () => {
 }
 
 .form-label {
+  color: #24425c;
   font-size: 15px;
   font-weight: 700;
-  color: #24425c;
 }
 
 .form-input {
   padding: var(--spacing-md);
   border: 1px solid #c9d8e6;
   border-radius: var(--border-radius-md);
+  background: #f9fbfd;
+  color: #24425c;
   font-size: 15px;
   transition: all 0.3s ease;
-  color: #24425c;
-  background: #f9fbfd;
 }
 
 .form-input:focus {
@@ -199,10 +202,10 @@ const handleRegister = async () => {
 
 .register-btn {
   padding: var(--spacing-md);
-  background: linear-gradient(135deg, #1d527c 0%, #153f63 100%);
-  color: white;
   border: none;
   border-radius: var(--border-radius-md);
+  background: linear-gradient(135deg, #1d527c 0%, #153f63 100%);
+  color: #ffffff;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
@@ -220,17 +223,16 @@ const handleRegister = async () => {
 }
 
 .register-footer {
-  text-align: center;
   margin-top: var(--spacing-lg);
-  font-size: 14px;
   color: #60778e;
+  font-size: 14px;
+  text-align: center;
 }
 
 .login-link {
   color: #1d527c;
-  text-decoration: none;
   font-weight: 600;
-  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .login-link:hover {

@@ -141,8 +141,8 @@ public class HomeController {
         // 公告 1：平台上线
         announcements.add(AnnouncementResponse.builder()
                 .id(1L)
-                .title("文山文山壮族刺绣网站平台正式上线")
-                .content("欢迎访问文山文山壮族刺绣网站平台，这是一个专门为传承和展示壮族非遗刺绣文化而设计的综合性网络平台。")
+                .title("文山壮族刺绣网站平台正式上线")
+                .content("欢迎访问文山壮族刺绣网站平台，这是一个专门为传承和展示壮族非遗刺绣文化而设计的综合性网络平台。")
                 .type("announcement")
                 .createdAt(LocalDateTime.now().minusDays(7))
                 .order(1)

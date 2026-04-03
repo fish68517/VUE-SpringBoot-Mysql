@@ -25,7 +25,7 @@
       <div v-if="featuredArtwork" class="hero-feature-card">
         <div class="hero-feature-media">
           <img
-            :src="featuredArtwork.imageUrl"
+            :src="artworksHeroImage"
             :alt="featuredArtwork.title"
             class="hero-feature-image"
           />
@@ -139,6 +139,7 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import artworksHeroImage from '../assets/image.png'
 import { Pagination } from '../components'
 import { ArtworkService } from '../services'
 import { useToast } from '../utils/useToast'

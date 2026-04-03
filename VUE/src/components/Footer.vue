@@ -3,7 +3,7 @@
     <div class="footer-content">
       <div class="footer-section">
         <h3>关于我们</h3>
-        <p>文山文山壮族刺绣网站系统致力于传承和展示壮族非遗刺绣文化，推动非遗文化活态传承。</p>
+        <p>文山壮族刺绣网站系统致力于传承和展示壮族非遗刺绣文化，推动非遗文化活态传承。</p>
       </div>
 
       <div class="footer-section">
@@ -33,7 +33,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; 2024 文山文山壮族刺绣网站系统. 保留所有权利。</p>
+      <p>&copy; 2024 文山壮族刺绣网站系统. 保留所有权利。</p>
     </div>
   </footer>
 </template>

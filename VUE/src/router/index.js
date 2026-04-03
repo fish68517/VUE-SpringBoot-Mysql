@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/authStore'
 
-// 前台页面
 const Home = () => import('../pages/Home.vue')
 const Artworks = () => import('../pages/Artworks.vue')
 const ArtworkDetail = () => import('../pages/ArtworkDetail.vue')
@@ -12,14 +11,22 @@ const UserCenter = () => import('../pages/UserCenter.vue')
 const Login = () => import('../pages/Login.vue')
 const Register = () => import('../pages/Register.vue')
 
-// 后台页面
 const AdminUsers = () => import('../pages/admin/AdminUsers.vue')
 const AdminResources = () => import('../pages/admin/AdminResources.vue')
 const AdminInteractions = () => import('../pages/admin/AdminInteractions.vue')
 const AdminSystem = () => import('../pages/admin/AdminSystem.vue')
 
-// 前台路由
-const frontendRoutes = [
+const routes = [
+  {
+    path: '/',
+    redirect: '/login',
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: Home,
+    meta: { requiresAuth: false, title: '首页' },
+  },
   {
     path: '/artworks',
     name: 'Artworks',
@@ -54,30 +61,20 @@ const frontendRoutes = [
     path: '/user',
     name: 'UserCenter',
     component: UserCenter,
-    meta: { requiresAuth: true, title: '用户中心' },
+    meta: { requiresAuth: false, title: '用户中心' },
   },
-]
-
-// 认证相关路由
-const authRoutes = [
   {
     path: '/login',
     name: 'Login',
     component: Login,
     meta: { requiresAuth: false, title: '登录' },
   },
-  { path: '/', redirect: '/login' },
-   { path: '/home', name: 'Home', component: Home, meta: { requiresAuth: false, title: '首页' } },
   {
     path: '/register',
     name: 'Register',
     component: Register,
     meta: { requiresAuth: false, title: '注册' },
   },
-]
-
-// 后台管理路由
-const adminRoutes = [
   {
     path: '/admin/users',
     name: 'AdminUsers',
@@ -104,25 +101,19 @@ const adminRoutes = [
   },
 ]
 
-const routes = [...frontendRoutes, ...authRoutes, ...adminRoutes]
-
 const router = createRouter({
   history: createWebHistory(),
   routes,
 })
 
-// 全局路由守卫 - 权限检查
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
 
-  // 从 localStorage 加载用户信息（如果还未加载）
   if (!authStore.isLoggedIn && !authStore.user) {
     authStore.loadUserFromStorage()
   }
 
-  // 检查是否需要认证
   if (to.meta.requiresAuth && !authStore.isLoggedIn) {
-    // 需要登录但未登录，重定向到登录页
     next({
       name: 'Login',
       query: { redirect: to.fullPath },
@@ -130,7 +121,13 @@ router.beforeEach((to, from, next) => {
     return
   }
 
-  // 更新页面标题
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    next({
+      name: 'Home',
+    })
+    return
+  }
+
   if (to.meta.title) {
     document.title = `${to.meta.title} - 文山壮族刺绣网站`
   }
@@ -138,10 +135,7 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-// 路由后置钩子 - 页面加载完成后的处理
-router.afterEach((to) => {
-  // 可以在这里处理页面加载完成后的逻辑
-  // 例如：关闭加载动画、滚动到顶部等
+router.afterEach(() => {
   window.scrollTo(0, 0)
 })
 

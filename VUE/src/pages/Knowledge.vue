@@ -1,25 +1,31 @@
 <template>
   <div class="knowledge-page">
     <section class="hero-section">
-      <div class="hero-content">
-        <span class="hero-kicker">{{ copy.heroKicker }}</span>
-        <h1>{{ copy.title }}</h1>
-        <p>{{ copy.subtitle }}</p>
+      <div class="hero-main">
+        <div class="hero-content">
+          <span class="hero-kicker">{{ copy.heroKicker }}</span>
+          <h1>{{ copy.title }}</h1>
+          <p>{{ copy.subtitle }}</p>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat-card">
+            <span class="hero-stat-label">{{ copy.totalArticles }}</span>
+            <strong>{{ totalItems || knowledge.length }}</strong>
+          </div>
+          <div class="hero-stat-card">
+            <span class="hero-stat-label">{{ copy.totalCategories }}</span>
+            <strong>{{ categories.length }}</strong>
+          </div>
+          <div class="hero-stat-card">
+            <span class="hero-stat-label">{{ copy.currentFilter }}</span>
+            <strong>{{ currentCategoryName }}</strong>
+          </div>
+        </div>
       </div>
 
-      <div class="hero-stats">
-        <div class="hero-stat-card">
-          <span class="hero-stat-label">{{ copy.totalArticles }}</span>
-          <strong>{{ totalItems || knowledge.length }}</strong>
-        </div>
-        <div class="hero-stat-card">
-          <span class="hero-stat-label">{{ copy.totalCategories }}</span>
-          <strong>{{ categories.length }}</strong>
-        </div>
-        <div class="hero-stat-card">
-          <span class="hero-stat-label">{{ copy.currentFilter }}</span>
-          <strong>{{ currentCategoryName }}</strong>
-        </div>
+      <div class="hero-visual">
+        <img :src="knowledgeHero" :alt="copy.title" class="hero-visual-image" />
       </div>
     </section>
 
@@ -105,6 +111,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { Pagination } from '../components'
+import knowledgeHero from '../assets/Knowledge.png'
 import { KnowledgeService } from '../services'
 import { useToast } from '../utils/useToast'
 
@@ -227,21 +234,26 @@ onMounted(() => {
 
 .hero-section {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
   gap: var(--spacing-lg);
   padding: 32px;
   border-radius: 24px;
-  background:
-    radial-gradient(circle at top right, rgba(255, 255, 255, 0.2), transparent 30%),
-    linear-gradient(135deg, #005db9 0%, #0f4d90 55%, #16365f 100%);
+  background: linear-gradient(135deg, #edf5ff 0%, #e2eefb 52%, #d7e8f8 100%);
   box-shadow: 0 22px 48px rgba(0, 71, 141, 0.22);
+}
+
+.hero-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
 }
 
 .hero-content {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  color: #ffffff;
+  color: #16365f;
 }
 
 .hero-kicker {
@@ -250,7 +262,8 @@ onMounted(() => {
   width: fit-content;
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(0, 93, 185, 0.1);
+  color: #005db9;
   font-size: var(--font-size-sm);
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -261,19 +274,20 @@ onMounted(() => {
   font-size: 40px;
   line-height: 1.2;
   font-weight: 800;
+  color: #16365f;
 }
 
 .hero-content p {
   max-width: 620px;
   margin: 0;
-  color: rgba(255, 255, 255, 0.88);
+  color: #48627c;
   font-size: 16px;
   line-height: 1.85;
 }
 
 .hero-stats {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -283,9 +297,9 @@ onMounted(() => {
   gap: 6px;
   padding: 18px 20px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(0, 93, 185, 0.12);
+  color: #16365f;
   backdrop-filter: blur(8px);
 }
 
@@ -295,8 +309,24 @@ onMounted(() => {
 }
 
 .hero-stat-label {
-  color: rgba(255, 255, 255, 0.74);
+  color: #60778e;
   font-size: var(--font-size-sm);
+}
+
+.hero-visual {
+  position: relative;
+  min-height: 320px;
+  overflow: hidden;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #bfd8f3 0%, #dcebf8 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+}
+
+.hero-visual-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .filter-panel {
@@ -518,6 +548,10 @@ onMounted(() => {
 
 @media (max-width: 900px) {
   .hero-section {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stats {
     grid-template-columns: 1fr;
   }
 }

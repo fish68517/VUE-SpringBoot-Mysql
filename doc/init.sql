@@ -199,4 +199,4 @@ CREATE TABLE IF NOT EXISTS activity (
 
 -- 插入默认系统设置
 INSERT INTO system_settings (site_name, site_description, contact_email, contact_phone) 
-VALUES ('文山文山壮族刺绣网站系统', '传承和展示壮族非遗刺绣文化的综合性网络平台', 'admin@zhuang-embroidery.com', '0876-1234567');
+VALUES ('文山壮族刺绣网站系统', '传承和展示壮族非遗刺绣文化的综合性网络平台', 'admin@zhuang-embroidery.com', '0876-1234567');

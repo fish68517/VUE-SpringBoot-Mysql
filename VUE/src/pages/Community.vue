@@ -1,25 +1,31 @@
 <template>
   <div class="community-page">
     <section class="hero-section">
-      <div class="hero-content">
-        <span class="hero-kicker">{{ copy.heroKicker }}</span>
-        <h1>{{ copy.title }}</h1>
-        <p>{{ copy.subtitle }}</p>
+      <div class="hero-main">
+        <div class="hero-content">
+          <span class="hero-kicker">{{ copy.heroKicker }}</span>
+          <h1>{{ copy.title }}</h1>
+          <p>{{ copy.subtitle }}</p>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat-card">
+            <span>{{ copy.totalTopics }}</span>
+            <strong>{{ topicTotalItems || topics.length }}</strong>
+          </div>
+          <div class="hero-stat-card">
+            <span>{{ copy.totalVotes }}</span>
+            <strong>{{ voteTotalItems || votes.length }}</strong>
+          </div>
+          <div class="hero-stat-card">
+            <span>{{ copy.activeVotes }}</span>
+            <strong>{{ activeVoteCount }}</strong>
+          </div>
+        </div>
       </div>
 
-      <div class="hero-stats">
-        <div class="hero-stat-card">
-          <span>{{ copy.totalTopics }}</span>
-          <strong>{{ topicTotalItems || topics.length }}</strong>
-        </div>
-        <div class="hero-stat-card">
-          <span>{{ copy.totalVotes }}</span>
-          <strong>{{ voteTotalItems || votes.length }}</strong>
-        </div>
-        <div class="hero-stat-card">
-          <span>{{ copy.activeVotes }}</span>
-          <strong>{{ activeVoteCount }}</strong>
-        </div>
+      <div class="hero-visual">
+        <img :src="communityHero" :alt="copy.title" class="hero-visual-image" />
       </div>
     </section>
 
@@ -208,9 +214,12 @@
           <div v-else class="login-prompt">
             <p>
               {{ copy.loginPromptPrefix }}
-              <router-link to="/login">{{ copy.loginAction }}</router-link>
+              {{ copy.loginAction }}
               {{ copy.loginPromptSuffix }}
             </p>
+            <router-link :to="loginTarget" class="login-prompt__action">
+              去登录后评论
+            </router-link>
           </div>
 
           <div class="comments-list">
@@ -308,7 +317,15 @@
           <p v-else-if="!isLoggedIn" class="vote-tip">{{ copy.voteLoginTip }}</p>
           <p v-else class="vote-tip">{{ copy.voteActionTip }}</p>
 
+          <router-link
+            v-if="selectedVote.status === 'active' && !isLoggedIn"
+            :to="loginTarget"
+            class="submit-btn submit-btn--link"
+          >
+            去登录后投票
+          </router-link>
           <button
+            v-else
             class="submit-btn"
             :disabled="!canSubmitVote"
             @click="submitVote"
@@ -323,6 +340,8 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+import communityHero from '../assets/Community.png'
 import { Pagination } from '../components'
 import { CommentService, TopicService, VoteService } from '../services'
 import { useAuthStore } from '../stores/authStore'
@@ -399,6 +418,7 @@ const copy = {
 }
 
 const authStore = useAuthStore()
+const route = useRoute()
 const { success, error } = useToast()
 
 const activeTab = ref('topics')
@@ -427,6 +447,12 @@ const voteTotalPages = ref(1)
 const voteTotalItems = ref(0)
 
 const isLoggedIn = computed(() => authStore.isLoggedIn)
+const loginTarget = computed(() => ({
+  path: '/login',
+  query: {
+    redirect: route.fullPath || '/community',
+  },
+}))
 const activeVoteCount = computed(() => votes.value.filter((vote) => vote.status === 'active').length)
 const canSubmitVote = computed(() => {
   return Boolean(
@@ -673,21 +699,26 @@ onMounted(() => {
 
 .hero-section {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
   gap: var(--spacing-lg);
   padding: 32px;
   border-radius: 24px;
-  background:
-    radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 32%),
-    linear-gradient(135deg, #0f5d5f 0%, #137f74 46%, #67b96d 100%);
+  background: linear-gradient(135deg, #edf8f6 0%, #e1f2ed 50%, #d8ece7 100%);
   box-shadow: 0 24px 46px rgba(15, 93, 95, 0.22);
+}
+
+.hero-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
 }
 
 .hero-content {
   display: flex;
   flex-direction: column;
   gap: 14px;
-  color: #ffffff;
+  color: #114e4b;
 }
 
 .hero-kicker,
@@ -703,7 +734,8 @@ onMounted(() => {
 }
 
 .hero-kicker {
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(19, 127, 116, 0.1);
+  color: #137f74;
 }
 
 .hero-content h1 {
@@ -711,19 +743,20 @@ onMounted(() => {
   font-size: 40px;
   line-height: 1.15;
   font-weight: 800;
+  color: #114e4b;
 }
 
 .hero-content p {
   margin: 0;
   max-width: 620px;
-  color: rgba(255, 255, 255, 0.88);
+  color: #4e6e70;
   line-height: 1.85;
   font-size: 16px;
 }
 
 .hero-stats {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -733,20 +766,36 @@ onMounted(() => {
   gap: 6px;
   padding: 18px 20px;
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid rgba(19, 127, 116, 0.12);
+  color: #114e4b;
   backdrop-filter: blur(10px);
 }
 
 .hero-stat-card span {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.74);
+  color: #607f7a;
 }
 
 .hero-stat-card strong {
   font-size: 28px;
   font-weight: 800;
+}
+
+.hero-visual {
+  position: relative;
+  min-height: 320px;
+  overflow: hidden;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #c5e6dc 0%, #e4f4ef 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+}
+
+.hero-visual-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .tabs-shell {
@@ -1246,6 +1295,25 @@ onMounted(() => {
   margin: 0;
 }
 
+.login-prompt__action,
+.submit-btn--link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 22px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 12px 22px rgba(0, 102, 204, 0.18);
+}
+
+.login-prompt__action {
+  margin-top: 14px;
+}
+
 .comments-list {
   display: flex;
   flex-direction: column;
@@ -1326,6 +1394,10 @@ onMounted(() => {
 
 @media (max-width: 960px) {
   .hero-section {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stats {
     grid-template-columns: 1fr;
   }
 

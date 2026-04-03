@@ -248,8 +248,8 @@ CREATE TABLE `system_settings`  (
 -- ----------------------------
 -- Records of system_settings
 -- ----------------------------
-INSERT INTO `system_settings` VALUES (1, '文山文山壮族刺绣网站系统涉及', '传承和展示壮族非遗刺绣文化的综合性网络平台传承和展示壮族非遗刺绣文化的综合性网络平台传承和展示壮族非遗刺绣文化的综合性网络平台传承和展示壮族非遗刺绣文化的综合性网络平台', '', 'admin@zhuang-embroidery.com', '0876-1234567891', '2026-02-17 03:32:13');
-INSERT INTO `system_settings` VALUES (2, '文山文山壮族刺绣英文版镜像站', 'Zhuang Embroidery Cultural Heritage Display Platform', NULL, 'en_support@zhuang-embroidery.com', '+86-0876-1234568', '2026-02-15 08:28:45');
+INSERT INTO `system_settings` VALUES (1, '文山壮族刺绣网站系统涉及', '传承和展示壮族非遗刺绣文化的综合性网络平台传承和展示壮族非遗刺绣文化的综合性网络平台传承和展示壮族非遗刺绣文化的综合性网络平台传承和展示壮族非遗刺绣文化的综合性网络平台', '', 'admin@zhuang-embroidery.com', '0876-1234567891', '2026-02-17 03:32:13');
+INSERT INTO `system_settings` VALUES (2, '文山壮族刺绣英文版镜像站', 'Zhuang Embroidery Cultural Heritage Display Platform', NULL, 'en_support@zhuang-embroidery.com', '+86-0876-1234568', '2026-02-15 08:28:45');
 INSERT INTO `system_settings` VALUES (3, '文山壮绣内部管理测试系统', '用于平台功能测试和数据审核的内部测试环境', NULL, 'test_admin@zhuang-embroidery.com', '13800138000', '2026-02-15 08:28:45');
 
 -- ----------------------------
