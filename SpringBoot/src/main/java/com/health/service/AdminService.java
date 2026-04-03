@@ -194,7 +194,7 @@ public class AdminService {
 
         // 按数据类型统计
         long routineCount = allHealthData.stream()
-                .filter(h -> "ROUTINE".equals(h.getDataType()))
+                .filter(h -> "ROUTINE".equals(h.getDataType()) || "HEALTH_CHECK".equals(h.getDataType()))
                 .count();
         long genderSpecificCount = allHealthData.stream()
                 .filter(h -> "GENDER_SPECIFIC".equals(h.getDataType()))

@@ -1,57 +1,54 @@
 <template>
   <div class="health-trend-container">
-    <!-- 页面标题 -->
     <div class="page-header">
       <h2>{{ $t('healthData.trends') || '健康趋势分析' }}</h2>
     </div>
 
-    <!-- 加载状态 -->
     <el-skeleton v-if="isLoading" :rows="8" animated />
 
-    <!-- 筛选条件卡片 -->
     <div v-else class="filter-card">
-      <div class="filter-section">
-        <div class="filter-group">
-          <label>{{ $t('healthData.startDate') || '开始日期' }}:</label>
+      <div class="filter-grid">
+        <div class="filter-item">
+          <label>{{ $t('healthData.startDate') || '开始日期' }}</label>
           <el-date-picker
             v-model="filterData.startDate"
             type="date"
-            :placeholder="$t('healthData.startDate') || '开始日期'"
             format="YYYY-MM-DD"
             value-format="YYYY-MM-DD"
-            @change="handleDateChange"
           />
         </div>
 
-        <div class="filter-group">
-          <label>{{ $t('healthData.endDate') || '结束日期' }}:</label>
+        <div class="filter-item">
+          <label>{{ $t('healthData.endDate') || '结束日期' }}</label>
           <el-date-picker
             v-model="filterData.endDate"
             type="date"
-            :placeholder="$t('healthData.endDate') || '结束日期'"
             format="YYYY-MM-DD"
             value-format="YYYY-MM-DD"
-            @change="handleDateChange"
           />
         </div>
 
-        <div class="filter-group">
-          <label>{{ $t('healthData.dataRange') || '健康指标' }}:</label>
+        <div class="filter-item metrics-selector">
+          <label>{{ $t('healthData.dataRange') || '分析指标' }}</label>
           <el-select
             v-model="filterData.selectedMetrics"
             multiple
-            :placeholder="$t('common.search') || '选择指标'"
+            collapse-tags
+            collapse-tags-tooltip
+            placeholder="请选择要分析的指标"
             @change="handleMetricsChange"
           >
-            <el-option label="身高 (cm)" value="height" />
-            <el-option label="体重 (kg)" value="weight" />
-            <el-option label="血压 (mmHg)" value="bloodPressure" />
-            <el-option label="心率 (次/分)" value="heartRate" />
+            <el-option
+              v-for="metric in metricOptions"
+              :key="metric.value"
+              :label="metric.label"
+              :value="metric.value"
+            />
           </el-select>
         </div>
 
         <div class="filter-actions">
-          <el-button type="primary" @click="handleRefresh" :loading="isLoading">
+          <el-button type="primary" :loading="isLoading" @click="handleRefresh">
             {{ $t('common.search') || '查询' }}
           </el-button>
           <el-button @click="handleReset">
@@ -61,89 +58,99 @@
       </div>
     </div>
 
-    <!-- 统计信息卡片 -->
     <div v-if="!isLoading && trendData.length > 0" class="statistics-card">
-      <div class="stat-item" v-for="stat in statistics" :key="stat.key">
+      <div v-for="stat in statistics" :key="stat.key" class="stat-item">
         <div class="stat-label">{{ stat.label }}</div>
         <div class="stat-value">{{ stat.value }}</div>
         <div class="stat-unit">{{ stat.unit }}</div>
       </div>
     </div>
 
-    <!-- 趋势图表卡片 -->
     <div v-if="!isLoading && trendData.length > 0" class="chart-card">
-      <h3>{{ $t('healthData.trends') || '健康趋势图表' }}</h3>
+      <div class="chart-header">
+        <div>
+          <h3>{{ $t('healthData.trends') || '趋势图表' }}</h3>
+          <p>支持按已选指标导出趋势分析报告。</p>
+        </div>
+        <el-button type="primary" plain @click="handleExport">
+          导出分析报告
+        </el-button>
+      </div>
       <div class="chart-container">
         <canvas ref="chartCanvas"></canvas>
       </div>
     </div>
 
-    <!-- 数据表格 -->
-    <div v-if="!isLoading && trendData.length > 0" class="data-table-card">
-      <h3>{{ $t('healthData.recentData') || '详细数据' }}</h3>
+    <div v-if="!isLoading && trendData.length > 0" class="table-card">
+      <h3>{{ $t('healthData.recentData') || '趋势明细' }}</h3>
       <el-table :data="trendData" stripe style="width: 100%">
         <el-table-column prop="recordedAt" :label="$t('healthData.recordDate') || '记录时间'" width="180" />
-        <el-table-column 
-          v-if="filterData.selectedMetrics.includes('height')"
-          prop="height" 
-          :label="$t('healthData.height') || '身高(cm)'" 
-          width="120" 
-        />
-        <el-table-column 
-          v-if="filterData.selectedMetrics.includes('weight')"
-          prop="weight" 
-          :label="$t('healthData.weight') || '体重(kg)'" 
-          width="120" 
-        />
-        <el-table-column 
-          v-if="filterData.selectedMetrics.includes('bloodPressure')"
-          prop="bloodPressure" 
-          :label="$t('healthData.bloodPressure') || '血压'" 
-          width="120" 
-        />
-        <el-table-column 
-          v-if="filterData.selectedMetrics.includes('heartRate')"
-          prop="heartRate" 
-          :label="$t('healthData.heartRate') || '心率(次/分)'" 
-          width="120" 
-        />
+        <el-table-column
+          v-for="metric in selectedMetricOptions"
+          :key="metric.value"
+          :prop="metric.value"
+          :label="metric.tableLabel"
+          min-width="120"
+        >
+          <template #default="{ row }">
+            {{ formatMetricValue(metric.value, row) }}
+          </template>
+        </el-table-column>
       </el-table>
     </div>
 
-    <!-- 无数据提示 -->
-    <div v-if="!isLoading && trendData.length === 0" class="no-data">
-      <el-empty :description="$t('healthHistory.noRecords') || '暂无数据'" />
+    <div v-else-if="!isLoading" class="empty-card">
+      <el-empty :description="$t('healthHistory.noRecords') || '当前时间范围内暂无数据'" />
     </div>
 
-    <!-- 错误提示 -->
     <el-alert
       v-if="errorMessage"
       :title="errorMessage"
       type="error"
       :closable="true"
       @close="errorMessage = ''"
-      class="error-alert"
+      class="feedback-alert"
     />
   </div>
 </template>
 
 <script>
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import Chart from 'chart.js/auto'
 import { healthDataAPI } from '../../services/api'
 import { authService } from '../../services/auth'
 
+const METRIC_CONFIG = {
+  height: { value: 'height', label: '身高', tableLabel: '身高(cm)', unit: 'cm', color: '#4caf50', decimals: 1 },
+  weight: { value: 'weight', label: '体重', tableLabel: '体重(kg)', unit: 'kg', color: '#1976d2', decimals: 1 },
+  bloodPressure: { value: 'bloodPressure', label: '血压', tableLabel: '血压(mmHg)', unit: 'mmHg', color: '#ff9800', decimals: 0 },
+  heartRate: { value: 'heartRate', label: '心率', tableLabel: '心率(次/分)', unit: '次/分', color: '#ef5350', decimals: 0 },
+  bodyTemperature: { value: 'bodyTemperature', label: '体温', tableLabel: '体温(°C)', unit: '°C', color: '#8e24aa', decimals: 1 },
+  bloodOxygen: { value: 'bloodOxygen', label: '血氧', tableLabel: '血氧(%)', unit: '%', color: '#009688', decimals: 0 },
+  bloodSugar: { value: 'bloodSugar', label: '血糖', tableLabel: '血糖(mmol/L)', unit: 'mmol/L', color: '#ff7043', decimals: 1 },
+  sleepDuration: { value: 'sleepDuration', label: '睡眠时长', tableLabel: '睡眠时长(小时)', unit: '小时', color: '#455a64', decimals: 1 }
+}
+
+const metricOptions = Object.values(METRIC_CONFIG)
+
+const escapeHtml = (value) =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+
 export default {
   name: 'HealthTrend',
   setup() {
     const chartCanvas = ref(null)
-    let chartInstance = null
     const isLoading = ref(true)
     const errorMessage = ref('')
     const trendData = ref([])
+    let chartInstance = null
 
-    // 默认日期范围（最近30天）
     const getDefaultDateRange = () => {
       const endDate = new Date()
       const startDate = new Date(endDate.getTime() - 30 * 24 * 60 * 60 * 1000)
@@ -154,144 +161,136 @@ export default {
     }
 
     const defaultRange = getDefaultDateRange()
-
     const filterData = reactive({
       startDate: defaultRange.start,
       endDate: defaultRange.end,
-      selectedMetrics: ['weight', 'heartRate']
+      selectedMetrics: ['weight', 'heartRate', 'bodyTemperature']
     })
 
-    // 计算统计信息
-    const statistics = computed(() => {
-      if (trendData.value.length === 0) return []
+    const selectedMetricOptions = computed(() =>
+      filterData.selectedMetrics.map((metric) => METRIC_CONFIG[metric]).filter(Boolean)
+    )
 
-      const stats = []
-
-      if (filterData.selectedMetrics.includes('weight')) {
-        const weights = trendData.value
-          .map(d => d.weight)
-          .filter(w => w !== null && w !== undefined)
-        if (weights.length > 0) {
-          const avgWeight = (weights.reduce((a, b) => a + b, 0) / weights.length).toFixed(2)
-          const maxWeight = Math.max(...weights).toFixed(2)
-          const minWeight = Math.min(...weights).toFixed(2)
-          stats.push(
-            { key: 'avgWeight', label: '平均体重', value: avgWeight, unit: 'kg' },
-            { key: 'maxWeight', label: '最高体重', value: maxWeight, unit: 'kg' },
-            { key: 'minWeight', label: '最低体重', value: minWeight, unit: 'kg' }
-          )
-        }
+    const parseMetricValue = (metricKey, record) => {
+      const rawValue = record?.[metricKey]
+      if (rawValue === null || rawValue === undefined || rawValue === '') {
+        return null
       }
 
-      if (filterData.selectedMetrics.includes('heartRate')) {
-        const heartRates = trendData.value
-          .map(d => d.heartRate)
-          .filter(h => h !== null && h !== undefined)
-        if (heartRates.length > 0) {
-          const avgHR = (heartRates.reduce((a, b) => a + b, 0) / heartRates.length).toFixed(0)
-          const maxHR = Math.max(...heartRates)
-          const minHR = Math.min(...heartRates)
-          stats.push(
-            { key: 'avgHR', label: '平均心率', value: avgHR, unit: '次/分' },
-            { key: 'maxHR', label: '最高心率', value: maxHR, unit: '次/分' },
-            { key: 'minHR', label: '最低心率', value: minHR, unit: '次/分' }
-          )
-        }
+      if (metricKey === 'bloodPressure') {
+        const [systolic] = String(rawValue).split('/')
+        const numericValue = Number(systolic)
+        return Number.isFinite(numericValue) ? numericValue : null
       }
 
-      return stats
-    })
+      const numericValue = Number(rawValue)
+      return Number.isFinite(numericValue) ? numericValue : null
+    }
 
-    // 初始化图表
-    const initChart = () => {
-      if (!chartCanvas.value) return
+    const formatNumber = (value, decimals = 1) => {
+      const numericValue = Number(value)
+      if (!Number.isFinite(numericValue)) {
+        return '-'
+      }
+      return numericValue.toFixed(decimals)
+    }
 
-      // 销毁旧图表
+    const formatMetricValue = (metricKey, row) => {
+      const config = METRIC_CONFIG[metricKey]
+      if (!config) {
+        return row?.[metricKey] ?? '-'
+      }
+      if (metricKey === 'bloodPressure') {
+        return row?.bloodPressure || '-'
+      }
+      return row?.[metricKey] === null || row?.[metricKey] === undefined ? '-' : formatNumber(row[metricKey], config.decimals)
+    }
+
+    const buildMetricStats = (metricKey) => {
+      const config = METRIC_CONFIG[metricKey]
+      const values = trendData.value
+        .map((record) => parseMetricValue(metricKey, record))
+        .filter((value) => value !== null)
+
+      if (!values.length) {
+        return []
+      }
+
+      const average = values.reduce((sum, value) => sum + value, 0) / values.length
+      const max = Math.max(...values)
+      const min = Math.min(...values)
+
+      return [
+        { key: `${metricKey}-avg`, label: `${config.label}平均值`, value: formatNumber(average, config.decimals), unit: config.unit },
+        { key: `${metricKey}-max`, label: `${config.label}最高值`, value: formatNumber(max, config.decimals), unit: config.unit },
+        { key: `${metricKey}-min`, label: `${config.label}最低值`, value: formatNumber(min, config.decimals), unit: config.unit }
+      ]
+    }
+
+    const statistics = computed(() =>
+      selectedMetricOptions.value.flatMap((metric) => buildMetricStats(metric.value))
+    )
+
+    const destroyChart = () => {
       if (chartInstance) {
         chartInstance.destroy()
+        chartInstance = null
+      }
+    }
+
+    const initChart = () => {
+      if (!chartCanvas.value || trendData.value.length === 0 || selectedMetricOptions.value.length === 0) {
+        return
       }
 
-      // 准备图表数据
-      const labels = trendData.value.map(d => d.recordedAt)
+      destroyChart()
+
+      const labels = trendData.value.map((item) => item.recordedAt)
       const datasets = []
-
-      const colors = {
-        weight: { borderColor: '#409eff', backgroundColor: 'rgba(64, 158, 255, 0.1)' },
-        height: { borderColor: '#67c23a', backgroundColor: 'rgba(103, 194, 58, 0.1)' },
-        heartRate: { borderColor: '#f56c6c', backgroundColor: 'rgba(245, 108, 108, 0.1)' },
-        bloodPressure: { borderColor: '#e6a23c', backgroundColor: 'rgba(230, 162, 60, 0.1)' }
-      }
-
-      if (filterData.selectedMetrics.includes('weight')) {
-        datasets.push({
-          label: '体重 (kg)',
-          data: trendData.value.map(d => d.weight),
-          borderColor: colors.weight.borderColor,
-          backgroundColor: colors.weight.backgroundColor,
-          borderWidth: 2,
-          tension: 0.4,
-          fill: true,
-          yAxisID: 'y'
-        })
-      }
-
-      if (filterData.selectedMetrics.includes('height')) {
-        datasets.push({
-          label: '身高 (cm)',
-          data: trendData.value.map(d => d.height),
-          borderColor: colors.height.borderColor,
-          backgroundColor: colors.height.backgroundColor,
-          borderWidth: 2,
-          tension: 0.4,
-          fill: true,
-          yAxisID: 'y1'
-        })
-      }
-
-      if (filterData.selectedMetrics.includes('heartRate')) {
-        datasets.push({
-          label: '心率 (次/分)',
-          data: trendData.value.map(d => d.heartRate),
-          borderColor: colors.heartRate.borderColor,
-          backgroundColor: colors.heartRate.backgroundColor,
-          borderWidth: 2,
-          tension: 0.4,
-          fill: true,
-          yAxisID: 'y2'
-        })
-      }
-
-      if (filterData.selectedMetrics.includes('bloodPressure')) {
-        // 血压需要特殊处理（格式为 "120/80"）
-        const systolicData = trendData.value.map(d => {
-          if (d.bloodPressure && typeof d.bloodPressure === 'string') {
-            const parts = d.bloodPressure.split('/')
-            return parts.length > 0 ? parseInt(parts[0]) : null
+      const scales = {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: '记录时间'
           }
-          return null
-        })
-        datasets.push({
-          label: '血压收缩压 (mmHg)',
-          data: systolicData,
-          borderColor: colors.bloodPressure.borderColor,
-          backgroundColor: colors.bloodPressure.backgroundColor,
-          borderWidth: 2,
-          tension: 0.4,
-          fill: true,
-          yAxisID: 'y3'
-        })
+        }
       }
 
-      // 创建新图表
+      selectedMetricOptions.value.forEach((metric, index) => {
+        const axisId = `y${index}`
+        datasets.push({
+          label: metric.tableLabel,
+          data: trendData.value.map((item) => parseMetricValue(metric.value, item)),
+          borderColor: metric.color,
+          backgroundColor: `${metric.color}22`,
+          borderWidth: 2,
+          tension: 0.35,
+          fill: false,
+          spanGaps: true,
+          yAxisID: axisId
+        })
+
+        scales[axisId] = {
+          type: 'linear',
+          display: true,
+          position: index % 2 === 0 ? 'left' : 'right',
+          title: {
+            display: true,
+            text: metric.tableLabel
+          },
+          grid: {
+            drawOnChartArea: index === 0
+          }
+        }
+      })
+
       chartInstance = new Chart(chartCanvas.value, {
         type: 'line',
-        data: {
-          labels: labels,
-          datasets: datasets
-        },
+        data: { labels, datasets },
         options: {
           responsive: true,
-          maintainAspectRatio: true,
+          maintainAspectRatio: false,
           interaction: {
             mode: 'index',
             intersect: false
@@ -300,172 +299,185 @@ export default {
             legend: {
               display: true,
               position: 'top'
-            },
-            title: {
-              display: false
             }
           },
-          scales: {
-            x: {
-              display: true,
-              title: {
-                display: true,
-                text: '日期'
-              }
-            },
-            y: {
-              type: 'linear',
-              display: filterData.selectedMetrics.includes('weight'),
-              position: 'left',
-              title: {
-                display: filterData.selectedMetrics.includes('weight'),
-                text: '体重 (kg)'
-              }
-            },
-            y1: {
-              type: 'linear',
-              display: filterData.selectedMetrics.includes('height'),
-              position: 'right',
-              title: {
-                display: filterData.selectedMetrics.includes('height'),
-                text: '身高 (cm)'
-              },
-              grid: {
-                drawOnChartArea: false
-              }
-            },
-            y2: {
-              type: 'linear',
-              display: filterData.selectedMetrics.includes('heartRate'),
-              position: 'right',
-              title: {
-                display: filterData.selectedMetrics.includes('heartRate'),
-                text: '心率 (次/分)'
-              },
-              grid: {
-                drawOnChartArea: false
-              }
-            },
-            y3: {
-              type: 'linear',
-              display: filterData.selectedMetrics.includes('bloodPressure'),
-              position: 'right',
-              title: {
-                display: filterData.selectedMetrics.includes('bloodPressure'),
-                text: '血压 (mmHg)'
-              },
-              grid: {
-                drawOnChartArea: false
-              }
-            }
-          }
+          scales
         }
       })
     }
 
-    // 获取趋势数据
     const fetchTrendData = async () => {
       try {
         isLoading.value = true
         errorMessage.value = ''
 
         const currentUser = authService.getUser()
-        if (!currentUser || !currentUser.id) {
+        if (!currentUser?.id) {
           throw new Error('无法获取用户信息')
         }
 
-        // 调用API获取数据
-        const response = await healthDataAPI.getDataByRange(
-          filterData.startDate,
-          filterData.endDate
-        )
+        if (new Date(filterData.startDate) > new Date(filterData.endDate)) {
+          throw new Error('开始日期不能晚于结束日期')
+        }
 
-        if (response && response.data) {
-          // 按日期排序
-          trendData.value = response.data.sort((a, b) => 
-            new Date(a.recordedAt) - new Date(b.recordedAt)
-          )
-          
-          // 初始化图表
-          if (trendData.value.length > 0) {
-            setTimeout(() => {
-              initChart()
-            }, 100)
-          }
+        const response = await healthDataAPI.getDataByRange(filterData.startDate, filterData.endDate)
+        trendData.value = (response?.data || [])
+          .filter((item) => item.dataType !== 'GENDER_SPECIFIC')
+          .sort((a, b) => new Date(a.recordedAt) - new Date(b.recordedAt))
+
+        await nextTick()
+        if (trendData.value.length > 0) {
+          initChart()
+        } else {
+          destroyChart()
         }
       } catch (error) {
-        console.error('获取趋势数据失败:', error)
-        if (error.response && error.response.data) {
-          errorMessage.value = error.response.data.message || '获取数据失败'
-        } else if (error.message) {
-          errorMessage.value = error.message
-        } else {
-          errorMessage.value = '获取趋势数据失败'
-        }
+        console.error('Failed to fetch trend data:', error)
+        errorMessage.value = error.response?.data?.message || error.message || '获取趋势数据失败'
         ElMessage.error(errorMessage.value)
       } finally {
         isLoading.value = false
       }
     }
 
-    // 日期变化处理
-    const handleDateChange = () => {
-      // 验证日期范围
-      if (filterData.startDate && filterData.endDate) {
-        if (new Date(filterData.startDate) > new Date(filterData.endDate)) {
-          ElMessage.warning('开始日期不能晚于结束日期')
-          return
-        }
-      }
-    }
-
-    // 指标变化处理
     const handleMetricsChange = () => {
       if (filterData.selectedMetrics.length === 0) {
-        ElMessage.warning('请至少选择一个健康指标')
         filterData.selectedMetrics = ['weight']
-        return
+        ElMessage.warning('至少选择一个分析指标')
       }
-      
+
       if (trendData.value.length > 0) {
-        initChart()
+        nextTick(() => {
+          initChart()
+        })
       }
     }
 
-    // 查询按钮处理
     const handleRefresh = async () => {
       await fetchTrendData()
     }
 
-    // 重置按钮处理
     const handleReset = () => {
-      const defaultRange = getDefaultDateRange()
-      filterData.startDate = defaultRange.start
-      filterData.endDate = defaultRange.end
-      filterData.selectedMetrics = ['weight', 'heartRate']
+      const range = getDefaultDateRange()
+      filterData.startDate = range.start
+      filterData.endDate = range.end
+      filterData.selectedMetrics = ['weight', 'heartRate', 'bodyTemperature']
       trendData.value = []
-      if (chartInstance) {
-        chartInstance.destroy()
-        chartInstance = null
-      }
+      errorMessage.value = ''
+      destroyChart()
     }
 
-    // 页面加载时获取数据
+    const buildSummaryText = () =>
+      statistics.value.map((stat) => `${stat.label}：${stat.value} ${stat.unit}`).join('；')
+
+    const handleExport = () => {
+      if (!trendData.value.length) {
+        ElMessage.warning('当前没有可导出的分析数据')
+        return
+      }
+
+      const exportedAt = new Date().toLocaleString('zh-CN')
+      const chartImage = chartCanvas.value ? chartCanvas.value.toDataURL('image/png') : ''
+      const headerCells = ['记录时间', ...selectedMetricOptions.value.map((metric) => metric.tableLabel)]
+        .map((header) => `<th>${escapeHtml(header)}</th>`)
+        .join('')
+
+      const rows = trendData.value
+        .map((record) => {
+          const cells = [
+            `<td>${escapeHtml(record.recordedAt)}</td>`,
+            ...selectedMetricOptions.value.map((metric) => `<td>${escapeHtml(formatMetricValue(metric.value, record))}</td>`)
+          ]
+          return `<tr>${cells.join('')}</tr>`
+        })
+        .join('')
+
+      const statsHtml = statistics.value
+        .map((stat) => `
+          <div class="stat-card">
+            <div class="stat-label">${escapeHtml(stat.label)}</div>
+            <div class="stat-value">${escapeHtml(stat.value)}</div>
+            <div class="stat-unit">${escapeHtml(stat.unit)}</div>
+          </div>
+        `)
+        .join('')
+
+      const reportHtml = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>健康趋势分析报告</title>
+  <style>
+    body { font-family: "Microsoft YaHei", sans-serif; margin: 32px; color: #1f2d3d; }
+    h1, h2, p { margin: 0 0 16px; }
+    .meta { margin-bottom: 24px; line-height: 1.8; color: #606266; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin: 24px 0; }
+    .stat-card { border: 1px solid #e8eef5; border-radius: 12px; padding: 16px; background: #f8fbff; }
+    .stat-label { font-size: 14px; color: #606266; margin-bottom: 8px; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #1f2d3d; }
+    .stat-unit { font-size: 12px; color: #909399; margin-top: 6px; }
+    .chart img { width: 100%; border: 1px solid #e8eef5; border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #e8eef5; padding: 10px 12px; text-align: left; font-size: 13px; }
+    th { background: #f5f7fa; }
+  </style>
+</head>
+<body>
+  <h1>健康趋势分析报告</h1>
+  <div class="meta">
+    <div>导出时间：${escapeHtml(exportedAt)}</div>
+    <div>分析时间范围：${escapeHtml(filterData.startDate)} 至 ${escapeHtml(filterData.endDate)}</div>
+    <div>分析指标：${escapeHtml(selectedMetricOptions.value.map((metric) => metric.label).join('、'))}</div>
+    <div>摘要：${escapeHtml(buildSummaryText())}</div>
+  </div>
+  <h2>指标统计</h2>
+  <div class="stats">${statsHtml}</div>
+  <h2>趋势图</h2>
+  <div class="chart">${chartImage ? `<img src="${chartImage}" alt="trend chart" />` : ''}</div>
+  <h2>明细数据</h2>
+  <table>
+    <thead>
+      <tr>${headerCells}</tr>
+    </thead>
+    <tbody>${rows}</tbody>
+  </table>
+</body>
+</html>`
+
+      const blob = new Blob([reportHtml], { type: 'text/html;charset=utf-8' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `health-trend-report-${filterData.startDate}-to-${filterData.endDate}.html`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+      ElMessage.success('分析报告已导出')
+    }
+
     onMounted(async () => {
       await fetchTrendData()
+    })
+
+    onBeforeUnmount(() => {
+      destroyChart()
     })
 
     return {
       chartCanvas,
       isLoading,
       errorMessage,
-      filterData,
       trendData,
+      filterData,
+      metricOptions,
+      selectedMetricOptions,
       statistics,
-      handleDateChange,
+      formatMetricValue,
       handleMetricsChange,
       handleRefresh,
-      handleReset
+      handleReset,
+      handleExport
     }
   }
 }
@@ -473,9 +485,8 @@ export default {
 
 <style scoped>
 .health-trend-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100%;
+  padding: 8px 0 24px;
 }
 
 .page-header {
@@ -488,191 +499,156 @@ export default {
   margin: 0;
   color: #333;
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 700;
 }
 
-.filter-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-bottom: 30px;
+.filter-card,
+.statistics-card,
+.chart-card,
+.table-card,
+.empty-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e8eef5;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
-.filter-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  align-items: flex-end;
-}
-
-.filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-  min-width: 200px;
-}
-
-.filter-group label {
-  font-weight: 500;
-  color: #333;
-  font-size: 14px;
-}
-
-.filter-actions {
-  display: flex;
-  gap: 10px;
-  flex: 1;
-  min-width: 200px;
-  justify-content: flex-start;
+.filter-card,
+.chart-card,
+.table-card,
+.empty-card {
+  padding: 28px 32px;
 }
 
 .statistics-card {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+  padding: 24px;
+}
+
+.chart-card,
+.table-card,
+.empty-card {
+  margin-top: 24px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
-  margin-bottom: 30px;
+  align-items: end;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-item label {
+  color: #606266;
+  font-size: 14px;
+}
+
+.metrics-selector {
+  grid-column: span 2;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 12px;
 }
 
 .stat-item {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  min-height: 120px;
   padding: 20px;
-  text-align: center;
-  border-left: 4px solid #409eff;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+  border: 1px solid #e8eef5;
 }
 
 .stat-label {
   color: #606266;
   font-size: 14px;
-  margin-bottom: 10px;
 }
 
 .stat-value {
-  color: #333;
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 5px;
+  margin-top: 12px;
+  color: #1f2d3d;
+  font-size: 30px;
+  font-weight: 700;
 }
 
 .stat-unit {
+  margin-top: 8px;
   color: #909399;
-  font-size: 12px;
+  font-size: 13px;
 }
 
-.chart-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  margin-bottom: 30px;
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
-.chart-card h3 {
-  margin: 0 0 20px 0;
-  color: #333;
-  font-size: 18px;
-  font-weight: bold;
-  border-bottom: 2px solid #409eff;
-  padding-bottom: 10px;
+.chart-header h3,
+.table-card h3 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  color: #1f2d3d;
+}
+
+.chart-header p {
+  margin: 0;
+  color: #909399;
+  font-size: 14px;
 }
 
 .chart-container {
-  position: relative;
-  height: 400px;
-  width: 100%;
+  height: 420px;
 }
 
-.chart-container canvas {
-  max-height: 400px;
-}
-
-.data-table-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  margin-bottom: 30px;
-}
-
-.data-table-card h3 {
-  margin: 0 0 20px 0;
-  color: #333;
-  font-size: 18px;
-  font-weight: bold;
-  border-bottom: 2px solid #409eff;
-  padding-bottom: 10px;
-}
-
-.no-data {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.error-alert {
+.feedback-alert {
   margin-top: 20px;
 }
 
-/* 响应式设计 */
+@media (max-width: 1200px) {
+  .filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .metrics-selector {
+    grid-column: span 2;
+  }
+}
+
 @media (max-width: 768px) {
-  .health-trend-container {
-    padding: 10px;
+  .filter-card,
+  .chart-card,
+  .table-card,
+  .empty-card {
+    padding: 20px;
   }
 
-  .filter-section {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .filter-group {
-    min-width: 100%;
-  }
-
-  .filter-actions {
-    min-width: 100%;
-    justify-content: space-between;
-  }
-
+  .filter-grid,
   .statistics-card {
     grid-template-columns: 1fr;
   }
 
-  .chart-card,
-  .data-table-card {
-    padding: 20px;
+  .metrics-selector {
+    grid-column: span 1;
+  }
+
+  .chart-header {
+    flex-direction: column;
   }
 
   .chart-container {
-    height: 300px;
-  }
-
-  .page-header h2 {
-    font-size: 20px;
-  }
-
-  :deep(.el-date-picker) {
-    width: 100%;
-  }
-
-  :deep(.el-select) {
-    width: 100%;
-  }
-
-  :deep(.el-table) {
-    font-size: 12px;
-  }
-
-  :deep(.el-table__header th) {
-    padding: 8px 0;
-  }
-
-  :deep(.el-table__body td) {
-    padding: 8px 0;
+    height: 320px;
   }
 }
 </style>

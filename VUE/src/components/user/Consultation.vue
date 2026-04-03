@@ -351,9 +351,8 @@ export default {
 
 <style scoped>
 .consultation-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100%;
+  padding: 8px 0 24px;
 }
 
 .page-header {
@@ -371,17 +370,19 @@ export default {
 
 .consultation-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 24px;
+  align-items: start;
 }
 
 .submit-consultation-card,
 .consultation-list-card,
 .consultation-detail-card {
   background: white;
-  border-radius: 8px;
+  border-radius: 16px;
+  border: 1px solid #e8eef5;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 30px;
+  padding: 32px 36px;
 }
 
 .submit-consultation-card h3,
@@ -410,7 +411,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 600px;
+  max-height: min(720px, 55vh);
   overflow-y: auto;
 }
 
@@ -540,7 +541,7 @@ export default {
 
 @media (max-width: 768px) {
   .consultation-container {
-    padding: 10px;
+    padding: 0;
   }
 
   .submit-consultation-card,

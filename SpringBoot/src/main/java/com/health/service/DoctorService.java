@@ -147,8 +147,13 @@ public class DoctorService {
             dataInfo.put("weight", data.getWeight());
             dataInfo.put("bloodPressure", data.getBloodPressure());
             dataInfo.put("heartRate", data.getHeartRate());
+            dataInfo.put("bodyTemperature", data.getBodyTemperature());
+            dataInfo.put("bloodOxygen", data.getBloodOxygen());
+            dataInfo.put("bloodSugar", data.getBloodSugar());
+            dataInfo.put("sleepDuration", data.getSleepDuration());
             dataInfo.put("dietRecord", data.getDietRecord());
             dataInfo.put("exerciseRecord", data.getExerciseRecord());
+            dataInfo.put("checkResults", data.getCheckResults());
             dataInfo.put("dataType", data.getDataType());
             dataInfo.put("recordedAt", data.getRecordedAt());
             dataInfo.put("createdAt", data.getCreatedAt());

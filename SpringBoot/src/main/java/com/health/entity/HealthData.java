@@ -39,6 +39,18 @@ public class HealthData {
     @Column(name = "heart_rate")
     private Integer heartRate;
 
+    @Column(name = "body_temperature", precision = 4, scale = 2)
+    private BigDecimal bodyTemperature;
+
+    @Column(name = "blood_oxygen")
+    private Integer bloodOxygen;
+
+    @Column(name = "blood_sugar", precision = 5, scale = 2)
+    private BigDecimal bloodSugar;
+
+    @Column(name = "sleep_duration", precision = 4, scale = 2)
+    private BigDecimal sleepDuration;
+
     @Column(name = "diet_record", columnDefinition = "TEXT")
     private String dietRecord;
 

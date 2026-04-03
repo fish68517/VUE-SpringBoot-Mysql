@@ -1,14 +1,11 @@
 <template>
   <div class="health-check-container">
-    <!-- 页面标题 -->
     <div class="page-header">
-      <h2>{{ $t('healthCheck.routineCheck') || '常规健康检查' }}</h2>
+      <h2>{{ $t('healthCheck.routineCheck') || '常规体检录入' }}</h2>
     </div>
 
-    <!-- 加载状态 -->
     <el-skeleton v-if="isLoading" :rows="8" animated />
 
-    <!-- 健康检查表单 -->
     <div v-else class="form-card">
       <el-form
         ref="formRef"
@@ -17,82 +14,79 @@
         label-width="120px"
         @submit.prevent="handleSubmit"
       >
-        <!-- 检查项目 - 身高 -->
-        <el-form-item :label="$t('healthData.height') || '身高(cm)'" prop="height">
-          <el-input-number
-            v-model="formData.height"
-            :min="50"
-            :max="250"
-            :step="0.1"
-            :placeholder="$t('healthData.height') || '身高(cm)'"
-            controls-position="right"
-          />
-          <span class="unit-label">cm</span>
-        </el-form-item>
+        <div class="metrics-grid">
+          <el-form-item :label="$t('healthData.height') || '身高'" prop="height">
+            <div class="field-with-unit">
+              <el-input-number v-model="formData.height" :min="50" :max="250" :step="0.1" controls-position="right" />
+              <span class="unit-label">cm</span>
+            </div>
+          </el-form-item>
 
-        <!-- 检查项目 - 体重 -->
-        <el-form-item :label="$t('healthData.weight') || '体重(kg)'" prop="weight">
-          <el-input-number
-            v-model="formData.weight"
-            :min="20"
-            :max="300"
-            :step="0.1"
-            :placeholder="$t('healthData.weight') || '体重(kg)'"
-            controls-position="right"
-          />
-          <span class="unit-label">kg</span>
-        </el-form-item>
+          <el-form-item :label="$t('healthData.weight') || '体重'" prop="weight">
+            <div class="field-with-unit">
+              <el-input-number v-model="formData.weight" :min="20" :max="300" :step="0.1" controls-position="right" />
+              <span class="unit-label">kg</span>
+            </div>
+          </el-form-item>
 
-        <!-- 检查项目 - 血压 -->
-        <el-form-item :label="$t('healthData.bloodPressure') || '血压'" prop="bloodPressure">
-          <el-input
-            v-model="formData.bloodPressure"
-            :placeholder="$t('healthData.bloodPressure') || '血压 (例如: 120/80)'"
-            clearable
-          />
-          <span class="unit-label">mmHg</span>
-        </el-form-item>
+          <el-form-item :label="$t('healthData.bloodPressure') || '血压'" prop="bloodPressure">
+            <div class="field-with-unit">
+              <el-input v-model="formData.bloodPressure" placeholder="例如：120/80" clearable />
+              <span class="unit-label">mmHg</span>
+            </div>
+          </el-form-item>
 
-        <!-- 检查项目 - 心率 -->
-        <el-form-item :label="$t('healthData.heartRate') || '心率(次/分)'" prop="heartRate">
-          <el-input-number
-            v-model="formData.heartRate"
-            :min="30"
-            :max="200"
-            :step="1"
-            :placeholder="$t('healthData.heartRate') || '心率(次/分)'"
-            controls-position="right"
-          />
-          <span class="unit-label">次/分</span>
-        </el-form-item>
+          <el-form-item :label="$t('healthData.heartRate') || '心率'" prop="heartRate">
+            <div class="field-with-unit">
+              <el-input-number v-model="formData.heartRate" :min="30" :max="200" :step="1" controls-position="right" />
+              <span class="unit-label">次/分</span>
+            </div>
+          </el-form-item>
 
-        <!-- 检查项目 - 检查结果备注 -->
+          <el-form-item label="体温" prop="bodyTemperature">
+            <div class="field-with-unit">
+              <el-input-number v-model="formData.bodyTemperature" :min="34" :max="42" :step="0.1" controls-position="right" />
+              <span class="unit-label">°C</span>
+            </div>
+          </el-form-item>
+
+          <el-form-item label="血氧" prop="bloodOxygen">
+            <div class="field-with-unit">
+              <el-input-number v-model="formData.bloodOxygen" :min="70" :max="100" :step="1" controls-position="right" />
+              <span class="unit-label">%</span>
+            </div>
+          </el-form-item>
+
+          <el-form-item label="血糖" prop="bloodSugar">
+            <div class="field-with-unit">
+              <el-input-number v-model="formData.bloodSugar" :min="2" :max="30" :step="0.1" controls-position="right" />
+              <span class="unit-label">mmol/L</span>
+            </div>
+          </el-form-item>
+
+          <el-form-item label="睡眠时长" prop="sleepDuration">
+            <div class="field-with-unit">
+              <el-input-number v-model="formData.sleepDuration" :min="0" :max="24" :step="0.5" controls-position="right" />
+              <span class="unit-label">小时</span>
+            </div>
+          </el-form-item>
+        </div>
+
         <el-form-item :label="$t('healthCheck.checkResults') || '检查结果'" prop="checkResults">
-          <el-input
-            v-model="formData.checkResults"
-            type="textarea"
-            :rows="3"
-            :placeholder="$t('healthCheck.checkResults') || '请记录检查结果和医师建议（可选）'"
-            clearable
-            maxlength="500"
-            show-word-limit
-          />
+          <el-input v-model="formData.checkResults" type="textarea" :rows="3" maxlength="500" show-word-limit />
         </el-form-item>
 
-        <!-- 检查日期 -->
-        <el-form-item :label="$t('healthCheck.checkDate') || '检查日期'" prop="recordedAt">
+        <el-form-item :label="$t('healthCheck.checkDate') || '检查时间'" prop="recordedAt">
           <el-date-picker
             v-model="formData.recordedAt"
             type="datetime"
-            :placeholder="$t('healthCheck.checkDate') || '选择检查日期'"
             format="YYYY-MM-DD HH:mm:ss"
             value-format="YYYY-MM-DD HH:mm:ss"
           />
         </el-form-item>
 
-        <!-- 操作按钮 -->
         <el-form-item>
-          <el-button type="primary" @click="handleSubmit" :loading="isSubmitting">
+          <el-button type="primary" :loading="isSubmitting" @click="handleSubmit">
             {{ $t('common.submit') || '提交' }}
           </el-button>
           <el-button @click="resetForm">
@@ -101,69 +95,79 @@
         </el-form-item>
       </el-form>
 
-      <!-- 错误提示 -->
       <el-alert
         v-if="errorMessage"
         :title="errorMessage"
         type="error"
         :closable="true"
         @close="errorMessage = ''"
-        class="error-alert"
+        class="feedback-alert"
       />
-
-      <!-- 成功提示 -->
       <el-alert
         v-if="successMessage"
         :title="successMessage"
         type="success"
         :closable="true"
         @close="successMessage = ''"
-        class="success-alert"
+        class="feedback-alert"
       />
 
-      <!-- 数据范围提示 -->
-      <el-alert
-        title="检查数据范围提示"
-        type="info"
-        :closable="false"
-        class="info-alert"
-      >
+      <el-alert title="检查指标参考范围" type="info" :closable="false" class="tips-alert">
         <template #default>
           <div class="range-tips">
-            <p><strong>身高:</strong> 50-250 cm</p>
-            <p><strong>体重:</strong> 20-300 kg</p>
-            <p><strong>心率:</strong> 30-200 次/分</p>
-            <p><strong>血压:</strong> 格式为 收缩压/舒张压 (例如: 120/80)</p>
+            <p>身高：50 - 250 cm</p>
+            <p>体重：20 - 300 kg</p>
+            <p>心率：30 - 200 次/分</p>
+            <p>体温：34 - 42 °C</p>
+            <p>血氧：70 - 100 %</p>
+            <p>血糖：2 - 30 mmol/L</p>
+            <p>睡眠时长：0 - 24 小时</p>
+            <p>血压格式：例如 120/80</p>
           </div>
         </template>
       </el-alert>
     </div>
 
-    <!-- 最近检查记录 -->
     <div v-if="!isLoading && recentChecks.length > 0" class="recent-checks-card">
-      <h3>{{ $t('healthCheck.routineCheck') || '最近检查记录' }}</h3>
+      <h3>{{ $t('healthCheck.routineCheck') || '最近体检记录' }}</h3>
       <el-table :data="recentChecks" stripe style="width: 100%">
-        <el-table-column prop="recordedAt" :label="$t('healthCheck.checkDate') || '检查日期'" width="180" />
-        <el-table-column prop="height" :label="$t('healthData.height') || '身高(cm)'" width="100" />
-        <el-table-column prop="weight" :label="$t('healthData.weight') || '体重(kg)'" width="100" />
-        <el-table-column prop="bloodPressure" :label="$t('healthData.bloodPressure') || '血压'" width="100" />
-        <el-table-column prop="heartRate" :label="$t('healthData.heartRate') || '心率(次/分)'" width="120" />
-        <el-table-column prop="checkResults" :label="$t('healthCheck.checkResults') || '检查结果'" width="200" :show-overflow-tooltip="true" />
+        <el-table-column prop="recordedAt" :label="$t('healthCheck.checkDate') || '检查时间'" width="180" />
+        <el-table-column prop="height" label="身高(cm)" width="110" />
+        <el-table-column prop="weight" label="体重(kg)" width="110" />
+        <el-table-column prop="bloodPressure" label="血压" width="120" />
+        <el-table-column prop="heartRate" label="心率" width="100" />
+        <el-table-column prop="bodyTemperature" label="体温" width="100" />
+        <el-table-column prop="bloodOxygen" label="血氧" width="100" />
+        <el-table-column prop="bloodSugar" label="血糖" width="110" />
+        <el-table-column prop="sleepDuration" label="睡眠时长" width="120" />
+        <el-table-column prop="checkResults" :label="$t('healthCheck.checkResults') || '检查结果'" min-width="220" show-overflow-tooltip />
       </el-table>
     </div>
 
-    <!-- 无记录提示 -->
-    <div v-if="!isLoading && recentChecks.length === 0" class="no-records-card">
-      <el-empty :description="$t('healthHistory.noRecords') || '暂无检查记录'" />
+    <div v-else-if="!isLoading" class="no-records-card">
+      <el-empty :description="$t('healthHistory.noRecords') || '暂无体检记录'" />
     </div>
   </div>
 </template>
 
 <script>
-import { ref, reactive, onMounted } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { healthDataAPI } from '../../services/api'
 import { authService } from '../../services/auth'
+
+const createDefaultFormData = () => ({
+  height: null,
+  weight: null,
+  bloodPressure: '',
+  heartRate: null,
+  bodyTemperature: null,
+  bloodOxygen: null,
+  bloodSugar: null,
+  sleepDuration: null,
+  checkResults: '',
+  recordedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
+})
 
 export default {
   name: 'HealthCheck',
@@ -175,102 +179,77 @@ export default {
     const successMessage = ref('')
     const recentChecks = ref([])
 
-    const formData = reactive({
-      height: null,
-      weight: null,
-      bloodPressure: '',
-      heartRate: null,
-      checkResults: '',
-      recordedAt: new Date().toISOString().slice(0, 19).replace('T', ' ')
-    })
+    const formData = reactive(createDefaultFormData())
 
-    // 表单验证规则
+    const numberRule = (message) => [{ type: 'number', message, trigger: 'blur' }]
     const formRules = {
-      height: [
-        { required: false, message: '身高为可选项', trigger: 'blur' },
-        { type: 'number', message: '身高必须是数字', trigger: 'blur' }
-      ],
-      weight: [
-        { required: false, message: '体重为可选项', trigger: 'blur' },
-        { type: 'number', message: '体重必须是数字', trigger: 'blur' }
-      ],
-      bloodPressure: [
-        { required: false, message: '血压为可选项', trigger: 'blur' }
-      ],
-      heartRate: [
-        { required: false, message: '心率为可选项', trigger: 'blur' },
-        { type: 'number', message: '心率必须是数字', trigger: 'blur' }
-      ],
-      checkResults: [
-        { required: false, message: '检查结果为可选项', trigger: 'blur' }
-      ],
-      recordedAt: [
-        { required: false, message: '检查日期为可选项', trigger: 'blur' }
-      ]
+      height: numberRule('请输入有效身高'),
+      weight: numberRule('请输入有效体重'),
+      heartRate: numberRule('请输入有效心率'),
+      bodyTemperature: numberRule('请输入有效体温'),
+      bloodOxygen: numberRule('请输入有效血氧'),
+      bloodSugar: numberRule('请输入有效血糖'),
+      sleepDuration: numberRule('请输入有效睡眠时长')
     }
 
-    // 验证血压格式
-    const validateBloodPressure = (bloodPressure) => {
-      if (!bloodPressure || bloodPressure.trim() === '') {
-        return true // 可选字段
+    const validateBloodPressure = (value) => {
+      if (!value) {
+        return true
       }
-      // 血压格式: 120/80
-      const bpRegex = /^\d{2,3}\/\d{2,3}$/
-      return bpRegex.test(bloodPressure)
+      return /^\d{2,3}\/\d{2,3}$/.test(value.trim())
     }
 
-    // 验证数据范围
     const validateDataRange = () => {
       const errors = []
 
-      if (formData.height !== null && (formData.height < 50 || formData.height > 250)) {
-        errors.push('身高必须在50-250cm之间')
-      }
-
-      if (formData.weight !== null && (formData.weight < 20 || formData.weight > 300)) {
-        errors.push('体重必须在20-300kg之间')
-      }
-
-      if (formData.heartRate !== null && (formData.heartRate < 30 || formData.heartRate > 200)) {
-        errors.push('心率必须在30-200次/分之间')
-      }
-
-      if (formData.bloodPressure && !validateBloodPressure(formData.bloodPressure)) {
-        errors.push('血压格式不正确，请使用 收缩压/舒张压 格式（例如: 120/80）')
-      }
+      if (formData.height !== null && (formData.height < 50 || formData.height > 250)) errors.push('身高必须在 50-250 cm 之间')
+      if (formData.weight !== null && (formData.weight < 20 || formData.weight > 300)) errors.push('体重必须在 20-300 kg 之间')
+      if (formData.heartRate !== null && (formData.heartRate < 30 || formData.heartRate > 200)) errors.push('心率必须在 30-200 次/分之间')
+      if (formData.bodyTemperature !== null && (formData.bodyTemperature < 34 || formData.bodyTemperature > 42)) errors.push('体温必须在 34-42 °C 之间')
+      if (formData.bloodOxygen !== null && (formData.bloodOxygen < 70 || formData.bloodOxygen > 100)) errors.push('血氧必须在 70-100% 之间')
+      if (formData.bloodSugar !== null && (formData.bloodSugar < 2 || formData.bloodSugar > 30)) errors.push('血糖必须在 2-30 mmol/L 之间')
+      if (formData.sleepDuration !== null && (formData.sleepDuration < 0 || formData.sleepDuration > 24)) errors.push('睡眠时长必须在 0-24 小时之间')
+      if (formData.bloodPressure && !validateBloodPressure(formData.bloodPressure)) errors.push('血压格式应为 120/80')
 
       return errors
     }
 
-    // 获取最近检查记录
     const fetchRecentChecks = async () => {
       try {
         const currentUser = authService.getUser()
-        if (!currentUser || !currentUser.id) {
+        if (!currentUser?.id) {
           return
         }
 
         const response = await healthDataAPI.getUserData()
-        if (response && response.data) {
-          // 过滤出ROUTINE类型的数据，只显示最近5条
-          // const routineData = response.data.filter(item => item.dataType === 'ROUTINE')
-          const routineData = response.data
-          recentChecks.value = routineData.slice(0, 10000)
+        if (response?.data) {
+          recentChecks.value = response.data
+            .filter((item) => item.dataType === 'HEALTH_CHECK')
+            .slice(0, 20)
         }
       } catch (error) {
-        console.error('获取检查记录失败:', error)
+        console.error('Failed to fetch health checks:', error)
       }
     }
 
-    // 提交表单
+    const resetForm = () => {
+      Object.assign(formData, createDefaultFormData())
+      errorMessage.value = ''
+      successMessage.value = ''
+      formRef.value?.clearValidate()
+    }
+
     const handleSubmit = async () => {
-      if (!formRef.value) return
+      if (!formRef.value) {
+        return
+      }
 
       try {
-        // 验证数据范围
+        await formRef.value.validate()
+
         const rangeErrors = validateDataRange()
         if (rangeErrors.length > 0) {
-          errorMessage.value = rangeErrors.join('; ')
+          errorMessage.value = rangeErrors.join('；')
           ElMessage.error(rangeErrors[0])
           return
         }
@@ -279,67 +258,40 @@ export default {
         errorMessage.value = ''
         successMessage.value = ''
 
-        // 获取当前用户ID
         const currentUser = authService.getUser()
-        if (!currentUser || !currentUser.id) {
+        if (!currentUser?.id) {
           throw new Error('无法获取用户信息')
         }
 
-        // 构建提交请求
-        const submitRequest = {
+        const payload = {
           userId: currentUser.id,
           height: formData.height,
           weight: formData.weight,
           bloodPressure: formData.bloodPressure || null,
           heartRate: formData.heartRate,
+          bodyTemperature: formData.bodyTemperature,
+          bloodOxygen: formData.bloodOxygen,
+          bloodSugar: formData.bloodSugar,
+          sleepDuration: formData.sleepDuration,
           checkResults: formData.checkResults || null,
           exerciseRecord: null,
-          dataType: 'ROUTINE',
+          dataType: 'HEALTH_CHECK',
           recordedAt: formData.recordedAt
         }
 
-        // 调用API提交检查记录
-        const response = await healthDataAPI.submitData(submitRequest)
-
-        if (response && response.data) {
-          successMessage.value = response.message || '检查记录已保存'
-          ElMessage.success('检查记录已保存')
-          
-          // 重置表单
-          resetForm()
-          
-          // 刷新最近记录
-          await fetchRecentChecks()
-        }
+        await healthDataAPI.submitData(payload)
+        successMessage.value = '体检记录已保存'
+        ElMessage.success('体检记录已保存')
+        resetForm()
+        await fetchRecentChecks()
       } catch (error) {
-        console.error('保存检查记录失败:', error)
-        if (error.response && error.response.data) {
-          errorMessage.value = error.response.data.message || '保存检查记录失败'
-        } else if (error.message) {
-          errorMessage.value = error.message
-        } else {
-          errorMessage.value = '保存检查记录失败'
-        }
+        console.error('Failed to submit health check:', error)
+        errorMessage.value = error.response?.data?.message || error.message || '保存体检记录失败'
       } finally {
         isSubmitting.value = false
       }
     }
 
-    // 重置表单
-    const resetForm = () => {
-      formData.height = null
-      formData.weight = null
-      formData.bloodPressure = ''
-      formData.heartRate = null
-      formData.checkResults = ''
-      formData.recordedAt = new Date().toISOString().slice(0, 19).replace('T', ' ')
-      
-      if (formRef.value) {
-        formRef.value.resetFields()
-      }
-    }
-
-    // 页面加载时获取最近记录
     onMounted(async () => {
       try {
         await fetchRecentChecks()
@@ -350,12 +302,12 @@ export default {
 
     return {
       formRef,
+      formData,
+      formRules,
       isLoading,
       isSubmitting,
       errorMessage,
       successMessage,
-      formData,
-      formRules,
       recentChecks,
       handleSubmit,
       resetForm
@@ -366,9 +318,8 @@ export default {
 
 <style scoped>
 .health-check-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100%;
+  padding: 8px 0 24px;
 }
 
 .page-header {
@@ -381,136 +332,83 @@ export default {
   margin: 0;
   color: #333;
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 700;
+}
+
+.form-card,
+.recent-checks-card,
+.no-records-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e8eef5;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.form-card,
+.recent-checks-card {
+  padding: 36px;
 }
 
 .form-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 30px;
   margin-bottom: 30px;
+}
+
+.no-records-card {
+  padding: 48px 20px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+}
+
+.field-with-unit {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.field-with-unit :deep(.el-input-number),
+.field-with-unit :deep(.el-input) {
+  flex: 1;
 }
 
 .unit-label {
   margin-left: 10px;
   color: #909399;
-  font-size: 14px;
+  white-space: nowrap;
 }
 
-.error-alert {
-  margin-top: 20px;
-}
-
-.success-alert {
-  margin-top: 20px;
-}
-
-.info-alert {
+.feedback-alert,
+.tips-alert {
   margin-top: 20px;
 }
 
 .range-tips {
-  padding: 10px 0;
+  line-height: 1.9;
 }
 
 .range-tips p {
-  margin: 8px 0;
-  font-size: 14px;
-  color: #606266;
-}
-
-.range-tips strong {
-  color: #333;
-}
-
-.recent-checks-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-  margin-bottom: 30px;
+  margin: 0;
 }
 
 .recent-checks-card h3 {
-  margin: 0 0 20px 0;
-  color: #333;
-  font-size: 18px;
-  font-weight: bold;
-  border-bottom: 2px solid #409eff;
-  padding-bottom: 10px;
+  margin: 0 0 20px;
+  font-size: 20px;
+  color: #1f2d3d;
 }
 
-.no-records-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 60px 30px;
-  text-align: center;
+@media (max-width: 992px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-:deep(.el-form-item) {
-  margin-bottom: 20px;
-}
-
-:deep(.el-input__wrapper) {
-  padding: 8px 12px;
-}
-
-:deep(.el-select) {
-  width: 100%;
-}
-
-:deep(.el-date-picker) {
-  width: 100%;
-}
-
-:deep(.el-table) {
-  margin-top: 20px;
-}
-
-/* 响应式设计 */
 @media (max-width: 768px) {
-  .health-check-container {
-    padding: 10px;
-  }
-
-  .form-card {
-    padding: 20px;
-  }
-
+  .form-card,
   .recent-checks-card {
     padding: 20px;
-  }
-
-  .no-records-card {
-    padding: 40px 20px;
-  }
-
-  .page-header h2 {
-    font-size: 20px;
-  }
-
-  :deep(.el-form-item__label) {
-    width: 100% !important;
-    text-align: left;
-    margin-bottom: 8px;
-  }
-
-  :deep(.el-form-item__content) {
-    margin-left: 0 !important;
-  }
-
-  :deep(.el-table) {
-    font-size: 12px;
-  }
-
-  :deep(.el-table__header th) {
-    padding: 8px 0;
-  }
-
-  :deep(.el-table__body td) {
-    padding: 8px 0;
   }
 }
 </style>

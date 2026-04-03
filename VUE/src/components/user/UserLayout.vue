@@ -221,7 +221,9 @@ export default {
 .user-main {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 24px 32px 32px;
+  min-width: 0;
+  background: linear-gradient(180deg, #f8fbff 0%, #f3f6fb 100%);
 }
 
 /* 响应式设计 */
@@ -252,6 +254,10 @@ export default {
   .user-info {
     font-size: 12px;
     padding: 0 5px;
+  }
+
+  .user-main {
+    padding: 16px;
   }
 }
 </style>

@@ -1,18 +1,15 @@
 <template>
   <div class="health-history-container">
-    <!-- 页面标题 -->
     <div class="page-header">
       <h2>{{ $t('healthHistory.healthHistory') || '健康历史' }}</h2>
     </div>
 
-    <!-- 加载状态 -->
     <el-skeleton v-if="isLoading" :rows="8" animated />
 
-    <!-- 筛选条件卡片 -->
     <div v-else class="filter-card">
       <div class="filter-section">
         <div class="filter-group">
-          <label>{{ $t('healthHistory.recordDate') || '记录日期' }}:</label>
+          <label>{{ $t('healthHistory.recordDate') || '记录日期' }}</label>
           <el-date-picker
             v-model="filterData.dateRange"
             type="daterange"
@@ -21,17 +18,15 @@
             end-placeholder="结束日期"
             format="YYYY-MM-DD"
             value-format="YYYY-MM-DD"
-            @change="handleDateChange"
           />
         </div>
 
         <div class="filter-group">
-          <label>{{ $t('healthHistory.recordType') || '记录类型' }}:</label>
+          <label>{{ $t('healthHistory.recordType') || '记录类型' }}</label>
           <el-select
             v-model="filterData.recordType"
             :placeholder="$t('common.search') || '选择类型'"
             clearable
-            @change="handleFilterChange"
           >
             <el-option label="全部" value="" />
             <el-option label="健康数据" value="HEALTH_DATA" />
@@ -43,7 +38,7 @@
         </div>
 
         <div class="filter-actions">
-          <el-button type="primary" @click="handleSearch" :loading="isLoading">
+          <el-button type="primary" :loading="isLoading" @click="handleSearch">
             {{ $t('common.search') || '查询' }}
           </el-button>
           <el-button @click="handleReset">
@@ -53,41 +48,20 @@
       </div>
     </div>
 
-    <!-- 历史记录表格 -->
     <div v-if="!isLoading && historyRecords.length > 0" class="records-card">
       <h3>{{ $t('healthHistory.recordDetails') || '记录详情' }}</h3>
-      <el-table
-        :data="paginatedRecords"
-        stripe
-        style="width: 100%"
-        @expand-change="handleExpandChange"
-      >
-        <!-- 展开行 -->
-        <el-table-column type="expand" width="50">
-          <template #default="{ row }">
-            <div class="expand-content">
-              <div class="detail-section">
-                <h4>详细信息</h4>
-                <div class="detail-grid">
-                  <div v-for="(value, key) in getDetailInfo(row)" :key="key" class="detail-item">
-                    <span class="detail-label">{{ formatDetailLabel(key) }}:</span>
-                    <span class="detail-value">{{ formatDetailValue(value) }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </template>
-        </el-table-column>
-
-        <!-- 记录日期 -->
+      <el-table :data="paginatedRecords" stripe style="width: 100%">
         <el-table-column
           prop="recordedAt"
           :label="$t('healthHistory.recordDate') || '记录日期'"
           width="180"
           sortable
-        />
+        >
+          <template #default="{ row }">
+            {{ formatDateTimeDisplay(row.recordedAt) }}
+          </template>
+        </el-table-column>
 
-        <!-- 记录类型 -->
         <el-table-column
           prop="recordType"
           :label="$t('healthHistory.recordType') || '记录类型'"
@@ -100,15 +74,14 @@
           </template>
         </el-table-column>
 
-        <!-- 摘要 -->
-        <el-table-column
-          prop="summary"
-          label="摘要"
-          min-width="200"
-          show-overflow-tooltip
-        />
+        <el-table-column prop="summary" label="摘要" min-width="260" show-overflow-tooltip />
 
-        <!-- 操作 -->
+        <el-table-column label="补充信息" min-width="220" show-overflow-tooltip>
+          <template #default="{ row }">
+            {{ buildSecondarySummary(row) }}
+          </template>
+        </el-table-column>
+
         <el-table-column :label="$t('common.edit') || '操作'" width="120" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleViewDetail(row)">
@@ -118,7 +91,6 @@
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
       <div class="pagination-container">
         <el-pagination
           v-model:current-page="currentPage"
@@ -132,45 +104,59 @@
       </div>
     </div>
 
-    <!-- 无数据提示 -->
     <div v-if="!isLoading && historyRecords.length === 0" class="no-data">
       <el-empty :description="$t('healthHistory.noRecords') || '暂无记录'" />
     </div>
 
-    <!-- 详情对话框 -->
     <el-dialog
       v-model="detailDialogVisible"
       :title="$t('healthHistory.recordDetails') || '记录详情'"
-      width="600px"
+      width="760px"
     >
       <div v-if="selectedRecord" class="detail-dialog-content">
-        <div class="detail-section">
-          <h4>基本信息</h4>
+        <div class="detail-section basic-section">
+          <h4>基础信息</h4>
           <div class="detail-grid">
             <div class="detail-item">
-              <span class="detail-label">记录日期:</span>
-              <span class="detail-value">{{ selectedRecord.recordedAt }}</span>
+              <span class="detail-label">记录时间</span>
+              <span class="detail-value">{{ formatDateTimeDisplay(selectedRecord.recordedAt) }}</span>
             </div>
             <div class="detail-item">
-              <span class="detail-label">记录类型:</span>
+              <span class="detail-label">记录类型</span>
               <span class="detail-value">{{ formatRecordType(selectedRecord.recordType) }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">摘要</span>
+              <span class="detail-value">{{ selectedRecord.summary || '-' }}</span>
+            </div>
+            <div v-if="selectedRecord.createdAt" class="detail-item">
+              <span class="detail-label">创建时间</span>
+              <span class="detail-value">{{ formatDateTimeDisplay(selectedRecord.createdAt) }}</span>
             </div>
           </div>
         </div>
 
-        <div class="detail-section">
-          <h4>详细数据</h4>
+        <div
+          v-for="group in detailGroups"
+          :key="group.title"
+          class="detail-section"
+        >
+          <h4>{{ group.title }}</h4>
           <div class="detail-grid">
-            <div v-for="(value, key) in getDetailInfo(selectedRecord)" :key="key" class="detail-item">
-              <span class="detail-label">{{ formatDetailLabel(key) }}:</span>
-              <span class="detail-value">{{ formatDetailValue(value) }}</span>
+            <div
+              v-for="item in group.items"
+              :key="`${group.title}-${item.label}`"
+              class="detail-item"
+              :class="{ 'detail-item-wide': item.wide }"
+            >
+              <span class="detail-label">{{ item.label }}</span>
+              <span class="detail-value">{{ item.value }}</span>
             </div>
           </div>
         </div>
       </div>
     </el-dialog>
 
-    <!-- 错误提示 -->
     <el-alert
       v-if="errorMessage"
       :title="errorMessage"
@@ -183,11 +169,108 @@
 </template>
 
 <script>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-import { healthDataAPI, consultationAPI, healthAdviceAPI } from '../../services/api'
+import { consultationAPI, healthAdviceAPI, healthDataAPI } from '../../services/api'
 import { authService } from '../../services/auth'
-import { formatDateTime } from '../../utils/formatters'
+
+const STATUS_TEXT = {
+  PENDING: '待处理',
+  ANSWERED: '已回复',
+  REVIEWED: '已审核',
+  ACTIVE: '正常'
+}
+
+const REVIEW_STATUS_TEXT = {
+  PENDING: '待审核',
+  REVIEWED: '已审核'
+}
+
+const GENDER_VALUE_TEXT = {
+  MALE: '男',
+  FEMALE: '女',
+  OTHER: '其他'
+}
+
+const GENDER_HEALTH_LABELS = {
+  menstrualCycle: '月经周期',
+  menstrualDays: '月经天数',
+  lastMenstrualDate: '最后月经日期',
+  pregnancyStatus: '妊娠状态',
+  menstrualSymptoms: '经期症状',
+  prostateHealth: '前列腺状态',
+  sexualFunction: '性功能状态'
+}
+
+const safeText = (value, fallback = '-') => {
+  if (value === null || value === undefined || value === '') {
+    return fallback
+  }
+  return String(value)
+}
+
+const formatDateTimeDisplay = (value) => {
+  if (!value) {
+    return '-'
+  }
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) {
+    return safeText(value)
+  }
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+const formatNumber = (value, decimals = 1) => {
+  if (value === null || value === undefined || value === '') {
+    return '-'
+  }
+  const numericValue = Number(value)
+  if (!Number.isFinite(numericValue)) {
+    return safeText(value)
+  }
+  return numericValue.toFixed(decimals)
+}
+
+const calculateBMI = (height, weight) => {
+  const heightValue = Number(height)
+  const weightValue = Number(weight)
+  if (!heightValue || !weightValue) {
+    return null
+  }
+  const bmi = weightValue / ((heightValue / 100) ** 2)
+  return Number.isFinite(bmi) ? bmi : null
+}
+
+const buildBloodPressureInsight = (bloodPressure) => {
+  if (!bloodPressure || !String(bloodPressure).includes('/')) {
+    return null
+  }
+  const [systolicRaw, diastolicRaw] = String(bloodPressure).split('/')
+  const systolic = Number(systolicRaw)
+  const diastolic = Number(diastolicRaw)
+  if (!Number.isFinite(systolic) || !Number.isFinite(diastolic)) {
+    return null
+  }
+  return {
+    pulsePressure: systolic - diastolic,
+    pressureLevel: systolic >= 140 || diastolic >= 90 ? '偏高' : systolic < 90 || diastolic < 60 ? '偏低' : '正常范围'
+  }
+}
+
+const getDefaultDateRange = () => {
+  const endDate = new Date()
+  const startDate = new Date(endDate.getTime() - 90 * 24 * 60 * 60 * 1000)
+  return [
+    startDate.toISOString().split('T')[0],
+    endDate.toISOString().split('T')[0]
+  ]
+}
 
 export default {
   name: 'HealthHistory',
@@ -200,294 +283,363 @@ export default {
     const detailDialogVisible = ref(false)
     const selectedRecord = ref(null)
 
-    // 默认日期范围（最近90天）
-    const getDefaultDateRange = () => {
-      const endDate = new Date()
-      const startDate = new Date(endDate.getTime() - 90 * 24 * 60 * 60 * 1000)
-      return [
-        startDate.toISOString().split('T')[0],
-        endDate.toISOString().split('T')[0]
-      ]
-    }
-
-    const defaultRange = getDefaultDateRange()
-
     const filterData = reactive({
-      dateRange: defaultRange,
+      dateRange: getDefaultDateRange(),
       recordType: ''
     })
 
-    // 分页后的记录
     const paginatedRecords = computed(() => {
       const start = (currentPage.value - 1) * pageSize.value
       const end = start + pageSize.value
       return historyRecords.value.slice(start, end)
     })
 
-    // 获取记录类型标签颜色
+    const detailGroups = computed(() => {
+      if (!selectedRecord.value) {
+        return []
+      }
+      return buildDetailGroups(selectedRecord.value)
+    })
+
     const getRecordTypeTag = (type) => {
       const tagMap = {
-        'HEALTH_DATA': 'success',
-        'HEALTH_CHECK': 'info',
-        'GENDER_HEALTH': 'warning',
-        'CONSULTATION': 'primary',
-        'HEALTH_ADVICE': ''
+        HEALTH_DATA: 'success',
+        HEALTH_CHECK: 'info',
+        GENDER_HEALTH: 'warning',
+        CONSULTATION: 'primary',
+        HEALTH_ADVICE: ''
       }
       return tagMap[type] || 'info'
     }
 
-    // 格式化记录类型
     const formatRecordType = (type) => {
       const typeMap = {
-        'HEALTH_DATA': '健康数据',
-        'HEALTH_CHECK': '常规检查',
-        'GENDER_HEALTH': '性别健康',
-        'CONSULTATION': '咨询记录',
-        'HEALTH_ADVICE': '健康建议'
+        HEALTH_DATA: '健康数据',
+        HEALTH_CHECK: '常规检查',
+        GENDER_HEALTH: '性别健康',
+        CONSULTATION: '咨询记录',
+        HEALTH_ADVICE: '健康建议'
       }
       return typeMap[type] || type
     }
 
-    // 格式化详情标签
-    const formatDetailLabel = (key) => {
-      const labelMap = {
-        'height': '身高',
-        'weight': '体重',
-        'bloodPressure': '血压',
-        'heartRate': '心率',
-        'dietRecord': '饮食记录',
-        'exerciseRecord': '运动记录',
-        'checkItems': '检查项目',
-        'checkResults': '检查结果',
-        'menstrualCycle': '月经周期',
-        'menstrualDays': '月经天数',
-        'lastMenstrualDate': '最后月经日期',
-        'pregnancyStatus': '妊娠状态',
-        'menstrualSymptoms': '月经症状',
-        'prostateHealth': '健康状态',
-        'sexualFunction': '性功能状态',
-        'question': '问题',
-        'answer': '回答',
-        'status': '状态',
-        'adviceContent': '建议内容',
-        'recommendation': '推荐',
-        'doctorName': '医师名称'
+    const normalizeStatus = (status) => STATUS_TEXT[status] || safeText(status)
+
+    const normalizeReviewStatus = (status) => REVIEW_STATUS_TEXT[status] || safeText(status)
+
+    const buildSecondarySummary = (record) => {
+      if (record.recordType === 'HEALTH_DATA' || record.recordType === 'HEALTH_CHECK') {
+        const parts = []
+        if (record.bloodPressure) parts.push(`血压 ${record.bloodPressure}`)
+        if (record.heartRate !== null && record.heartRate !== undefined) parts.push(`心率 ${record.heartRate} 次/分`)
+        if (record.bodyTemperature !== null && record.bodyTemperature !== undefined) parts.push(`体温 ${formatNumber(record.bodyTemperature)} °C`)
+        if (record.bloodOxygen !== null && record.bloodOxygen !== undefined) parts.push(`血氧 ${record.bloodOxygen}%`)
+        if (record.bloodSugar !== null && record.bloodSugar !== undefined) parts.push(`血糖 ${formatNumber(record.bloodSugar)} mmol/L`)
+        if (record.sleepDuration !== null && record.sleepDuration !== undefined) parts.push(`睡眠 ${formatNumber(record.sleepDuration)} 小时`)
+        return parts.join('，') || '-'
       }
-      return labelMap[key] || key
+
+      if (record.recordType === 'CONSULTATION') {
+        return record.answer ? `医生已回复：${safeText(record.answer).slice(0, 20)}${safeText(record.answer).length > 20 ? '...' : ''}` : '等待医生回复'
+      }
+
+      if (record.recordType === 'HEALTH_ADVICE') {
+        return record.recommendation || '暂无补充建议'
+      }
+
+      if (record.recordType === 'GENDER_HEALTH') {
+        const keys = Object.keys(GENDER_HEALTH_LABELS).filter((key) => record[key])
+        return keys.map((key) => GENDER_HEALTH_LABELS[key]).join('，') || '已记录专属健康信息'
+      }
+
+      return '-'
     }
 
-    // 格式化详情值
-    const formatDetailValue = (value) => {
-      if (value === null || value === undefined) {
-        return '-'
+    const buildHealthSummary = (item, recordType) => {
+      if (recordType === 'HEALTH_CHECK') {
+        return item.checkResults
+          ? `检查结果：${safeText(item.checkResults).slice(0, 24)}${safeText(item.checkResults).length > 24 ? '...' : ''}`
+          : `体检记录：血压 ${safeText(item.bloodPressure)}，心率 ${safeText(item.heartRate)}`
       }
-      if (typeof value === 'boolean') {
-        return value ? '是' : '否'
+      if (recordType === 'GENDER_HEALTH') {
+        return '性别健康专项记录'
       }
-      if (typeof value === 'object') {
-        return JSON.stringify(value)
-      }
-      return String(value)
+      return `身高 ${safeText(item.height)} cm，体重 ${safeText(item.weight)} kg`
     }
 
-    // 获取详情信息
-    const getDetailInfo = (record) => {
-      const info = {}
-      const excludeKeys = ['id', 'userId', 'recordedAt', 'recordType', 'summary', 'createdAt', 'updatedAt', 'dataType']
-
-      for (const key in record) {
-        if (!excludeKeys.includes(key) && record[key] !== null && record[key] !== undefined) {
-          info[key] = record[key]
-        }
-      }
-
-      return info
-    }
-
-    // 获取健康数据记录
     const fetchHealthDataRecords = async (startDate, endDate) => {
       try {
         const response = await healthDataAPI.getDataByRange(startDate, endDate)
-        if (response && response.data) {
-          return response.data.map(item => ({
+        if (!response?.data) {
+          return []
+        }
+
+        return response.data.map((item) => {
+          const recordType = item.dataType === 'HEALTH_CHECK'
+            ? 'HEALTH_CHECK'
+            : item.dataType === 'GENDER_SPECIFIC'
+              ? 'GENDER_HEALTH'
+              : 'HEALTH_DATA'
+
+          const bmi = calculateBMI(item.height, item.weight)
+          const pressureInsight = buildBloodPressureInsight(item.bloodPressure)
+
+          return {
             id: item.id,
+            userId: item.userId,
             recordedAt: item.recordedAt,
-            recordType: 'HEALTH_DATA',
-            summary: `身高: ${item.height}cm, 体重: ${item.weight}kg`,
+            createdAt: item.createdAt,
+            recordType,
+            summary: buildHealthSummary(item, recordType),
             height: item.height,
             weight: item.weight,
+            bmi: bmi ? formatNumber(bmi, 1) : null,
             bloodPressure: item.bloodPressure,
             heartRate: item.heartRate,
+            bodyTemperature: item.bodyTemperature,
+            bloodOxygen: item.bloodOxygen,
+            bloodSugar: item.bloodSugar,
+            sleepDuration: item.sleepDuration,
             dietRecord: item.dietRecord,
-            exerciseRecord: item.exerciseRecord
-          }))
-        }
+            exerciseRecord: item.exerciseRecord,
+            checkResults: item.checkResults,
+            reviewStatus: item.reviewStatus,
+            reviewFeedback: item.reviewFeedback,
+            feedbackDate: item.feedbackDate,
+            pulsePressure: pressureInsight?.pulsePressure ?? null,
+            pressureLevel: pressureInsight?.pressureLevel ?? null,
+            menstrualCycle: item.menstrualCycle,
+            menstrualDays: item.menstrualDays,
+            lastMenstrualDate: item.lastMenstrualDate,
+            pregnancyStatus: item.pregnancyStatus,
+            menstrualSymptoms: item.menstrualSymptoms,
+            prostateHealth: item.prostateHealth,
+            sexualFunction: item.sexualFunction
+          }
+        })
       } catch (error) {
-        console.error('获取健康数据记录失败:', error)
+        console.error('Failed to fetch health history records:', error)
+        return []
       }
-      return []
     }
 
-    // 获取咨询记录
-    const fetchConsultationRecords = async () => {
+    const isWithinDateRange = (value, startDate, endDate) => {
+      if (!value || !startDate || !endDate) {
+        return true
+      }
+      const current = new Date(value).getTime()
+      const start = new Date(`${startDate} 00:00:00`).getTime()
+      const end = new Date(`${endDate} 23:59:59`).getTime()
+      return current >= start && current <= end
+    }
+
+    const fetchConsultationRecords = async (startDate, endDate) => {
       try {
         const response = await consultationAPI.getConsultations()
-        if (response && response.data) {
-          return response.data.map(item => ({
-            id: item.id,
-            recordedAt: item.createdAt,
-            recordType: 'CONSULTATION',
-            summary: item.question.substring(0, 50) + (item.question.length > 50 ? '...' : ''),
-            question: item.question,
-            answer: item.answer,
-            status: item.status,
-            doctorName: item.doctorName
-          }))
+        if (!response?.data) {
+          return []
         }
+
+        return response.data
+          .filter((item) => isWithinDateRange(item.createdAt, startDate, endDate))
+          .map((item) => ({
+          id: item.id,
+          userId: item.userId,
+          doctorId: item.doctorId,
+          recordedAt: item.createdAt,
+          createdAt: item.createdAt,
+          answeredAt: item.answeredAt,
+          recordType: 'CONSULTATION',
+          summary: safeText(item.question, '').slice(0, 50) + (safeText(item.question, '').length > 50 ? '...' : ''),
+          question: item.question,
+          answer: item.answer,
+          status: item.status,
+          doctorName: item.doctorName
+        }))
       } catch (error) {
-        console.error('获取咨询记录失败:', error)
+        console.error('Failed to fetch consultation records:', error)
+        return []
       }
-      return []
     }
 
-    // 获取健康建议记录
-    const fetchHealthAdviceRecords = async () => {
+    const fetchHealthAdviceRecords = async (startDate, endDate) => {
       try {
         const response = await healthAdviceAPI.getMyAdvice()
-        if (response && response.data) {
-          return response.data.map(item => ({
-            id: item.id,
-            recordedAt: item.createdAt,
-            recordType: 'HEALTH_ADVICE',
-            summary: item.adviceContent.substring(0, 50) + (item.adviceContent.length > 50 ? '...' : ''),
-            adviceContent: item.adviceContent,
-            recommendation: item.recommendation,
-            doctorName: item.doctorName
-          }))
+        if (!response?.data) {
+          return []
         }
+
+        return response.data
+          .filter((item) => isWithinDateRange(item.createdAt, startDate, endDate))
+          .map((item) => ({
+          id: item.id,
+          userId: item.userId,
+          doctorId: item.doctorId,
+          recordedAt: item.createdAt,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          recordType: 'HEALTH_ADVICE',
+          summary: safeText(item.adviceContent, '').slice(0, 50) + (safeText(item.adviceContent, '').length > 50 ? '...' : ''),
+          adviceContent: item.adviceContent,
+          recommendation: item.recommendation,
+          doctorName: item.doctorName
+        }))
       } catch (error) {
-        console.error('获取健康建议记录失败:', error)
+        console.error('Failed to fetch health advice records:', error)
+        return []
       }
-      return []
     }
 
-    // 获取所有历史记录
     const fetchAllRecords = async () => {
       try {
         isLoading.value = true
         errorMessage.value = ''
 
         const currentUser = authService.getUser()
-        if (!currentUser || !currentUser.id) {
+        if (!currentUser?.id) {
           throw new Error('无法获取用户信息')
         }
 
+        if (!filterData.dateRange || filterData.dateRange.length !== 2) {
+          throw new Error('请选择完整的日期范围')
+        }
+
         const allRecords = []
+        const [startDate, endDate] = filterData.dateRange
 
-        // 获取健康数据记录
-        if (!filterData.recordType || filterData.recordType === 'HEALTH_DATA') {
-          const healthRecords = await fetchHealthDataRecords(
-            filterData.dateRange[0],
-            filterData.dateRange[1]
-          )
-          allRecords.push(...healthRecords)
+        if (!filterData.recordType || ['HEALTH_DATA', 'HEALTH_CHECK', 'GENDER_HEALTH'].includes(filterData.recordType)) {
+          const healthRecords = await fetchHealthDataRecords(startDate, endDate)
+          const filteredHealthRecords = filterData.recordType
+            ? healthRecords.filter((item) => item.recordType === filterData.recordType)
+            : healthRecords
+          allRecords.push(...filteredHealthRecords)
         }
 
-        // 获取咨询记录
         if (!filterData.recordType || filterData.recordType === 'CONSULTATION') {
-          const consultationRecords = await fetchConsultationRecords()
-          // 按日期范围筛选
-          const filtered = consultationRecords.filter(record => {
-            const recordDate = record.recordedAt.split(' ')[0]
-            return recordDate >= filterData.dateRange[0] && recordDate <= filterData.dateRange[1]
-          })
-          allRecords.push(...filtered)
+          const consultationRecords = await fetchConsultationRecords(startDate, endDate)
+          allRecords.push(...consultationRecords)
         }
 
-        // 获取健康建议记录
         if (!filterData.recordType || filterData.recordType === 'HEALTH_ADVICE') {
-          const adviceRecords = await fetchHealthAdviceRecords()
-          // 按日期范围筛选
-          const filtered = adviceRecords.filter(record => {
-            const recordDate = record.recordedAt.split(' ')[0]
-            return recordDate >= filterData.dateRange[0] && recordDate <= filterData.dateRange[1]
-          })
-          allRecords.push(...filtered)
+          const adviceRecords = await fetchHealthAdviceRecords(startDate, endDate)
+          allRecords.push(...adviceRecords)
         }
 
-        // 按日期排序（最新的在前）
-        historyRecords.value = allRecords.sort((a, b) =>
-          new Date(b.recordedAt) - new Date(a.recordedAt)
-        )
-
-        // 重置分页
+        historyRecords.value = allRecords.sort((a, b) => new Date(b.recordedAt) - new Date(a.recordedAt))
         currentPage.value = 1
       } catch (error) {
-        console.error('获取历史记录失败:', error)
-        if (error.response && error.response.data) {
-          errorMessage.value = error.response.data.message || '获取历史记录失败'
-        } else if (error.message) {
-          errorMessage.value = error.message
-        } else {
-          errorMessage.value = '获取历史记录失败'
-        }
+        console.error('Failed to fetch history records:', error)
+        errorMessage.value = error.message || '获取历史记录失败'
         ElMessage.error(errorMessage.value)
       } finally {
         isLoading.value = false
       }
     }
 
-    // 日期变化处理
-    const handleDateChange = () => {
-      if (filterData.dateRange && filterData.dateRange.length === 2) {
-        if (new Date(filterData.dateRange[0]) > new Date(filterData.dateRange[1])) {
-          ElMessage.warning('开始日期不能晚于结束日期')
-          filterData.dateRange = defaultRange
+    const buildDetailGroups = (record) => {
+      const groups = []
+
+      if (record.recordType === 'HEALTH_DATA' || record.recordType === 'HEALTH_CHECK') {
+        const metricItems = [
+          { label: '身高', value: record.height ? `${formatNumber(record.height, 1)} cm` : '-', wide: false },
+          { label: '体重', value: record.weight ? `${formatNumber(record.weight, 1)} kg` : '-', wide: false },
+          { label: 'BMI', value: record.bmi ? `${record.bmi}` : '-', wide: false },
+          { label: '血压', value: safeText(record.bloodPressure), wide: false },
+          { label: '脉压差', value: record.pulsePressure !== null && record.pulsePressure !== undefined ? `${record.pulsePressure} mmHg` : '-', wide: false },
+          { label: '血压判断', value: safeText(record.pressureLevel), wide: false },
+          { label: '心率', value: record.heartRate !== null && record.heartRate !== undefined ? `${record.heartRate} 次/分` : '-', wide: false },
+          { label: '体温', value: record.bodyTemperature !== null && record.bodyTemperature !== undefined ? `${formatNumber(record.bodyTemperature, 1)} °C` : '-', wide: false },
+          { label: '血氧', value: record.bloodOxygen !== null && record.bloodOxygen !== undefined ? `${record.bloodOxygen}%` : '-', wide: false },
+          { label: '血糖', value: record.bloodSugar !== null && record.bloodSugar !== undefined ? `${formatNumber(record.bloodSugar, 1)} mmol/L` : '-', wide: false },
+          { label: '睡眠时长', value: record.sleepDuration !== null && record.sleepDuration !== undefined ? `${formatNumber(record.sleepDuration, 1)} 小时` : '-', wide: false }
+        ]
+        groups.push({ title: '健康指标', items: metricItems })
+
+        const noteItems = []
+        if (record.checkResults) noteItems.push({ label: '检查结果', value: safeText(record.checkResults), wide: true })
+        if (record.dietRecord) noteItems.push({ label: '饮食记录', value: safeText(record.dietRecord), wide: true })
+        if (record.exerciseRecord) noteItems.push({ label: '运动记录', value: safeText(record.exerciseRecord), wide: true })
+        if (noteItems.length > 0) {
+          groups.push({ title: '补充说明', items: noteItems })
         }
+
+        const reviewItems = [
+          { label: '审核状态', value: normalizeReviewStatus(record.reviewStatus), wide: false }
+        ]
+        if (record.feedbackDate) reviewItems.push({ label: '审核时间', value: formatDateTimeDisplay(record.feedbackDate), wide: false })
+        if (record.reviewFeedback) reviewItems.push({ label: '审核反馈', value: safeText(record.reviewFeedback), wide: true })
+        groups.push({ title: '审核信息', items: reviewItems })
       }
+
+      if (record.recordType === 'GENDER_HEALTH') {
+        const genderHealthItems = [
+          { label: '月经周期', value: record.menstrualCycle ? `${record.menstrualCycle} 天` : '-', wide: false },
+          { label: '月经天数', value: record.menstrualDays ? `${record.menstrualDays} 天` : '-', wide: false },
+          { label: '最后月经日期', value: safeText(record.lastMenstrualDate), wide: false },
+          { label: '妊娠状态', value: safeText(record.pregnancyStatus), wide: false },
+          { label: '经期症状', value: safeText(record.menstrualSymptoms), wide: true },
+          { label: '前列腺状态', value: safeText(record.prostateHealth), wide: true },
+          { label: '性功能状态', value: safeText(record.sexualFunction), wide: false }
+        ]
+        groups.push({ title: '专项健康信息', items: genderHealthItems })
+      }
+
+      if (record.recordType === 'CONSULTATION') {
+        const consultationItems = [
+          { label: '当前状态', value: normalizeStatus(record.status), wide: false },
+          { label: '医生姓名', value: safeText(record.doctorName), wide: false },
+          { label: '医生ID', value: safeText(record.doctorId), wide: false },
+          { label: '提问内容', value: safeText(record.question), wide: true },
+          { label: '医生回复', value: safeText(record.answer), wide: true }
+        ]
+        if (record.answeredAt) {
+          consultationItems.push({ label: '回复时间', value: formatDateTimeDisplay(record.answeredAt), wide: false })
+        }
+        groups.push({ title: '咨询详情', items: consultationItems })
+      }
+
+      if (record.recordType === 'HEALTH_ADVICE') {
+        const adviceItems = [
+          { label: '医生姓名', value: safeText(record.doctorName), wide: false },
+          { label: '医生ID', value: safeText(record.doctorId), wide: false },
+          { label: '建议内容', value: safeText(record.adviceContent), wide: true },
+          { label: '推荐方案', value: safeText(record.recommendation), wide: true }
+        ]
+        if (record.updatedAt) {
+          adviceItems.push({ label: '更新时间', value: formatDateTimeDisplay(record.updatedAt), wide: false })
+        }
+        groups.push({ title: '建议详情', items: adviceItems })
+      }
+
+      return groups.filter((group) => group.items.some((item) => item.value !== '-'))
     }
 
-    // 筛选条件变化处理
-    const handleFilterChange = () => {
-      // 可以在这里添加自动搜索逻辑
+    const handleSearch = () => {
+      fetchAllRecords()
     }
 
-    // 搜索按钮处理
-    const handleSearch = async () => {
-      await fetchAllRecords()
-    }
-
-    // 重置按钮处理
     const handleReset = () => {
-      filterData.dateRange = defaultRange
+      filterData.dateRange = getDefaultDateRange()
       filterData.recordType = ''
-      currentPage.value = 1
-      historyRecords.value = []
+      fetchAllRecords()
     }
 
-    // 查看详情
     const handleViewDetail = (record) => {
       selectedRecord.value = record
       detailDialogVisible.value = true
     }
 
-    // 展开行处理
-    const handleExpandChange = () => {
-      // 可以在这里添加展开行的逻辑
+    const handlePageChange = (page) => {
+      currentPage.value = page
     }
 
-    // 分页处理
-    const handlePageChange = () => {
-      // 分页自动处理
-    }
-
-    const handlePageSizeChange = () => {
+    const handlePageSizeChange = (size) => {
+      pageSize.value = size
       currentPage.value = 1
     }
 
-    // 页面加载时获取数据
-    onMounted(async () => {
-      await fetchAllRecords()
+    onMounted(() => {
+      fetchAllRecords()
     })
 
     return {
@@ -495,22 +647,19 @@ export default {
       errorMessage,
       historyRecords,
       paginatedRecords,
+      filterData,
       currentPage,
       pageSize,
-      filterData,
       detailDialogVisible,
       selectedRecord,
+      detailGroups,
+      formatDateTimeDisplay,
       getRecordTypeTag,
       formatRecordType,
-      formatDetailLabel,
-      formatDetailValue,
-      getDetailInfo,
-      handleDateChange,
-      handleFilterChange,
+      buildSecondarySummary,
       handleSearch,
       handleReset,
       handleViewDetail,
-      handleExpandChange,
       handlePageChange,
       handlePageSizeChange
     }
@@ -520,9 +669,8 @@ export default {
 
 <style scoped>
 .health-history-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100%;
+  padding: 8px 0 24px;
 }
 
 .page-header {
@@ -535,14 +683,20 @@ export default {
   margin: 0;
   color: #333;
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 700;
+}
+
+.filter-card,
+.records-card,
+.no-data {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e8eef5;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .filter-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  padding: 24px 28px;
   margin-bottom: 30px;
 }
 
@@ -558,85 +712,33 @@ export default {
   flex-direction: column;
   gap: 8px;
   flex: 1;
-  min-width: 200px;
+  min-width: 220px;
 }
 
 .filter-group label {
-  font-weight: 500;
   color: #333;
   font-size: 14px;
+  font-weight: 500;
 }
 
 .filter-actions {
   display: flex;
   gap: 10px;
-  flex: 1;
   min-width: 200px;
-  justify-content: flex-start;
 }
 
 .records-card {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  padding: 30px;
+  padding: 32px 36px;
   margin-bottom: 30px;
 }
 
 .records-card h3 {
-  margin: 0 0 20px 0;
+  margin: 0 0 20px;
   color: #333;
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 700;
   border-bottom: 2px solid #409eff;
   padding-bottom: 10px;
-}
-
-.expand-content {
-  padding: 20px;
-  background: #f5f7fa;
-  border-radius: 4px;
-}
-
-.detail-section {
-  margin-bottom: 20px;
-}
-
-.detail-section h4 {
-  margin: 0 0 15px 0;
-  color: #333;
-  font-size: 14px;
-  font-weight: bold;
-  border-left: 3px solid #409eff;
-  padding-left: 10px;
-}
-
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.detail-label {
-  color: #606266;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.detail-value {
-  color: #333;
-  font-size: 14px;
-  word-break: break-word;
-}
-
-.detail-dialog-content {
-  padding: 20px 0;
 }
 
 .pagination-container {
@@ -648,72 +750,93 @@ export default {
 }
 
 .no-data {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   padding: 60px 20px;
   text-align: center;
+}
+
+.detail-dialog-content {
+  padding: 8px 0;
+}
+
+.detail-section {
+  margin-bottom: 22px;
+}
+
+.detail-section h4 {
+  margin: 0 0 14px;
+  color: #1f2d3d;
+  font-size: 15px;
+  font-weight: 700;
+  border-left: 3px solid #409eff;
+  padding-left: 10px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f8fbff;
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.detail-item-wide {
+  grid-column: span 2;
+}
+
+.detail-label {
+  color: #606266;
+  font-size: 13px;
+}
+
+.detail-value {
+  color: #1f2d3d;
+  font-size: 14px;
+  line-height: 1.7;
+  word-break: break-word;
+}
+
+.basic-section .detail-item {
+  background: #f5f7fa;
 }
 
 .error-alert {
   margin-top: 20px;
 }
 
-/* 响应式设计 */
 @media (max-width: 768px) {
-  .health-history-container {
-    padding: 10px;
-  }
-
   .filter-section {
     flex-direction: column;
-    gap: 15px;
+    align-items: stretch;
   }
 
-  .filter-group {
-    min-width: 100%;
-  }
-
+  .filter-group,
   .filter-actions {
     min-width: 100%;
-    justify-content: space-between;
   }
 
   .records-card {
     padding: 20px;
   }
 
-  .page-header h2 {
-    font-size: 20px;
-  }
-
   .detail-grid {
     grid-template-columns: 1fr;
   }
 
-  :deep(.el-date-picker) {
-    width: 100%;
+  .detail-item-wide {
+    grid-column: span 1;
   }
 
+  :deep(.el-date-editor),
   :deep(.el-select) {
     width: 100%;
-  }
-
-  :deep(.el-table) {
-    font-size: 12px;
-  }
-
-  :deep(.el-table__header th) {
-    padding: 8px 0;
-  }
-
-  :deep(.el-table__body td) {
-    padding: 8px 0;
-  }
-
-  :deep(.el-pagination) {
-    flex-wrap: wrap;
-    justify-content: center;
   }
 }
 </style>
