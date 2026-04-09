@@ -112,8 +112,8 @@ public class VirtualFitnessActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 } else {
                     String msg = response.body() != null ? response.body().getMessage() : "\u8bf7\u7a0d\u540e\u91cd\u8bd5";
-                    Toast.makeText(VirtualFitnessActivity.this, "\u8ba1\u5212\u5df2\u751f\u6210\uff0c\u4f46\u5165\u5e93\u5931\u8d25: " + msg,
-                            Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(VirtualFitnessActivity.this, "\u8ba1\u5212\u5df2\u751f\u6210\uff0c\u4f46\u5165\u5e93\u5931\u8d25: " + msg,
+//                            Toast.LENGTH_SHORT).show();
                 }
             }
 
