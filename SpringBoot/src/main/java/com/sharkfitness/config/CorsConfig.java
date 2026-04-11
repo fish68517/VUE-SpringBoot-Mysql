@@ -27,11 +27,13 @@ public class CorsConfig {
         String[] origins = allowedOrigins.split(",");
         for (String origin : origins) {
             String trimmedOrigin = origin.trim();
-            if (trimmedOrigin.contains("*")) {
-                config.addAllowedOriginPattern(trimmedOrigin);
-            } else {
-                config.addAllowedOrigin(trimmedOrigin);
-            }
+//            if (trimmedOrigin.contains("*")) {
+//                config.addAllowedOriginPattern(trimmedOrigin);
+//            } else {
+//                config.addAllowedOrigin(trimmedOrigin);
+//            }
+            config.addAllowedOriginPattern("http://localhost:5173");
+            config.addAllowedOriginPattern("http://127.0.0.1:5173");
         }
         
         // Allow all headers
