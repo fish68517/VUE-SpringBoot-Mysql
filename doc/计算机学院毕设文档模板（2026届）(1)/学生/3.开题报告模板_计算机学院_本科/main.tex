@@ -1,0 +1,318 @@
+\documentclass{article}
+\usepackage{wzu-report-style}
+\usepackage{enumerate}
+
+\usepackage[breaklinks,colorlinks,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
+
+\usepackage{graphicx, subfig, epstopdf, amsmath, booktabs, paralist, float, caption, xfrac, enumitem, array, multirow, cite}
+
+\usepackage{subfloat}
+
+\usepackage[heading=true]{ctex}
+
+\usepackage{zhnumber} % change section number to chinese
+\renewcommand\thesection{\zhnum{section}}
+\renewcommand \thesubsection {\arabic{section}}
+
+\usepackage{url}
+%\usepackage{cite}
+% comma： 用逗号分隔多个引用； square：使用方括号； super：引用是上角标形式
+\usepackage[square,sort,comma,numbers]{natbib}
+\def\bibfont{\fontsize{10.5pt}{12}\selectfont}
+
+\usepackage{titlesec}
+\titleformat{\section}{\kaishu\zihao{4}}{\thesection、}{0em}{}
+\titleformat{\subsubsection}{\kaishu\bfseries\zihao{-4}}{\thesection}{0em}{}
+
+
+\usepackage{caption}
+\DeclareCaptionLabelSeparator{twospace}{\ ~}   %这三条语句即可
+\captionsetup[figure]{labelsep=period,name={\kaishu 图}}
+
+\makeatletter
+\newcommand\dlmu@underline[2][6cm]{%
+	\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}\hskip3pt}
+\let\coverunderline\dlmu@underline
+\makeatother
+
+
+
+\renewcommand\figureautorefname{图}		% 重新定义引用图标
+\renewcommand\tableautorefname{表}		% 重新定义应用表格
+\def\equationautorefname{式}				% 重新定义公式
+
+% 论文中文标题
+\ctitle{个人旅行规划与记忆系统的设计与实现}
+
+% 作者详细信息
+\cauthor{郑\ 皓}        % 作者姓名
+\studentid{22211835233}       % 学号
+\cschool{计算机与人工智能学院}        % 学院
+\cclass{22网工2班}         %班级
+\cmajor{网络工程}    %专业
+\cyear{2026}               %毕业年份
+
+% 指导老师信息
+\cmentor{徐晓华}
+
+%指导老师意见
+%\cmentorcomments{该开题报告选题具有一定的理论价值与实践意义，研究目标明确，研究内容充实，结构安排合理。研究方法选择恰当，研究计划基本可行，同意开题。希望在后续研究中，能进一步细化研究方案，并注意对可能遇到的难点做好预案，确保毕业设计顺利实施。}
+
+
+\begin{document}
+\section{选题的背景与意义：}
+\subsection*{背景}
+随着社会经济的发展和人们生活水平的提高，旅游已成为现代人生活中不可或缺的一部分。越来越多的人倾向于通过旅行来放松身心、拓展视野、丰富人生体验。然而，在旅行过程中，用户往往面临行程规划繁琐、旅行记忆碎片化、信息难以系统化管理等问题。现有的旅行类应用大多侧重于旅行前的规划或旅行中的导航，缺乏对旅行全过程（规划、记录、回忆、分享）的一体化支持。此外，用户对于个性化、可视化、互动性强的旅行记忆管理工具的需求日益增强。
+
+在此背景下，结合现代Web开发技术，构建一个集旅行规划、记忆管理、多媒体记录、社交互动于一体的个人旅行系统，具有重要的现实意义和应用价值。
+\subsection*{意义}
+本系统的设计与实现具有以下三方面的意义：
+
+1、对用户而言，系统提供一站式的旅行服务体验，帮助用户高效规划行程、系统化记录旅行记忆、可视化展示旅行足迹，并通过社交功能增强用户间的互动与分享，提升旅行的情感价值与社会价值。
+
+2、从技术实践角度，本项目综合运用Vue.js 3、SpringBoot、MySQL等主流前后端技术，实现一个功能完整、架构清晰、扩展性强的Web应用，有助于深入理解全栈开发流程、数据库设计与系统集成，提升工程实践能力。
+
+3、从行业发展角度，该系统探索了旅行与记忆管理、社交互动相结合的创新模式，为智慧旅游、个性化服务系统的开发提供了参考，具有一定的行业借鉴意义。
+
+\vspace{0.8cm}
+\fullwidthrule
+
+\section{研究的基本内容与拟解决的主要问题：}
+\subsection*{基本内容：}
+本项目旨在设计并实现一个旅行记忆管理系统，该系统将为用户提供一个全面、便捷的平台，用于记录、管理、规划和分享其旅行经历。通过该系统，用户可以轻松创建旅行记录，上传照片和视频，撰写旅行日记，并在地图上标记旅行足迹。同时，系统还支持用户创建旅行计划、安排行程，并提供社交互动功能，如公开分享、评论和点赞，以增强用户间的交流与互动。
+
+\subsection*{拟解决的主要问题：}
+\begin{enumerate}[leftmargin=*, label=\arabic*、]
+  \item \textbf{用户管理模块的实现：}
+    \begin{itemize}[leftmargin=2em]
+      \item 完成用户注册、登录、个人信息管理等核心功能，确保用户数据的安全与隐私。
+    \end{itemize}
+  
+  \item \textbf{旅行记忆管理模块的实现：}
+    \begin{itemize}[leftmargin=2em]
+      \item 开发旅行记录的创建、编辑、删除功能，支持旅行名称、目的地、日期等信息的录入。
+      \item 实现多文件（照片、视频）上传功能。
+      \item 集成富文本编辑器，支持用户撰写和管理旅行日记。
+      \item 实现旅行足迹地图功能，允许用户在地图上标记地点并展示旅行路线。
+    \end{itemize}
+  
+  \item \textbf{旅行规划模块的实现：}
+    \begin{itemize}[leftmargin=2em]
+      \item 提供旅行计划的创建、修改、删除功能，包括目的地、预计时间、预算等。
+      \item 用户能够添加景点、住宿、交通等每日行程，方便用户进行行程安排。
+    \end{itemize}
+  
+  \item \textbf{分享与社交模块的实现：}
+    \begin{itemize}[leftmargin=2em]
+      \item 允许用户选择公开或私密旅行记录和计划。
+      \item 实现对公开旅行记录的评论和点赞功能，促进用户互动。
+    \end{itemize}
+
+  \item \textbf{数据库与系统架构：}
+    \begin{itemize}[leftmargin=2em]
+      \item 设计：E-R 模型（用户、旅行记录、多媒体、行程、评论、点赞等表），索引与分表预留（针对大文件或高并发）。
+      \item 技术点：MySQL 设计（外键、事务）、分页与延迟加载优化。
+    \end{itemize}
+\end{enumerate}
+
+\vspace{0.8cm}
+\fullwidthrule
+
+\section{研究的方法与技术路线：}
+
+\subsection*{项目概述}
+\noindent 本项目旨在设计并实现一个集旅行规划、记忆管理、多媒体记录、社交互动于一体的个人旅行系统。为确保系统功能完整、架构清晰、性能稳定，本项目将采用主流的前后端分离技术栈。
+
+\subsection*{研究方法}
+\noindent 本课题旨在构建一个集“旅行规划、旅行记忆管理、地图足迹展示、社交互动”为一体的综合系统，因此研究方法与技术路线应同时兼具科学性、系统性与工程可实现性。本节从研究方法、系统构建流程、技术路线三个角度展开，确保整体设计的逻辑性与技术实现的可行性。
+
+\begin{enumerate}
+    \item \textbf{文献研究法}
+    
+    通过查阅国内外关于智慧旅游系统、旅行日记采集、多媒体管理、前后端分离架构等方向的文献，掌握与本课题相关的研究进展、采用的技术框架和主流实现方式。文献来源包括期刊论文、研究报告、硕博士论文、行业文档和开源社区实践。文献研究将为系统需求分析、功能划分、数据库建模等提供理论依据与参考。
+    
+    \item \textbf{软件工程方法（体系化建模与过程控制）}
+    
+    采用经典的软件工程流程，包括需求分析、系统设计、编码实现、测试与维护等阶段。同时运用 UML 工具构建用例图、类图、时序图，以更直观地描述系统内部逻辑、模块依赖关系与交互流程。
+    
+    \item \textbf{原型设计与用户体验分析法}
+    
+    基于需求分析结果，使用如 Figma、墨刀等原型工具制作界面原型，并进行用户体验评估。通过持续迭代的方式，在编码开始前就对交互流程、页面布局和核心功能进行优化，确保系统的可用性与易用性。
+    
+    \item \textbf{设计开发法（功能模块设计）}
+    
+    采用敏捷开发思想，将系统拆分为多个功能模块（用户管理、旅行记忆、多媒体管理、规划模块、社交模块等）。每个模块独立设计、实现与测试，再统一集成，最终形成完整系统。
+    
+    \item \textbf{系统测试法}
+    
+    系统开发完成后，进行如下测试：
+    \begin{itemize}
+        \item 功能测试：检验系统功能是否按需求正确实现；
+        \item 性能测试：包括响应速度、并发访问能力、多媒体上传性能；
+        \item 安全测试：密码加密、接口安全、越权访问检测；
+        \item 用户测试：小范围用户体验测试，收集反馈并进行优化。
+    \end{itemize}
+\end{enumerate}
+
+\subsection*{技术路线}
+\noindent 本课题采用“前后端分离”的技术设计理念，将系统分为前端 UI 层、后端业务逻辑层和数据库层，并集成地图服务、多媒体管理服务等模块。技术整体架构如下：
+
+\begin{enumerate}[leftmargin=*, label=\arabic*、]
+  \item \textbf{前端技术路线（Vue3 + Element Plus）：}
+    \begin{itemize}[leftmargin=2em]
+      \item 使用 Vue3 组合式 API 构建前端界面，提高代码模块性与复用性；
+      \item 采用 Element Plus 作为 UI 组件库，提高界面一致性与开发效率；
+      \item 使用 Vue Router \& Pinia 进行路由管理与状态管理，实现模块间数据共享；
+      \item 使用 Axios 与后端进行 RESTful API 通信；
+      \item 前端整体实现强调响应式、易用性与可维护性，特别对多媒体展示和地图交互进行优化设计。
+    \end{itemize}
+
+  \item \textbf{后端技术路线（SpringBoot）：} 后端采用 SpringBoot 构建 RESTful 服务，具体路线如下：
+    \begin{itemize}[leftmargin=2em]
+      \item Spring MVC：负责接口路由与 HTTP 请求处理；
+      \item Spring Security / JWT：实现用户登录权限与接口安全访问控制；
+      \item MyBatis 或 JPA：用于数据库操作，支持 ORM；
+      \item 多媒体管理模块：负责图片、视频文件的上传、存储路径管理、文件访问权限控制；
+      \item 旅行规划、旅行记录、社交互动等业务逻辑采用分层架构设计（Controller → Service → DAO），实现高内聚、低耦合的模块化结构；
+      \item 预留扩展接口（如推荐算法、智能规划模块）以满足未来系统的可扩展性。
+    \end{itemize}
+  
+  \item \textbf{旅行足迹地图实现：}
+    \begin{itemize}[leftmargin=2em]
+      \item 利用地图服务商（如高德、百度）提供的 JavaScript API，在前端实现地图的加载和交互。
+      \item 在用户记录旅行地点时，通过地理编码（Geocoding）将地点名称转换为经纬度坐标，并存储到 MySQL 数据库中。
+      \item 在展示旅行足迹时，从数据库中读取坐标数据，利用地图 API 的标记点（Marker）和轨迹线（Polyline）功能，在地图上可视化展示用户的旅行路线和足迹。
+    \end{itemize}
+  
+  \item \textbf{多媒体文件上传与管理：}
+    \begin{itemize}[leftmargin=2em]
+      \item 前端采用分块上传或压缩技术优化大文件上传体验。
+      \item 后端利用 SpringBoot 提供的文件处理能力，将上传的文件存储到云存储服务器中，并在数据库中记录文件的存储路径和关联信息。
+    \end{itemize}
+  
+  \item \textbf{富文本编辑器的集成：}选用成熟的开源富文本编辑器，将其集成到 Vue.js 组件中，实现旅行日记的图文混排和格式化编辑功能。在数据存储时，将富文本内容以 HTML 或 Markdown 格式存储，确保内容的完整性和跨平台兼容性。
+\end{enumerate}
+
+\subsubsection*{技术选型}
+\noindent 为实现上述技术路线，本项目采用以下技术栈：
+
+\begin{table}[htbp]
+\centering
+\caption{系统技术选型}
+\begin{tabular}{|p{2cm}|p{3cm}|p{9cm}|}
+\hline
+\textbf{层面} & \textbf{核心技术} & \textbf{作用与优势} \\
+\hline
+前端 & Vue.js 3 & 采用渐进式框架，实现响应式、组件化的用户界面，提供高效的开发体验和良好的性能。 \\
+\cline{2-3}
+ & ElementPlus UI & 基于 Vue 3 的组件库，用于快速构建美观、统一的用户界面，提升开发效率。 \\
+\hline
+后端 & SpringBoot & 基于 Java 语言的轻量级框架，用于快速搭建 RESTful API 服务，简化配置，专注于业务逻辑实现。 \\
+\cline{2-3}
+ & RESTful API & 定义清晰的接口规范，实现前后端之间高效、松耦合的数据交互。 \\
+\hline
+数据层 & MySQL & 关系型数据库，用于持久化存储用户数据、旅行记录、规划信息等，确保数据的完整性和一致性。 \\
+\hline
+关键技术 & 富文本编辑器 & 引入富文本编辑器（如 Quill / CKEditor），用于支持用户撰写图文并茂的旅行日记，增强记录的丰富性。 \\
+\cline{2-3}
+ & 地图服务 & 集成高德/百度/腾讯等地图API，实现旅行足迹的地图标记、路线展示和地理位置信息的存储与检索。 \\
+\cline{2-3}
+ & 文件存储 & 实现多媒体文件（照片、视频）的上传、存储和管理功能。 \\
+\hline
+\end{tabular}
+\end{table}
+
+\vspace{0.8cm}
+\fullwidthrule
+\section{研究的总体安排与进度：}
+
+\begin{enumerate}[leftmargin=*, label=\arabic*、]
+  \item \textbf{2025年10月：}深入调研，收集与课题相关的技术资料和学术文献（完成至少20篇中英文文献的查阅与筛选），明确系统功能范围，确定前后端技术栈，初步构思系统架构。
+  
+  \item \textbf{2025年11月：}完成开题报告、文献综述初稿和外文文献翻译初稿的撰写，并与指导教师沟通修改。
+  
+  \item \textbf{2025年12月：}文献综述、外文翻译，开题报告定稿；着手毕业设计或撰写毕业论文等。
+  
+  \item \textbf{2026年2月：}假期集中开发，完成系统核心模块（用户管理、旅行记忆管理）的编码实现，并完成毕业论文的前三章（绪论、相关技术、需求分析）初稿。
+  
+  \item \textbf{2026年3月：}完成剩余功能模块（旅行规划、分享社交）的开发与集成测试；迎接中期检查，向指导老师汇报项目进展和已完成情况，并根据反馈进行调整。
+  
+  \item \textbf{2026年4月15日前：}学生完成论文正文撰写；完成所有功能开发与系统整体测试，完成毕业论文全部正文内容的撰写，提交论文完整初稿至毕业设计网络平台，等待指导教师审阅。
+  
+  \item \textbf{2026年4-5月：}根据指导教师和评阅意见修改论文，直至定稿。按时进行论文查重，准备答辩PPT，参加最终的毕业论文答辩。
+\end{enumerate}
+
+\newpage
+\section{主要参考文献:}
+
+\begin{thebibliography}{99}
+\setlength{\itemsep}{0pt}
+\setlength{\parskip}{0pt}
+
+\bibitem{ref1} 王显飞,陈梅,李小天.基于约束的旅游推荐系统的研究与设计[J].计算机技术与发展,2012,22(02):141-145.DOI:CNKI:SUN:WJFZ.0.2012-02-038.
+
+\bibitem{ref2} 陈佳敏.智慧旅游系统的设计和实现[D].南京邮电大学,2017.
+
+\bibitem{ref3} 蔡绍博,潘坛,鲍玲玲,等.基于大数据的文化旅游分析管理系统研究[J].科技创新与应用,2022,12(34):91-94.DOI:10.19981/j.CN23-1581/G3.2022.34.023.
+
+\bibitem{ref4} 全栈浓发客.知乎线上旅行信息管理系统设计与实现[EB/OL]. (2024-03-31) [2024-10-23]. https://zhuanlan.zhihu.com/p/690053102.
+
+\bibitem{ref5} 吕和发,周剑波.旅游翻译:定义、地位与标准[J].上海翻译,2008,(01):30-33.
+
+\bibitem{ref6} 邹文静.通航特色小镇智慧旅游服务系统设计研究[D].沈阳航空航天大学,2023.DOI:10.27324/d.cnki.gshkc.2023.000483.
+
+\bibitem{ref7} 张美英,夏斌.旅游信息数据库的需求分析[J].云南地理环境研究,2003,(02):33-36.DOI:CNKI:SUN:YNDL.0.2003-02-004.
+
+\bibitem{ref8} 刘亚,韩建功,高丽萍.富文本协同编辑中基于树型结构地址空间转换的一致性维护[J].小型微型计算机系统,2024,45(02):367-373.DOI:10.20009/j.cnki.21-1106/TP.2022-0489.
+
+\bibitem{ref9} 孙业超.基于RESTful API的前后端分离项目接口测试方法研究[J].软件,2025,46(09):116-118.
+
+\bibitem{ref10} 王浩,艾克成,张权益.基于特征协同的单目视觉惯性同步定位与地图构建方法[J].计算机工程,2025,51(08):305-316.DOI:10.19678/j.issn.1000-3428.0069250.
+
+\bibitem{ref11} 陈佳乐,张宇.基于SpringBoot与Vue的前后端分离Web应用开发实践[J].电脑知识与技术,2023,19(14):112-114.
+
+\bibitem{ref12} 基于SpringBoot和Vue框架的第三方医疗器械供应链平台的设计与实现[D]. 上海:东华大学,2019.
+
+\bibitem{ref13} 王文湛,徐熙涛,黄威.基于SpringBoot+Vue+GIS的旅游信息管理系统[J].信息与电脑,2025,37(20):254-256.
+
+\bibitem{ref14} 姚佰允,张豪,杜瑞庆.基于SpringBoot与Vue的学院人员管理系统设计与实现[J].无线互联科技,2025,22(02):78-83.
+
+\bibitem{ref15} 沈莹,黄旭,曾孟佳.基于SpringBoot+微信小程序的线上茶叶交易平台的设计与实现[J].福建茶叶,2025,47(10):49-51.
+
+\bibitem{ref16} Liu et al., 2022. Implementation of Personalized Information Recommendation Platform System Based on Deep Learning Tourism.
+
+\bibitem{ref17} Wang et al., 2020. Adaptive Recommendation System for Tourism by Personality Type Using Deep Learning.
+
+\bibitem{ref18} A.V. Gundavade, P.S. Godse, V.S. Chavan, H.V. Jyothi. SMART TRAVEL GUIDE. International Research Journal of Modern Engineering \& Technology (IRJMETS), 2025.
+
+\bibitem{ref19} Raciel Yera, Edianny Carballo Cruz, Juan Carlos Maroto Martos. Group Recommender Systems for Tourism: Current State and Future Directions. University of Jaén \& University of Granada, 2025.
+
+\bibitem{ref20} Ferhat ŞEKER. Evolution of Machine Learning in Tourism: A Comprehensive Review of Seminal Research. DergiPark Review Article, 2023.
+
+\end{thebibliography}
+
+%指导老师意见
+  \filbreak
+\section*{指导教师审核意见：}
+\vspace{1cm}
+{\zihao{-4}\songti 该开题报告选题具有一定的理论价值与实践意义，研究目标明确，研究内容充实，结构安排合理。研究方法选择恰当，研究计划基本可行，同意开题。希望在后续研究中，能进一步细化研究方案，并注意对可能遇到的难点做好预案，确保毕业设计顺利实施。} %指导老师实际意见
+\hrule height0pt
+\vfill
+\noindent\hfill
+\begin{minipage}{8cm}
+	\zihao{-4}\songti
+	\raggedleft
+	
+	%右下角签名和日期 教师的电子签名替换
+	%签名：\underline{\hspace{3cm}} \\[0.8em]
+	签名：\raisebox{-0.5cm}{\includegraphics[height=1.5cm]{教师电子签名.jpg}} \\[0.8em]
+	
+	%年\hspace{1cm}月\hspace{1cm}日
+	2025 年 11 月 24 日 %实际时间
+	
+	\vspace{0.5cm}
+\end{minipage}%
+\hspace*{1.5cm} % 调整右边距
+\vskip\npucorrect
+
+\end{document}
