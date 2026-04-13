@@ -60,7 +60,8 @@ public class MainActivity extends AppCompatActivity {
         XXPermissions.with(this).permission("android.permission.WRITE_EXTERNAL_STORAGE"
                 , "android.permission.READ_EXTERNAL_STORAGE"
                 , "android.permission.INTERNET"
-                , "android.permission.MANAGE_EXTERNAL_STORAGE").request(new OnPermission() {
+                , "android.permission.MANAGE_EXTERNAL_STORAGE"
+                , "android.permission.POST_NOTIFICATIONS").request(new OnPermission() {
             @Override
             public void hasPermission(List<String> granted, boolean all) {
                 Log.d(TAG,"SDK获取系统权限成功:"+all);

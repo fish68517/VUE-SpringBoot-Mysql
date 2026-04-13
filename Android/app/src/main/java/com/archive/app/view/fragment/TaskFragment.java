@@ -1,6 +1,7 @@
 package com.archive.app.view.fragment;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -23,26 +24,34 @@ import com.archive.app.ApiService;
 import com.archive.app.R;
 import com.archive.app.model.FocusRecord;
 import com.archive.app.model.TaskFocus;
+import com.archive.app.util.FocusNotificationHelper;
+import com.archive.app.util.SessionUserHelper;
 import com.archive.app.util.TaskTimerStore;
 import com.archive.app.view.activity.TaskEditorActivity;
 import com.archive.app.view.adapter.TaskAdapter;
 import com.archive.app.viewmodel.TaskViewModel;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 public class TaskFragment extends Fragment {
 
-    private static final long CURRENT_USER_ID = 1L;
     private static final long MILLIS_PER_MINUTE = 60_000L;
 
     private final Gson gson = new Gson();
@@ -53,6 +62,8 @@ public class TaskFragment extends Fragment {
     private ProgressBar progressBar;
     private TaskAdapter taskAdapter;
     private View fab;
+    private PieChart taskPieChart;
+    private TextView chartEmptyText;
 
     private AlertDialog timerDialog;
     private CountDownTimer countDownTimer;
@@ -79,7 +90,10 @@ public class TaskFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view_tasks);
         progressBar = view.findViewById(R.id.progress_bar_tasks);
         fab = view.findViewById(R.id.fab);
+        taskPieChart = view.findViewById(R.id.pie_chart_task_focus);
+        chartEmptyText = view.findViewById(R.id.tv_task_chart_empty);
 
+        setupAnalyticsChart();
         setupRecyclerView();
         observeViewModel();
 
@@ -96,16 +110,30 @@ public class TaskFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-            countDownTimer = null;
-        }
+        stopCurrentCountDown();
         if (timerDialog != null && timerDialog.isShowing()) {
             skipPauseOnDismiss = true;
             timerDialog.dismiss();
         }
         clearTimerDialogRefs();
         super.onDestroyView();
+    }
+
+    private void setupAnalyticsChart() {
+        taskPieChart.getDescription().setEnabled(false);
+        taskPieChart.setUsePercentValues(true);
+        taskPieChart.setDrawEntryLabels(false);
+        taskPieChart.setHoleRadius(56f);
+        taskPieChart.setTransparentCircleRadius(60f);
+        taskPieChart.setCenterText("任务时长占比");
+        taskPieChart.setCenterTextSize(16f);
+        taskPieChart.setCenterTextColor(Color.parseColor("#4F378B"));
+        taskPieChart.setEntryLabelColor(Color.TRANSPARENT);
+        Legend legend = taskPieChart.getLegend();
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setWordWrapEnabled(true);
     }
 
     private void setupRecyclerView() {
@@ -141,6 +169,7 @@ public class TaskFragment extends Fragment {
         taskViewModel.getUserTasks().observe(getViewLifecycleOwner(), tasks -> {
             if (tasks != null) {
                 taskAdapter.setTasks(tasks, getActivity());
+                updateTaskAnalyticsChart(tasks);
             }
         });
 
@@ -156,6 +185,73 @@ public class TaskFragment extends Fragment {
                 Toast.makeText(getContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void updateTaskAnalyticsChart(List<TaskFocus> tasks) {
+        List<TaskFocus> analyticsTasks = new ArrayList<>();
+        for (TaskFocus task : tasks) {
+            int minutes = task.getTaskActualMinutes() == null ? 0 : task.getTaskActualMinutes();
+            if (minutes > 0) {
+                analyticsTasks.add(task);
+            }
+        }
+
+        if (analyticsTasks.isEmpty()) {
+            taskPieChart.clear();
+            taskPieChart.setVisibility(View.INVISIBLE);
+            chartEmptyText.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        analyticsTasks.sort((left, right) -> Integer.compare(
+                right.getTaskActualMinutes() == null ? 0 : right.getTaskActualMinutes(),
+                left.getTaskActualMinutes() == null ? 0 : left.getTaskActualMinutes()
+        ));
+
+        List<PieEntry> entries = new ArrayList<>();
+        float otherMinutes = 0f;
+        for (int i = 0; i < analyticsTasks.size(); i++) {
+            TaskFocus task = analyticsTasks.get(i);
+            float minutes = task.getTaskActualMinutes() == null ? 0 : task.getTaskActualMinutes();
+            if (i < 5) {
+                entries.add(new PieEntry(minutes, safeTaskTitle(task.getTaskTitleText())));
+            } else {
+                otherMinutes += minutes;
+            }
+        }
+        if (otherMinutes > 0f) {
+            entries.add(new PieEntry(otherMinutes, "其他任务"));
+        }
+
+        PieDataSet dataSet = new PieDataSet(entries, "");
+        dataSet.setSliceSpace(3f);
+        dataSet.setSelectionShift(5f);
+        dataSet.setColors(
+                Color.parseColor("#7E57C2"),
+                Color.parseColor("#5C6BC0"),
+                Color.parseColor("#26A69A"),
+                Color.parseColor("#FF7043"),
+                Color.parseColor("#AB47BC"),
+                Color.parseColor("#FFA726")
+        );
+
+        PieData data = new PieData(dataSet);
+        data.setValueTextSize(12f);
+        data.setValueTextColor(Color.WHITE);
+
+        taskPieChart.setData(data);
+        taskPieChart.setCenterText("任务时长占比");
+        taskPieChart.highlightValues(null);
+        taskPieChart.invalidate();
+        taskPieChart.setVisibility(View.VISIBLE);
+        chartEmptyText.setVisibility(View.GONE);
+    }
+
+    private String safeTaskTitle(String title) {
+        if (title == null || title.trim().isEmpty()) {
+            return "未命名任务";
+        }
+        return title.length() > 8 ? title.substring(0, 8) + "…" : title;
     }
 
     private void showTimerDialog(TaskFocus task) {
@@ -342,6 +438,11 @@ public class TaskFragment extends Fragment {
             activeTimerSnapshot.elapsedFocusMillisInRound = 0L;
             activeTimerSnapshot.running = false;
             persistActiveSnapshot();
+            FocusNotificationHelper.showTimerNotification(
+                    requireContext(),
+                    "休息结束",
+                    "任务《" + safeFullTaskTitle() + "》可以开始下一轮专注了。"
+            );
             Toast.makeText(getContext(), "休息结束，进入下一轮专注", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -361,6 +462,13 @@ public class TaskFragment extends Fragment {
             activeTimerSnapshot.elapsedFocusMillisInRound = 0L;
             activeTimerSnapshot.running = false;
             persistActiveSnapshot();
+            if (!interrupted) {
+                FocusNotificationHelper.showTimerNotification(
+                        requireContext(),
+                        "专注计时完成",
+                        "任务《" + safeFullTaskTitle() + "》的本轮专注已完成。"
+                );
+            }
             return;
         }
 
@@ -371,6 +479,11 @@ public class TaskFragment extends Fragment {
         activeTimerSnapshot.running = false;
         persistActiveSnapshot();
         if (!interrupted) {
+            FocusNotificationHelper.showTimerNotification(
+                    requireContext(),
+                    "专注完成，开始休息",
+                    "任务《" + safeFullTaskTitle() + "》已完成一轮专注，现在进入休息阶段。"
+            );
             Toast.makeText(getContext(), "专注完成，开始休息", Toast.LENGTH_SHORT).show();
         }
     }
@@ -396,6 +509,14 @@ public class TaskFragment extends Fragment {
         if (timerDialog != null) {
             timerDialog.dismiss();
         }
+    }
+
+    private String safeFullTaskTitle() {
+        if (activeTimerTask == null || activeTimerTask.getTaskTitleText() == null
+                || activeTimerTask.getTaskTitleText().trim().isEmpty()) {
+            return "未命名任务";
+        }
+        return activeTimerTask.getTaskTitleText().trim();
     }
 
     private void updateTimerDialogContent() {
@@ -454,7 +575,7 @@ public class TaskFragment extends Fragment {
         }
 
         FocusRecord focusRecord = new FocusRecord();
-        focusRecord.setCampusUserId(CURRENT_USER_ID);
+        focusRecord.setCampusUserId(SessionUserHelper.getCurrentUserId());
         focusRecord.setTaskFocusId(activeTimerTask.getTaskFocusId());
         long endTime = System.currentTimeMillis();
         long startTime = endTime - (focusSeconds * 1000L);

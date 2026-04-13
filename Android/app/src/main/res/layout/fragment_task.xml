@@ -6,13 +6,12 @@
     android:background="#F6F2FA">
 
     <TextView
-        android:visibility="gone"
         android:id="@+id/tv_task_page_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="18dp"
-        android:text="时间管理系统"
+        android:text="任务管理"
         android:textColor="#4F378B"
         android:textSize="26sp"
         android:textStyle="bold"
@@ -20,19 +19,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
-        android:visibility="gone"
-        android:id="@+id/card_task_timer_hint"
+        android:id="@+id/card_task_analytics"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        app:cardBackgroundColor="#7E57C2"
+        app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="24dp"
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_task_page_title">
+        app:layout_constraintTop_toBottomOf="@id/tv_task_page_title"
+        app:strokeColor="#E8DEF8"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,8 +43,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="沉浸专注模式"
-                android:textColor="@android:color/white"
+                android:text="番茄计时数据统计"
+                android:textColor="#17121F"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -52,17 +52,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:text="默认 30 分钟专注 + 5 分钟休息，也可按任务自定义。"
-                android:textColor="#F3EFFF"
+                android:text="根据任务累计专注时长，展示当前任务时长占比。"
+                android:textColor="#6B6276"
                 android:textSize="13sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="在任务卡右下角点击“专注计时”即可开始、暂停或继续。"
-                android:textColor="#E8DEF8"
-                android:textSize="12sp" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:layout_marginTop="12dp">
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/pie_chart_task_focus"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    android:id="@+id/tv_task_chart_empty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="暂无计时统计数据"
+                    android:textColor="#909399"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+            </FrameLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -76,7 +89,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_task_timer_hint" />
+        app:layout_constraintTop_toBottomOf="@id/card_task_analytics" />
 
     <ProgressBar
         android:id="@+id/progress_bar_tasks"

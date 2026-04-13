@@ -2,140 +2,100 @@
   <el-card>
     <template #header>
       <div class="card-header">
-        <span>用户成就记录</span>
-        <div class="header-actions">
-          <el-input 
-            v-model="searchKeyword" 
-            placeholder="搜索用户或徽章名称" 
-            style="width: 200px; margin-right: 10px;" 
-            clearable
-          />
-          <el-button type="primary" @click="openDialog">
-            <el-icon><Trophy /></el-icon> 手动颁发徽章
-          </el-button>
+        <div>
+          <div class="header-title">{{ labels.title }}</div>
+          <div class="header-subtitle">{{ labels.subtitle }}</div>
         </div>
+        <el-input
+          v-model="searchKeyword"
+          :placeholder="labels.searchPlaceholder"
+          style="width: 240px"
+          clearable
+        />
       </div>
     </template>
 
+    <el-alert
+      :title="labels.ruleNotice"
+      type="info"
+      :closable="false"
+      show-icon
+      style="margin-bottom: 16px"
+    />
+
     <el-table :data="filteredRecords" v-loading="loading" style="width: 100%">
-      <el-table-column label="获奖用户" width="180">
+      <el-table-column :label="labels.userColumn" width="180">
         <template #default="scope">
           <div class="user-info">
-            <el-avatar :size="24" :src="scope.row.userAvatar" style="margin-right: 8px;" />
+            <el-avatar :size="24" :src="scope.row.userAvatar" style="margin-right: 8px" />
             <span>{{ scope.row.userName }}</span>
           </div>
         </template>
       </el-table-column>
 
-      <el-table-column label="获得徽章" width="200">
+      <el-table-column :label="labels.badgeColumn" width="220">
         <template #default="scope">
           <div class="badge-info">
-            <el-image :src="scope.row.badgeIcon" style="width: 30px; height: 30px; margin-right: 8px;" />
+            <el-image :src="scope.row.badgeIcon" style="width: 30px; height: 30px; margin-right: 8px" />
             <el-tag type="warning" effect="plain">{{ scope.row.badgeName }}</el-tag>
           </div>
         </template>
       </el-table-column>
 
-      <el-table-column prop="achieveTimestamp" label="获得时间" width="180">
+      <el-table-column prop="achieveTimestamp" :label="labels.timeColumn" width="180">
         <template #default="scope">
           {{ formatDateTime(scope.row.achieveTimestamp) }}
         </template>
       </el-table-column>
 
-      <el-table-column prop="achieveConditionText" label="达成说明/备注" show-overflow-tooltip />
+      <el-table-column prop="achieveConditionText" :label="labels.conditionColumn" show-overflow-tooltip />
 
-      <el-table-column label="操作" width="120">
+      <el-table-column :label="labels.actionColumn" width="120">
         <template #default="scope">
-          <el-popconfirm title="确定撤销该用户的此徽章吗？" @confirm="handleDelete(scope.row.userAchieveId)">
+          <el-popconfirm :title="labels.revokeConfirm" @confirm="handleDelete(scope.row.userAchieveId)">
             <template #reference>
-              <el-button size="small" type="danger">撤销</el-button>
+              <el-button size="small" type="danger">{{ labels.revokeButton }}</el-button>
             </template>
           </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
-
-    <el-dialog v-model="dialogVisible" title="手动颁发徽章" width="500px">
-      <el-form :model="form" label-width="100px">
-        
-        <el-form-item label="选择用户">
-          <el-select 
-            v-model="form.campusUserId" 
-            filterable 
-            placeholder="搜索并选择用户" 
-            style="width: 100%"
-          >
-            <el-option
-              v-for="user in users"
-              :key="user.campusUserId"
-              :label="user.campusNickname + ' (' + user.campusSchoolId + ')'"
-              :value="user.campusUserId"
-            />
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="选择徽章">
-          <el-select 
-            v-model="form.achievementId" 
-            placeholder="请选择徽章" 
-            style="width: 100%"
-          >
-            <el-option
-              v-for="ach in achievements"
-              :key="ach.achievementId"
-              :label="ach.achieveNameText"
-              :value="ach.achievementId"
-            >
-              <span style="float: left">{{ ach.achieveNameText }}</span>
-              <span style="float: right; color: #8492a6; font-size: 13px">
-                {{ ach.achieveTypeEnum }}
-              </span>
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="颁发理由">
-          <el-input 
-            v-model="form.achieveConditionText" 
-            type="textarea" 
-            placeholder="例如：系统管理员手动奖励" 
-          />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmit">确定颁发</el-button>
-      </template>
-    </el-dialog>
   </el-card>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import { Trophy } from '@element-plus/icons-vue';
 import api from '../../api/NetWorkApi.js';
 
-// 数据源
+const labels = {
+  title: '\u7528\u6237\u6210\u5c31\u8bb0\u5f55',
+  subtitle: '\u6210\u5c31\u5fbd\u7ae0\u6539\u4e3a\u7528\u6237\u8fbe\u6210\u76ee\u6807\u540e\u81ea\u52a8\u83b7\u53d6\uff0c\u7ba1\u7406\u5458\u4ec5\u67e5\u770b\u8bb0\u5f55\u4e0e\u64a4\u9500\u3002',
+  searchPlaceholder: '\u641c\u7d22\u7528\u6237\u6216\u5fbd\u7ae0\u540d\u79f0',
+  ruleNotice: '\u5f53\u524d\u89c4\u5219\uff1a\u7528\u6237\u5728 Android \u7aef\u4e60\u60ef\u6253\u5361\u7d2f\u8ba1\u6216\u8fde\u7eed\u8fbe\u5230 5 \u5929\u540e\uff0c\u7cfb\u7edf\u4f1a\u81ea\u52a8\u5199\u5165\u6210\u5c31\u8bb0\u5f55\u3002',
+  userColumn: '\u83b7\u5956\u7528\u6237',
+  badgeColumn: '\u83b7\u5f97\u5fbd\u7ae0',
+  timeColumn: '\u83b7\u5f97\u65f6\u95f4',
+  conditionColumn: '\u8fbe\u6210\u8bf4\u660e',
+  actionColumn: '\u64cd\u4f5c',
+  revokeConfirm: '\u786e\u5b9a\u64a4\u9500\u8be5\u7528\u6237\u7684\u6b64\u5fbd\u7ae0\u5417\uff1f',
+  revokeButton: '\u64a4\u9500',
+  unknownUser: '\u672a\u77e5\u7528\u6237',
+  deletedBadge: '\u5df2\u5220\u9664\u5fbd\u7ae0',
+  loadFailed: '\u6570\u636e\u52a0\u8f7d\u5931\u8d25',
+  revokeSuccess: '\u64a4\u9500\u6210\u529f',
+  revokeFailed: '\u64a4\u9500\u5931\u8d25'
+};
+
 const rawRecords = ref([]);
 const users = ref([]);
 const achievements = ref([]);
 const loading = ref(false);
 const searchKeyword = ref('');
 
-// 弹窗控制
-const dialogVisible = ref(false);
-const form = reactive({
-  campusUserId: null,
-  achievementId: null,
-  achieveConditionText: '管理员手动颁发'
-});
-
-// 初始化数据加载
 const fetchData = async () => {
   loading.value = true;
   try {
-    // 并发请求：关联表、用户表、徽章表
     const [relRes, userRes, achRes] = await Promise.all([
       api.userAchieveRelApi.list(),
       api.campusUserApi.list(),
@@ -146,87 +106,93 @@ const fetchData = async () => {
     users.value = userRes.data.data || userRes.data || [];
     achievements.value = achRes.data.data || achRes.data || [];
 
-    // 构建映射表以便快速查找
     const userMap = {};
-    users.value.forEach(u => userMap[u.campusUserId] = u);
-    
-    const achMap = {};
-    achievements.value.forEach(a => achMap[a.achievementId] = a);
+    users.value.forEach(user => {
+      userMap[user.campusUserId] = user;
+    });
 
-    // 组装显示数据
-    rawRecords.value = records.map(r => {
-      const u = userMap[r.campusUserId] || { campusNickname: '未知用户', campusAvatarUrl: '' };
-      const a = achMap[r.achievementId] || { achieveNameText: '已删除徽章', achieveIconUrl: '' };
-      
-      return {
-        ...r,
-        userName: u.campusNickname,
-        userAvatar: u.campusAvatarUrl,
-        badgeName: a.achieveNameText,
-        badgeIcon: a.achieveIconUrl
-      };
-    }).sort((a, b) => new Date(b.achieveTimestamp) - new Date(a.achieveTimestamp)); // 按时间倒序
+    const achievementMap = {};
+    achievements.value.forEach(achievement => {
+      achievementMap[achievement.achievementId] = achievement;
+    });
 
-  } catch (e) {
-    ElMessage.error('数据加载失败');
-    console.error(e);
+    rawRecords.value = records
+      .map(record => {
+        const user = userMap[record.campusUserId] || {
+          campusNickname: labels.unknownUser,
+          campusAvatarUrl: ''
+        };
+        const achievement = achievementMap[record.achievementId] || {
+          achieveNameText: labels.deletedBadge,
+          achieveIconUrl: ''
+        };
+
+        return {
+          ...record,
+          userName: user.campusNickname,
+          userAvatar: user.campusAvatarUrl,
+          badgeName: achievement.achieveNameText,
+          badgeIcon: achievement.achieveIconUrl
+        };
+      })
+      .sort((left, right) => new Date(right.achieveTimestamp) - new Date(left.achieveTimestamp));
+  } catch (error) {
+    ElMessage.error(labels.loadFailed);
+    console.error(error);
   } finally {
     loading.value = false;
   }
 };
 
-// 搜索过滤
 const filteredRecords = computed(() => {
-  if (!searchKeyword.value) return rawRecords.value;
-  const k = searchKeyword.value.toLowerCase();
-  return rawRecords.value.filter(r => 
-    r.userName.toLowerCase().includes(k) || 
-    r.badgeName.toLowerCase().includes(k)
+  const keyword = searchKeyword.value.trim().toLowerCase();
+  if (!keyword) {
+    return rawRecords.value;
+  }
+  return rawRecords.value.filter(record =>
+    (record.userName || '').toLowerCase().includes(keyword) ||
+    (record.badgeName || '').toLowerCase().includes(keyword)
   );
 });
 
-// 打开弹窗
-const openDialog = () => {
-  form.campusUserId = null;
-  form.achievementId = null;
-  form.achieveConditionText = '管理员手动颁发';
-  dialogVisible.value = true;
-};
-
-// 提交颁发
-const handleSubmit = async () => {
-  if (!form.campusUserId || !form.achievementId) {
-    ElMessage.warning('请选择用户和徽章');
-    return;
-  }
-  try {
-    await api.userAchieveRelApi.create(form);
-    ElMessage.success('颁发成功');
-    dialogVisible.value = false;
-    fetchData(); // 刷新列表
-  } catch (e) {
-    ElMessage.error('操作失败');
-  }
-};
-
-// 撤销徽章
-const handleDelete = async (id) => {
+const handleDelete = async id => {
   try {
     await api.userAchieveRelApi.delete(id);
-    ElMessage.success('撤销成功');
+    ElMessage.success(labels.revokeSuccess);
     fetchData();
-  } catch (e) {
-    ElMessage.error('撤销失败');
+  } catch (error) {
+    ElMessage.error(labels.revokeFailed);
   }
 };
 
-const formatDateTime = (ts) => ts ? ts.replace('T', ' ').substring(0, 16) : '-';
+const formatDateTime = timestamp => (timestamp ? timestamp.replace('T', ' ').substring(0, 16) : '-');
 
 onMounted(fetchData);
 </script>
 
 <style scoped>
-.card-header { display: flex; justify-content: space-between; align-items: center; }
-.header-actions { display: flex; align-items: center; }
-.user-info, .badge-info { display: flex; align-items: center; }
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.header-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #909399;
+}
+
+.user-info,
+.badge-info {
+  display: flex;
+  align-items: center;
+}
 </style>

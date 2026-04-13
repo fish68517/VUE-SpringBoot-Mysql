@@ -232,6 +232,9 @@ public interface ApiService {
     Call<UserResourceAction> getActionStatus(@Path("userId") Long userId, @Path("resourceId") Long resourceId);
 
     // 执行点赞或收藏操作 (type: "like" 或 "collect")
+    @GET("/userResourceAction/list")
+    Call<List<UserResourceAction>> getAllUserResourceActions();
+
     @POST("/userResourceAction/toggle/{userId}/{resourceId}/{type}")
     Call<Boolean> toggleResourceAction(@Path("userId") Long userId, @Path("resourceId") Long resourceId, @Path("type") String type);
 }

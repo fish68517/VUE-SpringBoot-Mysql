@@ -18,11 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.archive.app.ApiClient;
 import com.archive.app.ApiService;
-import com.archive.app.MyApplication;
 import com.archive.app.R;
 import com.archive.app.model.LearnResource;
 import com.archive.app.model.ResourceDetail;
 import com.archive.app.model.UserResourceAction;
+import com.archive.app.util.SessionUserHelper;
 import com.archive.app.view.adapter.ImageListAdapter;
 import com.bumptech.glide.Glide;
 
@@ -43,7 +43,7 @@ public class ResourceDetailActivity extends AppCompatActivity {
     private LearnResource basicResource;
     private ResourceDetail detailData;
     private ApiService apiService;
-    private Long currentUserId = MyApplication.curUser.getCampusUserId(); // 模拟当前用户ID
+    private Long currentUserId;
 
     // UI Components
     private TextView tvTitle, tvContent, tvLikeCount;
@@ -65,6 +65,7 @@ public class ResourceDetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_resource_detail);
 
         apiService = ApiClient.getClient().create(ApiService.class);
+        currentUserId = SessionUserHelper.getCurrentUserId();
 
         String json = getIntent().getStringExtra("resource_json");
         if (json != null) {
