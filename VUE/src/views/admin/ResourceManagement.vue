@@ -171,7 +171,7 @@
                   MP4, AVI 格式，最大 100MB
                 </span>
                 <span v-else>
-                  PDF, DOC, DOCX 格式，最大 10MB
+                  PDF, DOC, DOCX 格式，最大 20MB
                 </span>
               </div>
             </template>
@@ -274,9 +274,13 @@ const formRules = {
 
 const uploadUrl = computed(() => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-  return form.value.contentType === 'video'
-    ? `${baseUrl}/api/upload/video`
-    : `${baseUrl}/api/upload/image`;
+  if (form.value.contentType === 'video') {
+    return `${baseUrl}/api/upload/video`;
+  }
+  if (form.value.contentType === 'document') {
+    return `${baseUrl}/api/upload/document`;
+  }
+  return `${baseUrl}/api/upload/image`;
 });
 
 const uploadHeaders = computed(() => {
@@ -388,23 +392,33 @@ const handleContentTypeChange = () => {
 
 const beforeUpload = (file) => {
   const isVideo = form.value.contentType === 'video';
-  const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+  const maxSize = isVideo ? 100 * 1024 * 1024 : 20 * 1024 * 1024;
 
   if (file.size > maxSize) {
-    showError(`文件大小不能超过 ${isVideo ? '100MB' : '10MB'}`);
+    showError(`文件大小不能超过 ${isVideo ? '100MB' : '20MB'}`);
     return false;
   }
 
   return true;
 };
 
+const resolveUploadUrl = (response) => {
+  if (!response) return '';
+  if (typeof response === 'string') return response;
+  if (response.code === 200 && response.data?.url) return response.data.url;
+  if (response.url) return response.url;
+  if (response.data?.url) return response.data.url;
+  return '';
+};
+
 const handleUploadSuccess = (response) => {
-  if (response.code === 200) {
-    form.value.fileUrl = response.data;
-    showSuccess('文件上传成功');
-  } else {
-    showError(response.msg || '上传失败');
+  const fileUrl = resolveUploadUrl(response);
+  if (!fileUrl) {
+    showError(response?.msg || '上传失败');
+    return;
   }
+  form.value.fileUrl = fileUrl;
+  showSuccess('文件上传成功');
 };
 
 const handleUploadError = () => {

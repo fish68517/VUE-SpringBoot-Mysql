@@ -16,8 +16,8 @@
 
       <!-- Empty State -->
       <div v-else-if="contentList.length === 0" class="empty-state">
-        <el-empty description="No content yet">
-          <el-button type="primary" @click="openCreateDialog">Create Your First Content</el-button>
+        <el-empty description="暂无内容">
+          <el-button type="primary" @click="openCreateDialog">创建第一个内容</el-button>
         </el-empty>
       </div>
 
@@ -28,7 +28,7 @@
           <el-table-column label="类型" width="120">
             <template #default="{ row }">
               <el-tag :type="getContentTypeColor(row.contentType)">
-                {{ row.contentType }}
+                {{ formatContentType(row.contentType) }}
               </el-tag>
             </template>
           </el-table-column>
@@ -63,7 +63,7 @@
       <!-- Create/Edit Content Dialog -->
       <el-dialog
         v-model="showContentDialog"
-        :title="isEditMode ? 'Edit Content' : '添加内容'"
+        :title="isEditMode ? '编辑内容' : '添加内容'"
         width="700px"
         :close-on-click-modal="false"
       >
@@ -120,11 +120,11 @@
             >
               <el-button type="primary">
                 <el-icon><Upload /></el-icon>
-                Select File
+                选择文件
               </el-button>
               <template #tip>
                 <div class="el-upload__tip">
-                  {{ contentForm.contentType === 'video' ? 'MP4, AVI (max 100MB)' : 'PDF, DOC, DOCX (max 10MB)' }}
+                  {{ contentForm.contentType === 'video' ? 'MP4, AVI（最大 100MB）' : 'PDF, DOC, DOCX（最大 20MB）' }}
                 </div>
               </template>
             </el-upload>
@@ -140,15 +140,15 @@
               v-model="contentForm.content"
               type="textarea"
               :rows="10"
-              placeholder="Write your article content here..."
+              placeholder="请输入文章内容..."
             />
           </el-form-item>
         </el-form>
 
         <template #footer>
-          <el-button @click="showContentDialog = false">Cancel</el-button>
+          <el-button @click="showContentDialog = false">取消</el-button>
           <el-button type="primary" @click="submitContent" :loading="submitting">
-            {{ isEditMode ? 'Update' : 'Create' }}
+            {{ isEditMode ? '更新' : '创建' }}
           </el-button>
         </template>
       </el-dialog>
@@ -181,9 +181,13 @@ const fileList = ref([])
 
 const uploadUrl = computed(() => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
-  return contentForm.contentType === 'video' 
-    ? `${baseUrl}/api/upload/video`
-    : `${baseUrl}/api/upload/image`
+  if (contentForm.contentType === 'video') {
+    return `${baseUrl}/api/upload/video`
+  }
+  if (contentForm.contentType === 'document') {
+    return `${baseUrl}/api/upload/document`
+  }
+  return `${baseUrl}/api/upload/image`
 })
 
 const uploadHeaders = computed(() => ({
@@ -200,20 +204,20 @@ const contentForm = reactive({
 
 const contentRules = {
   title: [
-    { required: true, message: 'Please enter title', trigger: 'blur' },
-    { min: 3, max: 200, message: 'Length should be 3 to 200 characters', trigger: 'blur' }
+    { required: true, message: '请输入标题', trigger: 'blur' },
+    { min: 3, max: 200, message: '标题长度应为 3 到 200 个字符', trigger: 'blur' }
   ],
   description: [
-    { max: 1000, message: 'Length should not exceed 1000 characters', trigger: 'blur' }
+    { max: 1000, message: '描述长度不能超过 1000 个字符', trigger: 'blur' }
   ],
   contentType: [
-    { required: true, message: 'Please select content type', trigger: 'change' }
+    { required: true, message: '请选择内容类型', trigger: 'change' }
   ],
   fileUrl: [
     { 
       validator: (rule, value, callback) => {
         if ((contentForm.contentType === 'video' || contentForm.contentType === 'document') && !value) {
-          callback(new Error('Please upload a file'))
+          callback(new Error('请上传文件'))
         } else {
           callback()
         }
@@ -225,7 +229,7 @@ const contentRules = {
     {
       validator: (rule, value, callback) => {
         if (contentForm.contentType === 'article' && !value) {
-          callback(new Error('Please enter article content'))
+          callback(new Error('请输入文章内容'))
         } else {
           callback()
         }
@@ -255,7 +259,7 @@ const fetchContent = async () => {
       total.value = response.length
     }
   } catch (error) {
-    showError('Failed to load content')
+    showError('加载内容失败')
     console.error('Fetch content error:', error)
   } finally {
     loading.value = false
@@ -307,27 +311,37 @@ const handleContentTypeChange = () => {
 
 const beforeUpload = (file) => {
   const isVideo = contentForm.contentType === 'video'
-  const maxSize = isVideo ? 100 * 1024 * 1024 : 10 * 1024 * 1024 // 100MB for video, 10MB for document
+  const maxSize = isVideo ? 100 * 1024 * 1024 : 20 * 1024 * 1024 // 100MB for video, 20MB for document
   
   if (file.size > maxSize) {
-    showError(`File size should not exceed ${isVideo ? '100MB' : '10MB'}`)
+    showError(`文件大小不能超过 ${isVideo ? '100MB' : '20MB'}`)
     return false
   }
   
   return true
 }
 
-const handleUploadSuccess = (response, file) => {
-  if (response.code === 200) {
-    contentForm.fileUrl = response.data
-    showSuccess('File uploaded successfully')
-  } else {
-    showError(response.msg || 'Upload failed')
+const resolveUploadUrl = (response) => {
+  if (!response) return ''
+  if (typeof response === 'string') return response
+  if (response.code === 200 && response.data?.url) return response.data.url
+  if (response.url) return response.url
+  if (response.data?.url) return response.data.url
+  return ''
+}
+
+const handleUploadSuccess = (response) => {
+  const fileUrl = resolveUploadUrl(response)
+  if (!fileUrl) {
+    showError(response?.msg || '上传失败')
+    return
   }
+  contentForm.fileUrl = fileUrl
+  showSuccess('文件上传成功')
 }
 
 const handleUploadError = () => {
-  showError('File upload failed')
+  showError('文件上传失败')
 }
 
 const handleFileRemove = () => {
@@ -340,7 +354,7 @@ const submitContent = async () => {
 
   await contentFormRef.value.validate(async (valid) => {
     if (!valid) {
-      showWarning('Please fill in all required fields')
+      showWarning('请填写所有必填项')
       return
     }
 
@@ -358,16 +372,16 @@ const submitContent = async () => {
 
       if (isEditMode.value) {
         await updateResource(currentEditId.value, data)
-        showSuccess('Content updated successfully')
+        showSuccess('内容更新成功')
       } else {
         await createResource(data)
-        showSuccess('Content created successfully')
+        showSuccess('内容创建成功')
       }
 
       showContentDialog.value = false
       fetchContent()
     } catch (error) {
-      showError(error.message || 'Failed to save content')
+      showError(error.message || '保存内容失败')
     } finally {
       submitting.value = false
     }
@@ -384,15 +398,15 @@ const confirmDeleteqqqq = async (content) => {
     fetchContent()
   } catch (error) {
     if (error !== 'cancel' && error !== 'close') {
-      showError('Failed to delete content')
+      showError('删除内容失败')
     }
   }
 }
 
 const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return '--'
   const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+  return date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })
 }
 
 const getContentTypeColor = (type) => {
@@ -402,6 +416,15 @@ const getContentTypeColor = (type) => {
     document: 'warning'
   }
   return colorMap[type?.toLowerCase()] || 'info'
+}
+
+const formatContentType = (type) => {
+  const map = {
+    video: '视频',
+    article: '文章',
+    document: '文档'
+  }
+  return map[type] || type
 }
 
 onMounted(() => {
