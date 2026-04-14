@@ -1,11 +1,7 @@
-
 <template>
   <div class="my-training-plans">
-   
-   
-     <div class="my-training-plans">
     <div class="page-header">
-       <el-button class="back-btn" text @click="goBack">
+      <el-button class="back-btn" text @click="goBack">
         <el-icon><ArrowLeft /></el-icon>
         返回
       </el-button>
@@ -14,9 +10,7 @@
     </div>
 
     <el-tabs v-model="activeTab" class="custom-tabs">
-      <!-- Tab 1: 我的训练计划 -->
       <el-tab-pane label="训练计划" name="plans">
-        <!-- 筛选区域 -->
         <div class="filter-section">
           <el-radio-group v-model="statusFilter" @change="handleFilterChange">
             <el-radio-button label="all">全部</el-radio-button>
@@ -25,7 +19,6 @@
           </el-radio-group>
         </div>
 
-        <!-- 列表、加载、空状态 -->
         <div v-if="loading" class="loading-container">
           <el-skeleton :rows="3" animated />
         </div>
@@ -38,49 +31,44 @@
           />
         </div>
         <div v-else class="empty-state">
-           <el-empty :description="emptyStateMessage">
-             <template #image>
-               <el-icon :size="100" color="#909399"><Document /></el-icon>
-             </template>
-             <el-button type="primary" @click="handleContactCoach">寻找教练</el-button>
-           </el-empty>
+          <el-empty :description="emptyStateMessage">
+            <template #image>
+              <el-icon :size="100" color="#909399"><Document /></el-icon>
+            </template>
+            <el-button type="primary" @click="handleContactCoach">寻找教练</el-button>
+          </el-empty>
         </div>
       </el-tab-pane>
 
-      <!-- Tab 2: 训练反馈 -->
       <el-tab-pane label="训练反馈" name="feedback">
         <div v-if="loading" class="loading-container">
-           <el-skeleton :rows="3" animated />
+          <el-skeleton :rows="3" animated />
         </div>
-        <!-- 直接使用所有计划列表，不进行状态过滤 -->
         <div v-else-if="plans.length > 0" class="plans-list">
-           <p class="feedback-prompt">请选择一个训练计划以查看或提交反馈。</p>
-           <PlanCard
-             v-for="plan in plans"
-             :key="plan.id"
-             :plan="plan"
-             @click="handleFeedbackClick(plan)"
-             clickable-style="feedback"
-           />
+          <p class="feedback-prompt">请选择一个训练计划以查看或提交反馈。</p>
+          <PlanCard
+            v-for="plan in plans"
+            :key="plan.id"
+            :plan="plan"
+            @click="handleFeedbackClick(plan)"
+          />
         </div>
         <div v-else class="empty-state">
-           <el-empty description="暂无任何训练计划，无法提交反馈。">
-             <template #image>
-               <el-icon :size="100" color="#909399"><Document /></el-icon>
-             </template>
-           </el-empty>
+          <el-empty description="暂无任何训练计划，无法提交反馈。">
+            <template #image>
+              <el-icon :size="100" color="#909399"><Document /></el-icon>
+            </template>
+          </el-empty>
         </div>
       </el-tab-pane>
     </el-tabs>
-    </div>
-    
-    
-     <!-- 计划详情弹窗 (Plan Detail Dialog) -->
+
     <el-dialog
       v-model="dialogVisible"
       :title="selectedPlan?.name"
-      width="700px"
+      width="960px"
       :close-on-click-modal="false"
+      class="training-plan-dialog"
     >
       <div v-if="selectedPlan" class="plan-detail">
         <div class="detail-section">
@@ -109,12 +97,19 @@
 
         <div class="detail-section">
           <h3>计划详情</h3>
-          <p class="description">{{ selectedPlan.description }}</p>
+          <p class="description">{{ selectedPlan.description || '暂无描述' }}</p>
+        </div>
+
+        <div v-if="selectedPlan.videoUrl" class="detail-section">
+          <h3>训练视频</h3>
+          <div class="video-box">
+            <div class="video-name">{{ selectedPlan.videoName || '训练视频' }}</div>
+            <video :src="selectedPlan.videoUrl" controls class="plan-video-player" />
+          </div>
         </div>
 
         <div class="detail-section">
           <h3>训练动作</h3>
-          <!-- 假设 ExerciseList 组件内部处理了显示，如果内部也有英文需要单独修改那个文件 -->
           <ExerciseList :exercises-data="selectedPlan.exercises" />
         </div>
       </div>
@@ -124,123 +119,111 @@
       </template>
     </el-dialog>
 
-       <!-- 新增: 训练反馈弹窗 -->
     <TrainingFeedbackDialog
       v-if="selectedPlanForFeedback"
       v-model:visible="feedbackDialogVisible"
       :plan="selectedPlanForFeedback"
     />
-
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { Document } from '@element-plus/icons-vue';
-import { getTrainingPlans } from '../../api/training';
-import PlanCard from '../../components/training/PlanCard.vue';
-import ExerciseList from '../../components/training/ExerciseList.vue';
-import { showError } from '@/utils/feedback';
-import TrainingFeedbackDialog from '../../components/training/TrainingFeedbackDialog.vue';
+import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ArrowLeft, Document } from '@element-plus/icons-vue'
+import { getTrainingPlans } from '../../api/training'
+import PlanCard from '../../components/training/PlanCard.vue'
+import ExerciseList from '../../components/training/ExerciseList.vue'
+import TrainingFeedbackDialog from '../../components/training/TrainingFeedbackDialog.vue'
+import { showError } from '@/utils/feedback'
 
+const router = useRouter()
 
+const activeTab = ref('plans')
+const loading = ref(false)
+const plans = ref([])
+const statusFilter = ref('all')
+const dialogVisible = ref(false)
+const selectedPlan = ref(null)
+const feedbackDialogVisible = ref(false)
+const selectedPlanForFeedback = ref(null)
 
-const router = useRouter();
+const filteredPlans = computed(() => {
+  if (statusFilter.value === 'all') {
+    return plans.value
+  }
+  return plans.value.filter((plan) => plan.status === statusFilter.value)
+})
+
+const emptyStateMessage = computed(() => {
+  if (statusFilter.value === 'all') {
+    return '暂无训练计划，联系教练为您制定专属计划吧！'
+  }
+
+  const statusMap = {
+    active: '进行中',
+    completed: '已完成'
+  }
+  const statusText = statusMap[statusFilter.value] || statusFilter.value
+  return `暂无${statusText}的训练计划。`
+})
+
 const goBack = () => {
   router.back()
 }
 
-const loading = ref(false);
-const plans = ref([]);
-const statusFilter = ref('all');
-const dialogVisible = ref(false);
-const selectedPlan = ref(null);
-
-// 新增：训练反馈弹窗 state
-const feedbackDialogVisible = ref(false);
-const selectedPlanForFeedback = ref(null);
-
-// Computed properties
-const filteredPlans = computed(() => {
-  if (statusFilter.value === 'all') {
-    return plans.value;
-  }
-  return plans.value.filter(plan => plan.status === statusFilter.value);
-});
-
-// 新增：点击计划卡片 (在"训练反馈"Tab)
-const handleFeedbackClick = (plan) => {
-  // 打印计划信息
-  console.log('点击计划卡片:', plan);
-  selectedPlanForFeedback.value = plan;
-  feedbackDialogVisible.value = true;
-};
-
-// 动态生成中文的空状态提示
-const emptyStateMessage = computed(() => {
-  if (statusFilter.value === 'all') {
-    return '暂无训练计划，联系教练为您制定专属计划吧！';
-  }
-  const statusMap = {
-    active: '进行中',
-    completed: '已完成'
-  };
-  const statusText = statusMap[statusFilter.value] || statusFilter.value;
-  return `暂无${statusText}的训练计划。`;
-});
-
-// Methods
 const fetchPlans = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const response = await getTrainingPlans();
-    plans.value = response.content || response || [];
+    const response = await getTrainingPlans()
+    plans.value = response.content || response || []
   } catch (error) {
-    console.error('获取训练计划失败:', error);
-    showError('获取训练计划失败');
+    console.error('获取训练计划失败:', error)
+    showError('获取训练计划失败')
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const handleFilterChange = () => {
-  // 过滤逻辑由 computed 属性处理
-};
+  // filteredPlans handles filtering reactively
+}
 
 const handlePlanClick = (plan) => {
-  selectedPlan.value = plan;
-  dialogVisible.value = true;
-};
+  selectedPlan.value = plan
+  dialogVisible.value = true
+}
+
+const handleFeedbackClick = (plan) => {
+  selectedPlanForFeedback.value = plan
+  feedbackDialogVisible.value = true
+}
 
 const handleContactCoach = () => {
-  // 跳转到首页（因为教练列表功能尚未实现）
-  router.push('/home');
-};
+  router.push('/home')
+}
 
 const getStatusType = (status) => {
   const statusMap = {
     active: 'success',
     completed: 'info',
     cancelled: 'danger'
-  };
-  return statusMap[status] || 'info';
-};
+  }
+  return statusMap[status] || 'info'
+}
 
-// 将状态码转换为中文显示
 const getStatusText = (status) => {
   const textMap = {
     active: '进行中',
     completed: '已完成',
     cancelled: '已取消'
-  };
-  return textMap[status] || status;
-};
+  }
+  return textMap[status] || status
+}
 
-// Lifecycle
 onMounted(() => {
-  fetchPlans();
-});
+  fetchPlans()
+})
 </script>
 
 <style scoped>
@@ -270,7 +253,7 @@ onMounted(() => {
 .filter-section {
   margin-bottom: 24px;
   padding: 16px;
-  background-color: #F5F7FA;
+  background-color: #f5f7fa;
   border-radius: 8px;
 }
 
@@ -283,6 +266,11 @@ onMounted(() => {
   gap: 16px;
 }
 
+.feedback-prompt {
+  margin: 0;
+  color: #606266;
+}
+
 .empty-state {
   padding: 60px 24px;
   text-align: center;
@@ -292,9 +280,8 @@ onMounted(() => {
   margin-top: 16px;
 }
 
-/* Dialog Styles */
 .plan-detail {
-  max-height: 60vh;
+  max-height: 72vh;
   overflow-y: auto;
 }
 
@@ -311,7 +298,7 @@ onMounted(() => {
   font-size: 18px;
   font-weight: 600;
   color: #303133;
-  border-bottom: 2px solid #409EFF;
+  border-bottom: 2px solid #409eff;
   padding-bottom: 8px;
 }
 
@@ -343,7 +330,31 @@ onMounted(() => {
   white-space: pre-wrap;
 }
 
-/* Responsive Design */
+.video-box {
+  padding: 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  background-color: #f8fafc;
+}
+
+.video-name {
+  margin-bottom: 12px;
+  color: #303133;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.plan-video-player {
+  width: 100%;
+  max-height: 560px;
+  border-radius: 8px;
+  background-color: #000;
+}
+
+.training-plan-dialog :deep(.el-dialog__body) {
+  padding-top: 12px;
+}
+
 @media (max-width: 768px) {
   .my-training-plans {
     padding: 16px;
@@ -357,8 +368,12 @@ onMounted(() => {
     padding: 12px;
   }
 
-  .el-dialog {
-    width: 95% !important;
+  .plan-detail {
+    max-height: 68vh;
+  }
+
+  .plan-video-player {
+    max-height: 320px;
   }
 }
 </style>

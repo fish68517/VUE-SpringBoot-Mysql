@@ -32,4 +32,8 @@ public class TrainingPlanRequest {
     private String status;  // active, completed, cancelled
 
     private Long coachId;
+
+    private String videoUrl;
+
+    private String videoName;
 }

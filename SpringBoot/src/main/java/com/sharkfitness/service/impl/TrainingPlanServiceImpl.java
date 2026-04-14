@@ -48,6 +48,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
         plan.setStudent(student);
         plan.setStartDate(request.getStartDate());
         plan.setEndDate(request.getEndDate());
+        plan.setVideoUrl(request.getVideoUrl());
+        plan.setVideoName(request.getVideoName());
         
         if (request.getStatus() != null) {
             plan.setStatus(request.getStatus());
@@ -80,6 +82,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
         plan.setStudent(student);
         plan.setStartDate(request.getStartDate());
         plan.setEndDate(request.getEndDate());
+        plan.setVideoUrl(request.getVideoUrl());
+        plan.setVideoName(request.getVideoName());
         
         if (request.getStatus() != null) {
             plan.setStatus(request.getStatus());
@@ -176,6 +180,8 @@ public class TrainingPlanServiceImpl implements TrainingPlanService {
         vo.setStartDate(plan.getStartDate());
         vo.setEndDate(plan.getEndDate());
         vo.setStatus(plan.getStatus());
+        vo.setVideoUrl(plan.getVideoUrl());
+        vo.setVideoName(plan.getVideoName());
         vo.setCreatedAt(plan.getCreatedAt());
         vo.setUpdatedAt(plan.getUpdatedAt());
         

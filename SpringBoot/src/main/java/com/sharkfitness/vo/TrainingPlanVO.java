@@ -21,6 +21,8 @@ public class TrainingPlanVO {
     private LocalDate startDate;
     private LocalDate endDate;
     private String status;
+    private String videoUrl;
+    private String videoName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

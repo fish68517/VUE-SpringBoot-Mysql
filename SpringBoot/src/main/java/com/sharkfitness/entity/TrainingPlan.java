@@ -42,6 +42,12 @@ public class TrainingPlan {
     
     @Column(length = 20)
     private String status;  // active, completed, cancelled
+
+    @Column(name = "video_url", length = 500)
+    private String videoUrl;
+
+    @Column(name = "video_name", length = 255)
+    private String videoName;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;

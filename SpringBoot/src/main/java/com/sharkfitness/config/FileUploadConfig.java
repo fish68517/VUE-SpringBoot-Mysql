@@ -52,9 +52,12 @@ public class FileUploadConfig {
     public void init() {
         createDirectoryIfNotExists(uploadPath);
         createDirectoryIfNotExists(uploadPath + "/images");
-        createDirectoryIfNotExists(uploadPath + "/static/videos");
+        createDirectoryIfNotExists(uploadPath + "/videos");
         createDirectoryIfNotExists(uploadPath + "/documents");
         createDirectoryIfNotExists(uploadPath + "/avatars");
+        createDirectoryIfNotExists("src/main/resources/static/videos");
+        createDirectoryIfNotExists("src/main/resources/static/images");
+        createDirectoryIfNotExists("src/main/resources/static/documents");
     }
 
     private void createDirectoryIfNotExists(String path) {

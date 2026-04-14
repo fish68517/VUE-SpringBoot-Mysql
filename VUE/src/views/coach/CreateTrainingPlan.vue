@@ -1,4 +1,3 @@
-
 <template>
   <Layout>
     <div class="create-training-plan">
@@ -15,7 +14,6 @@
           label-width="120px"
           label-position="top"
         >
-          <!-- 学员选择 (Student Selector) -->
           <el-form-item label="学员" prop="studentId">
             <el-select
               v-model="planForm.studentId"
@@ -24,22 +22,21 @@
               :disabled="isEditMode"
             >
               <el-option
-                v-for="studentAnCoachs in students"
-                :key="studentAnCoachs.id || studentAnCoachs.studentId"
-                :label="studentAnCoachs.student?.username || `Student ${studentAnCoachs.studentId}`"
-                :value="studentAnCoachs.studentId"
+                v-for="studentItem in students"
+                :key="studentItem.id || studentItem.studentId"
+                :label="studentItem.student?.username || `Student ${studentItem.studentId}`"
+                :value="studentItem.studentId"
               >
                 <div class="student-option">
-                  <el-avatar :src="studentAnCoachs.student?.avatar || studentAnCoachs.avatar" :size="30">
-                    {{ (studentAnCoachs.student?.username || '').charAt(0).toUpperCase() }}
+                  <el-avatar :src="studentItem.student?.avatar || studentItem.avatar" :size="30">
+                    {{ (studentItem.student?.username || '').charAt(0).toUpperCase() }}
                   </el-avatar>
-                  <span>{{ studentAnCoachs.student?.username || `Student ${studentAnCoachs.studentId}` }}</span>
+                  <span>{{ studentItem.student?.username || `Student ${studentItem.studentId}` }}</span>
                 </div>
               </el-option>
             </el-select>
           </el-form-item>
 
-          <!-- 计划名称 (Plan Name) -->
           <el-form-item label="计划名称" prop="name">
             <el-input
               v-model="planForm.name"
@@ -49,7 +46,6 @@
             />
           </el-form-item>
 
-          <!-- 计划描述 (Description) -->
           <el-form-item label="计划描述" prop="description">
             <el-input
               v-model="planForm.description"
@@ -61,7 +57,36 @@
             />
           </el-form-item>
 
-          <!-- 日期范围 (Date Range) -->
+          <el-form-item label="训练视频">
+            <div class="plan-video-section">
+              <el-upload
+                :show-file-list="false"
+                :http-request="handlePlanVideoUpload"
+                :before-upload="beforePlanVideoUpload"
+                accept="video/*"
+              >
+                <el-button
+                  type="primary"
+                  plain
+                  :loading="uploadingVideo"
+                  :disabled="uploadingVideo || !!planForm.videoUrl"
+                >
+                  上传视频
+                </el-button>
+              </el-upload>
+
+              <div v-if="planForm.videoUrl" class="video-preview-wrapper">
+                <div class="video-preview-header">
+                  <span class="video-name">{{ planForm.videoName || '已上传视频' }}</span>
+                  <el-button type="danger" link @click="removePlanVideo">
+                    删除视频重新上传
+                  </el-button>
+                </div>
+                <video :src="planForm.videoUrl" controls class="plan-video-preview" />
+              </div>
+            </div>
+          </el-form-item>
+
           <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="开始日期" prop="startDate">
@@ -89,7 +114,6 @@
             </el-col>
           </el-row>
 
-          <!-- 状态 (Status) -->
           <el-form-item label="状态" prop="status">
             <el-radio-group v-model="planForm.status">
               <el-radio label="active">进行中</el-radio>
@@ -98,7 +122,6 @@
             </el-radio-group>
           </el-form-item>
 
-          <!-- 训练动作部分 (Exercises Section) -->
           <el-form-item label="训练动作">
             <div class="exercises-section">
               <div
@@ -137,7 +160,7 @@
                   <el-col :span="24">
                     <el-input
                       v-model="exercise.name"
-                      placeholder="动作名称 (如: 深蹲)"
+                      placeholder="动作名称"
                       class="exercise-input"
                     />
                   </el-col>
@@ -167,7 +190,7 @@
                   <el-col :span="8">
                     <el-input
                       v-model="exercise.duration"
-                      placeholder="如: 30分钟"
+                      placeholder="如：30分钟"
                     >
                       <template #prepend>时长</template>
                     </el-input>
@@ -180,7 +203,7 @@
                       v-model="exercise.notes"
                       type="textarea"
                       :rows="2"
-                      placeholder="备注信息 (可选)"
+                      placeholder="备注信息（可选）"
                     />
                   </el-col>
                 </el-row>
@@ -198,7 +221,6 @@
             </div>
           </el-form-item>
 
-          <!-- 表单操作 (Form Actions) -->
           <el-form-item>
             <el-button type="primary" @click="submitForm" :loading="submitting">
               {{ isEditMode ? '更新计划' : '创建计划' }}
@@ -212,13 +234,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { Plus, ArrowUp, ArrowDown, Delete } from '@element-plus/icons-vue'
+import { onMounted, reactive, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ArrowDown, ArrowUp, Delete, Plus } from '@element-plus/icons-vue'
 import Layout from '@/components/common/Layout.vue'
 import { getMyStudents } from '@/api/coach'
-import { createTrainingPlan, updateTrainingPlan, getTrainingPlanById } from '@/api/training'
-import { showSuccess, showError, showWarning } from '@/utils/feedback'
+import { createTrainingPlan, getTrainingPlanById, updateTrainingPlan } from '@/api/training'
+import { uploadVideo } from '@/api/upload'
+import { showError, showSuccess, showWarning } from '@/utils/feedback'
 
 const router = useRouter()
 const route = useRoute()
@@ -228,6 +251,7 @@ const students = ref([])
 const submitting = ref(false)
 const isEditMode = ref(false)
 const planId = ref(null)
+const uploadingVideo = ref(false)
 
 const planForm = reactive({
   studentId: null,
@@ -236,6 +260,8 @@ const planForm = reactive({
   startDate: '',
   endDate: '',
   status: 'active',
+  videoUrl: '',
+  videoName: '',
   exercises: []
 })
 
@@ -265,15 +291,11 @@ const fetchStudents = async () => {
   try {
     const response = await getMyStudents()
     students.value = (response || [])
-      .map(item => ({
+      .map((item) => ({
         ...item,
         studentId: item?.student?.id ?? item?.studentId
       }))
-      .filter(item => item.studentId != null && item?.status !== 0 && item?.status !== '0')
-    // 打印获取到的学生列表以便调试
-    console.log('获取学生列表成功，学生数：', students.value.length)
-    // 打印学生列表详情
-    console.log('学生列表详情：', JSON.stringify(students.value))
+      .filter((item) => item.studentId != null && item?.status !== 0 && item?.status !== '0')
   } catch (error) {
     showError('加载学员列表失败')
     console.error('Fetch students error:', error)
@@ -301,6 +323,35 @@ const moveExercise = (index, direction) => {
   planForm.exercises[newIndex] = temp
 }
 
+const beforePlanVideoUpload = (file) => {
+  const isLt100M = file.size / 1024 / 1024 < 100
+  if (!isLt100M) {
+    showWarning('视频大小不能超过 100MB')
+  }
+  return isLt100M
+}
+
+const handlePlanVideoUpload = async ({ file, onSuccess, onError }) => {
+  uploadingVideo.value = true
+  try {
+    const response = await uploadVideo(file)
+    planForm.videoUrl = response?.url || ''
+    planForm.videoName = response?.filename || file.name
+    showSuccess('训练视频上传成功')
+    onSuccess?.(response)
+  } catch (error) {
+    showError(error.message || '训练视频上传失败')
+    onError?.(error)
+  } finally {
+    uploadingVideo.value = false
+  }
+}
+
+const removePlanVideo = () => {
+  planForm.videoUrl = ''
+  planForm.videoName = ''
+}
+
 const submitForm = async () => {
   if (!formRef.value) return
 
@@ -315,8 +366,7 @@ const submitForm = async () => {
       return
     }
 
-    // Validate exercises
-    const hasInvalidExercise = planForm.exercises.some(ex => !ex.name.trim())
+    const hasInvalidExercise = planForm.exercises.some((exercise) => !exercise.name.trim())
     if (hasInvalidExercise) {
       showWarning('请为所有动作填写名称')
       return
@@ -355,9 +405,11 @@ const loadPlanData = async (id) => {
     planForm.startDate = plan.startDate
     planForm.endDate = plan.endDate
     planForm.status = plan.status
-    planForm.exercises = typeof plan.exercises === 'string' 
-      ? JSON.parse(plan.exercises) 
-      : plan.exercises || []
+    planForm.videoUrl = plan.videoUrl || ''
+    planForm.videoName = plan.videoName || ''
+    planForm.exercises = typeof plan.exercises === 'string'
+      ? JSON.parse(plan.exercises)
+      : (plan.exercises || [])
   } catch (error) {
     showError('加载计划数据失败')
     console.error('Load plan error:', error)
@@ -371,20 +423,17 @@ const goBack = () => {
 onMounted(async () => {
   await fetchStudents()
 
-  // Check if editing existing plan
   if (route.params.id) {
     isEditMode.value = true
     planId.value = route.params.id
     await loadPlanData(planId.value)
   } else {
-    // Add one default exercise for new plans
     addExercise()
   }
 })
 </script>
 
 <style scoped>
-/* 样式保持不变 */
 .create-training-plan {
   padding: 20px;
 }
@@ -407,16 +456,49 @@ onMounted(async () => {
   gap: 10px;
 }
 
+.plan-video-section {
+  width: 100%;
+}
+
+.video-preview-wrapper {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #dcdfe6;
+  border-radius: 8px;
+  background-color: #f8fafc;
+}
+
+.video-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.video-name {
+  color: #303133;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.plan-video-preview {
+  width: 100%;
+  max-height: 360px;
+  border-radius: 8px;
+  background-color: #000;
+}
+
 .exercises-section {
   width: 100%;
 }
 
 .exercise-item {
-  border: 1px solid #DCDFE6;
+  border: 1px solid #dcdfe6;
   border-radius: 4px;
   padding: 15px;
   margin-bottom: 15px;
-  background-color: #F5F7FA;
+  background-color: #f5f7fa;
 }
 
 .exercise-header {
@@ -460,6 +542,11 @@ onMounted(async () => {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+  }
+
+  .video-preview-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .exercise-actions .el-button {
