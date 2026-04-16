@@ -1,0 +1,247 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" compressed="false" version="29.6.1">
+  <diagram id="naxi-er-ref" name="数据库ER图">
+    <mxGraphModel dx="2037" dy="1201" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1300" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="roles" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="角色" vertex="1">
+          <mxGeometry height="46" width="90" x="170" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="users" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="用户" vertex="1">
+          <mxGeometry height="46" width="90" x="170" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="permissions" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="权限" vertex="1">
+          <mxGeometry height="46" width="90" x="170" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="patterns" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="纹样" vertex="1">
+          <mxGeometry height="46" width="90" x="760" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="comments" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="评论" vertex="1">
+          <mxGeometry height="46" width="90" x="1080" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="questions" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="提问" vertex="1">
+          <mxGeometry height="46" width="90" x="1080" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="works" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="原创作品" vertex="1">
+          <mxGeometry height="46" width="110" x="170" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_user_role" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="属于" vertex="1">
+          <mxGeometry height="60" width="90" x="170" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_role_perm" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="拥有" vertex="1">
+          <mxGeometry height="60" width="90" x="170" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_collect" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="收藏" vertex="1">
+          <mxGeometry height="60" width="90" x="556" y="294" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_user_comment" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="发表评论" vertex="1">
+          <mxGeometry height="60" width="110" x="470" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_comment_pattern" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="针对" vertex="1">
+          <mxGeometry height="60" width="90" x="855" y="61" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_user_question" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="发起提问" vertex="1">
+          <mxGeometry height="60" width="110" x="479" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_question_pattern" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="针对" vertex="1">
+          <mxGeometry height="60" width="90" x="850" y="436" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_publish_work" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontStyle=1;fontSize=15;strokeWidth=1;" value="发布作品" vertex="1">
+          <mxGeometry height="60" width="110" x="170" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_collect_time" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="收藏时间" vertex="1">
+          <mxGeometry height="40" width="90" x="394" y="236" as="geometry" />
+        </mxCell>
+        <mxCell id="role_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="角色ID" vertex="1">
+          <mxGeometry height="40" width="90" x="80" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="role_name" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="角色名称" vertex="1">
+          <mxGeometry height="40" width="100" x="260" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="role_desc" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="角色描述" vertex="1">
+          <mxGeometry height="40" width="100" x="300" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="user_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="用户ID" vertex="1">
+          <mxGeometry height="40" width="90" x="40" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="username" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="用户名" vertex="1">
+          <mxGeometry height="40" width="90" x="59" y="396" as="geometry" />
+        </mxCell>
+        <mxCell id="email" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="邮箱" vertex="1">
+          <mxGeometry height="40" width="90" x="290" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="status" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="状态" vertex="1">
+          <mxGeometry height="40" width="90" x="300" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="perm_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="权限ID" vertex="1">
+          <mxGeometry height="40" width="90" x="50" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="perm_name" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="权限名称" vertex="1">
+          <mxGeometry height="40" width="100" x="285" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="perm_time" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="创建时间" vertex="1">
+          <mxGeometry height="40" width="100" x="282" y="699" as="geometry" />
+        </mxCell>
+        <mxCell id="pattern_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="纹样ID" vertex="1">
+          <mxGeometry height="40" width="90" x="900" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="pattern_name" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="纹样名称" vertex="1">
+          <mxGeometry height="40" width="100" x="910" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="pattern_cat" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="纹样分类" vertex="1">
+          <mxGeometry height="40" width="100" x="684" y="233" as="geometry" />
+        </mxCell>
+        <mxCell id="view_count" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="浏览次数" vertex="1">
+          <mxGeometry height="40" width="100" x="664" y="404" as="geometry" />
+        </mxCell>
+        <mxCell id="comment_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="评论ID" vertex="1">
+          <mxGeometry height="40" width="90" x="1180" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="comment_content" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="评论内容" vertex="1">
+          <mxGeometry height="40" width="100" x="1180" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="comment_time" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="创建时间" vertex="1">
+          <mxGeometry height="40" width="100" x="1037" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="question_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="提问ID" vertex="1">
+          <mxGeometry height="40" width="90" x="1160" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="question_title" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="标题" vertex="1">
+          <mxGeometry height="40" width="90" x="1180" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="question_time" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="创建时间" vertex="1">
+          <mxGeometry height="40" width="100" x="1100" y="584" as="geometry" />
+        </mxCell>
+        <mxCell id="work_id" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="作品ID" vertex="1">
+          <mxGeometry height="40" width="90" x="30" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="work_title" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="标题" vertex="1">
+          <mxGeometry height="40" width="90" x="300" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="work_status" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="审核状态" vertex="1">
+          <mxGeometry height="40" width="100" x="320" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="work_like" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#010101;fontColor=#000000;fontSize=15;strokeWidth=1;" value="点赞数" vertex="1">
+          <mxGeometry height="40" width="90" x="30" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="rel_user_role" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="roles" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="rel_user_role" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="permissions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="rel_role_perm" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="patterns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="rel_collect" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="rel_collect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="attr_collect_time" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="rel_user_comment" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="rel_user_comment" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="comments" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="comments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="rel_comment_pattern" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="rel_comment_pattern" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="patterns" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="rel_user_question" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="rel_user_question" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="questions" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="questions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="rel_question_pattern" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="rel_question_pattern" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="patterns" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="permissions" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="rel_publish_work" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="rel_publish_work" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="works" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea100" edge="1" parent="1" source="roles" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="role_id" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea101" edge="1" parent="1" source="roles" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="role_name" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea102" edge="1" parent="1" source="roles" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="role_desc" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea103" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="user_id" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea104" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="username" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea105" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="email" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea106" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="status" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea107" edge="1" parent="1" source="permissions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="perm_id" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea108" edge="1" parent="1" source="permissions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="perm_name" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea109" edge="1" parent="1" source="permissions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="perm_time" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea110" edge="1" parent="1" source="patterns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="pattern_id" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea111" edge="1" parent="1" source="patterns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="pattern_name" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea112" edge="1" parent="1" source="patterns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="pattern_cat" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea113" edge="1" parent="1" source="patterns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="view_count" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea114" edge="1" parent="1" source="comments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="comment_id" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea115" edge="1" parent="1" source="comments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="comment_content" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea116" edge="1" parent="1" source="comments" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="comment_time" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea117" edge="1" parent="1" source="questions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="question_id" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea118" edge="1" parent="1" source="questions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="question_title" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea119" edge="1" parent="1" source="questions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="question_time" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea120" edge="1" parent="1" source="works" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="work_id" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea121" edge="1" parent="1" source="works" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="work_title" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea122" edge="1" parent="1" source="works" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="work_status" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea123" edge="1" parent="1" source="works" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#010101;fontColor=#FFFFFF;fontSize=15;strokeWidth=1;" target="work_like" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="app.diagrams.net" modified="2026-04-09T00:00:00.000Z" agent="OpenAI" version="24.7.17">
+  <diagram id="naxi-er" name="ER图">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="t_roles" value="&lt;b&gt;roles&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;role_name : varchar(50)&lt;br/&gt;description : varchar(255)&lt;br/&gt;created_at : timestamp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_permissions" value="&lt;b&gt;permissions&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;FK role_id : bigint&lt;br/&gt;permission_name : varchar(100)&lt;br/&gt;created_at : timestamp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="290" y="40" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_users" value="&lt;b&gt;users&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;FK role_id : bigint&lt;br/&gt;username : varchar(50)&lt;br/&gt;password : varchar(255)&lt;br/&gt;email : varchar(100)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="540" y="40" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_system_settings" value="&lt;b&gt;system_settings&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;setting_key : varchar(100)&lt;br/&gt;setting_value : text&lt;br/&gt;description : varchar(255)&lt;br/&gt;updated_at : timestamp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="40" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_patterns" value="&lt;b&gt;patterns&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;name : varchar(100)&lt;br/&gt;category : enum(&amp;#x27;七星纹&amp;#x27;&lt;br/&gt;description : text&lt;br/&gt;cultural_background : text" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="195" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_collections" value="&lt;b&gt;collections&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;FK user_id : bigint&lt;br/&gt;FK pattern_id : bigint&lt;br/&gt;created_at : timestamp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="290" y="195" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_comments" value="&lt;b&gt;comments&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;FK user_id : bigint&lt;br/&gt;FK pattern_id : bigint&lt;br/&gt;content : text&lt;br/&gt;created_at : timestamp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="540" y="195" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_questions" value="&lt;b&gt;questions&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;FK user_id : bigint&lt;br/&gt;FK pattern_id : bigint&lt;br/&gt;title : varchar(200)&lt;br/&gt;content : text" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="195" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_creative_works" value="&lt;b&gt;creative_works&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;FK user_id : bigint&lt;br/&gt;title : varchar(200)&lt;br/&gt;description : text&lt;br/&gt;image_url : varchar(255)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="350" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_operation_logs" value="&lt;b&gt;operation_logs&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;FK user_id : bigint&lt;br/&gt;operation_type : varchar(50)&lt;br/&gt;target_type : varchar(50)&lt;br/&gt;target_id : bigint" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="290" y="350" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_admin_audit_logs" value="&lt;b&gt;admin_audit_logs&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;FK admin_id : bigint&lt;br/&gt;operation_type : varchar(50)&lt;br/&gt;target_type : varchar(50)&lt;br/&gt;target_id : bigint" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="540" y="350" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="t_system_logs" value="&lt;b&gt;system_logs&lt;/b&gt;&lt;br/&gt;&lt;hr size='1'/&gt;PK id : bigint&lt;br/&gt;log_level : enum(&amp;#x27;INFO&amp;#x27;&lt;br/&gt;message : text&lt;br/&gt;details : text&lt;br/&gt;created_at : timestamp" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#666666;fontSize=11;align=left;verticalAlign=top;spacingLeft=8;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="790" y="350" width="220" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_permissions" target="t_roles">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_users" target="t_roles">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_collections" target="t_users">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_collections" target="t_patterns">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_comments" target="t_users">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_comments" target="t_patterns">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_questions" target="t_patterns">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_questions" target="t_users">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_creative_works" target="t_users">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_operation_logs" target="t_users">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e_11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=1.1;" edge="1" parent="1" source="t_admin_audit_logs" target="t_users">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
