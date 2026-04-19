@@ -25,12 +25,15 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 public class HabitDetailActivity extends AppCompatActivity {
+
+    private static final int MAX_RETROACTIVE_DAYS = 3;
 
     private HabitDetailViewModel viewModel;
     private HabitTrack currentHabit;
@@ -104,34 +107,35 @@ public class HabitDetailActivity extends AppCompatActivity {
         RadioGroup rgStatus = view.findViewById(R.id.rg_dialog_status);
 
         final boolean isEdit = existingCheckin != null;
-        final Calendar calendar = Calendar.getInstance();
+        final String originalDate = isEdit ? existingCheckin.getCheckinDate() : null;
+        final Calendar calendar = getInitialCalendar(originalDate);
 
         if (isEdit) {
             tvDate.setText(existingCheckin.getCheckinDate());
             etNote.setText(existingCheckin.getCheckinNoteText());
             rgStatus.check(getCheckedRadioId(existingCheckin.getCheckinStatusEnum()));
         } else {
-            tvDate.setText(dateFormat.format(new Date()));
+            tvDate.setText(dateFormat.format(calendar.getTime()));
             rgStatus.check(R.id.rb_completed);
         }
 
-        tvDate.setOnClickListener(v -> new DatePickerDialog(
-                this,
-                (dp, y, m, d) -> {
-                    calendar.set(y, m, d);
-                    tvDate.setText(dateFormat.format(calendar.getTime()));
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-        ).show());
+        tvDate.setOnClickListener(v -> showCheckinDatePicker(tvDate, calendar));
 
         builder.setView(view)
                 .setTitle(isEdit ? "编辑打卡" : "新增打卡")
                 .setPositiveButton("保存", (dialog, which) -> {
-                    String date = tvDate.getText().toString();
-                    String note = etNote.getText().toString();
+                    String date = tvDate.getText().toString().trim();
+                    String note = etNote.getText() == null ? "" : etNote.getText().toString().trim();
                     String status = getStatusFromRadioId(rgStatus.getCheckedRadioButtonId());
+
+                    if (!isDateSelectionValid(date, originalDate, isEdit)) {
+                        Toast.makeText(
+                                this,
+                                "仅支持今天及近 " + MAX_RETROACTIVE_DAYS + " 天内补卡，不能选择未来日期",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        return;
+                    }
 
                     HabitCheckin checkin = isEdit ? existingCheckin : new HabitCheckin();
                     checkin.setHabitTrackId(currentHabit.getHabitTrackId());
@@ -151,6 +155,78 @@ public class HabitDetailActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("取消", null)
                 .show();
+    }
+
+    private void showCheckinDatePicker(TextView targetView, Calendar selectedCalendar) {
+        DatePickerDialog dialog = new DatePickerDialog(
+                this,
+                (dp, year, month, dayOfMonth) -> {
+                    selectedCalendar.set(year, month, dayOfMonth, 0, 0, 0);
+                    selectedCalendar.set(Calendar.MILLISECOND, 0);
+                    targetView.setText(dateFormat.format(selectedCalendar.getTime()));
+                },
+                selectedCalendar.get(Calendar.YEAR),
+                selectedCalendar.get(Calendar.MONTH),
+                selectedCalendar.get(Calendar.DAY_OF_MONTH)
+        );
+        dialog.getDatePicker().setMinDate(getMinAllowedCalendar().getTimeInMillis());
+        dialog.getDatePicker().setMaxDate(getTodayCalendar().getTimeInMillis());
+        dialog.show();
+    }
+
+    private Calendar getInitialCalendar(String dateText) {
+        Calendar calendar = getTodayCalendar();
+        Date parsedDate = parseDate(dateText);
+        if (parsedDate != null) {
+            calendar.setTime(parsedDate);
+        }
+        return calendar;
+    }
+
+    private Calendar getTodayCalendar() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar;
+    }
+
+    private Calendar getMinAllowedCalendar() {
+        Calendar calendar = getTodayCalendar();
+        calendar.add(Calendar.DAY_OF_YEAR, -MAX_RETROACTIVE_DAYS);
+        return calendar;
+    }
+
+    private boolean isDateSelectionValid(String selectedDate, String originalDate, boolean isEdit) {
+        if (selectedDate == null || selectedDate.isEmpty()) {
+            return false;
+        }
+        if (isWithinAllowedWindow(selectedDate)) {
+            return true;
+        }
+        return isEdit && selectedDate.equals(originalDate);
+    }
+
+    private boolean isWithinAllowedWindow(String selectedDate) {
+        Date parsedDate = parseDate(selectedDate);
+        if (parsedDate == null) {
+            return false;
+        }
+        Date minDate = getMinAllowedCalendar().getTime();
+        Date maxDate = getTodayCalendar().getTime();
+        return !parsedDate.before(minDate) && !parsedDate.after(maxDate);
+    }
+
+    private Date parseDate(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return dateFormat.parse(value.trim());
+        } catch (ParseException exception) {
+            return null;
+        }
     }
 
     private int getCheckedRadioId(String status) {

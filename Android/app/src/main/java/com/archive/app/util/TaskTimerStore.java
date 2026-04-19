@@ -47,6 +47,8 @@ public final class TaskTimerStore {
         public String taskTitle;
         public int focusDurationMins;
         public int breakDurationMins;
+        public long focusRemainingMillis;
+        public long breakRemainingMillis;
         public long remainingMillis;
         public long stageDurationMillis;
         public boolean breakMode;
@@ -54,6 +56,7 @@ public final class TaskTimerStore {
         public boolean taskStarted;
         public int pauseCount;
         public int completedCycles;
+        public boolean focusStageCompleted;
         public long elapsedFocusMillisInRound;
         public long focusSessionStartEpochMillis;
     }

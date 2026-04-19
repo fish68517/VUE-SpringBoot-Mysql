@@ -41,7 +41,6 @@ import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -73,6 +72,7 @@ public class TaskFragment extends Fragment {
     private TextView timerClockView;
     private TextView timerMetaView;
     private MaterialButton timerToggleButton;
+    private MaterialButton timerNextStageButton;
     private boolean skipPauseOnDismiss;
 
     @Override
@@ -251,7 +251,7 @@ public class TaskFragment extends Fragment {
         if (title == null || title.trim().isEmpty()) {
             return "未命名任务";
         }
-        return title.length() > 8 ? title.substring(0, 8) + "…" : title;
+        return title.length() > 8 ? title.substring(0, 8) + "..." : title;
     }
 
     private void showTimerDialog(TaskFocus task) {
@@ -269,7 +269,7 @@ public class TaskFragment extends Fragment {
         timerClockView = dialogView.findViewById(R.id.tv_timer_clock);
         timerMetaView = dialogView.findViewById(R.id.tv_timer_meta);
         timerToggleButton = dialogView.findViewById(R.id.btn_timer_toggle);
-        MaterialButton timerNextStageButton = dialogView.findViewById(R.id.btn_timer_next_stage);
+        timerNextStageButton = dialogView.findViewById(R.id.btn_timer_next_stage);
         MaterialButton timerFinishButton = dialogView.findViewById(R.id.btn_timer_finish);
 
         timerTitleView.setText(task.getTaskTitleText() == null || task.getTaskTitleText().trim().isEmpty()
@@ -292,7 +292,7 @@ public class TaskFragment extends Fragment {
             }
             boolean resumeNextStage = activeTimerSnapshot.running;
             pauseActiveTimer(false);
-            moveToNextStage(true);
+            switchStageManually();
             if (resumeNextStage) {
                 startActiveTimer();
             } else {
@@ -329,14 +329,21 @@ public class TaskFragment extends Fragment {
         if (snapshot != null) {
             snapshot.focusDurationMins = sanitizeFocusMinutes(snapshot.focusDurationMins);
             snapshot.breakDurationMins = sanitizeBreakMinutes(snapshot.breakDurationMins);
-            if (snapshot.stageDurationMillis <= 0L) {
-                snapshot.stageDurationMillis = (snapshot.breakMode
-                        ? snapshot.breakDurationMins : snapshot.focusDurationMins) * MILLIS_PER_MINUTE;
-            }
-            if (snapshot.remainingMillis <= 0L || snapshot.remainingMillis > snapshot.stageDurationMillis) {
-                snapshot.remainingMillis = snapshot.stageDurationMillis;
-            }
             snapshot.taskTitle = task.getTaskTitleText();
+
+            long focusDurationMillis = getFocusDurationMillis(snapshot);
+            long breakDurationMillis = getBreakDurationMillis(snapshot);
+            if (snapshot.focusRemainingMillis <= 0L || snapshot.focusRemainingMillis > focusDurationMillis) {
+                snapshot.focusRemainingMillis = snapshot.breakMode
+                        ? focusDurationMillis
+                        : defaultRemaining(snapshot.remainingMillis, focusDurationMillis);
+            }
+            if (snapshot.breakRemainingMillis <= 0L || snapshot.breakRemainingMillis > breakDurationMillis) {
+                snapshot.breakRemainingMillis = snapshot.breakMode
+                        ? defaultRemaining(snapshot.remainingMillis, breakDurationMillis)
+                        : breakDurationMillis;
+            }
+            bindCurrentStageState(snapshot);
             return snapshot;
         }
 
@@ -350,9 +357,10 @@ public class TaskFragment extends Fragment {
         snapshot.taskStarted = false;
         snapshot.pauseCount = 0;
         snapshot.completedCycles = 0;
-        snapshot.stageDurationMillis = snapshot.focusDurationMins * MILLIS_PER_MINUTE;
-        snapshot.remainingMillis = snapshot.stageDurationMillis;
-        snapshot.elapsedFocusMillisInRound = 0L;
+        snapshot.focusStageCompleted = false;
+        snapshot.focusRemainingMillis = getFocusDurationMillis(snapshot);
+        snapshot.breakRemainingMillis = getBreakDurationMillis(snapshot);
+        bindCurrentStageState(snapshot);
         snapshot.focusSessionStartEpochMillis = 0L;
         return snapshot;
     }
@@ -365,10 +373,87 @@ public class TaskFragment extends Fragment {
         return value == null || value < 0 ? 5 : value;
     }
 
+    private long getFocusDurationMillis(TaskTimerStore.TimerSnapshot snapshot) {
+        return snapshot.focusDurationMins * MILLIS_PER_MINUTE;
+    }
+
+    private long getBreakDurationMillis(TaskTimerStore.TimerSnapshot snapshot) {
+        return sanitizeBreakMinutes(snapshot.breakDurationMins) * MILLIS_PER_MINUTE;
+    }
+
+    private long defaultRemaining(long value, long fullDuration) {
+        if (fullDuration <= 0L) {
+            return 0L;
+        }
+        if (value <= 0L) {
+            return fullDuration;
+        }
+        return Math.min(value, fullDuration);
+    }
+
+    private long clampRemaining(long value, long fullDuration) {
+        if (fullDuration <= 0L) {
+            return 0L;
+        }
+        if (value < 0L) {
+            return 0L;
+        }
+        return Math.min(value, fullDuration);
+    }
+
+    private void bindCurrentStageState(TaskTimerStore.TimerSnapshot snapshot) {
+        if (snapshot == null) {
+            return;
+        }
+
+        long focusDurationMillis = getFocusDurationMillis(snapshot);
+        long breakDurationMillis = getBreakDurationMillis(snapshot);
+        snapshot.focusRemainingMillis = clampRemaining(snapshot.focusRemainingMillis, focusDurationMillis);
+        snapshot.breakRemainingMillis = clampRemaining(snapshot.breakRemainingMillis, breakDurationMillis);
+
+        if (snapshot.breakMode) {
+            snapshot.stageDurationMillis = breakDurationMillis;
+            snapshot.remainingMillis = snapshot.breakRemainingMillis;
+        } else {
+            snapshot.stageDurationMillis = focusDurationMillis;
+            snapshot.remainingMillis = snapshot.focusRemainingMillis;
+        }
+        snapshot.elapsedFocusMillisInRound = Math.max(0L, focusDurationMillis - snapshot.focusRemainingMillis);
+    }
+
+    private void setCurrentStageRemaining(long millis) {
+        if (activeTimerSnapshot == null) {
+            return;
+        }
+
+        long fullDuration = activeTimerSnapshot.breakMode
+                ? getBreakDurationMillis(activeTimerSnapshot)
+                : getFocusDurationMillis(activeTimerSnapshot);
+        long safeRemaining = clampRemaining(millis, fullDuration);
+        activeTimerSnapshot.remainingMillis = safeRemaining;
+        activeTimerSnapshot.stageDurationMillis = fullDuration;
+        if (activeTimerSnapshot.breakMode) {
+            activeTimerSnapshot.breakRemainingMillis = safeRemaining;
+        } else {
+            activeTimerSnapshot.focusRemainingMillis = safeRemaining;
+            activeTimerSnapshot.elapsedFocusMillisInRound = Math.max(0L, fullDuration - safeRemaining);
+        }
+    }
+
+    private int getCurrentRoundFocusSeconds() {
+        if (activeTimerSnapshot == null) {
+            return 0;
+        }
+        long elapsedFocusMillis = Math.max(0L,
+                getFocusDurationMillis(activeTimerSnapshot) - activeTimerSnapshot.focusRemainingMillis);
+        return (int) (elapsedFocusMillis / 1000L);
+    }
+
     private void startActiveTimer() {
         if (activeTimerSnapshot == null) {
             return;
         }
+        bindCurrentStageState(activeTimerSnapshot);
         activeTimerSnapshot.running = true;
         activeTimerSnapshot.taskStarted = true;
         persistActiveSnapshot();
@@ -386,11 +471,7 @@ public class TaskFragment extends Fragment {
                     cancel();
                     return;
                 }
-                activeTimerSnapshot.remainingMillis = millisUntilFinished;
-                if (!activeTimerSnapshot.breakMode) {
-                    activeTimerSnapshot.elapsedFocusMillisInRound =
-                            activeTimerSnapshot.stageDurationMillis - millisUntilFinished;
-                }
+                setCurrentStageRemaining(millisUntilFinished);
                 persistActiveSnapshot();
                 updateTimerDialogContent();
             }
@@ -400,11 +481,8 @@ public class TaskFragment extends Fragment {
                 if (activeTimerSnapshot == null) {
                     return;
                 }
-                activeTimerSnapshot.remainingMillis = 0L;
-                if (!activeTimerSnapshot.breakMode) {
-                    activeTimerSnapshot.elapsedFocusMillisInRound = activeTimerSnapshot.stageDurationMillis;
-                }
-                moveToNextStage(false);
+                setCurrentStageRemaining(0L);
+                completeCurrentStageAndAdvance();
                 startActiveTimer();
             }
         };
@@ -425,18 +503,36 @@ public class TaskFragment extends Fragment {
         updateTimerDialogContent();
     }
 
-    private void moveToNextStage(boolean interrupted) {
+    private void switchStageManually() {
         if (activeTimerSnapshot == null) {
             return;
         }
 
         if (activeTimerSnapshot.breakMode) {
-            activeTimerSnapshot.completedCycles += 1;
             activeTimerSnapshot.breakMode = false;
-            activeTimerSnapshot.stageDurationMillis = activeTimerSnapshot.focusDurationMins * MILLIS_PER_MINUTE;
-            activeTimerSnapshot.remainingMillis = activeTimerSnapshot.stageDurationMillis;
-            activeTimerSnapshot.elapsedFocusMillisInRound = 0L;
+        } else if (getBreakDurationMillis(activeTimerSnapshot) > 0L) {
+            activeTimerSnapshot.breakMode = true;
+        }
+
+        activeTimerSnapshot.running = false;
+        bindCurrentStageState(activeTimerSnapshot);
+        persistActiveSnapshot();
+    }
+
+    private void completeCurrentStageAndAdvance() {
+        if (activeTimerSnapshot == null) {
+            return;
+        }
+
+        if (activeTimerSnapshot.breakMode) {
+            activeTimerSnapshot.breakRemainingMillis = getBreakDurationMillis(activeTimerSnapshot);
+            if (activeTimerSnapshot.focusStageCompleted) {
+                activeTimerSnapshot.completedCycles += 1;
+                activeTimerSnapshot.focusStageCompleted = false;
+            }
+            activeTimerSnapshot.breakMode = false;
             activeTimerSnapshot.running = false;
+            bindCurrentStageState(activeTimerSnapshot);
             persistActiveSnapshot();
             FocusNotificationHelper.showTimerNotification(
                     requireContext(),
@@ -447,45 +543,40 @@ public class TaskFragment extends Fragment {
             return;
         }
 
-        int focusSeconds = (int) (activeTimerSnapshot.elapsedFocusMillisInRound / 1000L);
+        int focusSeconds = getCurrentRoundFocusSeconds();
         if (focusSeconds > 0) {
-            saveFocusRecord(focusSeconds, interrupted ? "interrupted" : "completed");
+            saveFocusRecord(focusSeconds, "completed");
             syncTaskProgress(focusSeconds, true);
         }
 
-        int breakMinutes = sanitizeBreakMinutes(activeTimerSnapshot.breakDurationMins);
-        if (breakMinutes <= 0) {
+        activeTimerSnapshot.focusRemainingMillis = getFocusDurationMillis(activeTimerSnapshot);
+        activeTimerSnapshot.focusStageCompleted = true;
+        if (getBreakDurationMillis(activeTimerSnapshot) <= 0L) {
             activeTimerSnapshot.completedCycles += 1;
+            activeTimerSnapshot.focusStageCompleted = false;
             activeTimerSnapshot.breakMode = false;
-            activeTimerSnapshot.stageDurationMillis = activeTimerSnapshot.focusDurationMins * MILLIS_PER_MINUTE;
-            activeTimerSnapshot.remainingMillis = activeTimerSnapshot.stageDurationMillis;
-            activeTimerSnapshot.elapsedFocusMillisInRound = 0L;
             activeTimerSnapshot.running = false;
+            bindCurrentStageState(activeTimerSnapshot);
             persistActiveSnapshot();
-            if (!interrupted) {
-                FocusNotificationHelper.showTimerNotification(
-                        requireContext(),
-                        "专注计时完成",
-                        "任务《" + safeFullTaskTitle() + "》的本轮专注已完成。"
-                );
-            }
+            FocusNotificationHelper.showTimerNotification(
+                    requireContext(),
+                    "专注计时完成",
+                    "任务《" + safeFullTaskTitle() + "》的本轮专注已完成。"
+            );
             return;
         }
 
+        activeTimerSnapshot.breakRemainingMillis = getBreakDurationMillis(activeTimerSnapshot);
         activeTimerSnapshot.breakMode = true;
-        activeTimerSnapshot.stageDurationMillis = breakMinutes * MILLIS_PER_MINUTE;
-        activeTimerSnapshot.remainingMillis = activeTimerSnapshot.stageDurationMillis;
-        activeTimerSnapshot.elapsedFocusMillisInRound = 0L;
         activeTimerSnapshot.running = false;
+        bindCurrentStageState(activeTimerSnapshot);
         persistActiveSnapshot();
-        if (!interrupted) {
-            FocusNotificationHelper.showTimerNotification(
-                    requireContext(),
-                    "专注完成，开始休息",
-                    "任务《" + safeFullTaskTitle() + "》已完成一轮专注，现在进入休息阶段。"
-            );
-            Toast.makeText(getContext(), "专注完成，开始休息", Toast.LENGTH_SHORT).show();
-        }
+        FocusNotificationHelper.showTimerNotification(
+                requireContext(),
+                "专注完成，开始休息",
+                "任务《" + safeFullTaskTitle() + "》已完成一轮专注，现在进入休息阶段。"
+        );
+        Toast.makeText(getContext(), "专注完成，开始休息", Toast.LENGTH_SHORT).show();
     }
 
     private void finishTimerSession() {
@@ -493,9 +584,10 @@ public class TaskFragment extends Fragment {
             return;
         }
 
-        boolean onFocusStage = !activeTimerSnapshot.breakMode;
-        int focusSeconds = (int) (activeTimerSnapshot.elapsedFocusMillisInRound / 1000L);
-        if (onFocusStage && focusSeconds > 0) {
+        int focusSeconds = getCurrentRoundFocusSeconds();
+        boolean hasUnsavedFocus = focusSeconds > 0 && (!activeTimerSnapshot.breakMode
+                || activeTimerSnapshot.focusRemainingMillis < getFocusDurationMillis(activeTimerSnapshot));
+        if (hasUnsavedFocus) {
             saveFocusRecord(focusSeconds, "interrupted");
             syncTaskProgress(focusSeconds, true);
         }
@@ -525,17 +617,22 @@ public class TaskFragment extends Fragment {
             return;
         }
 
+        bindCurrentStageState(activeTimerSnapshot);
+
         String phaseText = activeTimerSnapshot.breakMode ? "当前阶段: 休息" : "当前阶段: 专注";
         timerPhaseView.setText(phaseText);
         timerClockView.setText(formatMillis(activeTimerSnapshot.remainingMillis));
         timerMetaView.setText(buildTimerMetaText(activeTimerSnapshot));
-        timerToggleButton.setText(activeTimerSnapshot.running ? "暂停计时" :
-                (activeTimerSnapshot.taskStarted ? "继续专注" : "开始专注"));
+        timerToggleButton.setText(activeTimerSnapshot.running ? "暂停计时"
+                : (activeTimerSnapshot.taskStarted ? "继续计时" : "开始专注"));
+        if (timerNextStageButton != null) {
+            timerNextStageButton.setText(activeTimerSnapshot.breakMode ? "返回专注" : "进入休息");
+        }
     }
 
     private String buildTimerMetaText(TaskTimerStore.TimerSnapshot snapshot) {
         return "专注 " + snapshot.focusDurationMins + " 分钟 / 休息 " + snapshot.breakDurationMins
-                + " 分钟  |  已暂停 " + snapshot.pauseCount + " 次  |  完成轮次 " + snapshot.completedCycles;
+                + " 分钟  |  已暂停 " + snapshot.pauseCount + " 次 | 完成轮次 " + snapshot.completedCycles;
     }
 
     private String formatMillis(long millis) {
@@ -550,6 +647,7 @@ public class TaskFragment extends Fragment {
         if (getContext() == null || activeTimerSnapshot == null) {
             return;
         }
+        bindCurrentStageState(activeTimerSnapshot);
         TaskTimerStore.save(getContext(), activeTimerSnapshot);
     }
 
@@ -566,6 +664,7 @@ public class TaskFragment extends Fragment {
         timerClockView = null;
         timerMetaView = null;
         timerToggleButton = null;
+        timerNextStageButton = null;
         activeTimerTask = null;
     }
 
