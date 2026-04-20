@@ -1,12 +1,10 @@
 <template>
   <header class="header">
     <div class="header-content">
-      <!-- Logo -->
       <div class="logo-section">
         <h1 class="logo">旅行记忆</h1>
       </div>
 
-      <!-- 主导航菜单 -->
       <nav class="nav-menu">
         <router-link to="/dashboard" class="nav-link" active-class="active">
           <el-icon><HomeFilled /></el-icon>
@@ -26,7 +24,6 @@
         </router-link>
       </nav>
 
-      <!-- 用户区域 -->
       <div class="user-section">
         <el-dropdown @command="handleCommand">
           <el-button type="primary" link class="account-btn">
@@ -38,6 +35,10 @@
               <el-dropdown-item v-if="false" command="profile">
                 <el-icon><UserFilled /></el-icon>
                 个人中心
+              </el-dropdown-item>
+              <el-dropdown-item v-if="userStore.isAdmin" command="admin">
+                <el-icon><Setting /></el-icon>
+                管理后台
               </el-dropdown-item>
               <el-dropdown-item command="logout" divided>
                 <el-icon><SwitchButton /></el-icon>
@@ -54,17 +55,18 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '../stores/userStore'
 import { ElMessage } from 'element-plus'
 import {
-  HomeFilled,
-  DocumentCopy,
   Calendar,
+  DocumentCopy,
+  HomeFilled,
+  Setting,
   Share,
+  SwitchButton,
   User,
-  UserFilled,
-  SwitchButton
+  UserFilled
 } from '@element-plus/icons-vue'
+import { useUserStore } from '../stores/userStore'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -74,7 +76,15 @@ const accountLabel = computed(() => userStore.user?.username || '我的账户')
 const handleCommand = (command) => {
   if (command === 'profile') {
     router.push('/profile')
-  } else if (command === 'logout') {
+    return
+  }
+
+  if (command === 'admin') {
+    router.push('/admin')
+    return
+  }
+
+  if (command === 'logout') {
     userStore.logout()
     ElMessage.success('退出登录成功')
     router.push('/login')
@@ -99,11 +109,6 @@ const handleCommand = (command) => {
   padding: 0 30px;
   height: 64px;
   max-width: 100%;
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
 }
 
 .logo {
@@ -143,24 +148,15 @@ const handleCommand = (command) => {
   font-weight: bold;
 }
 
-.user-section {
-  display: flex;
-  align-items: center;
-}
-
 .account-btn {
   color: white !important;
   font-size: 15px;
   font-weight: 600;
 }
 
-/* 移动端适配 */
 @media (max-width: 992px) {
   .nav-menu {
     gap: 20px;
-  }
-  .nav-link span {
-    font-size: 14px;
   }
 }
 
@@ -169,11 +165,8 @@ const handleCommand = (command) => {
     padding: 0 15px;
     height: auto;
     flex-direction: column;
-    py: 12px;
-  }
-
-  .logo-section {
-    margin-bottom: 8px;
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
 
   .nav-menu {
@@ -185,7 +178,7 @@ const handleCommand = (command) => {
   }
 
   .nav-link span {
-    display: none; /* 小屏幕只显示图标 */
+    display: none;
   }
 
   .user-section {

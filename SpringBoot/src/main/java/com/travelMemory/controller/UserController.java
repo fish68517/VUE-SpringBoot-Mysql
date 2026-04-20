@@ -51,7 +51,7 @@ public class UserController {
      * @return ResponseEntity with UserResponse containing updated user information
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UpdateUserRequest updateRequest) {

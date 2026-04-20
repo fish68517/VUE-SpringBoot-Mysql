@@ -4,6 +4,7 @@ import com.travelMemory.dto.UserResponse;
 import com.travelMemory.dto.UpdateUserRequest;
 import com.travelMemory.dto.UserStatisticsResponse;
 import com.travelMemory.entity.User;
+import com.travelMemory.entity.UserRole;
 import com.travelMemory.repository.UserRepository;
 import com.travelMemory.repository.TravelRecordRepository;
 import com.travelMemory.repository.TravelPlanRepository;
@@ -130,6 +131,7 @@ public class UserService {
                 .email(user.getEmail())
                 .avatarUrl(user.getAvatarUrl())
                 .bio(user.getBio())
+                .role(user.getRole() != null ? user.getRole().name() : UserRole.USER.name())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();

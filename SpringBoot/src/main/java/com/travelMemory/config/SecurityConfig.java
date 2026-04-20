@@ -1,7 +1,7 @@
 package com.travelMemory.config;
 
-import com.travelMemory.security.JwtAuthenticationFilter;
 import com.travelMemory.security.JwtAuthenticationEntryPoint;
+import com.travelMemory.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,26 +50,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // CSRF protection is disabled for JWT-based API since JWT tokens provide CSRF protection
-            // For traditional form-based authentication, CSRF should be enabled
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/auth/**").permitAll()
-                .requestMatchers("/api/travels/public").permitAll()
+                .requestMatchers("/api/auth/**", "/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/travels/public/feed").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                    // 静态资源放行 (如果是前后端不分离项目)
-                    .requestMatchers("/static/**", "/resources/**").permitAll()
-                    .requestMatchers("/uploads/**").permitAll()
+                .requestMatchers("/static/**", "/resources/**", "/uploads/**").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
-            // Add security headers
             .headers(headers -> headers
                 .frameOptions(frameOptions -> frameOptions.deny())
-                .xssProtection(xss -> xss.and())
+                .xssProtection(xss -> xss.disable())
                 .contentSecurityPolicy(csp -> csp.policyDirectives(
                     "default-src 'self'; " +
                     "script-src 'self' 'unsafe-inline' 'unsafe-eval'; " +
@@ -90,18 +85,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
-        // Configure allowed origins - restrict to specific domains in production
         configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:5173",      // Vue dev server
-            "http://localhost:3000",      // Alternative dev server
-            "http://localhost:8080"       // Backend for testing
+            "http://localhost:5173",
+            "http://localhost:3000",
+            "http://localhost:8080"
         ));
-        
-        // Allow specific HTTP methods
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        
-        // Allow specific headers
         configuration.setAllowedHeaders(Arrays.asList(
             "Content-Type",
             "Authorization",
@@ -111,18 +100,12 @@ public class SecurityConfig {
             "Access-Control-Request-Method",
             "Access-Control-Request-Headers"
         ));
-        
-        // Expose specific headers to client
         configuration.setExposedHeaders(Arrays.asList(
             "Authorization",
             "Content-Type",
             "X-Total-Count"
         ));
-        
-        // Allow credentials (cookies, authorization headers)
         configuration.setAllowCredentials(true);
-        
-        // Cache preflight requests for 1 hour
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

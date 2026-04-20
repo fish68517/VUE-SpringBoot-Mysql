@@ -2,10 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useUserStore } from '../stores/userStore'
 
 const routes = [
-  {
-    path: '/',
-    redirect: '/login'
-  },
+  { path: '/', redirect: '/login' },
   {
     path: '/login',
     name: 'Login',
@@ -82,7 +79,37 @@ const routes = [
     path: '/footprints',
     name: 'TravelFootprints',
     component: () => import('../views/TravelFootprints.vue'),
-    meta: { title: '旅行足迹' }
+    meta: { requiresAuth: true, title: '旅行足迹' }
+  },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: () => import('../views/AdminDashboardView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/users',
+    name: 'AdminUsers',
+    component: () => import('../views/AdminUsersView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/travels',
+    name: 'AdminTravels',
+    component: () => import('../views/AdminTravelsView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/plans',
+    name: 'AdminPlans',
+    component: () => import('../views/AdminPlansView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
+  },
+  {
+    path: '/admin/social',
+    name: 'AdminSocial',
+    component: () => import('../views/AdminSocialView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
   }
 ]
 
@@ -91,18 +118,22 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach((to) => {
   const userStore = useUserStore()
-  const requiresAuth = to.meta.requiresAuth
-  next()
 
-  // if (requiresAuth && !userStore.isAuthenticated) {
-  //   next('/login')
-  // } else if (!requiresAuth && userStore.isAuthenticated && (to.path === '/login' || to.path === '/register')) {
-  //   next('/dashboard')
-  // } else {
-  //   next()
-  // }
+  if (to.meta.requiresAuth && !userStore.isAuthenticated) {
+    return '/login'
+  }
+
+  if (!to.meta.requiresAuth && userStore.isAuthenticated) {
+    return userStore.getDefaultRoute()
+  }
+
+  if (to.meta.requiresAdmin && !userStore.isAdmin) {
+    return userStore.getDefaultRoute()
+  }
+
+  return true
 })
 
 export default router

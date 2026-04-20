@@ -1,14 +1,21 @@
 <template>
   <div id="app">
-    <!-- Global error notification component -->
     <ErrorNotification />
 
-    <!-- Login/Register pages don't show layout -->
     <template v-if="isAuthPage">
       <router-view />
     </template>
 
-    <!-- Main layout for authenticated pages -->
+    <template v-else-if="isAdminPage">
+      <AdminHeader />
+      <div class="main-container">
+        <AdminSidebar />
+        <main class="main-content admin-content">
+          <router-view />
+        </main>
+      </div>
+    </template>
+
     <template v-else>
       <Header />
       <div class="main-container">
@@ -25,17 +32,18 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import AdminHeader from './components/AdminHeader.vue'
+import AdminSidebar from './components/AdminSidebar.vue'
+import ErrorNotification from './components/ErrorNotification.vue'
+import Footer from './components/Footer.vue'
 import Header from './components/Header.vue'
 import Sidebar from './components/Sidebar.vue'
-import Footer from './components/Footer.vue'
-import ErrorNotification from './components/ErrorNotification.vue'
 import './styles/ux-improvements.css'
 
 const route = useRoute()
 
-const isAuthPage = computed(() => {
-  return route.path === '/login' || route.path === '/register'
-})
+const isAuthPage = computed(() => ['/login', '/register'].includes(route.path))
+const isAdminPage = computed(() => route.path.startsWith('/admin'))
 </script>
 
 <style scoped>
@@ -59,7 +67,12 @@ const isAuthPage = computed(() => {
   padding: 20px;
 }
 
-/* Responsive design */
+.admin-content {
+  background:
+    radial-gradient(circle at top right, rgba(58, 124, 165, 0.12), transparent 32%),
+    linear-gradient(180deg, #f4f8fb 0%, #eef3f7 100%);
+}
+
 @media (max-width: 768px) {
   .main-container {
     flex-direction: column;

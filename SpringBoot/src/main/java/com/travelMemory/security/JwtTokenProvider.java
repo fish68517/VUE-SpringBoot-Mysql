@@ -1,8 +1,12 @@
 package com.travelMemory.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException; // 注意引用这个异常
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,49 +30,25 @@ public class JwtTokenProvider {
 
     private SecretKey key;
 
-    // 初始化 Key，确保只生成一次，且长度足够
     @PostConstruct
     public void init() {
-        // 如果你的 jwtSecret 长度不足 64 个字符（针对 HS512），这里可能会报错或警告
-        // 建议在 application.yml 里设置一个很长的随机字符串
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
-     * 生成 Token (包含 email)
-     */
-    public String generateToken(String userId, String email) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
-
-        return Jwts.builder()
-                .setSubject(userId)
-                .claim("email", email)
-                .setIssuedAt(now)
-                .setExpiration(expiryDate) // 修复了这里的语法错误
-                .signWith(key, SignatureAlgorithm.HS512) // 统一使用 HS512
-                .compact();
-    }
-
-    /**
-     * 生成 Token (包含 role)
-     */
-    public String generateToken(Long userId, String role) {
+    public String generateToken(Long userId, String email, String role) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
                 .setSubject(userId.toString())
+                .claim("email", email)
                 .claim("role", role)
                 .setIssuedAt(now)
-                .setExpiration(expiryDate) // 修复了这里的语法错误
-                .signWith(key, SignatureAlgorithm.HS512) // 统一使用 HS512
+                .setExpiration(expiryDate)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    /**
-     * 从 Token 获取 UserID
-     */
     public String getUserIdFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -78,9 +58,6 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    /**
-     * 从 Token 获取 Email
-     */
     public String getEmailFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -90,9 +67,15 @@ public class JwtTokenProvider {
                 .get("email", String.class);
     }
 
-    /**
-     * 校验 Token
-     */
+    public String getRoleFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
