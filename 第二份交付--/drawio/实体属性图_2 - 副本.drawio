@@ -1,0 +1,195 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="pmihwUEYZBab0sANIGWq">
+    <mxGraphModel dx="7469" dy="4873" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="980" pageHeight="690" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="en_user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=15;fontStyle=1;fillColor=none;strokeColor=#000000;" value="用户 (User)" vertex="1">
+          <mxGeometry height="40" width="120" x="350" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="en_order" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=15;fontStyle=1;fillColor=none;strokeColor=#000000;" value="订单 (Order)" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="en_recipe" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=15;fontStyle=1;fillColor=none;strokeColor=#000000;" value="菜谱 (Recipe)" vertex="1">
+          <mxGeometry height="40" width="120" x="1150" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="en_cart" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=15;fontStyle=1;fillColor=none;strokeColor=#000000;" value="购物车 (Cart)" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="en_comment" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=15;fontStyle=1;fillColor=none;strokeColor=#000000;" value="评论 (Comment)" vertex="1">
+          <mxGeometry height="40" width="120" x="350" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="en_category" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=15;fontStyle=1;fillColor=none;strokeColor=#000000;" value="分类 (Category)" vertex="1">
+          <mxGeometry height="40" width="120" x="1550" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_order" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;" value="下单" vertex="1">
+          <mxGeometry height="40" width="80" x="550" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_contain1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;" value="包含" vertex="1">
+          <mxGeometry height="40" width="80" x="950" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_cart" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;" value="加购" vertex="1">
+          <mxGeometry height="40" width="80" x="550" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_contain2" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;" value="包含" vertex="1">
+          <mxGeometry height="40" width="80" x="950" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_comment" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;" value="发表" vertex="1">
+          <mxGeometry height="40" width="80" x="370" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_about" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;" value="针对" vertex="1">
+          <mxGeometry height="40" width="80" x="770" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_cat" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;" value="属于" vertex="1">
+          <mxGeometry height="40" width="80" x="1370" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ro1" edge="1" parent="1" source="en_user" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="rel_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ro2" edge="1" parent="1" source="rel_order" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="en_order" value="1:N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_rc1" edge="1" parent="1" source="en_order" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="rel_contain1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_rc2" edge="1" parent="1" source="rel_contain1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="en_recipe" value="N:M">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cart1" edge="1" parent="1" source="en_user" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="rel_cart">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cart2" edge="1" parent="1" source="rel_cart" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="en_cart" value="1:1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cc1" edge="1" parent="1" source="en_cart" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="rel_contain2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cc2" edge="1" parent="1" source="rel_contain2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="en_recipe" value="N:M">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_com1" edge="1" parent="1" source="en_user" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="rel_comment">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_com2" edge="1" parent="1" source="rel_comment" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="en_comment" value="1:N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ab1" edge="1" parent="1" source="en_comment" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="rel_about">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ab2" edge="1" parent="1" source="rel_about" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="en_recipe" value="N:1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cat1" edge="1" parent="1" source="en_recipe" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="rel_cat">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_cat2" edge="1" parent="1" source="rel_cat" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=none;strokeColor=#000000;" target="en_category" value="N:1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="用户ID" vertex="1">
+          <mxGeometry height="35" width="80" x="180" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="用户名" vertex="1">
+          <mxGeometry height="35" width="80" x="140" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="角色权限" vertex="1">
+          <mxGeometry height="35" width="80" x="180" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="BMI指数" vertex="1">
+          <mxGeometry height="35" width="80" x="270" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="a_u5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="口味偏好" vertex="1">
+          <mxGeometry height="35" width="80" x="270" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_u1" edge="1" parent="1" source="a_u1" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_user" />
+        <mxCell id="ea_u2" edge="1" parent="1" source="a_u2" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_user" />
+        <mxCell id="ea_u3" edge="1" parent="1" source="a_u3" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_user" />
+        <mxCell id="ea_u4" edge="1" parent="1" source="a_u4" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_user" />
+        <mxCell id="ea_u5" edge="1" parent="1" source="a_u5" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_user" />
+        <mxCell id="a_o1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="订单ID" vertex="1">
+          <mxGeometry height="35" width="80" x="640" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="订单编号" vertex="1">
+          <mxGeometry height="35" width="80" x="730" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="总金额" vertex="1">
+          <mxGeometry height="35" width="80" x="830" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="订单状态" vertex="1">
+          <mxGeometry height="35" width="80" x="910" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="创建时间" vertex="1">
+          <mxGeometry height="35" width="80" x="930" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_o1" edge="1" parent="1" source="a_o1" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order" />
+        <mxCell id="ea_o2" edge="1" parent="1" source="a_o2" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order" />
+        <mxCell id="ea_o3" edge="1" parent="1" source="a_o3" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order" />
+        <mxCell id="ea_o4" edge="1" parent="1" source="a_o4" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order" />
+        <mxCell id="ea_o5" edge="1" parent="1" source="a_o5" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order" />
+        <mxCell id="a_r1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="菜谱ID" vertex="1">
+          <mxGeometry height="35" width="80" x="1100" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="菜谱名称" vertex="1">
+          <mxGeometry height="35" width="80" x="1220" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="烹饪难度" vertex="1">
+          <mxGeometry height="35" width="80" x="1300" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="价格" vertex="1">
+          <mxGeometry height="35" width="80" x="1220" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="a_r5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="烹饪时间" vertex="1">
+          <mxGeometry height="35" width="80" x="1110" y="560" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_r1" edge="1" parent="1" source="a_r1" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_recipe" />
+        <mxCell id="ea_r2" edge="1" parent="1" source="a_r2" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_recipe" />
+        <mxCell id="ea_r3" edge="1" parent="1" source="a_r3" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_recipe" />
+        <mxCell id="ea_r4" edge="1" parent="1" source="a_r4" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_recipe" />
+        <mxCell id="ea_r5" edge="1" parent="1" source="a_r5" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_recipe" />
+        <mxCell id="a_ct1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="购物车ID" vertex="1">
+          <mxGeometry height="35" width="80" x="700" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ct2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="购买数量" vertex="1">
+          <mxGeometry height="35" width="80" x="800" y="850" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ct3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="添加时间" vertex="1">
+          <mxGeometry height="35" width="80" x="880" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_ct1" edge="1" parent="1" source="a_ct1" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_cart" />
+        <mxCell id="ea_ct2" edge="1" parent="1" source="a_ct2" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_cart" />
+        <mxCell id="ea_ct3" edge="1" parent="1" source="a_ct3" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_cart" />
+        <mxCell id="a_cm1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="评论ID" vertex="1">
+          <mxGeometry height="35" width="80" x="220" y="810" as="geometry" />
+        </mxCell>
+        <mxCell id="a_cm2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="评论内容" vertex="1">
+          <mxGeometry height="35" width="80" x="190" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="a_cm3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="评分等级" vertex="1">
+          <mxGeometry height="35" width="80" x="250" y="940" as="geometry" />
+        </mxCell>
+        <mxCell id="a_cm4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="点赞数量" vertex="1">
+          <mxGeometry height="35" width="80" x="360" y="950" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_cm1" edge="1" parent="1" source="a_cm1" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_comment" />
+        <mxCell id="ea_cm2" edge="1" parent="1" source="a_cm2" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_comment" />
+        <mxCell id="ea_cm3" edge="1" parent="1" source="a_cm3" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_comment" />
+        <mxCell id="ea_cm4" edge="1" parent="1" source="a_cm4" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_comment" />
+        <mxCell id="a_ca1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="分类ID" vertex="1">
+          <mxGeometry height="35" width="80" x="1560" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ca2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="分类名称" vertex="1">
+          <mxGeometry height="35" width="80" x="1680" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ca3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="分类描述" vertex="1">
+          <mxGeometry height="35" width="80" x="1720" y="460" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ca4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="排序权重" vertex="1">
+          <mxGeometry height="35" width="80" x="1660" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_ca1" edge="1" parent="1" source="a_ca1" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_category" />
+        <mxCell id="ea_ca2" edge="1" parent="1" source="a_ca2" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_category" />
+        <mxCell id="ea_ca3" edge="1" parent="1" source="a_ca3" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_category" />
+        <mxCell id="ea_ca4" edge="1" parent="1" source="a_ca4" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_category" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

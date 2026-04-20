@@ -1,0 +1,102 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="FdLE8wsEBQt50f0eLfZ7">
+    <mxGraphModel dx="1028" dy="611" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="980" pageHeight="690" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1" value="用户 (User)" vertex="1">
+          <mxGeometry height="40" width="100" x="540" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="recipe" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1" value="菜谱 (Recipe)" vertex="1">
+          <mxGeometry height="40" width="100" x="530" y="497" as="geometry" />
+        </mxCell>
+        <mxCell id="order" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1" value="订单 (Order)" vertex="1">
+          <mxGeometry height="40" width="100" x="900" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="category" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="分类 (Category)" vertex="1">
+          <mxGeometry height="40" width="100" x="316" y="576" as="geometry" />
+        </mxCell>
+        <mxCell id="window" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="食堂窗口 (Window)" vertex="1">
+          <mxGeometry height="40" width="100" x="780" y="483" as="geometry" />
+        </mxCell>
+        <mxCell id="comment" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="评论 (Comment)" vertex="1">
+          <mxGeometry height="40" width="100" x="540" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="cart" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="购物车 (Cart)" vertex="1">
+          <mxGeometry height="40" width="100" x="760" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_order" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="下单" vertex="1">
+          <mxGeometry height="40" width="80" x="740" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_comment" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="评论" vertex="1">
+          <mxGeometry height="40" width="80" x="550" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_cat" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="属于" vertex="1">
+          <mxGeometry height="40" width="80" x="439" y="590" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_win" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="提供" vertex="1">
+          <mxGeometry height="40" width="80" x="658" y="461" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_fav" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="收藏" vertex="1">
+          <mxGeometry height="40" width="80" x="416" y="384" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_cart" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="添加" vertex="1">
+          <mxGeometry height="40" width="80" x="720" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_detail" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="详情" vertex="1">
+          <mxGeometry height="40" width="80" x="898" y="579" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_pub" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="发布" vertex="1">
+          <mxGeometry height="40" width="80" x="331" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="rel_order" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="rel_order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;exitX=1;exitY=0.5;entryX=0.5;entryY=0;" target="order" value="n">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="user" style="edgeStyle=none;html=1;endArrow=none;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="rel_comment" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="rel_comment" style="edgeStyle=none;html=1;endArrow=none;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="comment" value="n">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="comment" style="edgeStyle=none;html=1;endArrow=none;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="recipe" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="recipe" style="edgeStyle=none;html=1;endArrow=none;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="rel_cat" value="n">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="rel_cat" style="edgeStyle=none;html=1;endArrow=none;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="category" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="recipe" style="edgeStyle=none;html=1;endArrow=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="rel_win" value="n">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="rel_win" style="edgeStyle=none;html=1;endArrow=none;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="window" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;exitX=0;exitY=0.5;entryX=0.5;entryY=0;" target="rel_fav" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="rel_fav" style="rounded=0;html=1;endArrow=none;exitX=0.5;exitY=1;" value="n">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="550" y="496" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="order" style="edgeStyle=none;html=1;endArrow=none;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="rel_detail" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="rel_detail" style="rounded=0;html=1;endArrow=none;exitX=0.5;exitY=1;entryX=1;entryY=0.5;" target="recipe" value="n">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="user" style="edgeStyle=none;html=1;endArrow=none;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="rel_pub" value="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="rel_pub" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;exitX=0.5;exitY=1;entryX=0;entryY=0.25;" target="recipe" value="n">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,43 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="pmihwUEYZBab0sANIGWq">
+    <mxGraphModel dx="1215" dy="731" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="en_order" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=15;fontStyle=1;fillColor=none;strokeColor=#000000;" value="订单 (Order)" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="订单ID" vertex="1">
+          <mxGeometry height="35" width="80" x="640" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="订单编号" vertex="1">
+          <mxGeometry height="35" width="80" x="730" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="总金额" vertex="1">
+          <mxGeometry height="35" width="80" x="830" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="订单状态" vertex="1">
+          <mxGeometry height="35" width="80" x="910" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="a_o5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;fillColor=none;strokeColor=#000000;" value="创建时间" vertex="1">
+          <mxGeometry height="35" width="80" x="930" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_o1" edge="1" parent="1" source="a_o1" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_o2" edge="1" parent="1" source="a_o2" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_o3" edge="1" parent="1" source="a_o3" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_o4" edge="1" parent="1" source="a_o4" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ea_o5" edge="1" parent="1" source="a_o5" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#000000;" target="en_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
