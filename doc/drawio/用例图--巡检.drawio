@@ -1,0 +1,46 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="0v2gTM2B2TeaWmeWr4RU">
+    <mxGraphModel dx="1209" dy="719" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sys_boundary" parent="1" style="swimlane;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;startSize=30;" value="电力设备巡检维护系统 - 巡检员模块" vertex="1">
+          <mxGeometry height="400" width="600" x="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_task" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;" value="执行巡检任务" vertex="1">
+          <mxGeometry height="50" width="140" x="60" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_view_notice" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;" value="查阅公告规范" vertex="1">
+          <mxGeometry height="50" width="140" x="60" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_fill" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;" value="填写巡检指标结果" vertex="1">
+          <mxGeometry height="40" width="150" x="380" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_img" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;" value="上传巡检现场图片" vertex="1">
+          <mxGeometry height="40" width="150" x="380" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_abn" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;" value="提报设备维修需求" vertex="1">
+          <mxGeometry height="40" width="150" x="380" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="inc1" edge="1" parent="sys_boundary" source="uc_task" style="edgeStyle=none;dashed=1;endArrow=open;" target="sub_fill" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc2" edge="1" parent="sys_boundary" source="uc_task" style="edgeStyle=none;dashed=1;endArrow=open;" target="sub_img" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc3" edge="1" parent="sys_boundary" source="uc_task" style="edgeStyle=none;dashed=1;endArrow=open;" target="sub_abn" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_insp" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontStyle=1;" value="巡检员" vertex="1">
+          <mxGeometry height="80" width="40" x="60" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="actor_insp" style="edgeStyle=none;endArrow=none;" target="uc_task">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="actor_insp" style="edgeStyle=none;endArrow=none;" target="uc_view_notice">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

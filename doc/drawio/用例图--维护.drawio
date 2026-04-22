@@ -1,0 +1,46 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="dlWYKNzdVgXdCBI-BhKZ">
+    <mxGraphModel dx="2056" dy="1222" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sys_boundary" parent="1" style="swimlane;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;startSize=30;" value="电力设备巡检维护系统 - 维护员模块" vertex="1">
+          <mxGeometry height="400" width="600" x="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_order" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;" value="处理维护工单" vertex="1">
+          <mxGeometry height="50" width="140" x="60" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_req" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;" value="查看工单处理要求" vertex="1">
+          <mxGeometry height="50" width="140" x="60" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_act" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;" value="填写具体维修措施" vertex="1">
+          <mxGeometry height="40" width="150" x="380" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_img" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;" value="上传维修后现场图片" vertex="1">
+          <mxGeometry height="40" width="150" x="380" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_res" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=13;" value="提交最终处理结果" vertex="1">
+          <mxGeometry height="40" width="150" x="380" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="inc1" edge="1" parent="sys_boundary" source="uc_order" style="edgeStyle=none;dashed=1;endArrow=open;" target="sub_act" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc2" edge="1" parent="sys_boundary" source="uc_order" style="edgeStyle=none;dashed=1;endArrow=open;" target="sub_img" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc3" edge="1" parent="sys_boundary" source="uc_order" style="edgeStyle=none;dashed=1;endArrow=open;" target="sub_res" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_main" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontStyle=1;" value="维护员" vertex="1">
+          <mxGeometry height="80" width="40" x="60" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="actor_main" style="edgeStyle=none;endArrow=none;" target="uc_order">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="actor_main" style="edgeStyle=none;endArrow=none;" target="uc_req">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

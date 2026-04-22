@@ -1,0 +1,64 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="tpuwzcRqd283diVr-lx9">
+    <mxGraphModel dx="1713" dy="1018" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sys_boundary" parent="1" style="swimlane;whiteSpace=wrap;html=1;fontSize=14;fontStyle=1;startSize=30;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="电力设备巡检维护系统 - 管理员模块" vertex="1">
+          <mxGeometry height="600" width="600" x="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_user" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="用户管理" vertex="1">
+          <mxGeometry height="50" width="140" x="60" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_device" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="设备管理" vertex="1">
+          <mxGeometry height="50" width="140" x="60" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_std" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="标准管理" vertex="1">
+          <mxGeometry height="50" width="140" x="60" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="uc_notice" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="公告管理" vertex="1">
+          <mxGeometry height="50" width="140" x="60" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_add_u" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="添加/配置系统用户" vertex="1">
+          <mxGeometry height="40" width="140" x="400" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_dev_info" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="设备台账与分类维护" vertex="1">
+          <mxGeometry height="40" width="140" x="400" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_set_std" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="制定巡检作业标准" vertex="1">
+          <mxGeometry height="40" width="140" x="400" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="sub_pub_notice" parent="sys_boundary" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="发布填报/处理规范" vertex="1">
+          <mxGeometry height="40" width="140" x="400" y="425" as="geometry" />
+        </mxCell>
+        <mxCell id="inc1" edge="1" parent="sys_boundary" source="uc_user" style="edgeStyle=none;dashed=1;endArrow=open;strokeWidth=2;strokeColor=#000000;fontSize=14;fontColor=#000000;" target="sub_add_u" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc2" edge="1" parent="sys_boundary" source="uc_device" style="edgeStyle=none;dashed=1;endArrow=open;strokeWidth=2;strokeColor=#000000;fontSize=14;fontColor=#000000;" target="sub_dev_info" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc3" edge="1" parent="sys_boundary" source="uc_std" style="edgeStyle=none;dashed=1;endArrow=open;strokeWidth=2;strokeColor=#000000;fontSize=14;fontColor=#000000;" target="sub_set_std" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inc4" edge="1" parent="sys_boundary" source="uc_notice" style="edgeStyle=none;dashed=1;endArrow=open;strokeWidth=2;strokeColor=#000000;fontSize=14;fontColor=#000000;" target="sub_pub_notice" value="&lt;&lt;include&gt;&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="actor_admin" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;fontStyle=1;strokeWidth=2;strokeColor=#000000;fontColor=#000000;" value="管理员" vertex="1">
+          <mxGeometry height="80" width="40" x="60" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="actor_admin" style="edgeStyle=none;endArrow=none;strokeWidth=2;strokeColor=#000000;fontSize=14;fontColor=#000000;" target="uc_user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="actor_admin" style="edgeStyle=none;endArrow=none;strokeWidth=2;strokeColor=#000000;fontSize=14;fontColor=#000000;" target="uc_device">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="actor_admin" style="edgeStyle=none;endArrow=none;strokeWidth=2;strokeColor=#000000;fontSize=14;fontColor=#000000;" target="uc_std">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="actor_admin" style="edgeStyle=none;endArrow=none;strokeWidth=2;strokeColor=#000000;fontSize=14;fontColor=#000000;" target="uc_notice">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

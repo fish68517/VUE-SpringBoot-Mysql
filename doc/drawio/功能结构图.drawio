@@ -1,0 +1,115 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="YpWYr27VrO0NY6zS9hTZ">
+    <mxGraphModel dx="1028" dy="611" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="root_node" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=16;fontStyle=1;" value="电 力 设 备 巡 检 维 护 系 统" vertex="1">
+          <mxGeometry height="40" width="260" x="465" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="l1_user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=14;fontStyle=1;" value="用&lt;br&gt;户&lt;br&gt;与&lt;br&gt;权&lt;br&gt;限" vertex="1">
+          <mxGeometry height="130" width="30" x="195" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="l1_device" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=14;fontStyle=1;" value="设&lt;br&gt;备&lt;br&gt;与&lt;br&gt;台&lt;br&gt;账" vertex="1">
+          <mxGeometry height="130" width="30" x="395" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="l1_inspect" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=14;fontStyle=1;" value="巡&lt;br&gt;检&lt;br&gt;与&lt;br&gt;标&lt;br&gt;准" vertex="1">
+          <mxGeometry height="130" width="30" x="595" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="l1_maintain" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=14;fontStyle=1;" value="维&lt;br&gt;护&lt;br&gt;与&lt;br&gt;工&lt;br&gt;单" vertex="1">
+          <mxGeometry height="130" width="30" x="795" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="l1_notice" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=14;fontStyle=1;" value="公&lt;br&gt;告&lt;br&gt;与&lt;br&gt;信&lt;br&gt;息" vertex="1">
+          <mxGeometry height="130" width="30" x="995" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="e_root_user" edge="1" parent="1" source="root_node" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l1_user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_root_device" edge="1" parent="1" source="root_node" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l1_device">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_root_inspect" edge="1" parent="1" source="root_node" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l1_inspect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_root_maintain" edge="1" parent="1" source="root_node" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l1_maintain">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_root_notice" edge="1" parent="1" source="root_node" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l1_notice">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_u1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="账&lt;br&gt;号&lt;br&gt;信&lt;br&gt;息&lt;br&gt;管&lt;br&gt;理" vertex="1">
+          <mxGeometry height="130" width="30" x="175" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_u2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="角&lt;br&gt;色&lt;br&gt;权&lt;br&gt;限&lt;br&gt;分&lt;br&gt;配" vertex="1">
+          <mxGeometry height="130" width="30" x="215" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="e_u1" edge="1" parent="1" source="l1_user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_u1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_u2" edge="1" parent="1" source="l1_user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_u2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_d1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="设&lt;br&gt;备&lt;br&gt;分&lt;br&gt;类&lt;br&gt;维&lt;br&gt;护" vertex="1">
+          <mxGeometry height="130" width="30" x="375" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_d2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="设&lt;br&gt;备&lt;br&gt;档&lt;br&gt;案&lt;br&gt;登&lt;br&gt;记" vertex="1">
+          <mxGeometry height="130" width="30" x="415" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="e_d1" edge="1" parent="1" source="l1_device" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_d1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_d2" edge="1" parent="1" source="l1_device" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_d2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_i1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="巡&lt;br&gt;检&lt;br&gt;指&lt;br&gt;标&lt;br&gt;制&lt;br&gt;定" vertex="1">
+          <mxGeometry height="130" width="30" x="555" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_i2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="巡&lt;br&gt;检&lt;br&gt;结&lt;br&gt;果&lt;br&gt;填&lt;br&gt;报" vertex="1">
+          <mxGeometry height="130" width="30" x="595" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_i3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="异&lt;br&gt;常&lt;br&gt;状&lt;br&gt;态&lt;br&gt;提&lt;br&gt;报" vertex="1">
+          <mxGeometry height="130" width="30" x="635" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="e_i1" edge="1" parent="1" source="l1_inspect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_i1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_i2" edge="1" parent="1" source="l1_inspect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_i2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_i3" edge="1" parent="1" source="l1_inspect" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_i3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_m1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="维&lt;br&gt;修&lt;br&gt;措&lt;br&gt;施&lt;br&gt;记&lt;br&gt;录" vertex="1">
+          <mxGeometry height="130" width="30" x="755" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_m2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="现&lt;br&gt;场&lt;br&gt;图&lt;br&gt;片&lt;br&gt;上&lt;br&gt;传" vertex="1">
+          <mxGeometry height="130" width="30" x="795" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_m3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="维&lt;br&gt;修&lt;br&gt;闭&lt;br&gt;环&lt;br&gt;审&lt;br&gt;核" vertex="1">
+          <mxGeometry height="130" width="30" x="835" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="e_m1" edge="1" parent="1" source="l1_maintain" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_m1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_m2" edge="1" parent="1" source="l1_maintain" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_m2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_m3" edge="1" parent="1" source="l1_maintain" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_m3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_n1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="业&lt;br&gt;务&lt;br&gt;公&lt;br&gt;告&lt;br&gt;发&lt;br&gt;布" vertex="1">
+          <mxGeometry height="130" width="30" x="975" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="l2_n2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;fontSize=13;" value="规&lt;br&gt;范&lt;br&gt;要&lt;br&gt;求&lt;br&gt;查&lt;br&gt;阅" vertex="1">
+          <mxGeometry height="130" width="30" x="1015" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="e_n1" edge="1" parent="1" source="l1_notice" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_n1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_n2" edge="1" parent="1" source="l1_notice" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=none;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="l2_n2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
