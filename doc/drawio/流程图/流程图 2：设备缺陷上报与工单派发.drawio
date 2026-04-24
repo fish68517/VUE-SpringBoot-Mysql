@@ -1,0 +1,82 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="b4AQJLB4waFM3Cs9tygl">
+    <mxGraphModel dx="1042" dy="626" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n_start" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=default;fontColor=#000000;fontStyle=1;fontSize=14;strokeWidth=2;" value="开始" vertex="1">
+          <mxGeometry height="40" width="120" x="340" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n_io1" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=none;strokeColor=default;fontColor=#000000;fontSize=14;strokeWidth=2;" value="上报设备缺陷信息" vertex="1">
+          <mxGeometry height="40" width="160" x="320" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="n_p1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=default;fontColor=#000000;fontSize=14;strokeWidth=2;" value="写入 defect 表&#xa;(status=&#39;pending&#39;)" vertex="1">
+          <mxGeometry height="50" width="140" x="330" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="n_p2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=default;fontColor=#000000;fontSize=14;strokeWidth=2;" value="管理员查询待处理缺陷" vertex="1">
+          <mxGeometry height="40" width="160" x="320" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="n_d1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=none;strokeColor=default;fontColor=#000000;fontSize=14;strokeWidth=2;" value="核实是否派发?" vertex="1">
+          <mxGeometry height="60" width="120" x="340" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="n_p3_n" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=default;fontColor=#000000;fontSize=14;strokeWidth=2;" value="驳回/关闭缺陷" vertex="1">
+          <mxGeometry height="40" width="120" x="160" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="n_p3_y" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=default;fontColor=#000000;fontSize=14;strokeWidth=2;" value="指定维护员并&#xa;写入 repair_order 表" vertex="1">
+          <mxGeometry height="50" width="140" x="480" y="515" as="geometry" />
+        </mxCell>
+        <mxCell id="n_p4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=default;fontColor=#000000;fontSize=14;strokeWidth=2;" value="更新 defect 状态为处理中" vertex="1">
+          <mxGeometry height="40" width="160" x="470" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="n_end" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=default;fontColor=#000000;fontStyle=1;fontSize=14;strokeWidth=2;" value="结束" vertex="1">
+          <mxGeometry height="40" width="120" x="340" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="n_start" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=default;strokeWidth=2;fontSize=14;fontColor=#000000;" target="n_io1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="n_io1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=default;strokeWidth=2;fontSize=14;fontColor=#000000;" target="n_p1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="n_p1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=default;strokeWidth=2;fontSize=14;fontColor=#000000;" target="n_p2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="n_p2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=default;strokeWidth=2;fontSize=14;fontColor=#000000;" target="n_d1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5_n" edge="1" parent="1" source="n_d1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=default;labelBackgroundColor=#ffffff;fontColor=#000000;fontStyle=1;strokeWidth=2;fontSize=14;" target="n_p3_n" value="N">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5_y" edge="1" parent="1" source="n_d1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=default;labelBackgroundColor=#ffffff;fontColor=#000000;fontStyle=1;strokeWidth=2;fontSize=14;" target="n_p3_y" value="Y">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="n_p3_y" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=default;strokeWidth=2;fontSize=14;fontColor=#000000;" target="n_p4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="n_p3_n" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=default;strokeWidth=2;fontSize=14;fontColor=#000000;" target="n_end">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="220" y="680" />
+              <mxPoint x="400" y="680" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="n_p4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=default;strokeWidth=2;fontSize=14;fontColor=#000000;" target="n_end">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="680" />
+              <mxPoint x="400" y="680" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,166 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="Quz6uGMylwk7zbRfElg6">
+    <mxGraphModel dx="1737" dy="1043" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sys_center" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=2;fontSize=14;fontStyle=1;arcSize=10;" value="电力设备巡检维护系统" vertex="1">
+          <mxGeometry height="500" width="300" x="450" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_inspector" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontSize=14;fontStyle=1;" value="巡检员" vertex="1">
+          <mxGeometry height="200" width="150" x="50" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_maintainer" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontSize=14;fontStyle=1;" value="维护员" vertex="1">
+          <mxGeometry height="200" width="150" x="50" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_admin" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;fontSize=14;fontStyle=1;" value="管理员" vertex="1">
+          <mxGeometry height="200" width="150" x="1000" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="e_i1" edge="1" parent="1" source="sys_center" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="ext_inspector">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="180" />
+            </Array>
+            <mxPoint x="450" y="180" as="sourcePoint" />
+            <mxPoint x="200" y="180" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_i1" parent="e_i1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="巡检任务与标准要求" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_i2" edge="1" parent="1" source="ext_inspector" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="sys_center">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="230" />
+            </Array>
+            <mxPoint x="200" y="230" as="sourcePoint" />
+            <mxPoint x="450" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_i2" parent="e_i2" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="巡检记录与现场图片" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_i3" edge="1" parent="1" source="sys_center" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="ext_inspector">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="280" />
+            </Array>
+            <mxPoint x="450" y="280" as="sourcePoint" />
+            <mxPoint x="200" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_i3" parent="e_i3" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="系统公告与反馈信息" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_i4" edge="1" parent="1" source="ext_inspector" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="sys_center">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="330" />
+            </Array>
+            <mxPoint x="200" y="330" as="sourcePoint" />
+            <mxPoint x="450" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_i4" parent="e_i4" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="设备缺陷与异常提报" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_m1" edge="1" parent="1" source="sys_center" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="ext_maintainer">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="480" />
+            </Array>
+            <mxPoint x="450" y="480" as="sourcePoint" />
+            <mxPoint x="200" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_m1" parent="e_m1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="维修工单与缺陷详情" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_m2" edge="1" parent="1" source="ext_maintainer" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="sys_center">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="530" />
+            </Array>
+            <mxPoint x="200" y="530" as="sourcePoint" />
+            <mxPoint x="450" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_m2" parent="e_m2" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="维修措施与处理结果" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_m3" edge="1" parent="1" source="sys_center" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="ext_maintainer">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="580" />
+            </Array>
+            <mxPoint x="450" y="580" as="sourcePoint" />
+            <mxPoint x="200" y="580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_m3" parent="e_m3" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="工单审核与反馈信息" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_m4" edge="1" parent="1" source="ext_maintainer" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="sys_center">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="325" y="630" />
+            </Array>
+            <mxPoint x="200" y="630" as="sourcePoint" />
+            <mxPoint x="450" y="630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_m4" parent="e_m4" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="维修现场确认图片" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_a1" edge="1" parent="1" source="ext_admin" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="sys_center">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="875" y="330" />
+            </Array>
+            <mxPoint x="1000" y="330" as="sourcePoint" />
+            <mxPoint x="750" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_a1" parent="e_a1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="基础台账与标准配置" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_a2" edge="1" parent="1" source="ext_admin" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="sys_center">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="875" y="380" />
+            </Array>
+            <mxPoint x="1000" y="380" as="sourcePoint" />
+            <mxPoint x="750" y="380" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_a2" parent="e_a2" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="任务派发与公告发布" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_a3" edge="1" parent="1" source="sys_center" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="ext_admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="875" y="430" />
+            </Array>
+            <mxPoint x="750" y="430" as="sourcePoint" />
+            <mxPoint x="1000" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_a3" parent="e_a3" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="巡检与维修统计数据" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_a4" edge="1" parent="1" source="sys_center" style="edgeStyle=none;html=1;endArrow=block;endFill=1;strokeColor=#000000;fontSize=14;" target="ext_admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="875" y="480" />
+            </Array>
+            <mxPoint x="750" y="480" as="sourcePoint" />
+            <mxPoint x="1000" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="l_a4" parent="e_a4" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;labelBackgroundColor=#ffffff;" value="操作日志与系统反馈" vertex="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

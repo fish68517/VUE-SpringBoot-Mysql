@@ -1,0 +1,97 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="_V8mxp4TmWEwZ49G73f3">
+    <mxGraphModel dx="1042" dy="626" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="center" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;fontStyle=1;" value="操作日志&#xa;(operation_log)" vertex="1">
+          <mxGeometry height="50" width="130" x="340" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="a1" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="&lt;u&gt;日志ID&lt;/u&gt;" vertex="1">
+          <mxGeometry height="40" width="90" x="360" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="操作模块" vertex="1">
+          <mxGeometry height="40" width="90" x="500" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="操作动作" vertex="1">
+          <mxGeometry height="40" width="90" x="600" y="160" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="用户名" vertex="1">
+          <mxGeometry height="40" width="90" x="640" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="真实姓名" vertex="1">
+          <mxGeometry height="40" width="90" x="620" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="角色" vertex="1">
+          <mxGeometry height="40" width="90" x="520" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="a7" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="请求方法" vertex="1">
+          <mxGeometry height="40" width="90" x="390" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="a8" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="请求路径" vertex="1">
+          <mxGeometry height="40" width="90" x="250" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="a9" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="IP地址" vertex="1">
+          <mxGeometry height="40" width="90" x="120" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="a10" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="是否成功" vertex="1">
+          <mxGeometry height="40" width="90" x="80" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="a11" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="返回信息" vertex="1">
+          <mxGeometry height="40" width="90" x="80" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="a12" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="详细信息" vertex="1">
+          <mxGeometry height="40" width="90" x="150" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="a13" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="创建时间" vertex="1">
+          <mxGeometry height="40" width="90" x="250" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="a14" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#010101;fontColor=#000000;strokeWidth=2;fontSize=14;" value="更新时间" vertex="1">
+          <mxGeometry height="40" width="90" x="610" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="center" style="edgeStyle=none;html=1;endArrow=none;strokeColor=#010101;strokeWidth=2;fontSize=14;fontColor=#000000;" target="a14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

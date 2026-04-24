@@ -1,0 +1,165 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="MjpClX20yJ58HjrdjkSF">
+    <mxGraphModel dx="2084" dy="1252" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cls_sys_user" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="SysUser" vertex="1">
+          <mxGeometry height="210" width="200" x="500" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_sys_user" parent="cls_sys_user" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- username: VARCHAR&#xa;- password: VARCHAR&#xa;- real_name: VARCHAR&#xa;- role: VARCHAR&#xa;- phone: VARCHAR&#xa;- email: VARCHAR&#xa;- status: VARCHAR&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="180" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_device_category" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="DeviceCategory" vertex="1">
+          <mxGeometry height="145" width="200" x="50" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_device_category" parent="cls_device_category" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- code: VARCHAR&#xa;- name: VARCHAR&#xa;- description: VARCHAR&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="115" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_notice" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="Notice" vertex="1">
+          <mxGeometry height="190" width="200" x="800" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_notice" parent="cls_notice" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- title: VARCHAR&#xa;- content: VARCHAR&#xa;- pinned: TINYINT&#xa;- status: VARCHAR&#xa;- publish_time: DATETIME&#xa;- publisher_id: BIGINT&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="160" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_inspection_standard" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="InspectionStandard" vertex="1">
+          <mxGeometry height="205" width="200" x="50" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_inspection_standard" parent="cls_inspection_standard" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- category_id: BIGINT&#xa;- item_name: VARCHAR&#xa;- standard_value: VARCHAR&#xa;- check_method: VARCHAR&#xa;- cycle_days: INT&#xa;- abnormal_rule: VARCHAR&#xa;- remark: VARCHAR&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="175" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_device" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="Device" vertex="1">
+          <mxGeometry height="220" width="200" x="50" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_device" parent="cls_device" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- category_id: BIGINT&#xa;- device_code: VARCHAR&#xa;- device_name: VARCHAR&#xa;- location: VARCHAR&#xa;- status: VARCHAR&#xa;- last_inspection_time: DATETIME&#xa;- image_name: VARCHAR&#xa;- remark: VARCHAR&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="190" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_inspection_task" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="InspectionTask" vertex="1">
+          <mxGeometry height="220" width="200" x="350" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_inspection_task" parent="cls_inspection_task" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- task_no: VARCHAR&#xa;- title: VARCHAR&#xa;- device_id: BIGINT&#xa;- inspector_id: BIGINT&#xa;- planned_date: DATE&#xa;- status: VARCHAR&#xa;- priority: VARCHAR&#xa;- remark: VARCHAR&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="190" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_operation_log" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="OperationLog" vertex="1">
+          <mxGeometry height="260" width="210" x="950" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_operation_log" parent="cls_operation_log" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- module: VARCHAR&#xa;- action: VARCHAR&#xa;- username: VARCHAR&#xa;- real_name: VARCHAR&#xa;- role: VARCHAR&#xa;- request_method: VARCHAR&#xa;- request_path: VARCHAR&#xa;- ip: VARCHAR&#xa;- success: TINYINT&#xa;- message: VARCHAR&#xa;- details: VARCHAR&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="230" width="210" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_inspection_task_item" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="InspectionTaskItem" vertex="1">
+          <mxGeometry height="245" width="220" x="350" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_inspection_task_item" parent="cls_inspection_task_item" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- task_id: BIGINT&#xa;- standard_id: BIGINT&#xa;- item_name: VARCHAR&#xa;- standard_value: VARCHAR&#xa;- check_method: VARCHAR&#xa;- abnormal_rule: VARCHAR&#xa;- sort_order: INT&#xa;- checked_value: VARCHAR&#xa;- item_result: VARCHAR&#xa;- item_remark: VARCHAR&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="215" width="220" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_inspection_record" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="InspectionRecord" vertex="1">
+          <mxGeometry height="220" width="210" x="650" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_inspection_record" parent="cls_inspection_record" style="textstrokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- task_id: BIGINT&#xa;- device_id: BIGINT&#xa;- inspector_id: BIGINT&#xa;- result: VARCHAR&#xa;- status_description: VARCHAR&#xa;- image_name: VARCHAR&#xa;- inspection_time: DATETIME&#xa;- need_repair: TINYINT&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="190" width="210" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_defect" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="Defect" vertex="1">
+          <mxGeometry height="220" width="200" x="650" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_defect" parent="cls_defect" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- record_id: BIGINT&#xa;- device_id: BIGINT&#xa;- reporter_id: BIGINT&#xa;- level: VARCHAR&#xa;- status: VARCHAR&#xa;- description: VARCHAR&#xa;- image_name: VARCHAR&#xa;- reported_at: DATETIME&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="190" width="200" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="cls_repair_order" parent="1" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;fillColor=#000000;fontColor=#ffffff;strokeColor=#000000;marginBottom=0;" value="RepairOrder" vertex="1">
+          <mxGeometry height="250" width="210" x="950" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="attr_repair_order" parent="cls_repair_order" style="text;strokeColor=#000000;fillColor=#ffffff;align=left;verticalAlign=top;spacingLeft=5;spacingRight=5;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fontColor=#000000;fontSize=12;" value="- id: BIGINT&#xa;- order_no: VARCHAR&#xa;- defect_id: BIGINT&#xa;- device_id: BIGINT&#xa;- maintainer_id: BIGINT&#xa;- status: VARCHAR&#xa;- measures: VARCHAR&#xa;- result: VARCHAR&#xa;- image_name: VARCHAR&#xa;- finished_at: DATETIME&#xa;- remark: VARCHAR&#xa;- created_at: DATETIME&#xa;- updated_at: DATETIME" vertex="1">
+          <mxGeometry height="220" width="210" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="e_device_category" edge="1" parent="1" source="cls_device" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_device_category">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_standard_category" edge="1" parent="1" source="cls_inspection_standard" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_device_category">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="30" y="652" />
+              <mxPoint x="30" y="122" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_notice_user" edge="1" parent="1" source="cls_notice" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_sys_user">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_task_device" edge="1" parent="1" source="cls_inspection_task" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_device">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_task_user" edge="1" parent="1" source="cls_inspection_task" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_sys_user">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="450" y="280" />
+              <mxPoint x="600" y="280" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_item_task" edge="1" parent="1" source="cls_inspection_task_item" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_inspection_task">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_item_standard" edge="1" parent="1" source="cls_inspection_task_item" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_inspection_standard">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_record_task" edge="1" parent="1" source="cls_inspection_record" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_inspection_task">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_record_device" edge="1" parent="1" source="cls_inspection_record" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_device">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="755" y="260" />
+              <mxPoint x="150" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_record_user" edge="1" parent="1" source="cls_inspection_record" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_sys_user">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="670" y="280" />
+              <mxPoint x="670" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_defect_record" edge="1" parent="1" source="cls_defect" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_inspection_record">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_defect_device" edge="1" parent="1" source="cls_defect" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_device">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="750" y="860" />
+              <mxPoint x="300" y="860" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_defect_user" edge="1" parent="1" source="cls_defect" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_sys_user">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="870" y="710" />
+              <mxPoint x="870" y="240" />
+              <mxPoint x="700" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_repair_defect" edge="1" parent="1" source="cls_repair_order" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_defect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_repair_device" edge="1" parent="1" source="cls_repair_order" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_device">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1055" y="880" />
+              <mxPoint x="280" y="880" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_repair_user" edge="1" parent="1" source="cls_repair_order" style="edgeStyle=orthogonalEdgeStyle;dashed=1;html=1;endArrow=open;endFill=0;strokeColor=#000000;" target="cls_sys_user">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1180" y="725" />
+              <mxPoint x="1180" y="155" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

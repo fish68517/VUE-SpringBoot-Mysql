@@ -1,0 +1,90 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="6eblT2JR9qGDx0DZ7Pqu">
+    <mxGraphModel dx="1042" dy="626" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="head_insp" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;strokeWidth=2;strokeColor=#000000;fontSize=14;" value="巡检员" vertex="1">
+          <mxGeometry height="60" width="30" x="100" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="head_svc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontStyle=1;strokeWidth=2;fontSize=14;" value="工单管理服务" vertex="1">
+          <mxGeometry height="40" width="100" x="350" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="head_db" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontStyle=1;strokeWidth=2;fontSize=14;" value="数据库" vertex="1">
+          <mxGeometry height="40" width="100" x="600" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="head_admin" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;strokeWidth=2;strokeColor=#000000;fontSize=14;" value="管理员" vertex="1">
+          <mxGeometry height="60" width="30" x="850" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="line_insp" edge="1" parent="1" source="head_insp" style="edgeStyle=none;html=1;endArrow=none;dashed=1;strokeColor=#000000;strokeWidth=2;fontSize=14;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="line_svc" edge="1" parent="1" source="head_svc" style="edgeStyle=none;html=1;endArrow=none;dashed=1;strokeColor=#000000;strokeWidth=2;fontSize=14;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="400" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="line_db" edge="1" parent="1" source="head_db" style="edgeStyle=none;html=1;endArrow=none;dashed=1;strokeColor=#000000;strokeWidth=2;fontSize=14;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="650" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="line_admin" edge="1" parent="1" source="head_admin" style="edgeStyle=none;html=1;endArrow=none;dashed=1;strokeColor=#000000;strokeWidth=2;fontSize=14;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="865" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_insp" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="150" width="14" x="108" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="act_svc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="420" width="14" x="393" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="act_db" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="420" width="14" x="643" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="act_admin" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="220" width="14" x="858" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="msg1" edge="1" parent="1" source="act_insp" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.1;entryX=0;entryY=0.035;strokeWidth=2;fontSize=14;" target="act_svc" value="1. 上报设备缺陷(异常)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg2" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.1;entryX=0;entryY=0.1;strokeWidth=2;fontSize=14;" target="act_db" value="2. INSERT defect (status=&#39;pending&#39;)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret1" edge="1" parent="1" source="act_db" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=0;exitY=0.2;entryX=1;entryY=0.2;strokeWidth=2;fontSize=14;" target="act_svc" value="3. 返回写入成功">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret2" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=0;exitY=0.28;entryX=1;entryY=0.8;strokeWidth=2;fontSize=14;" target="act_insp" value="4. 提示上报成功">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg3" edge="1" parent="1" source="act_admin" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0;exitY=0.1;entryX=1;entryY=0.5;strokeWidth=2;fontSize=14;" target="act_svc" value="5. 查询待处理缺陷">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg4" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.55;entryX=0;entryY=0.55;strokeWidth=2;fontSize=14;" target="act_db" value="6. SELECT defect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret3" edge="1" parent="1" source="act_db" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=0;exitY=0.65;entryX=1;entryY=0.65;strokeWidth=2;fontSize=14;" target="act_svc" value="7. 返回缺陷列表">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret4" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=1;exitY=0.7;entryX=0;entryY=0.5;strokeWidth=2;fontSize=14;" target="act_admin" value="8. 渲染列表">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg5" edge="1" parent="1" source="act_admin" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0;exitY=0.8;entryX=1;entryY=0.8;strokeWidth=2;fontSize=14;" target="act_svc" value="9. 派发维修工单并指派维护员">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg6" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.85;entryX=0;entryY=0.85;strokeWidth=2;fontSize=14;" target="act_db" value="10. INSERT repair_order &amp;amp; UPDATE defect">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret5" edge="1" parent="1" source="act_db" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=0;exitY=0.92;entryX=1;entryY=0.92;strokeWidth=2;fontSize=14;" target="act_svc" value="11. 事务提交成功">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret6" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=1;exitY=0.97;entryX=0;entryY=0.95;strokeWidth=2;fontSize=14;" target="act_admin" value="12. 提示派发成功">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,92 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="KkUYRgol122Z-83-klTq">
+    <mxGraphModel dx="1489" dy="894" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="head_inspector" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;strokeWidth=2;fontSize=14;" value="巡检员&#xa;(Inspector)" vertex="1">
+          <mxGeometry height="60" width="30" x="100" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="head_app" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontStyle=1;strokeWidth=2;fontSize=14;" value="移动端 UI" vertex="1">
+          <mxGeometry height="40" width="100" x="270" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="head_svc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontStyle=1;strokeWidth=2;fontSize=14;" value="巡检业务服务" vertex="1">
+          <mxGeometry height="40" width="100" x="470" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="head_db" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;fontStyle=1;strokeWidth=2;fontSize=14;" value="数据库&#xa;(Database)" vertex="1">
+          <mxGeometry height="40" width="100" x="670" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="line_inspector" edge="1" parent="1" source="head_inspector" style="edgeStyle=none;html=1;endArrow=none;dashed=1;strokeColor=#000000;strokeWidth=2;fontSize=14;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="line_app" edge="1" parent="1" source="head_app" style="edgeStyle=none;html=1;endArrow=none;dashed=1;strokeColor=#000000;strokeWidth=2;fontSize=14;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="320" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="line_svc" edge="1" parent="1" source="head_svc" style="edgeStyle=none;html=1;endArrow=none;dashed=1;strokeColor=#000000;strokeWidth=2;fontSize=14;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="line_db" edge="1" parent="1" source="head_db" style="edgeStyle=none;html=1;endArrow=none;dashed=1;strokeColor=#000000;strokeWidth=2;fontSize=14;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="720" y="650" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="act_inspector" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="420" width="14" x="108" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="act_app" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="420" width="14" x="313" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="act_svc" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="420" width="14" x="513" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="act_db" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;strokeWidth=2;fontSize=14;" value="" vertex="1">
+          <mxGeometry height="420" width="14" x="713" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="msg1" edge="1" parent="1" source="act_inspector" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.05;entryX=0;entryY=0.05;strokeWidth=2;fontSize=14;" target="act_app" value="1. 请求待办巡检任务">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg2" edge="1" parent="1" source="act_app" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.15;entryX=0;entryY=0.15;strokeWidth=2;fontSize=14;" target="act_svc" value="2. API GET /inspection/tasks">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg3" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.25;entryX=0;entryY=0.25;strokeWidth=2;fontSize=14;" target="act_db" value="3. SELECT inspection_task">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret1" edge="1" parent="1" source="act_db" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=0;exitY=0.35;entryX=1;entryY=0.35;strokeWidth=2;fontSize=14;" target="act_svc" value="4. 返回任务列表">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret2" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=0;exitY=0.45;entryX=1;entryY=0.45;strokeWidth=2;fontSize=14;" target="act_app" value="5. 渲染任务列表">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg4" edge="1" parent="1" source="act_inspector" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.55;entryX=0;entryY=0.55;strokeWidth=2;fontSize=14;" target="act_app" value="6. 填写检查结果(checked_value)并提交">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg5" edge="1" parent="1" source="act_app" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.65;entryX=0;entryY=0.65;strokeWidth=2;fontSize=14;" target="act_svc" value="7. API POST /inspection/record">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_self" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;align=left;exitX=1;exitY=0.72;entryX=1;entryY=0.82;strokeWidth=2;fontSize=14;" target="act_svc" value="8. 校验 abnormal_rule">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="560" y="482" />
+              <mxPoint x="560" y="524" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="msg6" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.88;entryX=0;entryY=0.88;strokeWidth=2;fontSize=14;" target="act_db" value="9. INSERT inspection_record &amp;amp; task_item">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret3" edge="1" parent="1" source="act_db" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=0;exitY=0.94;entryX=1;entryY=0.94;strokeWidth=2;fontSize=14;" target="act_svc" value="10. 数据写入成功">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ret4" edge="1" parent="1" source="act_svc" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=open;endFill=0;dashed=1;strokeColor=#000000;exitX=0;exitY=0.98;entryX=1;entryY=0.98;strokeWidth=2;fontSize=14;" target="act_app" value="11. 提示巡检完成">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
