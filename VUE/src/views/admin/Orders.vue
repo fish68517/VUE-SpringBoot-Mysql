@@ -1,9 +1,9 @@
-<template>
+﻿<template>
   <div class="orders">
     <el-card>
       <template #header>
         <div class="header">
-          <span>订单管理</span>
+          <span>{{ isMerchant ? '商家订单管理' : '订单管理' }}</span>
           <el-input
             v-model="searchQuery"
             placeholder="搜索订单号"
@@ -36,9 +36,27 @@
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="320" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleViewDetails(row)">查看详情</el-button>
+
+            <template v-if="isMerchant">
+              <el-button
+                type="success"
+                link
+                :disabled="row.status !== STATUS_PAID"
+                @click="handleUpdateStatus(row, STATUS_FINISHED)"
+              >
+                已完成
+              </el-button>
+              <el-button
+                :type="row.status === STATUS_TAKEN ? 'success' : 'info'"
+                link
+                disabled
+              >
+                已取走
+              </el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -96,9 +114,15 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { orderApi } from '@/api/networkApi'
+
+const STATUS_PENDING = '待付款'
+const STATUS_PAID = '已付款'
+const STATUS_FINISHED = '已完成'
+const STATUS_TAKEN = '已取走'
+const STATUS_CANCELED = '已取消'
 
 export default {
   setup() {
@@ -110,6 +134,9 @@ export default {
     const total = ref(0)
     const detailsVisible = ref(false)
     const currentOrder = ref(null)
+
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    const isMerchant = computed(() => userInfo.role === 'merchant')
 
     const getOrders = async () => {
       loading.value = true
@@ -137,16 +164,17 @@ export default {
 
     const getStatusType = (status) => {
       const types = {
-        待付款: 'warning',
-        已付款: 'primary',
-        已完成: 'success',
-        已取消: 'info'
+        [STATUS_PENDING]: 'warning',
+        [STATUS_PAID]: 'primary',
+        [STATUS_FINISHED]: 'success',
+        [STATUS_TAKEN]: 'success',
+        [STATUS_CANCELED]: 'info'
       }
       return types[status] || 'info'
     }
 
     const shouldShowPickupCode = (order) => {
-      return ['已付款', '已完成'].includes(order?.status)
+      return [STATUS_PAID, STATUS_FINISHED].includes(order?.status)
     }
 
     const handleSearch = () => {
@@ -176,20 +204,12 @@ export default {
 
     const handleUpdateStatus = async (order, status) => {
       try {
-        const actionText = {
-          已付款: '接单',
-          已完成: '完成',
-          已取消: '取消'
-        }[status]
-
-        await ElMessageBox.confirm(`确定要${actionText}该订单吗？`)
+        await ElMessageBox.confirm('确定更新该订单状态吗？', '提示', { type: 'warning' })
         await orderApi.updateOrderStatus(order.id, status)
-        ElMessage.success(`${actionText}成功`)
+        ElMessage.success('状态更新成功')
         getOrders()
       } catch (error) {
-        if (error !== 'cancel') {
-          ElMessage.error('操作失败')
-        }
+        if (error !== 'cancel') ElMessage.error('状态更新失败')
       }
     }
 
@@ -209,6 +229,7 @@ export default {
       total,
       detailsVisible,
       currentOrder,
+      isMerchant,
       getStatusType,
       shouldShowPickupCode,
       handleSearch,
@@ -216,7 +237,10 @@ export default {
       handleCurrentChange,
       handleViewDetails,
       handleUpdateStatus,
-      formatDate
+      formatDate,
+      STATUS_PAID,
+      STATUS_FINISHED,
+      STATUS_TAKEN
     }
   }
 }

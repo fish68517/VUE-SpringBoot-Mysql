@@ -1,7 +1,12 @@
 package com.animal.mapper;
 
 import com.animal.model.Order;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 import java.util.Map;
@@ -32,23 +37,99 @@ public interface OrderMapper {
     @Update("UPDATE `order` SET status = #{status} WHERE id = #{id}")
     int updateStatus(Order order);
 
-    // Count waiting orders by fixed window id. If window_id is empty, fallback to category_id.
+    @Select("<script>" +
+            "SELECT COUNT(*) FROM `order` " +
+            "<where>" +
+            "<if test='query != null and query != \"\"'>" +
+            "(order_no LIKE CONCAT('%', #{query}, '%') OR IFNULL(remark, '') LIKE CONCAT('%', #{query}, '%'))" +
+            "</if>" +
+            "</where>" +
+            "</script>")
+    int countAll(@Param("query") String query);
 
-    /*原来 countWaitingByMerchant 逻辑
+    @Select("<script>" +
+            "SELECT * FROM `order` " +
+            "<where>" +
+            "<if test='query != null and query != \"\"'>" +
+            "(order_no LIKE CONCAT('%', #{query}, '%') OR IFNULL(remark, '') LIKE CONCAT('%', #{query}, '%'))" +
+            "</if>" +
+            "</where>" +
+            "ORDER BY created_at DESC " +
+            "LIMIT #{offset}, #{pageSize}" +
+            "</script>")
+    List<Order> findAllByPage(
+            @Param("offset") Integer offset,
+            @Param("pageSize") Integer pageSize,
+            @Param("query") String query);
 
-    统计维度：recipe.merchant_id
-    只统计状态为“待付款/已付款”的订单
-    SQL 是按 merchant_id 分组后 COUNT(DISTINCT o.id)
-    所以如果：
+    @Select("<script>" +
+            "SELECT COUNT(*) FROM `order` " +
+            "<where>" +
+            "user_id = #{userId} " +
+            "<if test='query != null and query != \"\"'>" +
+            "AND (order_no LIKE CONCAT('%', #{query}, '%') OR IFNULL(remark, '') LIKE CONCAT('%', #{query}, '%'))" +
+            "</if>" +
+            "</where>" +
+            "</script>")
+    int countByUser(@Param("userId") Integer userId, @Param("query") String query);
 
-    菜品没分配 merchant_id，或者
-    大部分菜品都属于同一个 merchant_id，
-    就会出现你看到的“每个菜品等待人数几乎一样”。*/
+    @Select("<script>" +
+            "SELECT * FROM `order` " +
+            "<where>" +
+            "user_id = #{userId} " +
+            "<if test='query != null and query != \"\"'>" +
+            "AND (order_no LIKE CONCAT('%', #{query}, '%') OR IFNULL(remark, '') LIKE CONCAT('%', #{query}, '%'))" +
+            "</if>" +
+            "</where>" +
+            "ORDER BY created_at DESC " +
+            "LIMIT #{offset}, #{pageSize}" +
+            "</script>")
+    List<Order> findByUserByPage(
+            @Param("userId") Integer userId,
+            @Param("offset") Integer offset,
+            @Param("pageSize") Integer pageSize,
+            @Param("query") String query);
+
+    @Select("<script>" +
+            "SELECT COUNT(*) FROM `order` o " +
+            "<where>" +
+            "EXISTS (" +
+            "SELECT 1 FROM order_detail od JOIN recipe r ON r.id = od.recipe_id " +
+            "WHERE od.order_id = o.id AND r.merchant_id = #{merchantId}" +
+            ") " +
+            "<if test='query != null and query != \"\"'>" +
+            "AND (o.order_no LIKE CONCAT('%', #{query}, '%') OR IFNULL(o.remark, '') LIKE CONCAT('%', #{query}, '%'))" +
+            "</if>" +
+            "</where>" +
+            "</script>")
+    int countByMerchant(@Param("merchantId") Integer merchantId, @Param("query") String query);
+
+    @Select("<script>" +
+            "SELECT o.* FROM `order` o " +
+            "<where>" +
+            "EXISTS (" +
+            "SELECT 1 FROM order_detail od JOIN recipe r ON r.id = od.recipe_id " +
+            "WHERE od.order_id = o.id AND r.merchant_id = #{merchantId}" +
+            ") " +
+            "<if test='query != null and query != \"\"'>" +
+            "AND (o.order_no LIKE CONCAT('%', #{query}, '%') OR IFNULL(o.remark, '') LIKE CONCAT('%', #{query}, '%'))" +
+            "</if>" +
+            "</where>" +
+            "ORDER BY o.created_at DESC " +
+            "LIMIT #{offset}, #{pageSize}" +
+            "</script>")
+    List<Order> findByMerchantByPage(
+            @Param("merchantId") Integer merchantId,
+            @Param("offset") Integer offset,
+            @Param("pageSize") Integer pageSize,
+            @Param("query") String query);
+
     @Select("SELECT COALESCE(r.window_id, r.category_id) AS windowId, COUNT(DISTINCT o.id) AS waitingCount " +
             "FROM `order` o " +
             "JOIN order_detail od ON od.order_id = o.id " +
             "JOIN recipe r ON r.id = od.recipe_id " +
-            "WHERE COALESCE(r.window_id, r.category_id) IS NOT NULL AND o.status IN ('待付款','已付款') " +
+            "WHERE COALESCE(r.window_id, r.category_id) IS NOT NULL " +
+            "AND o.status IN ('\u5df2\u4ed8\u6b3e', '\u5df2\u5b8c\u6210') " +
             "GROUP BY COALESCE(r.window_id, r.category_id)")
     List<Map<String, Object>> countWaitingByWindow();
 }

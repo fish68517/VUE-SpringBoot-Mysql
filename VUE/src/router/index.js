@@ -36,6 +36,7 @@ const router = createRouter({
         { path: 'dashboard', component: () => import('../views/admin/Dashboard.vue'), meta: { title: '控制台' } },
         { path: 'users', component: () => import('../views/admin/Users.vue'), meta: { title: '用户管理' } },
         { path: 'recipes', component: () => import('../views/admin/Recipes.vue'), meta: { title: '菜品管理' } },
+        { path: 'categories', component: () => import('../views/admin/Categories.vue'), meta: { title: '分类管理' } },
         { path: 'orders', component: () => import('../views/admin/Orders.vue'), meta: { title: '订单管理' } },
         { path: 'reviews', component: () => import('../views/admin/Reviews.vue'), meta: { title: '评价管理' } }
       ]
@@ -47,6 +48,7 @@ const router = createRouter({
       children: [
         { path: '', redirect: '/merchant/recipes' },
         { path: 'recipes', component: () => import('../views/admin/Recipes.vue'), meta: { title: '菜品管理' } },
+        { path: 'categories', component: () => import('../views/admin/Categories.vue'), meta: { title: '分类管理' } },
         { path: 'orders', component: () => import('../views/admin/Orders.vue'), meta: { title: '订单管理' } }
       ]
     }

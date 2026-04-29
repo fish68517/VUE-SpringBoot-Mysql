@@ -16,13 +16,11 @@ public interface UserMapper extends BaseMapper<User> {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insert(User user);
 
-
     @Delete("DELETE FROM user WHERE id = #{id}")
     int delete(Integer id);
 
     @Select("SELECT * FROM users WHERE role = #{role} AND status = 1")
-    List<User> selectActiveUsersByRole( String role);
-
+    List<User> selectActiveUsersByRole(String role);
 
     @Select("SELECT COUNT(*) FROM user " +
             "WHERE username LIKE CONCAT('%', #{query}, '%') " +
@@ -45,14 +43,16 @@ public interface UserMapper extends BaseMapper<User> {
     @Update("UPDATE user SET password = #{password} WHERE id = #{id}")
     int updatePassword(@Param("id") Integer id, @Param("password") String password);
 
-
     @Select("SELECT * FROM user")
     List<User> findAll();
 
     @Update("<script>" +
             "UPDATE user SET " +
+            "<if test='username != null and username != \"\"'>username = #{username},</if>" +
             "<if test='nickname != null'>nickname = #{nickname},</if>" +
+            "<if test='role != null and role != \"\"'>role = #{role},</if>" +
             "<if test='avatar != null'>avatar = #{avatar},</if>" +
+            "<if test='password != null and password != \"\"'>password = #{password},</if>" +
             "<if test='bmi != null'>bmi = #{bmi},</if>" +
             "<if test='height != null'>height = #{height},</if>" +
             "<if test='weight != null'>weight = #{weight},</if>" +
@@ -63,4 +63,4 @@ public interface UserMapper extends BaseMapper<User> {
             "WHERE id = #{id}" +
             "</script>")
     int update(User user);
-} 
+}

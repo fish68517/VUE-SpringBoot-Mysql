@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="orders">
     <h2>我的订单</h2>
 
@@ -31,8 +31,26 @@
         <div class="order-footer">
           <span class="total">总计：￥{{ order.totalAmount }}</span>
           <div class="actions">
-            <el-button v-if="order.status === '待付款'" type="primary" @click="payOrder(order)">立即支付</el-button>
-            <el-button v-if="order.status === '待付款'" @click="cancelOrder(order)">取消订单</el-button>
+            <el-button v-if="order.status === STATUS_PENDING" type="primary" @click="payOrder(order)">立即支付</el-button>
+            <el-button v-if="order.status === STATUS_PENDING" @click="cancelOrder(order)">取消订单</el-button>
+
+            <el-button :type="[STATUS_FINISHED, STATUS_TAKEN].includes(order.status) ? 'success' : 'default'" disabled>
+              已完成
+            </el-button>
+            <el-button
+              v-if="order.status === STATUS_FINISHED"
+              type="success"
+              @click="takeOrder(order)"
+            >
+              已取走
+            </el-button>
+            <el-button
+              v-else
+              :type="order.status === STATUS_TAKEN ? 'success' : 'default'"
+              disabled
+            >
+              已取走
+            </el-button>
           </div>
         </div>
       </el-card>
@@ -45,6 +63,12 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { orderApi } from '@/api/networkApi'
 import { getImageUrl } from '@/utils/image'
+
+const STATUS_PENDING = '待付款'
+const STATUS_PAID = '已付款'
+const STATUS_FINISHED = '已完成'
+const STATUS_TAKEN = '已取走'
+const STATUS_CANCELED = '已取消'
 
 export default {
   setup() {
@@ -61,23 +85,25 @@ export default {
 
     const getStatusType = (status) => {
       const types = {
-        待付款: 'warning',
-        已付款: 'primary',
-        已完成: 'success',
-        已取消: 'info'
+        [STATUS_PENDING]: 'warning',
+        [STATUS_PAID]: 'primary',
+        [STATUS_FINISHED]: 'success',
+        [STATUS_TAKEN]: 'success',
+        [STATUS_CANCELED]: 'info'
       }
       return types[status] || 'info'
     }
 
     const shouldShowPickupCode = (order) => {
-      return ['已付款', '已完成'].includes(order?.status)
+      return [STATUS_PAID, STATUS_FINISHED].includes(order?.status)
     }
 
     const payOrder = async (order) => {
       try {
-        await ElMessageBox.confirm('确认支付该订单？')
-        await orderApi.updateOrderStatus(order.id, '已付款')
-        order.status = '已付款'
+        await ElMessageBox.confirm('确认支付该订单？', '提示', { type: 'warning' })
+        await orderApi.updateOrderStatus(order.id, STATUS_PAID)
+        order.status = STATUS_PAID
+        ElMessage.success('支付成功')
       } catch (error) {
         if (error !== 'cancel') ElMessage.error('支付失败')
       }
@@ -85,11 +111,23 @@ export default {
 
     const cancelOrder = async (order) => {
       try {
-        await ElMessageBox.confirm('确认取消该订单？')
-        await orderApi.updateOrderStatus(order.id, '已取消')
-        order.status = '已取消'
+        await ElMessageBox.confirm('确认取消该订单？', '提示', { type: 'warning' })
+        await orderApi.updateOrderStatus(order.id, STATUS_CANCELED)
+        order.status = STATUS_CANCELED
+        ElMessage.success('取消成功')
       } catch (error) {
         if (error !== 'cancel') ElMessage.error('取消失败')
+      }
+    }
+
+    const takeOrder = async (order) => {
+      try {
+        await ElMessageBox.confirm('确认已取走该订单吗？', '提示', { type: 'warning' })
+        await orderApi.updateOrderStatus(order.id, STATUS_TAKEN)
+        order.status = STATUS_TAKEN
+        ElMessage.success('取餐状态已更新')
+      } catch (error) {
+        if (error !== 'cancel') ElMessage.error('更新失败')
       }
     }
 
@@ -101,7 +139,11 @@ export default {
       shouldShowPickupCode,
       payOrder,
       cancelOrder,
-      getImageUrl
+      takeOrder,
+      getImageUrl,
+      STATUS_PENDING,
+      STATUS_FINISHED,
+      STATUS_TAKEN
     }
   }
 }
@@ -115,5 +157,5 @@ export default {
 .order-item { display: flex; gap: 12px; margin-bottom: 10px; }
 .item-image { width: 72px; height: 72px; }
 .order-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
-.actions { display: flex; gap: 10px; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
 </style>

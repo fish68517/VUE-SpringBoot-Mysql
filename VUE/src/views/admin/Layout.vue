@@ -4,7 +4,7 @@
       <el-aside width="200px">
         <div class="logo">
           <Logo />
-          <span>菜谱推荐系统</span>
+          <span>后台管理</span>
         </div>
         <el-menu
           :default-active="$route.path"
@@ -12,11 +12,11 @@
           class="admin-menu"
           background-color="#001529"
           text-color="#fff"
-          active-text-color="#409EFF"
+          active-text-color="#409eff"
         >
-          <el-menu-item index="/admin">
+          <el-menu-item index="/admin/dashboard">
             <el-icon><HomeFilled /></el-icon>
-            <span>管理首页</span>
+            <span>控制台</span>
           </el-menu-item>
           <el-menu-item index="/admin/users">
             <el-icon><User /></el-icon>
@@ -24,12 +24,16 @@
           </el-menu-item>
           <el-menu-item index="/admin/recipes">
             <el-icon><Bowl /></el-icon>
-            <span>菜品动态管理</span>
+            <span>菜品管理</span>
           </el-menu-item>
-<!--          <el-menu-item index="/admin/nutrition">
-            <el-icon><Notebook /></el-icon>
-            <span>营养知识管理</span>
-          </el-menu-item>-->
+          <el-menu-item index="/admin/categories">
+            <el-icon><MenuIcon /></el-icon>
+            <span>分类管理</span>
+          </el-menu-item>
+          <el-menu-item index="/admin/orders">
+            <el-icon><List /></el-icon>
+            <span>订单管理</span>
+          </el-menu-item>
           <el-menu-item index="/admin/reviews">
             <el-icon><ChatDotRound /></el-icon>
             <span>评价管理</span>
@@ -41,7 +45,7 @@
         </el-menu>
       </el-aside>
       <el-main>
-        <router-view></router-view>
+        <router-view />
       </el-main>
     </el-container>
   </div>
@@ -53,6 +57,8 @@ import {
   HomeFilled,
   User,
   Bowl,
+  Menu as MenuIcon,
+  List,
   ChatDotRound,
   SwitchButton
 } from '@element-plus/icons-vue'
@@ -66,6 +72,8 @@ export default {
     HomeFilled,
     User,
     Bowl,
+    MenuIcon,
+    List,
     ChatDotRound,
     SwitchButton
   },
@@ -74,27 +82,21 @@ export default {
     const router = useRouter()
 
     const handleLogout = () => {
-      ElMessageBox.confirm(
-        '确定要退出登录吗？',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-      ).then(async () => {
+      ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
         try {
           await userApi.logout()
-          // 清除本地存储的用户信息和token
-          // 跳转到登录页
+          localStorage.removeItem('token')
+          localStorage.removeItem('userInfo')
           router.push('/login')
           ElMessage.success('退出登录成功')
         } catch (error) {
-          console.error('退出登录失败:', error)
+          ElMessage.error('退出登录失败')
         }
-      }).catch(() => {
-        // 取消退出
-      })
+      }).catch(() => {})
     }
 
     return {
@@ -114,7 +116,6 @@ export default {
 .el-aside {
   background-color: #001529;
   color: #fff;
-  width: 200px !important;
 }
 .logo {
   height: 60px;
@@ -150,4 +151,4 @@ export default {
   background-color: #f0f2f5;
   padding: 20px;
 }
-</style> 
+</style>

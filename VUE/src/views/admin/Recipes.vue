@@ -3,11 +3,10 @@
     <el-card>
       <template #header>
         <div class="header">
-          <div class="left">
-            <span class="title">菜品管理</span>
-          </div>
-          <div class="right">
-            <el-button type="primary" @click="handleAdd">添加菜品</el-button>
+          <span class="title">{{ pageTitle }}</span>
+          <div class="actions">
+            <el-button @click="goCategoryManage">分类管理</el-button>
+            <el-button type="primary" @click="handleAdd">新增菜品</el-button>
           </div>
         </div>
       </template>
@@ -26,6 +25,7 @@
       </div>
 
       <el-table :data="recipes" stripe v-loading="loading">
+        <el-table-column type="index" label="序号" width="80" :index="getRowIndex" />
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column label="图片" width="120">
           <template #default="{ row }">
@@ -38,29 +38,25 @@
             </el-image>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="名称" width="150" />
-        <el-table-column prop="description" label="描述" show-overflow-tooltip />
-        <el-table-column label="分类" width="120">
+        <el-table-column prop="name" label="名称" width="160" />
+        <el-table-column prop="description" label="描述" min-width="180" show-overflow-tooltip />
+        <el-table-column label="分类" width="140">
           <template #default="{ row }">
             <el-tag>{{ getCategoryName(row.categoryId) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="difficulty" label="难度" width="100">
           <template #default="{ row }">
-            <el-tag :type="getDifficultyType(row.difficulty)">
-              {{ row.difficulty }}
-            </el-tag>
+            <el-tag :type="getDifficultyType(row.difficulty)">{{ row.difficulty || '-' }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="cookingTime" label="烹饪时间" width="120">
-          <template #default="{ row }">
-            {{ row.cookingTime }}分钟
-          </template>
+          <template #default="{ row }">{{ row.cookingTime || 0 }}分钟</template>
         </el-table-column>
         <el-table-column prop="price" label="价格" width="120">
           <template #default="{ row }">￥{{ formatPrice(row.price) }}</template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
             <el-button type="danger" link @click="handleDelete(row)">删除</el-button>
@@ -82,7 +78,7 @@
     </el-card>
 
     <el-dialog
-      :title="dialogType === 'add' ? '添加菜品' : '编辑菜品'"
+      :title="dialogType === 'add' ? '新增菜品' : '编辑菜品'"
       v-model="dialogVisible"
       width="700px"
     >
@@ -157,11 +153,12 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus, Picture as PictureIcon } from '@element-plus/icons-vue'
 import { recipeApi } from '@/api/networkApi'
 import { getImageUrl } from '@/utils/image'
+import { useRouter } from 'vue-router'
 
 export default {
   components: {
@@ -169,6 +166,7 @@ export default {
     PictureIcon
   },
   setup() {
+    const router = useRouter()
     const loading = ref(false)
     const recipes = ref([])
     const categories = ref([])
@@ -176,11 +174,11 @@ export default {
     const currentPage = ref(1)
     const pageSize = ref(10)
     const total = ref(0)
-
     const dialogVisible = ref(false)
     const dialogType = ref('add')
     const formRef = ref(null)
     const form = ref({
+      id: null,
       name: '',
       categoryId: null,
       image: '',
@@ -191,6 +189,9 @@ export default {
       price: 0,
       difficulty: '中等'
     })
+
+    const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
+    const pageTitle = computed(() => userInfo.role === 'merchant' ? '商家菜品管理' : '菜品管理')
 
     const rules = {
       name: [{ required: true, message: '请输入菜品名称', trigger: 'blur' }],
@@ -209,9 +210,15 @@ export default {
           pageSize: pageSize.value,
           query: searchQuery.value
         }
-        const { data, total: totalCount } = await recipeApi.getRecipeList(params)
-        recipes.value = data || []
-        total.value = totalCount || 0
+        const response = await recipeApi.getRecipeList(params)
+        if (Array.isArray(response)) {
+          recipes.value = response
+          total.value = response.length
+        } else {
+          const list = response?.data || []
+          recipes.value = list
+          total.value = response?.total ?? list.length
+        }
       } catch (error) {
         ElMessage.error('获取菜品列表失败')
       } finally {
@@ -222,14 +229,14 @@ export default {
     const getCategories = async () => {
       try {
         const data = await recipeApi.getCategories()
-        categories.value = data || []
+        categories.value = Array.isArray(data) ? data : []
       } catch (error) {
         ElMessage.error('获取分类失败')
       }
     }
 
     const getCategoryName = (categoryId) => {
-      const category = categories.value.find(c => c.id === categoryId)
+      const category = categories.value.find((item) => item.id === categoryId)
       return category ? category.name : '-'
     }
 
@@ -247,23 +254,28 @@ export default {
       return Number.isNaN(value) ? '0.00' : value.toFixed(2)
     }
 
+    const getRowIndex = (index) => {
+      return (currentPage.value - 1) * pageSize.value + index + 1
+    }
+
     const handleSearch = () => {
       currentPage.value = 1
       getRecipes()
     }
 
-    const handleSizeChange = (val) => {
-      pageSize.value = val
+    const handleSizeChange = (size) => {
+      pageSize.value = size
       getRecipes()
     }
 
-    const handleCurrentChange = (val) => {
-      currentPage.value = val
+    const handleCurrentChange = (page) => {
+      currentPage.value = page
       getRecipes()
     }
 
     const resetForm = () => {
       form.value = {
+        id: null,
         name: '',
         categoryId: null,
         image: '',
@@ -285,15 +297,23 @@ export default {
     const handleEdit = (row) => {
       dialogType.value = 'edit'
       form.value = {
-        ...row,
-        price: row.price === null || row.price === undefined ? 0 : Number(row.price)
+        id: row.id,
+        name: row.name || '',
+        categoryId: row.categoryId,
+        image: row.image || '',
+        description: row.description || '',
+        ingredients: row.ingredients || '',
+        steps: row.steps || '',
+        cookingTime: row.cookingTime || 30,
+        price: Number(row.price || 0),
+        difficulty: row.difficulty || '中等'
       }
       dialogVisible.value = true
     }
 
     const handleDelete = async (row) => {
       try {
-        await ElMessageBox.confirm('确定要删除该菜品吗？')
+        await ElMessageBox.confirm('确定要删除该菜品吗？', '提示', { type: 'warning' })
         await recipeApi.deleteRecipe(row.id)
         ElMessage.success('删除成功')
         getRecipes()
@@ -315,15 +335,14 @@ export default {
       if (response.code === 200 && response.data?.url) {
         form.value.image = response.data.url.split('/').pop()
         ElMessage.success('图片上传成功')
-      } else {
-        ElMessage.error(response.message || '图片上传失败')
+        return
       }
+      ElMessage.error(response.message || '图片上传失败')
     }
 
     const beforeImageUpload = (file) => {
       const isImage = /^image\//.test(file.type)
       const isLt2M = file.size / 1024 / 1024 < 2
-
       if (!isImage) {
         ElMessage.error('只能上传图片文件')
       }
@@ -337,16 +356,14 @@ export default {
       if (!formRef.value) return
       await formRef.value.validate(async (valid) => {
         if (!valid) return
-
         const payload = {
           ...form.value,
           price: Number(form.value.price || 0)
         }
-
         try {
           if (dialogType.value === 'add') {
             await recipeApi.createRecipe(payload)
-            ElMessage.success('添加成功')
+            ElMessage.success('新增成功')
           } else {
             await recipeApi.updateRecipe(payload)
             ElMessage.success('更新成功')
@@ -354,14 +371,22 @@ export default {
           dialogVisible.value = false
           getRecipes()
         } catch (error) {
-          ElMessage.error(dialogType.value === 'add' ? '添加失败' : '更新失败')
+          ElMessage.error(dialogType.value === 'add' ? '新增失败' : '更新失败')
         }
       })
     }
 
-    onMounted(() => {
-      getCategories()
-      getRecipes()
+    const goCategoryManage = () => {
+      if (userInfo.role === 'merchant') {
+        router.push('/merchant/categories')
+        return
+      }
+      router.push('/admin/categories')
+    }
+
+    onMounted(async () => {
+      await getCategories()
+      await getRecipes()
     })
 
     return {
@@ -372,6 +397,7 @@ export default {
       currentPage,
       pageSize,
       total,
+      pageTitle,
       dialogVisible,
       dialogType,
       formRef,
@@ -380,17 +406,19 @@ export default {
       getCategoryName,
       getDifficultyType,
       formatPrice,
+      getRowIndex,
       handleSearch,
       handleSizeChange,
       handleCurrentChange,
       handleAdd,
       handleEdit,
       handleDelete,
+      uploadHeaders,
       handleImageSuccess,
       beforeImageUpload,
       handleSubmit,
-      getImageUrl,
-      uploadHeaders
+      goCategoryManage,
+      getImageUrl
     }
   }
 }
@@ -405,18 +433,17 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
-.left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
 .title {
   font-size: 16px;
-  font-weight: bold;
+  font-weight: 600;
+}
+.actions {
+  display: flex;
+  gap: 10px;
 }
 .search-bar {
   margin: 20px 0;
-  width: 300px;
+  width: 320px;
 }
 .pagination {
   margin-top: 20px;
@@ -427,13 +454,12 @@ export default {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
   cursor: pointer;
-  position: relative;
   overflow: hidden;
   width: 120px;
   height: 120px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 .recipe-uploader:hover {
   border-color: #409eff;

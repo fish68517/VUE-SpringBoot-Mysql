@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="cart">
     <el-card>
       <template #header>
@@ -21,26 +21,29 @@
           </el-checkbox>
         </div>
 
-        <div v-for="item in cartItems" :key="item.id" class="cart-item">
-          <el-checkbox v-model="selectedIds" :label="item.id" />
-          <el-image :src="getImageUrl(item.recipe?.image)" class="recipe-image" fit="cover" />
-          <div class="recipe-info">
-            <h3>{{ item.recipe?.name }}</h3>
-            <p class="description">{{ item.recipe?.description }}</p>
+        <el-checkbox-group v-model="selectedIds">
+          <div v-for="(item, index) in cartItems" :key="item.id" class="cart-item">
+            <span class="item-index">{{ index + 1 }}</span>
+            <el-checkbox :label="item.id" />
+            <el-image :src="getImageUrl(item.recipe?.image)" class="recipe-image" fit="cover" />
+            <div class="recipe-info">
+              <h3>{{ item.recipe?.name }}</h3>
+              <p class="description">{{ item.recipe?.description }}</p>
+            </div>
+            <div class="quantity-control">
+              <el-input-number
+                v-model="item.quantity"
+                :min="1"
+                :max="99"
+                size="small"
+                @change="(val) => updateQuantity(item, val)"
+              />
+            </div>
+            <div class="actions">
+              <el-button type="danger" link @click="removeFromCart(item.id)">删除</el-button>
+            </div>
           </div>
-          <div class="quantity-control">
-            <el-input-number
-              v-model="item.quantity"
-              :min="1"
-              :max="99"
-              size="small"
-              @change="(val) => updateQuantity(item, val)"
-            />
-          </div>
-          <div class="actions">
-            <el-button type="danger" link @click="removeFromCart(item.id)">删除</el-button>
-          </div>
-        </div>
+        </el-checkbox-group>
 
         <div class="remark-bar">
           <span class="remark-label">订单备注模板：</span>
@@ -79,7 +82,7 @@ export default {
     const remarkTemplates = ref([])
 
     const selectedItems = computed(() =>
-      cartItems.value.filter(item => selectedIds.value.includes(item.id))
+      cartItems.value.filter((item) => selectedIds.value.includes(item.id))
     )
 
     const selectedQuantity = computed(() =>
@@ -98,13 +101,13 @@ export default {
     )
 
     const toggleCheckAll = (val) => {
-      selectedIds.value = val ? cartItems.value.map(i => i.id) : []
+      selectedIds.value = val ? cartItems.value.map((i) => i.id) : []
     }
 
     const getCartList = async () => {
       try {
         cartItems.value = await cartApi.getCartList()
-        selectedIds.value = cartItems.value.map(i => i.id)
+        selectedIds.value = cartItems.value.map((i) => i.id)
       } catch (error) {
         ElMessage.error('获取购物车失败')
       }
@@ -123,7 +126,7 @@ export default {
       try {
         await ElMessageBox.confirm('确定删除该商品吗？', '提示', { type: 'warning' })
         await cartApi.removeFromCart(id)
-        selectedIds.value = selectedIds.value.filter(v => v !== id)
+        selectedIds.value = selectedIds.value.filter((v) => v !== id)
         getCartList()
       } catch (error) {
         if (error !== 'cancel') ElMessage.error('删除失败')
@@ -144,11 +147,11 @@ export default {
     const createOrder = async () => {
       try {
         const orderData = {
-          items: selectedItems.value.map(item => ({
+          items: selectedItems.value.map((item) => ({
             recipeId: item.recipeId,
             quantity: item.quantity
           })),
-          cartItemIds: selectedItems.value.map(item => item.id),
+          cartItemIds: selectedItems.value.map((item) => item.id),
           remark: remarkTemplates.value.join(' / ')
         }
         await orderApi.createOrder(orderData)
@@ -187,6 +190,7 @@ export default {
 .header { display: flex; justify-content: space-between; align-items: center; }
 .cart-top { margin-bottom: 10px; }
 .cart-item { display: flex; align-items: center; gap: 14px; padding: 16px 0; border-bottom: 1px solid #ebeef5; }
+.item-index { width: 24px; color: #909399; text-align: center; font-size: 12px; }
 .recipe-image { width: 90px; height: 90px; border-radius: 6px; }
 .recipe-info { flex: 1; }
 .description { color: #909399; font-size: 13px; }

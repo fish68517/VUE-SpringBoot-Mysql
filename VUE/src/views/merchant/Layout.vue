@@ -12,11 +12,15 @@
           class="merchant-menu"
           background-color="#1f2d3d"
           text-color="#fff"
-          active-text-color="#409EFF"
+          active-text-color="#409eff"
         >
           <el-menu-item index="/merchant/recipes">
             <el-icon><Bowl /></el-icon>
             <span>菜品管理</span>
+          </el-menu-item>
+          <el-menu-item index="/merchant/categories">
+            <el-icon><MenuIcon /></el-icon>
+            <span>分类管理</span>
           </el-menu-item>
           <el-menu-item index="/merchant/orders">
             <el-icon><List /></el-icon>
@@ -37,7 +41,7 @@
 
 <script>
 import Logo from '@/components/Logo.vue'
-import { Bowl, List, SwitchButton } from '@element-plus/icons-vue'
+import { Bowl, Menu as MenuIcon, List, SwitchButton } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { userApi } from '@/api/networkApi'
@@ -46,6 +50,7 @@ export default {
   components: {
     Logo,
     Bowl,
+    MenuIcon,
     List,
     SwitchButton
   },
