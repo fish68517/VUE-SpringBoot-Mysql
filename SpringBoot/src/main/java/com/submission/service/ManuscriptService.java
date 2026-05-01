@@ -40,13 +40,6 @@ public class ManuscriptService {
         if (file != null && !file.isEmpty()) {
             filePath = FileUploadUtil.uploadFile(file);
         }
-        // 判断 filePath 是否包括 image\638cf433-9375-4c26-8192-fe390d35bbbb.pdf 去掉 image\
-        if (filePath != null && filePath.contains("image\\")) {
-            filePath = filePath.replace("image\\", "");
-        }
-        System.out.println("filePath: " + filePath);
-
-        // Create manuscript
         Manuscript manuscript = Manuscript.builder()
                 .authorId(manuscriptDTO.getAuthorId())
                 .categoryId(manuscriptDTO.getCategoryId())
@@ -96,9 +89,10 @@ public class ManuscriptService {
             throw new RuntimeException("Manuscript not found");
         }
 
-        // Check if manuscript can be modified (only DRAFT or SUBMITTED status)
-        if (!"DRAFT".equals(existingManuscript.getStatus()) && !"SUBMITTED".equals(existingManuscript.getStatus())) {
-            throw new RuntimeException("Only manuscripts in DRAFT or SUBMITTED status can be modified");
+        if (!"DRAFT".equals(existingManuscript.getStatus())
+                && !"SUBMITTED".equals(existingManuscript.getStatus())
+                && !"REVISION_REQUIRED".equals(existingManuscript.getStatus())) {
+            throw new RuntimeException("Only draft, submitted, or revision-required manuscripts can be modified");
         }
 
         // Upload new file if provided
@@ -111,7 +105,10 @@ public class ManuscriptService {
             filePath = FileUploadUtil.uploadFile(file);
         }
 
-        // Update manuscript
+        String nextStatus = "REVISION_REQUIRED".equals(existingManuscript.getStatus())
+                ? "SUBMITTED"
+                : existingManuscript.getStatus();
+
         Manuscript manuscript = Manuscript.builder()
                 .id(manuscriptDTO.getId())
                 .authorId(existingManuscript.getAuthorId())
@@ -120,11 +117,14 @@ public class ManuscriptService {
                 .abstractText(manuscriptDTO.getAbstractText())
                 .content(manuscriptDTO.getContent())
                 .filePath(filePath)
-                .status(existingManuscript.getStatus())
+                .status(nextStatus)
                 .submissionDate(existingManuscript.getSubmissionDate())
                 .build();
 
         manuscriptMapper.update(manuscript);
+        if ("SUBMITTED".equals(nextStatus) && "REVISION_REQUIRED".equals(existingManuscript.getStatus())) {
+            notificationService.sendManuscriptStatusNotification(existingManuscript.getAuthorId(), existingManuscript.getId(), "REVISION_REQUIRED", "SUBMITTED");
+        }
         return manuscript;
     }
 

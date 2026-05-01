@@ -95,9 +95,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
-
-// ⚠️ 务必使用封装好的 api，不要用原生 axios
 import api from '@/services/api'
 
 const loading = ref(false)
@@ -160,13 +157,9 @@ const loadPendingTasks = async () => {
 // 1. 加载进行中 (需求1：通过新接口获取 accepted 状态)
 const loadAcceptedTasks = async () => {
   try {
-    // ⚠️ 请将此处的 URL 替换为你后端提供的真实【新接口地址】
     const response = await api.get('/api/reviewers/tasks/accepted-endpoint') 
-    // 打印 response
-    console.log('response:', response)
     if (response.code === 200) {
       const tasks = response.data || []
-      // 过滤保险：确保只展示 ACCEPTED 状态的稿件
       acceptedTasks.value = tasks.filter(t => t.status === 'ACCEPTED')
     }
   } catch (error) {
@@ -177,7 +170,6 @@ const loadAcceptedTasks = async () => {
 // 2. 加载已完成 (需求2：通过新接口获取 非accepted 和 非PENDING 状态)
 const loadCompletedTasks = async () => {
   try {
-    // ⚠️ 请将此处的 URL 替换为你后端提供的真实【新接口地址】
     const response = await api.get('/api/reviewers/tasks/completed-endpoint') 
     if (response.code === 200) {
       const tasks = response.data || []
@@ -191,41 +183,12 @@ const loadCompletedTasks = async () => {
 
 
 
-// Load pending and accepted review tasks
-const loadReviewTasks = async () => {
-  loading.value = true
-  try {
-    const response = await axios.get('/api/api/reviewers/tasks')
-    if (response.code === 200) {
-      const tasks = response.data || []
-      pendingTasks.value = tasks.filter(t => t.status === 'PENDING')
-      acceptedTasks.value = tasks.filter(t => t.status === 'ACCEPTED')
-    }
-  } catch (error) {
-    ElMessage.error('加载审稿任务失败')
-  } finally {
-    loading.value = false
-  }
-}
-
-// Load review history
-const loadReviewHistory = async () => {
-  try {
-    const response = await axios.get('/api/api/reviewers/history')
-    if (response.data.code === 200) {
-      completedTasks.value = response.data.data || []
-    }
-  } catch (error) {
-    ElMessage.error('加载审稿历史失败')
-  }
-}
-
 // View manuscript content
 const viewManuscript = async (task) => {
   try {
-    const response = await axios.get(`/api/api/reviewers/manuscripts/${task.manuscriptId}`)
-    if (response.data.code === 200) {
-      currentManuscript.value = response.data.data
+    const response = await api.get(`/api/reviewers/manuscripts/${task.manuscriptId}`)
+    if (response.code === 200) {
+      currentManuscript.value = response.data
       manuscriptDialogVisible.value = true
     }
   } catch (error) {
@@ -236,10 +199,10 @@ const viewManuscript = async (task) => {
 // Accept review task
 const acceptTask = async (task) => {
   try {
-    const response = await axios.post(`/api/api/reviewers/tasks/${task.id}/accept`)
-    if (response.data.code === 200) {
+    const response = await api.post(`/api/reviewers/tasks/${task.id}/accept`)
+    if (response.code === 200) {
       ElMessage.success('已接受审稿任务')
-      loadReviewTasks()
+      loadAllData()
     }
   } catch (error) {
     ElMessage.error('接受任务失败')
@@ -249,10 +212,10 @@ const acceptTask = async (task) => {
 // Reject review task
 const rejectTask = async (task) => {
   try {
-    const response = await axios.post(`/api/api/reviewers/tasks/${task.id}/reject`)
-    if (response.data.code === 200) {
+    const response = await api.post(`/api/reviewers/tasks/${task.id}/reject`)
+    if (response.code === 200) {
       ElMessage.success('已拒绝审稿任务')
-      loadReviewTasks()
+      loadAllData()
     }
   } catch (error) {
     ElMessage.error('拒绝任务失败')
@@ -278,16 +241,15 @@ const submitReviewOpinion = async () => {
   }
 
   try {
-    const response = await axios.post(`/api/api/reviewers/reviews/${currentTask.value.id}/submit`, {
+    const response = await api.post(`/api/reviewers/reviews/${currentTask.value.id}/submit`, {
       opinion: reviewForm.value.opinion,
       score: reviewForm.value.score,
       recommendation: reviewForm.value.recommendation
     })
-    if (response.data.code === 200) {
+    if (response.code === 200) {
       ElMessage.success('审稿意见已提交')
       reviewDialogVisible.value = false
-      loadReviewTasks()
-      loadReviewHistory()
+      loadAllData()
     }
   } catch (error) {
     ElMessage.error('提交审稿意见失败')
@@ -297,9 +259,9 @@ const submitReviewOpinion = async () => {
 // View review details
 const viewReview = async (task) => {
   try {
-    const response = await axios.get(`/api/api/reviewers/reviews/${task.id}`)
-    if (response.data.code === 200) {
-      currentReview.value = response.data.data
+    const response = await api.get(`/api/reviewers/reviews/${task.id}`)
+    if (response.code === 200) {
+      currentReview.value = response.data
       reviewDetailsDialogVisible.value = true
     }
   } catch (error) {

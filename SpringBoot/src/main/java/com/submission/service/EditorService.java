@@ -170,9 +170,6 @@ public class EditorService {
 
 
         // Update manuscript status based on review result
-        String oldStatus = manuscript.getStatus();
-        System.out.println("Old status: " + oldStatus);
-        System.out.println(" status: " + oldStatus);
         updateManuscriptStatusAfterInitialReview(manuscript, status);
 
         // Send notification to author about initial review result
@@ -246,6 +243,9 @@ public class EditorService {
         if (manuscript == null) {
             throw new RuntimeException("Manuscript not found");
         }
+        if (!"UNDER_REVIEW".equals(manuscript.getStatus())) {
+            throw new RuntimeException("Only manuscripts under review can be assigned to reviewers");
+        }
 
         // Validate reviewer exists and is active
         User reviewer = userMapper.findById(reviewerId);
@@ -277,8 +277,9 @@ public class EditorService {
 
         reviewMapper.insert(review);
 
-        // Send notification to reviewer about assignment
-        notificationService.sendReviewerAssignmentNotification(reviewerId, manuscriptId, editorId);
+        if (notificationService != null) {
+            notificationService.sendReviewerAssignmentNotification(reviewerId, manuscriptId, editorId);
+        }
     }
 
     /**
@@ -397,6 +398,49 @@ public class EditorService {
         // Generate acceptance notification content
         String notification = generateNotificationContent(manuscript, author);
         return notification;
+    }
+
+    /**
+     * 编辑根据审稿意见作出终审决定。
+     */
+    public Manuscript submitFinalReview(Long manuscriptId, Long editorId, String finalStatus, String opinion) {
+        Manuscript manuscript = manuscriptMapper.findById(manuscriptId);
+        if (manuscript == null) {
+            throw new RuntimeException("Manuscript not found");
+        }
+
+        User editor = userMapper.findById(editorId);
+        if (editor == null || !"EDITOR".equals(editor.getRole())) {
+            throw new RuntimeException("User is not an editor");
+        }
+
+        if (!isValidFinalStatus(finalStatus)) {
+            throw new RuntimeException("Invalid final review status. Must be ACCEPTED, REJECTED, or REVISION_REQUIRED");
+        }
+
+        List<Review> reviews = reviewMapper.findByManuscriptId(manuscriptId);
+        boolean hasSubmittedReview = reviews.stream().anyMatch(r -> "SUBMITTED".equals(r.getStatus()));
+        if (!hasSubmittedReview) {
+            throw new RuntimeException("Final review requires at least one submitted reviewer opinion");
+        }
+
+        String oldStatus = manuscript.getStatus();
+        manuscript.setStatus(finalStatus);
+        manuscript.setUpdatedAt(LocalDateTime.now());
+        manuscriptMapper.update(manuscript);
+
+        if (notificationService != null) {
+            notificationService.sendManuscriptStatusNotification(manuscript.getAuthorId(), manuscriptId, oldStatus, finalStatus);
+        }
+
+        return manuscript;
+    }
+
+    /**
+     * 校验终审状态。
+     */
+    private boolean isValidFinalStatus(String status) {
+        return "ACCEPTED".equals(status) || "REJECTED".equals(status) || "REVISION_REQUIRED".equals(status);
     }
 
     /**

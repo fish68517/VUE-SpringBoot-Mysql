@@ -40,8 +40,8 @@ public class UserManagementService {
             throw new RuntimeException("User is not in pending status");
         }
 
-        userMapper.updateStatus(userId, "APPROVED");
-        user.setStatus("APPROVED");
+        userMapper.updateStatus(userId, "ACTIVE");
+        user.setStatus("ACTIVE");
         
         // Send approval notification
         notificationService.sendUserApprovalNotification(userId, true);

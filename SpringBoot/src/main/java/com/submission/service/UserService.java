@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * User Service - Business logic for user operations
+ * 用户服务：处理注册、登录和用户基础信息维护。
  */
 @Service
 @RequiredArgsConstructor
@@ -16,23 +16,21 @@ public class UserService {
     private final UserMapper userMapper;
 
     /**
-     * Register a new user
+     * 注册新用户。注册后先进入待审核状态，由管理员审核通过后启用。
      */
     public User register(UserDTO userDTO) {
-        // Check if username already exists
         User existingUser = userMapper.findByUsername(userDTO.getUsername());
         if (existingUser != null) {
-            throw new RuntimeException("Username already exists");
+            throw new RuntimeException("用户名已存在");
         }
 
-        // Create new user with PENDING status
         User user = User.builder()
                 .username(userDTO.getUsername())
                 .password(userDTO.getPassword())
                 .email(userDTO.getEmail())
                 .phone(userDTO.getPhone())
                 .role(userDTO.getRole())
-                .status("ACTIVE")
+                .status("PENDING")
                 .academicAchievements(userDTO.getAcademicAchievements())
                 .workEmail(userDTO.getWorkEmail())
                 .expertiseAreas(userDTO.getExpertiseAreas())
@@ -45,43 +43,41 @@ public class UserService {
     }
 
     /**
-     * Login user with username and password
+     * 使用用户名和明文密码登录。
      */
     public User login(String username, String password) {
         User user = userMapper.findByUsername(username);
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new RuntimeException("用户不存在");
         }
 
-        // Validate password (plain text comparison as per requirements)
         if (!user.getPassword().equals(password)) {
-            throw new RuntimeException("Invalid password");
+            throw new RuntimeException("密码错误");
         }
 
-        // Check if user is approved
-/*        if (!"ACTIVE".equals(user.getStatus()) && !"APPROVED".equals(user.getStatus())) {
-            throw new RuntimeException("User account is not approved");
-        }*/
+        if (!"ACTIVE".equals(user.getStatus()) && !"APPROVED".equals(user.getStatus())) {
+            throw new RuntimeException("账号尚未审核通过，暂不能登录");
+        }
 
         return user;
     }
 
     /**
-     * Get user by id
+     * 根据 ID 查询用户。
      */
     public User getUserById(Long id) {
         return userMapper.findById(id);
     }
 
     /**
-     * Get user by username
+     * 根据用户名查询用户。
      */
     public User getUserByUsername(String username) {
         return userMapper.findByUsername(username);
     }
 
     /**
-     * Update user information
+     * 更新用户信息。
      */
     public User updateUser(UserDTO userDTO) {
         User user = User.builder()
@@ -103,7 +99,7 @@ public class UserService {
     }
 
     /**
-     * Get users by role
+     * 根据角色查询已启用用户。
      */
     public java.util.List<User> getUsersByRole(String role) {
         return userMapper.findByRole(role);

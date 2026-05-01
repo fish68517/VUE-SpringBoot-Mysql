@@ -90,15 +90,14 @@ const formatDate = (date) => {
 
 const loadManuscriptsForReview = async () => {
   try {
-    const response = await editorService.getPendingManuscripts()
+    const response = await manuscriptService.getAllManuscripts()
     if (response.data) {
-      // Fetch full manuscript details for each manuscript
+      const underReviewManuscripts = response.data.filter(item => item.status === 'UNDER_REVIEW')
       const manuscriptsWithDetails = await Promise.all(
-        response.data.map(async (item) => {
+        underReviewManuscripts.map(async (item) => {
           try {
-            const detail = await manuscriptService.getManuscriptDetail(item.manuscriptId)
+            const detail = await manuscriptService.getManuscriptDetail(item.id)
             const manuscript = detail.data.manuscript
-            // 获取分配的审稿人数组，如果不存在则默认为空数组
             const reviews = detail.data.reviews || [] 
             
             return {
@@ -110,10 +109,10 @@ const loadManuscriptsForReview = async () => {
             }
           } catch (error) {
             return {
-              id: item.manuscriptId,
-              title: 'Unknown',
-              authorName: 'Unknown',
-              submissionDate: null,
+              id: item.id,
+              title: item.title || '未知稿件',
+              authorName: item.authorName || '未知作者',
+              submissionDate: item.submissionDate,
               reviewerCount: 0
             }
           }

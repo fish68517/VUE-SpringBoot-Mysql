@@ -71,5 +71,18 @@ export const editorService = {
   // Generate acceptance notification for a manuscript
   generateAcceptanceNotification(manuscriptId) {
     return api.post(`/api/editors/manuscripts/${manuscriptId}/generate-acceptance-notification`)
+  },
+
+  // Submit final review decision
+  submitFinalReview(manuscriptId, finalStatus, opinion) {
+    return api.post(`/api/editors/manuscripts/${manuscriptId}/final-review`, {
+      finalStatus,
+      opinion
+    })
+  },
+
+  // Get all active authors for communication
+  getAllAuthors() {
+    return api.get('/api/users/by-role/AUTHOR')
   }
 }

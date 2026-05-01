@@ -172,7 +172,6 @@ public class ReviewerService {
                 iterator.remove();
             }
         }
-        System.out.println(reviews);
         return reviews.stream().map(this::convertReviewToDTO).collect(Collectors.toList());
     /*    return reviews.stream()
                 .filter(r -> "ACCEPTED".equals(r.getStatus()))

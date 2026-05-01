@@ -92,8 +92,6 @@ public class MessageController {
             HttpSession session) {
         try {
             Long senderId = (Long) session.getAttribute("userId");
-            System.out.println("Sender ID: " + senderId);
-            System.out.println("Recipient : " + request);
             if (senderId == null) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ApiResponse.error("User not logged in"));

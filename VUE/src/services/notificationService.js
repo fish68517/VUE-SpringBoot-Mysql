@@ -1,55 +1,31 @@
-import axios from 'axios';
+import api from './api'
 
-const API_BASE_URL = '/api/notifications';
+const API_BASE_URL = '/api/notifications'
 
 /**
- * Get all notifications for current user
+ * 获取当前用户全部通知
  */
 export const getNotifications = async () => {
-  try {
-    const response = await axios.get(API_BASE_URL);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching notifications:', error);
-    throw error;
-  }
-};
+  return api.get(API_BASE_URL)
+}
 
 /**
- * Get unread notification count
+ * 获取未读通知数量
  */
 export const getUnreadCount = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/unread-count`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching unread count:', error);
-    throw error;
-  }
-};
+  return api.get(`${API_BASE_URL}/unread-count`)
+}
 
 /**
- * Mark notification as read
+ * 标记通知为已读
  */
 export const markAsRead = async (notificationId) => {
-  try {
-    const response = await axios.post(`${API_BASE_URL}/${notificationId}/read`);
-    return response.data;
-  } catch (error) {
-    console.error('Error marking notification as read:', error);
-    throw error;
-  }
-};
+  return api.post(`${API_BASE_URL}/${notificationId}/read`)
+}
 
 /**
- * Get notification by id
+ * 根据 ID 获取通知
  */
 export const getNotificationById = async (notificationId) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/${notificationId}`);
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching notification:', error);
-    throw error;
-  }
-};
+  return api.get(`${API_BASE_URL}/${notificationId}`)
+}

@@ -59,8 +59,8 @@ CREATE TABLE `initial_reviews`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_manuscript_id`(`manuscript_id` ASC) USING BTREE,
   INDEX `idx_editor_id`(`editor_id` ASC) USING BTREE,
-  CONSTRAINT `initial_reviews_ibfk_1` FOREIGN KEY (`manuscript_id`) REFERENCES `manuscripts` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `initial_reviews_ibfk_2` FOREIGN KEY (`editor_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `initial_reviews_ibfk_1` FOREIGN KEY (`manuscript_id`) REFERENCES `manuscripts` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `initial_reviews_ibfk_2` FOREIGN KEY (`editor_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -91,8 +91,8 @@ CREATE TABLE `manuscripts`  (
   INDEX `idx_category_id`(`category_id` ASC) USING BTREE,
   INDEX `idx_status`(`status` ASC) USING BTREE,
   INDEX `idx_submission_date`(`submission_date` ASC) USING BTREE,
-  CONSTRAINT `manuscripts_ibfk_1` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `manuscripts_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `manuscripts_ibfk_1` FOREIGN KEY (`author_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `manuscripts_ibfk_2` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -122,8 +122,8 @@ CREATE TABLE `messages`  (
   INDEX `idx_is_read`(`is_read` ASC) USING BTREE,
   INDEX `idx_created_at`(`created_at` ASC) USING BTREE,
   INDEX `messages_ibfk_3`(`manuscript_id` ASC) USING BTREE,
-  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`recipient_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
   CONSTRAINT `messages_ibfk_3` FOREIGN KEY (`manuscript_id`) REFERENCES `manuscripts` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
@@ -189,9 +189,9 @@ CREATE TABLE `reviews`  (
   INDEX `idx_reviewer_id`(`reviewer_id` ASC) USING BTREE,
   INDEX `idx_editor_id`(`editor_id` ASC) USING BTREE,
   INDEX `idx_status`(`status` ASC) USING BTREE,
-  CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`manuscript_id`) REFERENCES `manuscripts` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`reviewer_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `reviews_ibfk_3` FOREIGN KEY (`editor_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  CONSTRAINT `reviews_ibfk_1` FOREIGN KEY (`manuscript_id`) REFERENCES `manuscripts` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `reviews_ibfk_2` FOREIGN KEY (`reviewer_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `reviews_ibfk_3` FOREIGN KEY (`editor_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -243,7 +243,7 @@ CREATE TABLE `users`  (
   INDEX `idx_username`(`username` ASC) USING BTREE,
   INDEX `idx_role`(`role` ASC) USING BTREE,
   INDEX `idx_status`(`status` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 101 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of users
@@ -252,5 +252,6 @@ INSERT INTO `users` VALUES (1, 'zhangsan', '123456789', '12345666600@qq.com', '1
 INSERT INTO `users` VALUES (2, 'bianji', '123456789', '12345666600@qq.com', '1507146975', 'EDITOR', 'ACTIVE', NULL, '12345666600@163.com', NULL, NULL, '2026-03-07 12:50:03', '2026-03-07 13:04:40');
 INSERT INTO `users` VALUES (3, 'shengao', '12345678', '12345666600@qq.com', NULL, 'REVIEWER', 'ACTIVE', NULL, NULL, '计算机技术', '计算机技术计算机技术计算机技术计算机技术', '2026-03-07 13:42:31', '2026-03-07 16:55:38');
 INSERT INTO `users` VALUES (4, 'shengao1', '12345678', '12345666680@qq.com', NULL, 'REVIEWER', 'ACTIVE', NULL, NULL, NULL, NULL, '2026-03-07 13:42:47', '2026-03-07 13:42:47');
+INSERT INTO `users` VALUES (100, 'admin', '123456', 'admin@example.com', '13800000000', 'ADMIN', 'ACTIVE', NULL, NULL, NULL, NULL, '2026-05-01 00:00:00', '2026-05-01 00:00:00');
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -57,7 +57,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import api from '@/services/api'
 
 const loading = ref(false)
 const historyList = ref([])
@@ -73,9 +73,9 @@ onMounted(() => {
 const loadReviewHistory = async () => {
   loading.value = true
   try {
-    const response = await axios.get('/api/api/reviewers/history')
-    if (response.data.code === 200) {
-      historyList.value = response.data.data || []
+    const response = await api.get('/api/reviewers/history')
+    if (response.code === 200) {
+      historyList.value = response.data || []
     }
   } catch (error) {
     ElMessage.error('加载审稿历史失败')
@@ -87,9 +87,9 @@ const loadReviewHistory = async () => {
 // View review details
 const viewDetails = async (review) => {
   try {
-    const response = await axios.get(`/api/api/reviewers/reviews/${review.id}`)
-    if (response.data.code === 200) {
-      currentReview.value = response.data.data
+    const response = await api.get(`/api/reviewers/reviews/${review.id}`)
+    if (response.code === 200) {
+      currentReview.value = response.data
       detailsDialogVisible.value = true
     }
   } catch (error) {

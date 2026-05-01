@@ -22,6 +22,9 @@ CREATE TABLE IF NOT EXISTS users (
     INDEX idx_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+INSERT IGNORE INTO users (id, username, password, email, phone, role, status, created_at, updated_at)
+VALUES (1, 'admin', '123456', 'admin@example.com', '13800000000', 'ADMIN', 'ACTIVE', NOW(), NOW());
+
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -50,8 +53,8 @@ CREATE TABLE IF NOT EXISTS manuscripts (
     submission_date TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (author_id) REFERENCES users(id),
-    FOREIGN KEY (category_id) REFERENCES categories(id),
+    FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
     INDEX idx_author_id (author_id),
     INDEX idx_category_id (category_id),
     INDEX idx_status (status),
@@ -67,8 +70,8 @@ CREATE TABLE IF NOT EXISTS initial_reviews (
     opinion TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (manuscript_id) REFERENCES manuscripts(id),
-    FOREIGN KEY (editor_id) REFERENCES users(id),
+    FOREIGN KEY (manuscript_id) REFERENCES manuscripts(id) ON DELETE CASCADE,
+    FOREIGN KEY (editor_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_manuscript_id (manuscript_id),
     INDEX idx_editor_id (editor_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -86,9 +89,9 @@ CREATE TABLE IF NOT EXISTS reviews (
     submitted_date TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (manuscript_id) REFERENCES manuscripts(id),
-    FOREIGN KEY (reviewer_id) REFERENCES users(id),
-    FOREIGN KEY (editor_id) REFERENCES users(id),
+    FOREIGN KEY (manuscript_id) REFERENCES manuscripts(id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewer_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (editor_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_manuscript_id (manuscript_id),
     INDEX idx_reviewer_id (reviewer_id),
     INDEX idx_editor_id (editor_id),
@@ -105,9 +108,9 @@ CREATE TABLE IF NOT EXISTS messages (
     type VARCHAR(50) NOT NULL COMMENT 'NOTIFICATION, COMMUNICATION',
     is_read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (sender_id) REFERENCES users(id),
-    FOREIGN KEY (recipient_id) REFERENCES users(id),
-    FOREIGN KEY (manuscript_id) REFERENCES manuscripts(id),
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (recipient_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (manuscript_id) REFERENCES manuscripts(id) ON DELETE CASCADE,
     INDEX idx_recipient_id (recipient_id),
     INDEX idx_sender_id (sender_id),
     INDEX idx_is_read (is_read),

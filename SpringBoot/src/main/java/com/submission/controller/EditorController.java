@@ -376,6 +376,34 @@ public class EditorController {
     }
 
     /**
+     * 提交稿件终审结果。
+     */
+    @PostMapping("/manuscripts/{manuscriptId}/final-review")
+    public ResponseEntity<ApiResponse<ManuscriptDTO>> submitFinalReview(
+            @PathVariable Long manuscriptId,
+            @RequestBody FinalReviewRequest request,
+            HttpSession session) {
+        try {
+            Long editorId = (Long) session.getAttribute("userId");
+            if (editorId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error("User not logged in"));
+            }
+
+            com.submission.entity.Manuscript manuscript = editorService.submitFinalReview(
+                    manuscriptId,
+                    editorId,
+                    request.getFinalStatus(),
+                    request.getOpinion()
+            );
+            return ResponseEntity.ok(ApiResponse.success("Final review submitted successfully", convertManuscriptToDTO(manuscript)));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    /**
      * Convert Manuscript entity to ManuscriptDTO
      */
     private ManuscriptDTO convertManuscriptToDTO(com.submission.entity.Manuscript manuscript) {
@@ -404,6 +432,17 @@ public class EditorController {
         private String title;
         private String abstractText;
         private String content;
+    }
+
+    /**
+     * 终审请求 DTO。
+     */
+    @lombok.Data
+    @lombok.NoArgsConstructor
+    @lombok.AllArgsConstructor
+    public static class FinalReviewRequest {
+        private String finalStatus;
+        private String opinion;
     }
 
     /**

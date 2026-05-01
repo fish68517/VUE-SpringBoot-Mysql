@@ -30,9 +30,9 @@
             type="primary"
             size="small"
             @click="editManuscript(row.id)"
-            :disabled="row.status !== 'DRAFT' && row.status !== 'SUBMITTED'"
+            :disabled="row.status !== 'DRAFT' && row.status !== 'SUBMITTED' && row.status !== 'REVISION_REQUIRED'"
           >
-            编辑
+            {{ row.status === 'REVISION_REQUIRED' ? '上传修改稿' : '编辑' }}
           </el-button>
           <el-button
             link

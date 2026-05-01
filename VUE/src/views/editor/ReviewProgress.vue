@@ -19,9 +19,17 @@
         </el-table-column>
         <el-table-column prop="reviewerCount" label="分配审稿人数" width="120" />
         <el-table-column prop="submittedCount" label="已提交意见数" width="120" />
-        <el-table-column label="操作" width="150" fixed="right">
+        <el-table-column label="操作" width="220" fixed="right">
           <template #default="{ row }">
             <el-button link type="primary" @click="handleViewProgress(row)">查看进度</el-button>
+            <el-button
+              link
+              type="success"
+              :disabled="row.submittedCount === 0"
+              @click="handleFinalReview(row)"
+            >
+              终审
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -103,6 +111,33 @@
           />
         </div>
       </el-dialog>
+
+      <el-dialog v-model="finalReviewDialogVisible" title="提交终审结果" width="600px">
+        <el-form :model="finalReviewForm" label-width="100px">
+          <el-form-item label="稿件标题">
+            <el-input :model-value="selectedManuscript?.title" disabled />
+          </el-form-item>
+          <el-form-item label="终审结果" required>
+            <el-select v-model="finalReviewForm.finalStatus" placeholder="请选择终审结果" style="width: 100%">
+              <el-option label="录用" value="ACCEPTED" />
+              <el-option label="退修" value="REVISION_REQUIRED" />
+              <el-option label="拒稿" value="REJECTED" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="终审意见">
+            <el-input
+              v-model="finalReviewForm.opinion"
+              type="textarea"
+              :rows="5"
+              placeholder="请输入给作者的终审意见"
+            />
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <el-button @click="finalReviewDialogVisible = false">取消</el-button>
+          <el-button type="primary" :loading="submittingFinalReview" @click="submitFinalReview">提交终审</el-button>
+        </template>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -116,9 +151,15 @@ import { manuscriptService } from '../../services/manuscriptService'
 const manuscriptsUnderReview = ref([])
 const progressDialogVisible = ref(false)
 const opinionDialogVisible = ref(false)
+const finalReviewDialogVisible = ref(false)
 const selectedManuscript = ref(null)
 const selectedReview = ref(null)
 const reviewProgress = ref([])
+const submittingFinalReview = ref(false)
+const finalReviewForm = ref({
+  finalStatus: '',
+  opinion: ''
+})
 
 const formatDate = (date) => {
   if (!date) return ''
@@ -184,13 +225,13 @@ const getRecommendationLabel = (recommendation) => {
 
 const loadManuscriptsUnderReview = async () => {
   try {
-    const response = await editorService.getPendingManuscripts()
+    const response = await manuscriptService.getAllManuscripts()
     if (response.data) {
-      // Fetch full manuscript details for each manuscript
+      const underReviewManuscripts = response.data.filter(item => item.status === 'UNDER_REVIEW')
       const manuscriptsWithDetails = await Promise.all(
-        response.data.map(async (item) => {
+        underReviewManuscripts.map(async (item) => {
           try {
-            const detail = await manuscriptService.getManuscriptDetail(item.manuscriptId)
+            const detail = await manuscriptService.getManuscriptDetail(item.id)
             const manuscript = detail.data.manuscript
             
             // Get review progress to count reviewers and submitted reviews
@@ -208,10 +249,10 @@ const loadManuscriptsUnderReview = async () => {
             }
           } catch (error) {
             return {
-              id: item.manuscriptId,
-              title: 'Unknown',
-              authorName: 'Unknown',
-              submissionDate: null,
+              id: item.id,
+              title: item.title || '未知稿件',
+              authorName: item.authorName || '未知作者',
+              submissionDate: item.submissionDate,
               reviewerCount: 0,
               submittedCount: 0
             }
@@ -239,6 +280,39 @@ const handleViewProgress = async (manuscript) => {
 const handleViewOpinion = (review) => {
   selectedReview.value = review
   opinionDialogVisible.value = true
+}
+
+const handleFinalReview = (manuscript) => {
+  selectedManuscript.value = manuscript
+  finalReviewForm.value = {
+    finalStatus: '',
+    opinion: ''
+  }
+  finalReviewDialogVisible.value = true
+}
+
+const submitFinalReview = async () => {
+  if (!finalReviewForm.value.finalStatus) {
+    ElMessage.warning('请选择终审结果')
+    return
+  }
+
+  submittingFinalReview.value = true
+  try {
+    await editorService.submitFinalReview(
+      selectedManuscript.value.id,
+      finalReviewForm.value.finalStatus,
+      finalReviewForm.value.opinion
+    )
+    ElMessage.success('终审结果已提交')
+    finalReviewDialogVisible.value = false
+    progressDialogVisible.value = false
+    await loadManuscriptsUnderReview()
+  } catch (error) {
+    ElMessage.error(error.message || '提交终审失败')
+  } finally {
+    submittingFinalReview.value = false
+  }
 }
 
 onMounted(() => {

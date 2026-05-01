@@ -64,8 +64,6 @@ public class MessageService {
                 .type(type)
                 .isRead(false)
                 .build();
-
-        System.out.println("Message: " + message);
         messageMapper.insert(message);
         return convertToDTO(message);
     }

@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
- * File Upload Utility - Handles file upload operations
+ * 文件上传工具：上传文件保存到项目根目录 image 文件夹，数据库只保存文件名。
  */
 public class FileUploadUtil {
 
@@ -18,7 +18,7 @@ public class FileUploadUtil {
     private static final String[] ALLOWED_EXTENSIONS = {"pdf", "doc", "docx", "jpg", "png", "gif"};
 
     /**
-     * Upload file and return the file path
+     * 上传文件并返回文件名。
      */
     public static String uploadFile(MultipartFile file) throws IOException {
         // Validate file
@@ -53,7 +53,7 @@ public class FileUploadUtil {
         // Save file
         Files.write(filePath, file.getBytes());
 
-        return filePath.toString();
+        return uniqueFilename;
     }
 
     /**
@@ -80,11 +80,14 @@ public class FileUploadUtil {
     }
 
     /**
-     * Delete file
+     * 删除 image 目录中的文件。
      */
     public static boolean deleteFile(String filePath) {
         try {
             Path path = Paths.get(filePath);
+            if (path.getParent() == null) {
+                path = Paths.get(UPLOAD_DIR, filePath);
+            }
             return Files.deleteIfExists(path);
         } catch (IOException e) {
             return false;
