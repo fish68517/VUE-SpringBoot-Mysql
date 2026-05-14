@@ -1,0 +1,154 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram id="shenyang-music-festival-arch" name="Page-1">
+    <mxGraphModel dx="2977" dy="1789" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1120" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="" vertex="1">
+          <mxGeometry height="150" width="1640" x="80" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="l1" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontStyle=1;fontSize=20;rotation=270;strokeWidth=2;strokeColor=#000000;fontColor=#000000;fillColor=default;" value="展现层" vertex="1">
+          <mxGeometry height="218" width="83.5" x="159" y="-8" as="geometry" />
+        </mxCell>
+        <mxCell id="top1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontStyle=1;fontColor=#000000;" value="Vue 前端页面 / PC浏览器" vertex="1">
+          <mxGeometry height="90" width="360" x="730" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="" vertex="1">
+          <mxGeometry height="491" width="1640" x="80" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="l2" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontStyle=1;fontSize=20;rotation=270;strokeWidth=2;strokeColor=#000000;fontColor=#000000;fillColor=default;" value="应用服务层" vertex="1">
+          <mxGeometry height="150" width="60" x="140" y="185" as="geometry" />
+        </mxCell>
+        <mxCell id="bar2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontStyle=1;fontColor=#000000;" value="SpringBoot 业务服务 / RESTful API" vertex="1">
+          <mxGeometry height="55" width="600" x="610" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="h_user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontStyle=1;fontColor=#000000;" value="用户端" vertex="1">
+          <mxGeometry height="48" width="240" x="275" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="h_admin" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontStyle=1;fontColor=#000000;" value="管理端" vertex="1">
+          <mxGeometry height="48" width="240" x="780" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="h_common" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontStyle=1;fontColor=#000000;" value="公共支撑服务" vertex="1">
+          <mxGeometry height="48" width="240" x="1285" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="u_0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="账号管理" vertex="1">
+          <mxGeometry height="44" width="145" x="232" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="u_1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="音乐资讯" vertex="1">
+          <mxGeometry height="44" width="145" x="405" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="u_2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="票务预订" vertex="1">
+          <mxGeometry height="44" width="145" x="232" y="444" as="geometry" />
+        </mxCell>
+        <mxCell id="u_3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="电子票查看" vertex="1">
+          <mxGeometry height="44" width="145" x="405" y="444" as="geometry" />
+        </mxCell>
+        <mxCell id="u_4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="购物车结算" vertex="1">
+          <mxGeometry height="44" width="145" x="232" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="u_5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="订单支付" vertex="1">
+          <mxGeometry height="44" width="145" x="405" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="u_6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="积分商城" vertex="1">
+          <mxGeometry height="44" width="145" x="232" y="576" as="geometry" />
+        </mxCell>
+        <mxCell id="u_7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="评论点赞" vertex="1">
+          <mxGeometry height="44" width="145" x="405" y="576" as="geometry" />
+        </mxCell>
+        <mxCell id="u_8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="音乐节关注" vertex="1">
+          <mxGeometry height="44" width="145" x="232" y="642" as="geometry" />
+        </mxCell>
+        <mxCell id="u_9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="打卡任务" vertex="1">
+          <mxGeometry height="44" width="145" x="405" y="642" as="geometry" />
+        </mxCell>
+        <mxCell id="a_0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="仪表盘统计" vertex="1">
+          <mxGeometry height="44" width="145" x="737" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="a_1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="票务管理" vertex="1">
+          <mxGeometry height="44" width="145" x="910" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="a_2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="资讯管理" vertex="1">
+          <mxGeometry height="44" width="145" x="737" y="444" as="geometry" />
+        </mxCell>
+        <mxCell id="a_3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="订单管理" vertex="1">
+          <mxGeometry height="44" width="145" x="910" y="444" as="geometry" />
+        </mxCell>
+        <mxCell id="a_4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="用户管理" vertex="1">
+          <mxGeometry height="44" width="145" x="737" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="a_5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="积分管理" vertex="1">
+          <mxGeometry height="44" width="145" x="910" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="a_6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="评论审核" vertex="1">
+          <mxGeometry height="44" width="145" x="737" y="576" as="geometry" />
+        </mxCell>
+        <mxCell id="a_7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="音乐节/场次管理" vertex="1">
+          <mxGeometry height="44" width="145" x="910" y="576" as="geometry" />
+        </mxCell>
+        <mxCell id="a_8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="票区库存管理" vertex="1">
+          <mxGeometry height="44" width="145" x="737" y="642" as="geometry" />
+        </mxCell>
+        <mxCell id="a_9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="兑换审核" vertex="1">
+          <mxGeometry height="44" width="145" x="910" y="642" as="geometry" />
+        </mxCell>
+        <mxCell id="s_0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="身份认证" vertex="1">
+          <mxGeometry height="44" width="145" x="1242" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="s_1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="角色权限" vertex="1">
+          <mxGeometry height="44" width="145" x="1415" y="378" as="geometry" />
+        </mxCell>
+        <mxCell id="s_2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="库存校验" vertex="1">
+          <mxGeometry height="44" width="145" x="1242" y="444" as="geometry" />
+        </mxCell>
+        <mxCell id="s_3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="实名购票校验" vertex="1">
+          <mxGeometry height="44" width="145" x="1415" y="444" as="geometry" />
+        </mxCell>
+        <mxCell id="s_4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="支付状态处理" vertex="1">
+          <mxGeometry height="44" width="145" x="1242" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="s_5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="积分流水处理" vertex="1">
+          <mxGeometry height="44" width="145" x="1415" y="510" as="geometry" />
+        </mxCell>
+        <mxCell id="s_6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="评论与收藏处理" vertex="1">
+          <mxGeometry height="44" width="145" x="1242" y="576" as="geometry" />
+        </mxCell>
+        <mxCell id="s_7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="数据统计汇总" vertex="1">
+          <mxGeometry height="44" width="145" x="1415" y="576" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="" vertex="1">
+          <mxGeometry height="194" width="1640" x="80" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="l3" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontStyle=1;fontSize=20;rotation=270;strokeWidth=2;strokeColor=#000000;fontColor=#000000;fillColor=default;" value="数据层" vertex="1">
+          <mxGeometry height="100" width="60" x="115" y="745" as="geometry" />
+        </mxCell>
+        <mxCell id="d_0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="用户与权限数据&lt;br&gt;users" vertex="1">
+          <mxGeometry height="75" width="430" x="200" y="712" as="geometry" />
+        </mxCell>
+        <mxCell id="d_1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="票务活动数据&lt;br&gt;festivals / ticket_sessions / ticket_zones / tickets" vertex="1">
+          <mxGeometry height="73" width="430" x="665" y="714" as="geometry" />
+        </mxCell>
+        <mxCell id="d_2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="订单与商品数据&lt;br&gt;orders / order_items / products / product_categories" vertex="1">
+          <mxGeometry height="90" width="430" x="1130" y="715" as="geometry" />
+        </mxCell>
+        <mxCell id="d_3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="资讯与互动数据&lt;br&gt;articles / article_comments / artists / user_collections" vertex="1">
+          <mxGeometry height="75" width="430" x="200" y="815" as="geometry" />
+        </mxCell>
+        <mxCell id="d_4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="积分与打卡数据&lt;br&gt;checkin_tasks / checkin_records / points_history / points_mall / points_exchanges" vertex="1">
+          <mxGeometry height="77" width="430" x="665" y="815" as="geometry" />
+        </mxCell>
+        <mxCell id="d_5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="辅助信息数据&lt;br&gt;schedules / transport_info / weather_info / festival_follows" vertex="1">
+          <mxGeometry height="72" width="430" x="1130" y="815" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontColor=#000000;" value="" vertex="1">
+          <mxGeometry height="160" width="1640" x="80" y="915" as="geometry" />
+        </mxCell>
+        <mxCell id="l4" parent="1" style="text;html=1;whiteSpace=wrap;align=center;verticalAlign=middle;fontStyle=1;fontSize=20;rotation=270;strokeWidth=2;strokeColor=#000000;fontColor=#000000;fillColor=default;" value="数据库层" vertex="1">
+          <mxGeometry height="110" width="60" x="120" y="945" as="geometry" />
+        </mxCell>
+        <mxCell id="db1" parent="1" style="shape=cylinder;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;fillColor=default;strokeColor=#000000;strokeWidth=2;fontSize=20;fontStyle=1;fontColor=#000000;" value="MySQL 数据库" vertex="1">
+          <mxGeometry height="90" width="240" x="790" y="965" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
