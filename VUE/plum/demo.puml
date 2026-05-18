@@ -1,0 +1,62 @@
+@startuml
+skinparam backgroundColor white
+skinparam defaultFontName SimSun
+class admin {
+  +id: INTEGER
+  +username: TEXT
+  +password: TEXT
+  +real_name: TEXT
+  +create_time: TEXT
+}
+class employer {
+  +id: INTEGER
+  +employer_name: TEXT
+  +employer_type: TEXT
+  +industry_type: TEXT
+  +address: TEXT
+  +contact_name: TEXT
+  +contact_phone: TEXT
+  +email: TEXT
+  +establish_date: TEXT
+  +capital: TEXT
+  +credit_code: TEXT
+  +introduction: TEXT
+  +create_time: TEXT
+}
+class department {
+  +id: INTEGER
+  +employer_id: INTEGER
+  +department_name: TEXT
+  +leader_name: TEXT
+  +department_phone: TEXT
+  +duty_desc: TEXT
+}
+class employment_info {
+  +id: INTEGER
+  +employer_id: INTEGER
+  +total_staff: INTEGER
+  +regular_staff: INTEGER
+  +temp_staff: INTEGER
+  +contract_status: TEXT
+  +social_security_status: TEXT
+  +remark: TEXT
+  +create_time: TEXT
+}
+class job_post {
+  +id: INTEGER
+  +employer_id: INTEGER
+  +job_name: TEXT
+  +job_count: INTEGER
+  +education_requirement: TEXT
+  +major_requirement: TEXT
+  +salary: TEXT
+  +work_address: TEXT
+  +publish_date: TEXT
+  +end_date: TEXT
+  +job_desc: TEXT
+  +create_time: TEXT
+}
+employer "1" -- "n" department
+employer "1" -- "n" employment_info
+employer "1" -- "n" job_post
+@enduml

@@ -1,0 +1,274 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.6.1 Chrome/142.0.7444.265 Electron/39.8.0 Safari/537.36" version="29.6.1">
+  <diagram name="第 1 页" id="zwHe63TLkY9mGypG8etb">
+    <mxGraphModel dx="1713" dy="1018" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="291" pageHeight="413" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="f1_title" parent="1" style="text;html=1;fontSize=16;fontStyle=1" value="图 1：身份认证与登录流程" vertex="1">
+          <mxGeometry height="30" width="250" x="100" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_start" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="开始" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="输入账号密码" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_d1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=13;" value="校验是否正确?" vertex="1">
+          <mxGeometry height="60" width="120" x="150" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_err" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="提示错误信息" vertex="1">
+          <mxGeometry height="40" width="120" x="320" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="判断Role角色类型" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="跳转对应角色工作台" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="f1_end" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="结束" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="ef1_1" edge="1" parent="1" source="f1_start" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f1_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef1_2" edge="1" parent="1" source="f1_1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f1_d1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef1_3" edge="1" parent="1" source="f1_d1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="f1_err" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef1_4" edge="1" parent="1" source="f1_err" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=0;entryX=1;entryY=0.5;" target="f1_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef1_5" edge="1" parent="1" source="f1_d1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f1_2" value="Y">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef1_6" edge="1" parent="1" source="f1_2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f1_3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef1_7" edge="1" parent="1" source="f1_3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f1_end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_title" parent="1" style="text;html=1;fontSize=16;fontStyle=1" value="图 2：健康数据上报与审核流程" vertex="1">
+          <mxGeometry height="30" width="250" x="700" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_start" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="开始" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="患者填写健康指标" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="状态设为PENDING" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="医师接收待审核列表" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="填写审核意见反馈" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="状态更新为REVIEWED" vertex="1">
+          <mxGeometry height="40" width="140" x="750" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="f2_end" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="结束" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="ef2_1" edge="1" parent="1" source="f2_start" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f2_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef2_2" edge="1" parent="1" source="f2_1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f2_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef2_3" edge="1" parent="1" source="f2_2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f2_3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef2_4" edge="1" parent="1" source="f2_3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f2_4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef2_5" edge="1" parent="1" source="f2_4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f2_5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef2_6" edge="1" parent="1" source="f2_5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f2_end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3_title" parent="1" style="text;html=1;fontSize=16;fontStyle=1" value="图 3：在线医疗咨询流程" vertex="1">
+          <mxGeometry height="30" width="250" x="1300" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="f3_start" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="开始" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="f3_1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="患者提交咨询问题" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="f3_2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="指定医师/平台分发" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="f3_3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="医师查看并解答" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="f3_4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="更新状态为ANSWERED" vertex="1">
+          <mxGeometry height="40" width="160" x="1350" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="f3_5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="向患者推送解答通知" vertex="1">
+          <mxGeometry height="40" width="140" x="1350" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="f3_end" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="结束" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="ef3_1" edge="1" parent="1" source="f3_start" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f3_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef3_2" edge="1" parent="1" source="f3_1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f3_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef3_3" edge="1" parent="1" source="f3_2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f3_3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef3_4" edge="1" parent="1" source="f3_3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f3_4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef3_5" edge="1" parent="1" source="f3_4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f3_5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef3_6" edge="1" parent="1" source="f3_5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f3_end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f4_title" parent="1" style="text;html=1;fontSize=16;fontStyle=1" value="图 4：医师开具健康建议流程" vertex="1">
+          <mxGeometry height="30" width="250" x="100" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="f4_start" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="开始" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="f4_1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="医师调阅患者档案" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="f4_2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="分析历史体征数据" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="f4_3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="填写康复建议内容" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="f4_4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="写入health_advice表" vertex="1">
+          <mxGeometry height="40" width="150" x="150" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="f4_5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="患者端收到红点提醒" vertex="1">
+          <mxGeometry height="40" width="140" x="150" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="f4_end" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="结束" vertex="1">
+          <mxGeometry height="40" width="120" x="150" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="ef4_1" edge="1" parent="1" source="f4_start" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f4_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef4_2" edge="1" parent="1" source="f4_1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f4_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef4_3" edge="1" parent="1" source="f4_2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f4_3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef4_4" edge="1" parent="1" source="f4_3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f4_4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef4_5" edge="1" parent="1" source="f4_4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f4_5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef4_6" edge="1" parent="1" source="f4_5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f4_end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f5_title" parent="1" style="text;html=1;fontSize=16;fontStyle=1" value="图 5：医师资质认证审核流程" vertex="1">
+          <mxGeometry height="30" width="250" x="700" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="f5_start" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="开始" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="f5_1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="医师提交执业证号" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="f5_2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="管理员查看申请" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="f5_d1" parent="1" style="rhombus;whiteSpace=wrap;html=1;fontSize=13;" value="资质是否合规?" vertex="1">
+          <mxGeometry height="60" width="120" x="750" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="f5_d1_n" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="驳回申请" vertex="1">
+          <mxGeometry height="40" width="100" x="920" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="f5_3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="更新Verified为1" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="f5_4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="开通医师接单权限" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="1170" as="geometry" />
+        </mxCell>
+        <mxCell id="f5_end" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="结束" vertex="1">
+          <mxGeometry height="40" width="120" x="750" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="ef5_1" edge="1" parent="1" source="f5_start" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f5_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef5_2" edge="1" parent="1" source="f5_1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f5_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef5_3" edge="1" parent="1" source="f5_2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f5_d1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef5_4" edge="1" parent="1" source="f5_d1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="f5_d1_n" value="N">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef5_5" edge="1" parent="1" source="f5_d1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f5_3" value="Y">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef5_6" edge="1" parent="1" source="f5_3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f5_4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef5_7" edge="1" parent="1" source="f5_4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f5_end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef5_8" edge="1" parent="1" source="f5_d1_n" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=1;entryY=0.5;" target="f5_end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f6_title" parent="1" style="text;html=1;fontSize=16;fontStyle=1" value="图 6：系统审计日志自动记录流程" vertex="1">
+          <mxGeometry height="30" width="250" x="1300" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="f6_start" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="开始" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="750" as="geometry" />
+        </mxCell>
+        <mxCell id="f6_1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="用户执行关键操作" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="f6_2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="拦截器捕获请求" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="910" as="geometry" />
+        </mxCell>
+        <mxCell id="f6_3" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="提取Action/Resource" vertex="1">
+          <mxGeometry height="40" width="150" x="1350" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="f6_4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="异步构建Log对象" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="1070" as="geometry" />
+        </mxCell>
+        <mxCell id="f6_5" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fontSize=14;" value="持久化至audit_logs" vertex="1">
+          <mxGeometry height="40" width="140" x="1350" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="f6_end" parent="1" style="rounded=1;arcSize=50;whiteSpace=wrap;html=1;fontSize=14;" value="结束" vertex="1">
+          <mxGeometry height="40" width="120" x="1350" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="ef6_1" edge="1" parent="1" source="f6_start" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f6_1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef6_2" edge="1" parent="1" source="f6_1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f6_2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef6_3" edge="1" parent="1" source="f6_2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f6_3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef6_4" edge="1" parent="1" source="f6_3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f6_4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef6_5" edge="1" parent="1" source="f6_4" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f6_5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ef6_6" edge="1" parent="1" source="f6_5" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;endFill=1;strokeColor=#000000;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="f6_end">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
