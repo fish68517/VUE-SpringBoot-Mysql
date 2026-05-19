@@ -7,6 +7,8 @@ export interface UserProfile {
   nickname?: string
   avatar?: string
   email?: string
+  contactPhone?: string
+  shippingAddress?: string
   realName?: string
   idNumber?: string
   isRealNameVerified?: boolean

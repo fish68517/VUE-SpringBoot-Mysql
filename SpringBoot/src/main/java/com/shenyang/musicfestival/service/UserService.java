@@ -60,4 +60,9 @@ public interface UserService {
      */
     User uploadAvatar(Long userId, String avatarUrl);
 
+    /**
+     * Change user login password
+     */
+    void changePassword(Long userId, String oldPassword, String newPassword);
+
 }

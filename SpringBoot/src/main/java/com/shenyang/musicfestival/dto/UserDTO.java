@@ -25,6 +25,10 @@ public class UserDTO {
 
     private String email;
 
+    private String contactPhone;
+
+    private String shippingAddress;
+
     private String realName;
 
     private String idNumber;

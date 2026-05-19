@@ -15,9 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -31,217 +29,233 @@ public class UserController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
 
-    @Value("${file.upload.path}")
-    private String uploadPath;
-
     @Value("${file.upload.max-size}")
     private long maxFileSize;
 
-    @Value("${file.upload.allowed-extensions}")
-    private String allowedExtensions;
-
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserDTO>> register(@RequestBody RegisterRequest request) {
-        // Validate input
         if (request.getPhone() == null || request.getPhone().trim().isEmpty()) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("手机号不能为空"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("手机号不能为空"));
         }
         if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("密码不能为空"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("密码不能为空"));
         }
 
-        // Check if phone already exists
         if (userService.phoneExists(request.getPhone())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(ApiResponse.error("该手机号已被注册"));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("该手机号已被注册"));
         }
 
-        // Register user
         User user = userService.register(request.getPhone(), request.getPassword());
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .body(ApiResponse.success(convertToDTO(user), "注册成功"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(convertToDTO(user), "注册成功"));
     }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
-        // Validate input
         if (request.getPhone() == null || request.getPhone().trim().isEmpty()) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("手机号不能为空"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("手机号不能为空"));
         }
         if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("密码不能为空"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("密码不能为空"));
         }
 
-        // Authenticate user
         var user = userService.login(request.getPhone(), request.getPassword());
         if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ApiResponse.error("手机号或密码错误"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("手机号或密码错误"));
         }
 
         User authenticatedUser = user.get();
-
-        // Check if user is blocked
-        if (authenticatedUser.getIsBlocked()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.error("账户已被封禁"));
+        if (Boolean.TRUE.equals(authenticatedUser.getIsBlocked())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("账户已被封禁"));
         }
 
-        // Generate tokens
         String token = jwtUtil.generateToken(authenticatedUser.getId(), authenticatedUser.getRole());
         String refreshToken = jwtUtil.generateRefreshToken(authenticatedUser.getId());
 
         LoginResponse response = LoginResponse.builder()
-            .userId(authenticatedUser.getId())
-            .phone(authenticatedUser.getPhone())
-            .token(token)
-            .refreshToken(refreshToken)
-            .role(authenticatedUser.getRole())
-            .build();
+                .userId(authenticatedUser.getId())
+                .phone(authenticatedUser.getPhone())
+                .token(token)
+                .refreshToken(refreshToken)
+                .role(authenticatedUser.getRole())
+                .build();
 
         return ResponseEntity.ok(ApiResponse.success(response, "登录成功"));
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getProfile(@RequestParam Long userId) {
+    public ResponseEntity<ApiResponse<UserDTO>> getProfile(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestParam(value = "userId", required = false) Long requestUserId) {
+        Long userId = resolveUserId(token, requestUserId);
         return userService.getUserById(userId)
-            .map(user -> ResponseEntity.ok(convertToDTO(user)))
-            .orElse(ResponseEntity.notFound().build());
+                .map(user -> ResponseEntity.ok(ApiResponse.success(convertToDTO(user), "获取个人信息成功")))
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("用户不存在")));
     }
 
     @PutMapping("/profile")
-    public ResponseEntity<UserDTO> updateProfile(@RequestParam Long userId, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<ApiResponse<UserDTO>> updateProfile(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestParam(value = "userId", required = false) Long requestUserId,
+            @RequestBody UserDTO userDTO) {
+        Long userId = resolveUserId(token, requestUserId);
         User updatedUser = userService.updateProfile(userId, userDTO);
-        return ResponseEntity.ok(convertToDTO(updatedUser));
+        return ResponseEntity.ok(ApiResponse.success(convertToDTO(updatedUser), "个人信息更新成功"));
     }
 
     @PostMapping("/real-name")
     public ResponseEntity<ApiResponse<UserDTO>> verifyRealName(
-        @RequestParam Long userId,
-        @RequestBody RealNameRequest request) {
-        
-        // Validate input
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestParam(value = "userId", required = false) Long requestUserId,
+            @RequestBody RealNameRequest request) {
+        Long userId = resolveUserId(token, requestUserId);
+
         if (request.getRealName() == null || request.getRealName().trim().isEmpty()) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("真实姓名不能为空"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("真实姓名不能为空"));
         }
         if (request.getIdNumber() == null || request.getIdNumber().trim().isEmpty()) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("身份证号不能为空"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("身份证号不能为空"));
         }
 
-        // Check if user exists
         var user = userService.getUserById(userId);
         if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error("用户不存在"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("用户不存在"));
         }
 
-        // Check if ID number already exists (prevent duplicate)
         if (userService.idNumberExists(request.getIdNumber())) {
             User existingUser = userService.findByIdNumber(request.getIdNumber()).get();
             if (!existingUser.getId().equals(userId)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(ApiResponse.error("该身份证号已被使用"));
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(ApiResponse.error("该身份证号已被使用"));
             }
         }
 
-        // Verify real name
         User verifiedUser = userService.verifyRealName(userId, request.getRealName(), request.getIdNumber());
         return ResponseEntity.ok(ApiResponse.success(convertToDTO(verifiedUser), "实名认证成功"));
     }
 
     @GetMapping("/real-name")
-    public ResponseEntity<ApiResponse<RealNameStatusResponse>> getRealNameStatus(@RequestParam Long userId) {
+    public ResponseEntity<ApiResponse<RealNameStatusResponse>> getRealNameStatus(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestParam(value = "userId", required = false) Long requestUserId) {
+        Long userId = resolveUserId(token, requestUserId);
         var user = userService.getUserById(userId);
         if (user.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(ApiResponse.error("用户不存在"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error("用户不存在"));
         }
 
         RealNameStatusResponse response = RealNameStatusResponse.builder()
-            .isVerified(user.get().getIsRealNameVerified())
-            .realName(user.get().getRealName())
-            .maskedIdNumber(user.get().getIdNumber() != null ? MaskingUtil.maskIdNumber(user.get().getIdNumber()) : null)
-            .build();
+                .isVerified(user.get().getIsRealNameVerified())
+                .realName(user.get().getRealName())
+                .maskedIdNumber(user.get().getIdNumber() != null ? MaskingUtil.maskIdNumber(user.get().getIdNumber()) : null)
+                .build();
 
         return ResponseEntity.ok(ApiResponse.success(response, "获取实名认证状态成功"));
     }
 
     @PostMapping("/avatar")
     public ResponseEntity<ApiResponse<UserDTO>> uploadAvatar(
-        @RequestParam Long userId,
-        @RequestParam("file") MultipartFile file) {
-        
-        // Validate file
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestParam(value = "userId", required = false) Long requestUserId,
+            @RequestParam("file") MultipartFile file) {
+        Long userId = resolveUserId(token, requestUserId);
+
         if (file.isEmpty()) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("文件不能为空"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("文件不能为空"));
         }
-
         if (file.getSize() > maxFileSize) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("文件大小超过限制（最大10MB）"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("文件大小超过限制（最大10MB）"));
         }
 
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("文件名无效"));
-        }
-
-        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
-        if (!allowedExtensions.contains(fileExtension)) {
-            return ResponseEntity.badRequest()
-                .body(ApiResponse.error("不支持的文件类型"));
+        String extension = getImageExtension(file.getOriginalFilename());
+        if (extension == null) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("仅支持 jpg、jpeg、png、gif、webp 格式图片"));
         }
 
         try {
-            // Create upload directory if not exists
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
+            File imageDir = new File(System.getProperty("user.dir"), "images");
+            if (!imageDir.exists() && !imageDir.mkdirs()) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("图片目录创建失败"));
             }
 
-            // Generate unique filename
-            String uniqueFilename = UUID.randomUUID() + "." + fileExtension;
-            Path filePath = Paths.get(uploadPath, uniqueFilename);
+            String uniqueFilename = "avatar_" + UUID.randomUUID() + extension;
+            File dest = new File(imageDir, uniqueFilename);
+            file.transferTo(dest);
 
-            // Save file
-            Files.write(filePath, file.getBytes());
-
-            // Update user avatar
-            String avatarUrl = "/uploads/" + uniqueFilename;
-            User updatedUser = userService.uploadAvatar(userId, avatarUrl);
-
+            User updatedUser = userService.uploadAvatar(userId, uniqueFilename);
             return ResponseEntity.ok(ApiResponse.success(convertToDTO(updatedUser), "头像上传成功"));
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("文件上传失败"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error("文件上传失败"));
         }
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestParam(value = "userId", required = false) Long requestUserId,
+            @RequestBody ChangePasswordRequest request) {
+        Long userId = resolveUserId(token, requestUserId);
+
+        if (request.getOldPassword() == null || request.getOldPassword().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("原密码不能为空"));
+        }
+        if (request.getNewPassword() == null || request.getNewPassword().trim().length() < 6) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("新密码长度不能少于6位"));
+        }
+
+        try {
+            userService.changePassword(userId, request.getOldPassword(), request.getNewPassword());
+            return ResponseEntity.ok(ApiResponse.success(null, "密码修改成功"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    private Long resolveUserId(String token, Long requestUserId) {
+        try {
+            if (token != null && token.startsWith("Bearer ")) {
+                return jwtUtil.extractUserId(token.substring(7));
+            }
+            if (token != null && !token.trim().isEmpty()) {
+                return jwtUtil.extractUserId(token);
+            }
+        } catch (Exception ignored) {
+        }
+        return requestUserId == null ? 1L : requestUserId;
+    }
+
+    private String getImageExtension(String originalFilename) {
+        if (originalFilename == null || !originalFilename.contains(".")) {
+            return null;
+        }
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase(Locale.ROOT);
+        if (!extension.equals(".jpg")
+                && !extension.equals(".jpeg")
+                && !extension.equals(".png")
+                && !extension.equals(".gif")
+                && !extension.equals(".webp")) {
+            return null;
+        }
+        return extension;
     }
 
     private UserDTO convertToDTO(User user) {
         String maskedIdNumber = user.getIdNumber() != null ? MaskingUtil.maskIdNumber(user.getIdNumber()) : null;
-        
+
         return UserDTO.builder()
-            .id(user.getId())
-            .phone(user.getPhone())
-            .nickname(user.getNickname())
-            .avatar(user.getAvatar())
-            .email(user.getEmail())
-            .realName(user.getRealName())
-            .idNumber(user.getIdNumber())
-            .maskedIdNumber(maskedIdNumber)
-            .isRealNameVerified(user.getIsRealNameVerified())
-            .points(user.getPoints())
-            .isBlocked(user.getIsBlocked())
-            .role(user.getRole())
-            .build();
+                .id(user.getId())
+                .phone(user.getPhone())
+                .nickname(user.getNickname())
+                .avatar(user.getAvatar())
+                .email(user.getEmail())
+                .contactPhone(user.getContactPhone())
+                .shippingAddress(user.getShippingAddress())
+                .realName(user.getRealName())
+                .idNumber(user.getIdNumber())
+                .maskedIdNumber(maskedIdNumber)
+                .isRealNameVerified(user.getIsRealNameVerified())
+                .points(user.getPoints())
+                .isBlocked(user.getIsBlocked())
+                .role(user.getRole())
+                .build();
     }
 
 }

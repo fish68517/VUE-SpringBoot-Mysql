@@ -70,6 +70,12 @@ public class UserServiceImpl implements UserService {
         if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail());
         }
+        if (userDTO.getContactPhone() != null) {
+            user.setContactPhone(userDTO.getContactPhone());
+        }
+        if (userDTO.getShippingAddress() != null) {
+            user.setShippingAddress(userDTO.getShippingAddress());
+        }
         
         return userRepository.save(user);
     }
@@ -106,6 +112,19 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new RuntimeException("User not found"));
         user.setAvatar(avatarUrl);
         return userRepository.save(user);
+    }
+
+    @Override
+    public void changePassword(Long userId, String oldPassword, String newPassword) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new IllegalArgumentException("原密码不正确");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
 }

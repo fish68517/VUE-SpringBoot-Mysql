@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS users (
     nickname VARCHAR(100) COMMENT '昵称',
     avatar VARCHAR(500) COMMENT '头像URL',
     email VARCHAR(100) COMMENT '邮箱',
+    contact_phone VARCHAR(20) COMMENT '联系手机号',
+    shipping_address VARCHAR(2000) COMMENT '收货地址JSON',
     real_name VARCHAR(100) COMMENT '真实姓名',
     id_number VARCHAR(18) UNIQUE COMMENT '身份证号（用于防黄牛）',
     is_real_name_verified BOOLEAN DEFAULT FALSE COMMENT '是否完成实名认证',

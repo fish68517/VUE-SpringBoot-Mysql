@@ -8,6 +8,7 @@ export const userApi = {
   logout: () => request.post('/users/logout'),
   getProfile: () => request.get('/users/profile'),
   updateProfile: (data: any) => request.put('/users/profile', data),
+  changePassword: (data: { oldPassword: string; newPassword: string }) => request.put('/users/password', data),
   realNameAuth: (data: any) => request.post('/users/real-name', data),
   getRealNameStatus: () => request.get('/users/real-name'),
   uploadAvatar: (file: File) => {

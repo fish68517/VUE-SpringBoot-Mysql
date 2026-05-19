@@ -7,6 +7,7 @@
         <el-button type="primary" size="small" @click="handleGoToTicket">购票</el-button>
         <el-button type="primary" size="small" @click="handleGoToShop">商城</el-button>
         <el-button type="primary" size="small" @click="handleGoToOrders">我的订单</el-button>
+        <el-button type="primary" size="small" @click="handleGoToProfile">用户中心</el-button>
         <!-- <el-button type="primary" size="small" @click="handleGoToWeather">天气交通</el-button> -->
         <el-button type="primary" size="small" @click="handleGoToPoints">打卡积分</el-button>
         <el-button type="danger" size="small" @click="handleLogout">退出登录</el-button>
@@ -159,6 +160,10 @@ const handleGoToShop = () => {
 
 const handleGoToOrders = () => {
   router.push('/orders')
+}
+
+const handleGoToProfile = () => {
+  router.push('/profile')
 }
 
 onMounted(() => {
