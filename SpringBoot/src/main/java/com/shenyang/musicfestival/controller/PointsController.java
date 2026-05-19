@@ -7,7 +7,9 @@ import com.shenyang.musicfestival.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -38,14 +40,22 @@ public class PointsController {
         return ResponseEntity.ok(ApiResponse.success(pointsService.getTasks(extractUserIdSafe(token)), "获取任务成功"));
     }
 
-    @PostMapping("/tasks/{taskId}/checkin")
-    public ResponseEntity<ApiResponse<Void>> checkin(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long taskId) {
+    @PostMapping(value = "/tasks/{taskId}/checkin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<Void>> checkin(@RequestHeader(value = "Authorization", required = false) String token,
+                                                     @PathVariable Long taskId,
+                                                     @RequestParam("photo") MultipartFile photo,
+                                                     @RequestParam(value = "description", required = false) String description) {
         try {
-            pointsService.checkin(extractUserIdSafe(token), taskId);
+            pointsService.checkin(extractUserIdSafe(token), taskId, photo, description);
             return ResponseEntity.ok(ApiResponse.success(null, "打卡成功！"));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.error(e.getMessage()));
         }
+    }
+
+    @GetMapping("/records")
+    public ResponseEntity<ApiResponse<List<CheckinRecordDTO>>> getMyRecords(@RequestHeader(value = "Authorization", required = false) String token) {
+        return ResponseEntity.ok(ApiResponse.success(pointsService.getMyRecords(extractUserIdSafe(token)), "获取打卡记录成功"));
     }
 
     @GetMapping("/mall")

@@ -141,6 +141,7 @@ CREATE TABLE `checkin_records`  (
   `user_id` bigint NOT NULL COMMENT '用户ID',
   `task_id` bigint NOT NULL COMMENT '任务ID',
   `photo` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '打卡照片URL',
+  `description` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '打卡文字描述',
   `latitude` decimal(10, 8) NOT NULL COMMENT '打卡位置纬度',
   `longitude` decimal(11, 8) NOT NULL COMMENT '打卡位置经度',
   `status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT 'pending' COMMENT '状态：pending/approved/rejected',

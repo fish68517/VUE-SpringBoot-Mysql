@@ -239,6 +239,7 @@ CREATE TABLE IF NOT EXISTS checkin_records (
     user_id BIGINT NOT NULL COMMENT '用户ID',
     task_id BIGINT NOT NULL COMMENT '任务ID',
     photo VARCHAR(500) NOT NULL COMMENT '打卡照片URL',
+    description VARCHAR(1000) COMMENT '打卡文字描述',
     latitude DECIMAL(10, 8) NOT NULL COMMENT '打卡位置纬度',
     longitude DECIMAL(11, 8) NOT NULL COMMENT '打卡位置经度',
     status VARCHAR(50) DEFAULT 'pending' COMMENT '状态：pending/approved/rejected',

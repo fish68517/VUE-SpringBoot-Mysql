@@ -1,5 +1,25 @@
 import request from './request'
 
+export interface CheckinTask {
+  id: number
+  name: string
+  description: string
+  points: number
+  status: 'ongoing' | 'ended' | 'completed' | string
+}
+
+export interface CheckinRecord {
+  id: number
+  taskId: number
+  taskName: string
+  points: number
+  photo: string
+  description?: string
+  status: 'pending' | 'approved' | 'rejected' | string
+  rejectReason?: string
+  createdAt: string
+}
+
 export interface PointsGood {
   id?: number
   name: string
@@ -44,7 +64,10 @@ export const pointsApi = {
   getTasks: () => request.get('/points/tasks'),
   
   // 提交打卡
-  checkin: (taskId: number) => request.post(`/points/tasks/${taskId}/checkin`),
+  checkin: (taskId: number, data: FormData) => request.post(`/points/tasks/${taskId}/checkin`, data),
+
+  // 获取我的打卡记录
+  getCheckinRecords: () => request.get('/points/records'),
   
   // 获取积分商城商品
   getMallItems: () => request.get('/points/mall'),

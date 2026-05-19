@@ -128,6 +128,7 @@ public class AdminTaskController {
             dto.put("taskId", record.getTaskId());
             dto.put("taskName", task != null ? task.getName() : "未知任务");
             dto.put("photo", record.getPhoto());
+            dto.put("description", record.getDescription());
             dto.put("latitude", record.getLatitude());
             dto.put("longitude", record.getLongitude());
             dto.put("status", record.getStatus());

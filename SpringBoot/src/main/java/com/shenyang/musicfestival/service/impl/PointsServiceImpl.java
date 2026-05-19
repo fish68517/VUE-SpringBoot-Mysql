@@ -7,9 +7,14 @@ import com.shenyang.musicfestival.service.PointsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,25 +44,28 @@ public class PointsServiceImpl implements PointsService {
 
     @Override
     @Transactional
-    public void checkin(Long userId, Long taskId) {
+    public void checkin(Long userId, Long taskId, MultipartFile photo, String description) {
         if (recordRepo.existsByUserIdAndTaskId(userId, taskId)) {
             throw new IllegalArgumentException("您已经打卡过了");
         }
         CheckinTask task = taskRepo.findById(taskId)
                 .orElseThrow(() -> new IllegalArgumentException("打卡任务不存在"));
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        String photoFileName = saveCheckinPhoto(photo);
 
-        // 1. 创建打卡记录（毕设演示写入默认坐标和假图片）
+        // 经纬度字段数据库非空，但当前页面按需求不采集位置，统一写入 0。
         CheckinRecord record = new CheckinRecord();
         record.setUserId(userId);
         record.setTaskId(taskId);
-        record.setPhoto("demo_photo.jpg");
+        record.setPhoto(photoFileName);
+        record.setDescription(normalizeDescription(description));
         record.setLatitude(new BigDecimal("0"));
         record.setLongitude(new BigDecimal("0"));
         record.setStatus("approved"); // 直接审核通过
         record = recordRepo.save(record);
 
         // 2. 增加用户积分
-        User user = userRepo.findById(userId).orElseThrow();
         Long currentPoints = user.getPoints() == null ? 0L : user.getPoints();
         user.setPoints(currentPoints + task.getPoints());
         userRepo.save(user);
@@ -70,6 +78,67 @@ public class PointsServiceImpl implements PointsService {
         history.setRelatedId(record.getId());
         history.setDescription("完成打卡任务：" + task.getName());
         historyRepo.save(history);
+    }
+
+    @Override
+    public List<CheckinRecordDTO> getMyRecords(Long userId) {
+        return recordRepo.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(record -> {
+                    CheckinTask task = taskRepo.findById(record.getTaskId()).orElse(null);
+                    return CheckinRecordDTO.builder()
+                            .id(record.getId())
+                            .taskId(record.getTaskId())
+                            .taskName(task == null ? "未知任务" : task.getName())
+                            .points(task == null ? 0 : task.getPoints())
+                            .photo(record.getPhoto())
+                            .description(record.getDescription())
+                            .status(record.getStatus())
+                            .rejectReason(record.getRejectReason())
+                            .createdAt(record.getCreatedAt())
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+    private String saveCheckinPhoto(MultipartFile photo) {
+        if (photo == null || photo.isEmpty()) {
+            throw new IllegalArgumentException("请选择打卡照片");
+        }
+
+        String originalFilename = photo.getOriginalFilename();
+        String extension = "";
+        if (originalFilename != null && originalFilename.contains(".")) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase(Locale.ROOT);
+        }
+
+        if (!List.of(".jpg", ".jpeg", ".png", ".gif", ".webp").contains(extension)) {
+            throw new IllegalArgumentException("仅支持 jpg、jpeg、png、gif、webp 格式图片");
+        }
+
+        File imageDir = new File(System.getProperty("user.dir"), "images");
+        if (!imageDir.exists() && !imageDir.mkdirs()) {
+            throw new IllegalArgumentException("图片目录创建失败");
+        }
+
+        String newFileName = "checkin_" + UUID.randomUUID() + extension;
+        File dest = new File(imageDir, newFileName);
+        try {
+            photo.transferTo(dest);
+            return newFileName;
+        } catch (IOException e) {
+            throw new IllegalArgumentException("图片保存失败：" + e.getMessage());
+        }
+    }
+
+    private String normalizeDescription(String description) {
+        if (description == null) {
+            return null;
+        }
+        String trimmed = description.trim();
+        if (trimmed.length() > 1000) {
+            throw new IllegalArgumentException("文字描述不能超过 1000 个字符");
+        }
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     @Override
