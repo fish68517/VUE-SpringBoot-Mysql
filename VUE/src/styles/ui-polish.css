@@ -1,0 +1,359 @@
+:root {
+  --health-text: #1f2d3d;
+  --health-muted: #5f6f84;
+  --health-border: rgba(145, 170, 198, 0.28);
+  --health-card: rgba(255, 255, 255, 0.9);
+  --health-card-strong: rgba(255, 255, 255, 0.96);
+  --health-blue: #2f80ed;
+  --health-teal: #1aa6a6;
+  --health-green: #37a169;
+  --health-shadow: 0 18px 44px rgba(31, 56, 88, 0.12);
+}
+
+html {
+  font-size: 19px;
+}
+
+body {
+  color: var(--health-text);
+  background:
+    radial-gradient(circle at top left, rgba(47, 128, 237, 0.12), transparent 30%),
+    linear-gradient(135deg, #eef7fb 0%, #f8fbff 42%, #f4faf6 100%) !important;
+}
+
+#app {
+  font-size: 19px;
+}
+
+.user-layout,
+.doctor-layout,
+.admin-layout {
+  position: relative;
+  isolation: isolate;
+  background:
+    linear-gradient(135deg, rgba(236, 247, 251, 0.88), rgba(248, 252, 255, 0.86)) !important;
+}
+
+.user-layout::before,
+.doctor-layout::before,
+.admin-layout::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(120deg, rgba(241, 249, 255, 0.78), rgba(245, 252, 248, 0.84)),
+    url("../../assets/health-system-bg.jpg") center / cover no-repeat;
+  opacity: 0.28;
+}
+
+.user-header,
+.user-main,
+.doctor-aside,
+.doctor-main-wrapper,
+.admin-aside,
+.admin-main-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+.user-header,
+.doctor-header,
+.admin-header,
+.doctor-aside,
+.admin-aside {
+  border-color: var(--health-border) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(14px);
+}
+
+.user-main,
+.doctor-main,
+.admin-main {
+  background: transparent !important;
+  color: var(--health-text);
+}
+
+.user-main > *,
+.doctor-main > *,
+.admin-main > * {
+  max-width: 1320px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.user-main > .health-data-input-container,
+.user-main > .health-history-container,
+.user-main > .health-trend-container,
+.doctor-main > .patient-record-container,
+.admin-main > .audit-log-container,
+.admin-main > .data-statistics-container {
+  max-width: 1480px;
+}
+
+.logo-text,
+.header-title {
+  color: #18324a !important;
+  letter-spacing: 0;
+}
+
+.logo-text {
+  font-size: 22px !important;
+  font-weight: 800 !important;
+}
+
+.header-title {
+  font-size: 24px !important;
+}
+
+.top-menu .el-menu-item,
+.side-menu .el-menu-item,
+.user-info,
+.doctor-info,
+.admin-info {
+  font-size: 18px !important;
+}
+
+.top-menu .el-menu-item.is-active,
+.side-menu .el-menu-item.is-active {
+  color: var(--health-blue) !important;
+}
+
+.top-menu .el-menu-item:hover,
+.side-menu .el-menu-item:hover,
+.user-info:hover,
+.doctor-info:hover,
+.admin-info:hover {
+  color: var(--health-teal) !important;
+  background: rgba(232, 246, 248, 0.9) !important;
+}
+
+.page-header {
+  margin-bottom: 24px !important;
+  padding: 18px 22px 16px !important;
+  border-bottom: 0 !important;
+  border-left: 5px solid var(--health-blue);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 26px rgba(42, 84, 128, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.page-header h2 {
+  font-size: 30px !important;
+  line-height: 1.25;
+  color: #172d45 !important;
+}
+
+.info-card,
+.form-card,
+.recent-data-card,
+.filter-card,
+.records-card,
+.statistics-card,
+.chart-card,
+.table-card,
+.empty-card,
+.submit-consultation-card,
+.consultation-list-card,
+.consultation-detail-card,
+.recent-checks-card,
+.no-records-card,
+.recent-records-card,
+.search-filter-area,
+.patient-card,
+.empty-state,
+.review-card,
+.advice-card,
+.data-card,
+.detail-table-card,
+.stat-card,
+.table-container,
+.info-card,
+.record-content > .info-card {
+  border: 1px solid var(--health-border) !important;
+  border-radius: 14px !important;
+  background: var(--health-card) !important;
+  box-shadow: var(--health-shadow) !important;
+  backdrop-filter: blur(12px);
+}
+
+.info-card,
+.form-card,
+.recent-data-card,
+.filter-card,
+.records-card,
+.statistics-card,
+.chart-card,
+.table-card,
+.empty-card,
+.submit-consultation-card,
+.consultation-list-card,
+.consultation-detail-card,
+.recent-checks-card,
+.no-records-card,
+.recent-records-card,
+.detail-table-card {
+  padding: 30px !important;
+}
+
+.info-item,
+.stat-item,
+.data-content,
+.detail-content,
+.range-tips {
+  border: 1px solid rgba(145, 170, 198, 0.22);
+  border-radius: 12px;
+  background: rgba(246, 250, 255, 0.84) !important;
+}
+
+.label,
+.stat-label,
+.detail-item .label,
+.filter-group label,
+.unit-label {
+  color: var(--health-muted) !important;
+  font-size: 18px !important;
+}
+
+.value,
+.detail-item .value,
+.stat-title,
+.card-title,
+.recent-data-card h3,
+.records-card h3,
+.chart-card h3,
+.detail-table-card h3,
+.recent-checks-card h3,
+.consultation-list-card h3,
+.submit-consultation-card h3,
+.consultation-detail-card h3 {
+  color: var(--health-text) !important;
+}
+
+.value,
+.detail-item .value {
+  font-size: 19px !important;
+}
+
+.el-form-item__label,
+.el-input__inner,
+.el-textarea__inner,
+.el-select-dropdown__item,
+.el-button,
+.el-alert__title,
+.el-table {
+  font-size: 18px !important;
+}
+
+.el-input__wrapper,
+.el-textarea__inner,
+.el-select .el-input__wrapper,
+.el-date-editor.el-input,
+.el-date-editor.el-input__wrapper {
+  min-height: 38px;
+  border-radius: 8px !important;
+}
+
+.el-button {
+  min-height: 36px;
+  border-radius: 8px !important;
+  font-weight: 600;
+}
+
+.el-button--primary {
+  background: linear-gradient(135deg, var(--health-blue), var(--health-teal)) !important;
+  border-color: transparent !important;
+  box-shadow: 0 10px 18px rgba(47, 128, 237, 0.18);
+}
+
+.el-table {
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--health-card-strong) !important;
+}
+
+.el-table th.el-table__cell {
+  background: rgba(235, 245, 252, 0.96) !important;
+  color: #20384f;
+  font-weight: 700;
+}
+
+.el-table td.el-table__cell {
+  color: #31465d;
+}
+
+.el-table__body tr:hover > td.el-table__cell {
+  background: rgba(232, 247, 246, 0.72) !important;
+}
+
+.metrics-grid,
+.statistics-grid,
+.chart-section,
+.patient-cards,
+.consultation-cards {
+  gap: 24px !important;
+}
+
+.search-filter-area,
+.filter-section {
+  padding: 20px !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+}
+
+.tips-alert {
+  background: rgba(232, 247, 246, 0.82) !important;
+  border-color: rgba(26, 166, 166, 0.22) !important;
+}
+
+.stat-card {
+  border-top-width: 5px !important;
+}
+
+.stat-card.health-stat {
+  border-top-color: var(--health-green) !important;
+}
+
+.stat-value {
+  color: var(--health-blue) !important;
+}
+
+@media (max-width: 768px) {
+  #app {
+    font-size: 18px;
+  }
+
+  .user-main,
+  .doctor-main,
+  .admin-main {
+    padding: 14px !important;
+  }
+
+  .page-header {
+    padding: 14px 16px !important;
+  }
+
+  .page-header h2 {
+    font-size: 25px !important;
+  }
+
+  .info-card,
+  .form-card,
+  .recent-data-card,
+  .filter-card,
+  .records-card,
+  .statistics-card,
+  .chart-card,
+  .table-card,
+  .empty-card,
+  .submit-consultation-card,
+  .consultation-list-card,
+  .consultation-detail-card,
+  .recent-checks-card,
+  .no-records-card,
+  .recent-records-card,
+  .detail-table-card {
+    padding: 18px !important;
+  }
+}

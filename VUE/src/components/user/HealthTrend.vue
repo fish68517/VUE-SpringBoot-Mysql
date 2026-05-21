@@ -238,6 +238,17 @@ export default {
       }
     }
 
+    const renderChartAfterDomReady = async () => {
+      await nextTick()
+      await new Promise((resolve) => requestAnimationFrame(resolve))
+
+      if (trendData.value.length > 0) {
+        initChart()
+      } else {
+        destroyChart()
+      }
+    }
+
     const initChart = () => {
       if (!chartCanvas.value || trendData.value.length === 0 || selectedMetricOptions.value.length === 0) {
         return
@@ -325,18 +336,13 @@ export default {
           .filter((item) => item.dataType !== 'GENDER_SPECIFIC')
           .sort((a, b) => new Date(a.recordedAt) - new Date(b.recordedAt))
 
-        await nextTick()
-        if (trendData.value.length > 0) {
-          initChart()
-        } else {
-          destroyChart()
-        }
       } catch (error) {
         console.error('Failed to fetch trend data:', error)
         errorMessage.value = error.response?.data?.message || error.message || '获取趋势数据失败'
         ElMessage.error(errorMessage.value)
       } finally {
         isLoading.value = false
+        await renderChartAfterDomReady()
       }
     }
 
@@ -346,11 +352,7 @@ export default {
         ElMessage.warning('至少选择一个分析指标')
       }
 
-      if (trendData.value.length > 0) {
-        nextTick(() => {
-          initChart()
-        })
-      }
+      renderChartAfterDomReady()
     }
 
     const handleRefresh = async () => {

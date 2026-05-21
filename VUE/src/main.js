@@ -4,6 +4,7 @@ import router from './router'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import './styles/ui-polish.css'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import i18n from './i18n'
 
