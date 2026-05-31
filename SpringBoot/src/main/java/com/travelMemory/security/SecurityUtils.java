@@ -12,11 +12,19 @@ public class SecurityUtils {
 
     // HTML policy for XSS prevention - allows safe HTML tags
     private static final PolicyFactory HTML_POLICY = new HtmlPolicyBuilder()
-            .allowElements("p", "br", "strong", "em", "u", "h1", "h2", "h3", "h4", "h5", "h6",
-                    "ul", "ol", "li", "blockquote", "a", "img")
-            .allowAttributes("href").onElements("a")
-            .allowAttributes("src", "alt", "title").onElements("img")
+            .allowElements(
+                    "p", "br", "strong", "em", "u", "s",
+                    "h1", "h2", "h3", "h4", "h5", "h6",
+                    "ul", "ol", "li", "blockquote", "code", "pre",
+                    "a", "img",
+                    "table", "thead", "tbody", "tr", "th", "td", "colgroup", "col"
+            )
+            .allowAttributes("href", "target", "rel").onElements("a")
+            .allowAttributes("src", "alt", "title", "width", "height").onElements("img")
+            .allowAttributes("colspan", "rowspan").onElements("td", "th")
+            .allowAttributes("span").onElements("col")
             .allowAttributes("class").globally()
+            .allowUrlProtocols("http", "https", "data")
             .toFactory();
 
     /**

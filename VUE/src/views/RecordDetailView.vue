@@ -543,6 +543,28 @@ const handleToggleLike = async () => {
   overflow-x: auto;
 }
 
+:deep(.diary-content table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  background: #fff;
+  overflow: hidden;
+}
+
+:deep(.diary-content th),
+:deep(.diary-content td) {
+  border: 1px solid #dcdfe6;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+:deep(.diary-content th) {
+  background: #f5f7fa;
+  color: #303133;
+  font-weight: 600;
+}
+
 .interaction-section {
   display: flex;
   gap: 10px;

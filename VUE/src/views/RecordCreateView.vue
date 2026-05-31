@@ -61,7 +61,7 @@
           </el-form-item>
         </div>
 
-        <el-form-item label="精彩瞬间（图片/视频）">
+        <el-form-item label="精彩瞬间（独立媒体附件）">
           <div class="upload-wrapper">
             <el-upload
               v-model:file-list="fileList"
@@ -74,7 +74,7 @@
             >
               <el-icon><Plus /></el-icon>
             </el-upload>
-            <div class="upload-tip">支持上传 JPG、PNG 图片或 MP4 视频，创建成功后会自动关联到本篇记录。</div>
+            <div class="upload-tip">这里上传的是记录附件；正文编辑器里的“插入图片”会直接插入到文本内容中。</div>
           </div>
 
           <el-dialog v-model="dialogVisible" width="720px">
@@ -131,11 +131,23 @@
         </section>
 
         <el-form-item label="详细日志" prop="diaryContent" class="editor-item">
-          <div class="diary-editor-wrapper">
-            <div ref="editorRef"></div>
-            <div v-if="!form.diaryContent && submitted" class="editor-hint">
-              请输入旅行日志正文，或先使用上方 AI 功能生成草稿。
-            </div>
+          <div class="rich-editor-wrapper">
+            <Toolbar
+              class="rich-toolbar"
+              :editor="editorRef"
+              :default-config="toolbarConfig"
+              mode="default"
+            />
+            <Editor
+              v-model="form.diaryContent"
+              class="rich-editor"
+              :default-config="editorConfig"
+              mode="default"
+              @on-created="handleEditorCreated"
+            />
+          </div>
+          <div class="editor-tip">
+            正文支持标题、列表、引用、代码块、表格、链接和图片插入。图片会以内嵌形式保存在正文里。
           </div>
         </el-form-item>
 
@@ -160,26 +172,25 @@
 </template>
 
 <script setup>
-import 'quill/dist/quill.snow.css'
-import { computed, nextTick, onMounted, reactive, ref } from 'vue'
+import '@wangeditor/editor/dist/css/style.css'
+import { computed, onBeforeUnmount, reactive, ref, shallowRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import { aiService } from '../services/aiService'
 import { fileService } from '../services/fileService'
 import { travelService } from '../services/travelService'
 
 const router = useRouter()
 const formRef = ref(null)
-const editorRef = ref(null)
+const editorRef = shallowRef()
 const loading = ref(false)
 const aiLoading = ref(false)
 const uploadStatus = ref('正在发布...')
-const submitted = ref(false)
 const fileList = ref([])
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
-let quillEditor = null
 
 const form = reactive({
   title: '',
@@ -196,14 +207,72 @@ const aiForm = reactive({
   highlights: ''
 })
 
+const toolbarConfig = {
+  toolbarKeys: [
+    'headerSelect',
+    '|',
+    'bold',
+    'italic',
+    'underline',
+    'through',
+    '|',
+    'color',
+    'bgColor',
+    '|',
+    'bulletedList',
+    'numberedList',
+    '|',
+    'insertLink',
+    'uploadImage',
+    '|',
+    'blockquote',
+    'codeBlock',
+    '|',
+    'insertTable',
+    'deleteTable',
+    'insertTableRow',
+    'deleteTableRow',
+    'insertTableCol',
+    'deleteTableCol',
+    'tableHeader',
+    'tableFullWidth',
+    '|',
+    'undo',
+    'redo'
+  ]
+}
+
+const editorConfig = {
+  placeholder: '在这里开始记录你的旅程...',
+  MENU_CONF: {
+    uploadImage: {
+      allowedFileTypes: ['image/*'],
+      async customUpload(file, insertFn) {
+        if (!file.type.startsWith('image/')) {
+          ElMessage.warning('只能插入图片文件')
+          return
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+          ElMessage.warning('正文内嵌图片请控制在 5MB 以内')
+          return
+        }
+
+        const base64Url = await fileToDataUrl(file)
+        insertFn(base64Url, file.name, '')
+      }
+    }
+  }
+}
+
 const rules = {
   title: [{ required: true, message: '请填写旅行标题', trigger: 'blur' }],
   destination: [{ required: true, message: '请填写目的地', trigger: 'blur' }],
   startDate: [{ required: true, message: '请选择出发日期', trigger: 'change' }],
   endDate: [{ required: true, message: '请选择返程日期', trigger: 'change' }],
   diaryContent: [{
-    validator: (_rule, _value, callback) => {
-      if (!quillEditor || !quillEditor.getText().trim()) {
+    validator: (_rule, value, callback) => {
+      if (!hasRichTextContent(value)) {
         callback(new Error('请填写详细日志'))
         return
       }
@@ -224,24 +293,15 @@ const travelDays = computed(() => {
 
 const travelDaysText = computed(() => (travelDays.value > 0 ? `${travelDays.value} 天` : '请先选择日期'))
 
-onMounted(async () => {
-  const Quill = (await import('quill')).default
-  await nextTick()
-  quillEditor = new Quill(editorRef.value, {
-    theme: 'snow',
-    placeholder: '在这里开始记录你的旅程...',
-    modules: {
-      toolbar: [
-        [{ header: [1, 2, false] }],
-        ['bold', 'italic', 'underline'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['clean']
-      ]
-    }
-  })
-  quillEditor.on('text-change', () => {
-    form.diaryContent = quillEditor.root.innerHTML
-  })
+const handleEditorCreated = (editor) => {
+  editorRef.value = editor
+}
+
+onBeforeUnmount(() => {
+  const editor = editorRef.value
+  if (editor) {
+    editor.destroy()
+  }
 })
 
 const handlePictureCardPreview = (uploadFile) => {
@@ -250,8 +310,6 @@ const handlePictureCardPreview = (uploadFile) => {
 }
 
 const setEditorContent = (content) => {
-  if (!quillEditor) return
-  quillEditor.root.innerHTML = content
   form.diaryContent = content
 }
 
@@ -271,7 +329,7 @@ const handleGenerateDiary = async () => {
       highlights: aiForm.highlights,
       description: form.description
     })
-    setEditorContent(response.data.content)
+    setEditorContent(convertPlainTextToHtml(response.data.content))
     ElMessage.success('AI 日志草稿已生成，可继续手动修改')
   } catch (error) {
     ElMessage.error(error.message || 'AI 日志生成失败')
@@ -282,12 +340,11 @@ const handleGenerateDiary = async () => {
 
 const handleCreateRecord = async () => {
   if (!formRef.value) return
-  submitted.value = true
 
   try {
     await formRef.value.validate()
 
-    if (!form.diaryContent || form.diaryContent === '<p><br></p>') {
+    if (!hasRichTextContent(form.diaryContent)) {
       ElMessage.warning('请填写旅行日志内容')
       return
     }
@@ -315,7 +372,7 @@ const handleCreateRecord = async () => {
       for (const fileItem of fileList.value) {
         await fileService.uploadFile(newRecordId, fileItem.raw)
         successCount += 1
-        uploadStatus.value = `正在上传文件 (${successCount}/${fileList.value.length})...`
+        uploadStatus.value = `正在上传附件 (${successCount}/${fileList.value.length})...`
       }
     }
 
@@ -331,6 +388,40 @@ const handleCreateRecord = async () => {
 const handleCancel = () => {
   router.back()
 }
+
+const hasRichTextContent = (html) => {
+  if (!html) return false
+  const hasMedia = /<(img|table|video)\b/i.test(html)
+  const plainText = html
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .trim()
+  return hasMedia || plainText.length > 0
+}
+
+const convertPlainTextToHtml = (content) => {
+  if (!content) return ''
+  return content
+    .split(/\n{2,}/)
+    .map(block => `<p>${escapeHtml(block).replace(/\n/g, '<br>')}</p>`)
+    .join('')
+}
+
+const escapeHtml = (value) => value
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#39;')
+
+const fileToDataUrl = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader()
+  reader.onload = () => resolve(reader.result)
+  reader.onerror = () => reject(new Error('图片读取失败'))
+  reader.readAsDataURL(file)
+})
 </script>
 
 <style scoped>
@@ -435,33 +526,39 @@ const handleCancel = () => {
   gap: 20px;
 }
 
-.diary-editor-wrapper {
+.rich-editor-wrapper {
+  width: 100%;
   border: 1px solid #dcdfe6;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
+  background: #fff;
 }
 
-:deep(.ql-toolbar) {
-  border: none !important;
-  border-bottom: 1px solid #ebeef5 !important;
-  background-color: #f9fafe;
+.rich-toolbar {
+  border-bottom: 1px solid #ebeef5;
 }
 
-:deep(.ql-container) {
-  border: none !important;
-  min-height: 320px;
+.rich-editor {
+  min-height: 420px;
 }
 
-:deep(.ql-editor) {
-  min-height: 320px;
-  padding: 20px;
-  font-size: 16px;
+:deep(.rich-editor .w-e-text-container) {
+  min-height: 420px !important;
 }
 
-.editor-hint {
-  padding: 12px 20px 16px;
-  color: #f56c6c;
+:deep(.rich-editor .w-e-scroll) {
+  min-height: 420px !important;
+}
+
+:deep(.rich-editor [data-slate-editor]) {
+  min-height: 420px !important;
+  padding: 18px 20px;
+}
+
+.editor-tip {
+  margin-top: 10px;
   font-size: 13px;
+  color: #909399;
 }
 
 .form-actions {
