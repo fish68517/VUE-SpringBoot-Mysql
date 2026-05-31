@@ -60,6 +60,30 @@ public class FootprintController {
     }
 
     /**
+     * Get all map footprints for the current authenticated user
+     * @param authHeader the Authorization header containing JWT token
+     * @return ResponseEntity with List of MapFootprintResponse
+     */
+    @GetMapping("/footprints/my")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<List<MapFootprintResponse>>> getCurrentUserFootprints(
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
+        try {
+            Long userId = extractUserIdFromToken(authHeader);
+            if (userId == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ApiResponse.error(401, "Unauthorized"));
+            }
+
+            List<MapFootprintResponse> footprints = footprintService.getFootprintsByUser(userId);
+            return ResponseEntity.ok(ApiResponse.success(footprints));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(500, "Failed to retrieve current user footprints: " + e.getMessage()));
+        }
+    }
+
+    /**
      * Get all map footprints for a travel record
      * @param travelId the travel record ID
      * @param authHeader the Authorization header containing JWT token

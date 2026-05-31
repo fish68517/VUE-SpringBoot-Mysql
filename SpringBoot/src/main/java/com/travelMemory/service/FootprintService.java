@@ -80,6 +80,19 @@ public class FootprintService {
     }
 
     /**
+     * Get all map footprints owned by the current user
+     * @param userId the user ID
+     * @return List of MapFootprintResponse
+     */
+    @Transactional(readOnly = true)
+    public List<MapFootprintResponse> getFootprintsByUser(Long userId) {
+        List<MapFootprint> footprints = mapFootprintRepository.findByUserId(userId);
+        return footprints.stream()
+                .map(MapFootprintResponse::from)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Delete a map footprint
      * @param footprintId the footprint ID
      * @param userId the user ID (for ownership verification)

@@ -116,6 +116,33 @@ describe('Footprint Service', () => {
     })
   })
 
+  describe('getCurrentUserFootprints', () => {
+    it('should fetch all footprints for current user', async () => {
+      const mockResponse = {
+        data: {
+          code: 200,
+          data: [
+            {
+              id: 1,
+              travelRecordId: 1,
+              locationName: 'Beijing',
+              latitude: 39.9042,
+              longitude: 116.4074,
+              visitDate: '2024-01-15'
+            }
+          ]
+        }
+      }
+
+      api.get.mockResolvedValueOnce(mockResponse)
+
+      const result = await footprintService.getCurrentUserFootprints()
+
+      expect(api.get).toHaveBeenCalledWith('/api/travels/footprints/my')
+      expect(result).toEqual(mockResponse)
+    })
+  })
+
   describe('deleteFootprint', () => {
     it('should delete a footprint', async () => {
       const footprintId = 1

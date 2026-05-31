@@ -23,6 +23,14 @@ export const footprintService = {
   },
 
   /**
+   * Get all map footprints created by current authenticated user
+   * @returns {Promise} Response containing list of current user's footprints
+   */
+  getCurrentUserFootprints() {
+    return api.get('/api/travels/footprints/my')
+  },
+
+  /**
    * Delete a map footprint
    * @param {number} footprintId - The footprint ID
    * @returns {Promise} Response confirming deletion

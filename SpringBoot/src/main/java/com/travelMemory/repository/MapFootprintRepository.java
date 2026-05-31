@@ -31,4 +31,12 @@ public interface MapFootprintRepository extends JpaRepository<MapFootprint, Long
      */
     @Query("SELECT COUNT(mf) FROM MapFootprint mf JOIN TravelRecord tr ON mf.travelRecordId = tr.id WHERE tr.userId = :userId")
     long countByUserId(@Param("userId") Long userId);
+
+    /**
+     * Find all map footprints owned by a user through their travel records
+     * @param userId the user ID
+     * @return List of map footprints
+     */
+    @Query("SELECT mf FROM MapFootprint mf JOIN TravelRecord tr ON mf.travelRecordId = tr.id WHERE tr.userId = :userId ORDER BY mf.visitDate ASC, mf.createdAt ASC")
+    List<MapFootprint> findByUserId(@Param("userId") Long userId);
 }
