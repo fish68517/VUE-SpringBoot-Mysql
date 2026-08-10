@@ -20,14 +20,6 @@
       </article>
     </div>
 
-    <el-alert
-      title="本学习项目不使用 JWT、Spring Security 或接口权限校验，后台路径仅用于页面和代码分类。"
-      type="warning"
-      :closable="false"
-      show-icon
-      class="admin-alert"
-    />
-
     <div class="admin-dashboard-grid">
       <article class="admin-action-card">
         <p class="eyebrow">MANAGEMENT</p>
@@ -39,17 +31,6 @@
             <small>进入维护 →</small>
           </router-link>
         </div>
-      </article>
-      <article class="admin-action-card admin-demo-card">
-        <p class="eyebrow">DEMO ROUTE</p>
-        <h2>答辩演示建议</h2>
-        <ol>
-          <li>修改充电站名称或营业时间</li>
-          <li>新增一条充电桩实时状态</li>
-          <li>回复待处理的用户反馈</li>
-          <li>返回前台刷新并展示同步结果</li>
-        </ol>
-        <div class="server-time">服务时间：{{ dashboard.serverTime || '-' }}</div>
       </article>
     </div>
   </div>

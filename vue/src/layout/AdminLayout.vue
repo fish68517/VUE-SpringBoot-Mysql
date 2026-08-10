@@ -14,7 +14,6 @@
           <span>{{ item.icon }}</span>{{ item.title }}
         </router-link>
       </nav>
-      <router-link to="/" class="back-front">返回前台</router-link>
     </aside>
 
     <div class="admin-main">

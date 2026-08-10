@@ -49,7 +49,7 @@ input {
 
 .site-header {
   height: 76px;
-  padding: 0 max(24px, calc((100vw - 1220px) / 2));
+  padding: 0 36px;
   display: flex;
   align-items: center;
   gap: 42px;
@@ -149,9 +149,9 @@ input {
 }
 
 .page-container {
-  width: min(1220px, calc(100% - 48px));
+  width: 100%;
   margin: 0 auto;
-  padding: 36px 0 56px;
+  padding: 36px 36px 56px;
   flex: 1;
 }
 
@@ -722,7 +722,7 @@ input {
 .admin-dashboard-grid {
   margin-top: 22px;
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.5fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
 }
 
@@ -840,8 +840,8 @@ input {
   }
 
   .page-container {
-    width: min(100% - 28px, 1220px);
-    padding-top: 18px;
+    width: 100%;
+    padding: 18px 14px 56px;
   }
 
   .hero-panel {

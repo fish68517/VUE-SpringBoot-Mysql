@@ -87,8 +87,8 @@
       </article>
 
       <article class="info-card stage-card">
-          <p class="eyebrow">PHASE TWO</p>
-        <h2>第二阶段功能入口</h2>
+        <p class="eyebrow">USER FEATURES</p>
+        <h2>用户功能</h2>
         <ol class="stage-list">
           <li><span>01</span>高德地图站点定位与筛选</li>
           <li><span>02</span>区域使用率和趋势图表</li>
