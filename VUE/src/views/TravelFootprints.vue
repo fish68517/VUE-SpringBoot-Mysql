@@ -65,41 +65,31 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="地点名称" prop="locationName">
+        <el-form-item label="旅行地址" prop="address">
           <el-input
-            v-model="addForm.locationName"
-            placeholder="例如：苏州平江路"
+            v-model="addForm.address"
+            placeholder="例如：苏州平江路、北京故宫、上海外滩"
             maxlength="200"
             show-word-limit
             clearable
-          />
+            @input="clearResolvedAddress"
+            @keyup.enter="handleResolveAddress"
+          >
+            <template #append>
+              <el-button :loading="geocoding" @click="handleResolveAddress">识别地址</el-button>
+            </template>
+          </el-input>
         </el-form-item>
 
-        <div class="coordinate-row">
-          <el-form-item label="纬度" prop="latitude" class="coordinate-item">
-            <el-input-number
-              v-model="addForm.latitude"
-              :min="-90"
-              :max="90"
-              :precision="6"
-              :step="0.000001"
-              controls-position="right"
-              style="width: 100%"
-            />
-          </el-form-item>
-
-          <el-form-item label="经度" prop="longitude" class="coordinate-item">
-            <el-input-number
-              v-model="addForm.longitude"
-              :min="-180"
-              :max="180"
-              :precision="6"
-              :step="0.000001"
-              controls-position="right"
-              style="width: 100%"
-            />
-          </el-form-item>
-        </div>
+        <el-alert
+          v-if="resolvedLocation"
+          :title="`已识别：${resolvedLocation.name}`"
+          description="系统已自动获取定位信息，保存时会写入数据库"
+          type="success"
+          :closable="false"
+          show-icon
+          class="geocode-alert"
+        />
 
         <el-form-item label="打卡日期" prop="visitDate">
           <el-date-picker
@@ -145,34 +135,25 @@ const travelRecords = ref([])
 const loading = ref(false)
 const recordsLoading = ref(false)
 const submitting = ref(false)
+const geocoding = ref(false)
 const addDialogVisible = ref(false)
 const addFormRef = ref(null)
+let amapLoadPromise = null
 
 const addForm = reactive({
   travelRecordId: null,
-  locationName: '',
-  latitude: null,
-  longitude: null,
+  address: '',
   visitDate: ''
 })
+const resolvedLocation = ref(null)
 
 const currentUserId = computed(() => userStore.user?.id ?? null)
 const presetFootprintCount = computed(() => footprints.value.filter(item => item.source === 'preset').length)
 const userFootprintCount = computed(() => footprints.value.filter(item => item.source === 'custom').length)
 
-const validateLatitude = (_rule, value, callback) => {
-  validateCoordinate(value, -90, 90, '纬度', callback)
-}
-
-const validateLongitude = (_rule, value, callback) => {
-  validateCoordinate(value, -180, 180, '经度', callback)
-}
-
 const addRules = {
   travelRecordId: [{ required: true, message: '请选择旅行记录', trigger: 'change' }],
-  locationName: [{ required: true, message: '请输入地点名称', trigger: 'blur' }],
-  latitude: [{ validator: validateLatitude, trigger: 'change' }],
-  longitude: [{ validator: validateLongitude, trigger: 'change' }]
+  address: [{ required: true, message: '请输入旅行地址', trigger: 'blur' }]
 }
 
 const fetchFootprints = async () => {
@@ -239,12 +220,16 @@ const handleSubmitFootprint = async () => {
   try {
     await addFormRef.value.validate()
     submitting.value = true
+    const location = await resolveAddressCoordinates()
+    if (!location) {
+      return
+    }
 
     await footprintService.addFootprint({
       travelRecordId: addForm.travelRecordId,
-      locationName: addForm.locationName.trim(),
-      latitude: Number(addForm.latitude),
-      longitude: Number(addForm.longitude),
+      locationName: location.name,
+      latitude: location.latitude,
+      longitude: location.longitude,
       visitDate: addForm.visitDate || null
     })
 
@@ -260,23 +245,88 @@ const handleSubmitFootprint = async () => {
 
 const resetAddForm = () => {
   addForm.travelRecordId = null
-  addForm.locationName = ''
-  addForm.latitude = null
-  addForm.longitude = null
+  addForm.address = ''
   addForm.visitDate = ''
+  resolvedLocation.value = null
   addFormRef.value?.clearValidate()
 }
+
+const clearResolvedAddress = () => {
+  resolvedLocation.value = null
+}
+
+const handleResolveAddress = async () => {
+  if (!addForm.address.trim()) {
+    ElMessage.warning('请输入旅行地址')
+    return
+  }
+
+  await resolveAddressCoordinates(true)
+}
+
+const resolveAddressCoordinates = async (showSuccessMessage = false) => {
+  const address = addForm.address.trim()
+  if (!address) {
+    ElMessage.warning('请输入旅行地址')
+    return null
+  }
+
+  if (resolvedLocation.value?.query === address) {
+    return resolvedLocation.value
+  }
+
+  try {
+    geocoding.value = true
+    const AMap = await loadAmapApi()
+    const geocoder = new AMap.Geocoder()
+    const result = await geocodeAddress(geocoder, address)
+
+    if (!result) {
+      ElMessage.warning('未识别到经纬度，请重新输入常见的旅行地址，例如城市名、景区名或具体地标')
+      return null
+    }
+
+    resolvedLocation.value = result
+    if (showSuccessMessage) {
+      ElMessage.success('地址识别成功')
+    }
+    return result
+  } catch (error) {
+    console.error('地址识别失败:', error)
+    ElMessage.error('地址识别失败，请稍后重试或输入更常见的旅行地址')
+    return null
+  } finally {
+    geocoding.value = false
+  }
+}
+
+const geocodeAddress = (geocoder, address) => new Promise((resolve) => {
+  geocoder.getLocation(address, (status, result) => {
+    const firstGeocode = result?.geocodes?.[0]
+    const location = firstGeocode?.location
+    const latitude = Number(location?.lat)
+    const longitude = Number(location?.lng)
+
+    if (status !== 'complete' || !firstGeocode || Number.isNaN(latitude) || Number.isNaN(longitude)) {
+      resolve(null)
+      return
+    }
+
+    resolve({
+      query: address,
+      name: firstGeocode.formattedAddress || firstGeocode.formatted_address || address,
+      latitude,
+      longitude
+    })
+  })
+})
 
 const initMap = () => {
   window._AMapSecurityConfig = {
     securityJsCode: '76805393edb2f03827a55eafa36fc6d2'
   }
 
-  AMapLoader.load({
-    key: 'e2706bc1e334def5699349076d5f6d58',
-    version: '2.0',
-    plugins: ['AMap.ToolBar', 'AMap.Scale', 'AMap.Marker', 'AMap.InfoWindow']
-  }).then((AMap) => {
+  loadAmapApi().then((AMap) => {
     AMapObj.value = AMap
     map.value = new AMap.Map('container', {
       viewMode: '3D',
@@ -291,6 +341,22 @@ const initMap = () => {
     console.error('地图加载失败:', e)
     ElMessage.error('地图加载失败')
   })
+}
+
+const loadAmapApi = () => {
+  window._AMapSecurityConfig = {
+    securityJsCode: '76805393edb2f03827a55eafa36fc6d2'
+  }
+
+  if (!amapLoadPromise) {
+    amapLoadPromise = AMapLoader.load({
+      key: 'e2706bc1e334def5699349076d5f6d58',
+      version: '2.0',
+      plugins: ['AMap.ToolBar', 'AMap.Scale', 'AMap.Marker', 'AMap.InfoWindow', 'AMap.Geocoder']
+    })
+  }
+
+  return amapLoadPromise
 }
 
 const getDefaultCenter = () => {
@@ -359,21 +425,6 @@ const buildInfoWindowContent = (item) => {
       <p style="margin:5px 0; font-size:13px; color:#666;">类型：${sourceText}</p>
     </div>
   `
-}
-
-const validateCoordinate = (value, min, max, label, callback) => {
-  if (value === null || value === undefined || value === '') {
-    callback(new Error(`请输入${label}`))
-    return
-  }
-
-  const numberValue = Number(value)
-  if (Number.isNaN(numberValue) || numberValue < min || numberValue > max) {
-    callback(new Error(`${label}范围为 ${min} 到 ${max}`))
-    return
-  }
-
-  callback()
 }
 
 const formatRecordOption = (record) => {
@@ -457,6 +508,10 @@ onUnmounted(() => {
 
 .record-alert {
   margin-bottom: 16px;
+}
+
+.geocode-alert {
+  margin-bottom: 18px;
 }
 
 .add-form {
