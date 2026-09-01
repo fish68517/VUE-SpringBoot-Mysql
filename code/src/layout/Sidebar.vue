@@ -4,15 +4,31 @@ import { useRoute, useRouter } from 'vue-router'
 import { Fold, Expand } from '@element-plus/icons-vue'
 import { routes } from '@/router/routes'
 import { useAppStore } from '@/stores/app'
+import { useTabsStore } from '@/stores/tabs'
 
 const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
+const tabsStore = useTabsStore()
 const rootRoute = routes.find((item) => item.path === '/')
 const menuRoutes = computed(() => rootRoute?.children?.filter((item) => item.meta?.menu) || [])
 
 function toPath(parentPath: string, childPath: string) {
-  return `${parentPath}/${childPath}`.replace(/\/+/g, '/')
+  return `/${parentPath}/${childPath}`.replace(/\/+/g, '/')
+}
+
+function toAbsolutePath(path: string) {
+  return `/${path}`.replace(/\/+/g, '/')
+}
+
+function openMenu(path: string, title: unknown) {
+  tabsStore.open({
+    path,
+    title: String(title || ''),
+    closable: path !== '/dashboard',
+  })
+
+  if (route.path !== path) router.push(path)
 }
 </script>
 
@@ -34,10 +50,9 @@ function toPath(parentPath: string, childPath: string) {
         background-color="transparent"
         text-color="#b9c0cd"
         active-text-color="#ffffff"
-        router
       >
         <template v-for="item in menuRoutes" :key="item.path">
-          <el-sub-menu v-if="item.children?.length" :index="item.path">
+          <el-sub-menu v-if="item.children?.length" :index="toAbsolutePath(item.path)">
             <template #title>
               <el-icon><component :is="item.meta?.icon" /></el-icon>
               <span>{{ item.meta?.title }}</span>
@@ -46,12 +61,17 @@ function toPath(parentPath: string, childPath: string) {
               v-for="child in item.children.filter((node) => node.meta?.menu)"
               :key="child.path"
               :index="toPath(item.path, child.path)"
+              @click="openMenu(toPath(item.path, child.path), child.meta?.title)"
             >
               <span class="submenu-dot" />
               <template #title>{{ child.meta?.title }}</template>
             </el-menu-item>
           </el-sub-menu>
-          <el-menu-item v-else :index="item.path">
+          <el-menu-item
+            v-else
+            :index="toAbsolutePath(item.path)"
+            @click="openMenu(toAbsolutePath(item.path), item.meta?.title)"
+          >
             <el-icon><component :is="item.meta?.icon" /></el-icon>
             <template #title>{{ item.meta?.title }}</template>
           </el-menu-item>
