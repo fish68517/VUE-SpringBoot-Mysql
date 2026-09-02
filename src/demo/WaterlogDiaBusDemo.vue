@@ -63,8 +63,9 @@ const waterlogConfig = ref({
     h: 910
   }
 })
-const selectedDia = ref('waterlog-point-warning-list')
+const selectedDia = ref('water-prediction')
 const diaOptions = [
+  { label: '防汛预警系统', value: 'water-prediction' },
   { label: '告警列表', value: 'waterlog-alarm-list' },
   { label: '告警事件列表', value: 'waterlog-alarm-event-list' },
   { label: '设备视频', value: 'waterlog-device-video' },

@@ -13,6 +13,7 @@ const BusTest = () => import('@/demo/BusTest.vue');
 const FireTest = () => import('@/package/BZAQ/BzFire/index.vue');
 const BzRiskTest = () => import('@/demo/BzRiskTest.vue');
 const AIAnalysisDiaTest = () => import('@/demo/AIAnalysisDiaTest.vue');
+const WaterlogDiaBusDemo = () => import('@/demo/WaterlogDiaBusDemo.vue');
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -46,6 +47,14 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'BzAIAnalysisDia AI分析弹窗测试'
     }
+  },
+  {
+    path: '/waterlog-dia-bus',
+    name: 'WaterlogDiaBusDemo',
+    component: WaterlogDiaBusDemo,
+    meta: {
+      title: '防汛预警系统效果测试'
+    }
   }
 ]
 
@@ -63,4 +72,4 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-export default router 
+export default router

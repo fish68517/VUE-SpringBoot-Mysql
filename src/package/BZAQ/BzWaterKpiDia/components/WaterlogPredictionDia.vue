@@ -32,6 +32,24 @@
       <!-- 地图区 -->
       <div class="map-wrap">
         <div ref="mapRef" class="map"></div>
+        <div class="water-grid" aria-hidden="true"></div>
+        <canvas ref="flowCanvasRef" class="flow-canvas" aria-hidden="true"></canvas>
+        <div class="flow-hud" aria-hidden="true">
+          <div class="flow-hud__eyebrow">
+            <span class="flow-hud__pulse"></span>
+            水势动态推演
+          </div>
+          <div class="flow-hud__title">两江汇流态势</div>
+          <div class="flow-hud__routes">
+            <span><i class="jialing"></i>嘉陵江 → 朝天门</span>
+            <span><i class="yangtze"></i>长江 → 朝天门</span>
+          </div>
+        </div>
+        <div class="flow-status" aria-hidden="true">
+          <span class="flow-status__wave"><i></i><i></i><i></i><i></i></span>
+          <span>FLOWING</span>
+          <b>双河道粒子流</b>
+        </div>
         <div class="legend">
           <div class="lg"><span class="sw" style="background:#2196F3;height:4px;"></span> 嘉陵江</div>
           <div class="lg"><span class="sw" style="background:#FF9800;height:4px;"></span> 长江</div>
@@ -117,9 +135,7 @@
           <button class="btn-calc" :disabled="calculating" @click="calc">
             {{ calculating ? '计算中...' : '计算预警' }}
           </button>
-          <button class="btn-clear" :disabled="stationLoading" @click="resetByLatestStationInfo">
-            {{ stationLoading ? '刷新中...' : '重置' }}
-          </button>
+          <button class="btn-clear" :disabled="calculating" @click="resetStaticData">重置</button>
         </div>
 
         <div class="section-title">
@@ -177,7 +193,6 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, computed, nextTick } from 'vue'
-import axios from 'axios'
 import L from 'leaflet'
 import * as echarts from 'echarts/core'
 import { LineChart } from 'echarts/charts'
@@ -190,13 +205,7 @@ import type { WarningResult } from './flood-engine'
 
 echarts.use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer])
 
-const FLOOD_API = 'http://23.99.16.179:11001/api/boot/system/flood-engine'
-
 const emit = defineEmits(['close'])
-
-const BASE_URL = 'http://23.99.16.179:11001'
-const STATION_LIST_API = `${BASE_URL}/api/boot/system/flood-engine/station/list`
-const SIMULATE_API = `${BASE_URL}/api/boot/system/flood-engine/simulate/count`
 
 const visible = ref(true)
 const isClosing = ref(false)
@@ -204,12 +213,35 @@ let closeTimer: ReturnType<typeof setTimeout> | null = null
 
 // ---- 地图 ----
 const mapRef = ref<HTMLElement | null>(null)
+const flowCanvasRef = ref<HTMLCanvasElement | null>(null)
 let map: L.Map | null = null
 const markers: Record<string, L.CircleMarker> = {}
 const labelMarkers: Record<string, L.Marker> = {}
 let warningPathLayers: L.Polyline[] = []
 let pathAnimTimer: ReturnType<typeof setInterval> | null = null
 let overlayMarker: L.Marker | null = null
+let flowAnimationFrame: number | null = null
+let mapResizeObserver: ResizeObserver | null = null
+let mapResizeTimer: ReturnType<typeof setTimeout> | null = null
+let lastFlowFrame = 0
+
+type FlowRiverKey = 'jialing' | 'yangtze'
+type FlowPoint = { x: number; y: number }
+type FlowPath = {
+  points: FlowPoint[]
+  distances: number[]
+  total: number
+  color: string
+}
+
+const projectedFlowPaths: Partial<Record<FlowRiverKey, FlowPath>> = {}
+const flowParticles = Array.from({ length: 46 }, (_, index) => ({
+  river: (index % 5 < 3 ? 'jialing' : 'yangtze') as FlowRiverKey,
+  phase: ((index * 37) % 101) / 101,
+  speed: 18 + (index % 7) * 3.5,
+  radius: 0.9 + (index % 4) * 0.42,
+  alpha: 0.46 + (index % 5) * 0.1
+}))
 
 // ---- 图表 ----
 const chartRef = ref<HTMLElement | null>(null)
@@ -226,8 +258,6 @@ const rainfall = rainCount
 const simulateRise = ref<number | null>(null)
 const simulateStationName = ref('')
 const calculating = ref(false)
-const stationLoading = ref(false)
-const stationRealZ = ref<Record<string, number>>({})
 const lockedStation = ref('')
 let isComponentAlive = false
 
@@ -270,33 +300,6 @@ function fmtThr(v: number | null | undefined): string {
   return (v === null || v === undefined) ? '—' : String(v)
 }
 
-// ---- 接口：获取水文站点列表 ----
-async function fetchStations() {
-  try {
-    const res = await axios.get(`${FLOOD_API}/station/list`)
-    const list = res?.data?.data
-    if (!Array.isArray(list)) return
-
-    const zMap: Record<string, number> = {}
-    list.forEach((item: any) => {
-      if (item.name && item.z != null) {
-        zMap[item.name] = item.z
-      }
-    })
-    stationRealZ.value = zMap
-
-    // 将实时水位填入输入框（作为初始值）
-    STATIONS.forEach(s => {
-      if (isTrigger(s) && zMap[s.name] != null) {
-        levels.value[s.name] = zMap[s.name]
-      }
-    })
-    updateChart()
-  } catch (e) {
-    console.error('[WaterlogPredictionDia] 获取站点列表失败:', e)
-  }
-}
-
 // ---- 单站点输入锁定逻辑 ----
 // 判断某个站点的输入框是否可编辑
 function isInputDisabled(stationName: string): boolean {
@@ -324,63 +327,6 @@ function normalizeNumber(value: any): number | null {
   return Number.isFinite(num) ? num : null
 }
 
-function normalizeThreshold(value: any): number | null {
-  const num = normalizeNumber(value)
-  return num === null || num < 0 ? null : num
-}
-
-function normalizeOptionalNumber(value: any): number | null {
-  const num = normalizeNumber(value)
-  return num === null ? null : num
-}
-
-function normalizeLevelName(level: any): string {
-  const levelMap: Record<string, string> = {
-    NONE: '无',
-    BLUE: '蓝色',
-    YELLOW: '黄色',
-    RED: '红色'
-  }
-  const key = String(level || '').toUpperCase()
-  return levelMap[key] || String(level || '无')
-}
-
-function normalizeServerWarningResult(serverResult: any): WarningResult {
-  const levelName = normalizeLevelName(serverResult?.level ?? serverResult?.levelName)
-  return {
-    hasWarning: Boolean(serverResult?.hasWarning),
-    level: levelName === '红色' ? 3 : levelName === '黄色' ? 2 : levelName === '蓝色' ? 1 : 0,
-    levelName,
-    velocity: normalizeNumber(serverResult?.velocity) ?? 0,
-    nearestStation: String(serverResult?.nearestStation || ''),
-    nearestDistanceKm: normalizeNumber(serverResult?.nearestDistanceKm) ?? 0,
-    arrivalHours: normalizeNumber(serverResult?.arrivalHours) ?? 0,
-    warningHours: normalizeNumber(serverResult?.warningHours) ?? 0,
-    warningImmediate: Boolean(serverResult?.warningImmediate),
-    reachedWarningStations: Array.isArray(serverResult?.reachedWarningStations) ? serverResult.reachedWarningStations : [],
-    matchedRules: Array.isArray(serverResult?.matchedRules) ? serverResult.matchedRules : [],
-    arrivalTime: fmtHours(normalizeNumber(serverResult?.arrivalHours) ?? 0),
-    warningTime: serverResult?.warningImmediate ? '已不足1小时(立即)' : fmtHours(normalizeNumber(serverResult?.warningHours) ?? 0)
-  }
-}
-
-function getResultRank(warningResult: WarningResult) {
-  return typeof warningResult.level === 'number' ? warningResult.level : 0
-}
-
-function pickBetterSimulation(current: any | null, next: any) {
-  if (!current) return next
-  const currentResult = current.warningResult as WarningResult
-  const nextResult = next.warningResult as WarningResult
-  const currentRank = getResultRank(currentResult)
-  const nextRank = getResultRank(nextResult)
-  if (nextRank !== currentRank) return nextRank > currentRank ? next : current
-  if (nextResult.hasWarning && currentResult.hasWarning) {
-    return nextResult.arrivalHours < currentResult.arrivalHours ? next : current
-  }
-  return Math.abs(next.chaotianmenRise || 0) > Math.abs(current.chaotianmenRise || 0) ? next : current
-}
-
 function escapeHtml(value: string) {
   return value.replace(/[&<>"']/g, char => ({
     '&': '&amp;',
@@ -389,66 +335,6 @@ function escapeHtml(value: string) {
     '"': '&quot;',
     "'": '&#39;'
   }[char] || char))
-}
-
-function applyStationRows(rows: any[]) {
-  const defaultStationMap = new Map(STATIONS.map(station => [station.name, station]))
-  const nextStations: Station[] = []
-  const usedNames = new Set<string>()
-
-  rows.forEach(row => {
-    const name = String(row?.name || '').trim()
-    if (!name) return
-
-    const fallback = defaultStationMap.get(name)
-    const lon = normalizeNumber(row?.lon) ?? fallback?.lon
-    const lat = normalizeNumber(row?.lat) ?? fallback?.lat
-    const dist = normalizeNumber(row?.distToChaotianmen ?? row?.dist) ?? fallback?.dist ?? 0
-    if (!Number.isFinite(lon) || !Number.isFinite(lat)) return
-
-    const station: Station = {
-      name,
-      river: String(row?.river || fallback?.river || ''),
-      lon: lon as number,
-      lat: lat as number,
-      dist,
-      warning: normalizeThreshold(row?.warning ?? fallback?.warning),
-      guarantee: normalizeThreshold(row?.guarantee ?? fallback?.guarantee),
-      z: normalizeOptionalNumber(row?.z ?? fallback?.z)
-    }
-
-    nextStations.push(station)
-    usedNames.add(name)
-
-    const realLevel = normalizeNumber(row?.z)
-    levels.value[name] = realLevel ?? levels.value[name] ?? 0
-  })
-
-  STATIONS.forEach(station => {
-    if (usedNames.has(station.name)) return
-    nextStations.push({ ...station })
-  })
-
-  if (nextStations.length) stationList.value = nextStations
-}
-
-async function fetchStationList() {
-  if (stationLoading.value) return
-  stationLoading.value = true
-
-  try {
-    const res = await axios.get(STATION_LIST_API)
-    if (!isComponentAlive) return
-    const rows = Array.isArray(res?.data?.data) ? res.data.data : []
-    applyStationRows(rows)
-    rebuildMap()
-    updateChart()
-    calc()
-  } catch (error) {
-    console.error('获取水文站点列表失败:', error)
-  } finally {
-    if (isComponentAlive) stationLoading.value = false
-  }
 }
 
 function getLocalWarningResult() {
@@ -516,23 +402,6 @@ function hideMapOverlay() {
   overlayMarker = null
 }
 
-async function simulateStation(station: Station) {
-  const inputz = normalizeNumber(levels.value[station.name]) ?? 0
-  const res = await axios.post(SIMULATE_API, {
-    name: station.name,
-    z: station.z ?? null,
-    inputz,
-    caojieFlow: normalizeOptionalNumber(caojieFlow.value),
-    rainCount: normalizeOptionalNumber(rainCount.value)
-  })
-  const data = res?.data?.data || {}
-  return {
-    name: String(data?.name || station.name),
-    chaotianmenRise: normalizeNumber(data?.chaotianmenRise) ?? 0,
-    warningResult: normalizeServerWarningResult(data?.warningResult)
-  }
-}
-
 function rebuildMap() {
   if (!map) return
   warningPathLayers.forEach(layer => map?.removeLayer(layer))
@@ -570,18 +439,18 @@ function createStationLabel(s: Station) {
 
 function initMap() {
   if (!mapRef.value) return
-  map = L.map(mapRef.value, { attributionControl: false }).setView([29.55, 106.35], 9)
+  map = L.map(mapRef.value, {
+    attributionControl: false,
+    zoomControl: true,
+    zoomAnimation: true,
+    fadeAnimation: true
+  }).setView([29.55, 106.35], 9)
 
   const jl = RIVERS.jialing.map(p => [p[1], p[0]] as [number, number])
   const yz = RIVERS.yangtze.map(p => [p[1], p[0]] as [number, number])
 
-  L.polyline(jl, { color: '#2196F3', weight: 12, opacity: 0.12 }).addTo(map)
-  L.polyline(jl, { color: '#2196F3', weight: 4, opacity: 0.9 }).addTo(map)
-  L.polyline(jl, { color: '#e3f2fd', weight: 2, opacity: 0.85, className: 'river-flow' }).addTo(map)
-
-  L.polyline(yz, { color: '#FF9800', weight: 12, opacity: 0.12 }).addTo(map)
-  L.polyline(yz, { color: '#FF9800', weight: 4, opacity: 0.9 }).addTo(map)
-  L.polyline(yz, { color: '#fff3e0', weight: 2, opacity: 0.85, className: 'river-flow' }).addTo(map)
+  addRiverLayers(jl, '#2196F3', '#9eeeff', 'jialing')
+  addRiverLayers(yz, '#FF9800', '#fff0aa', 'yangtze')
 
   stationList.value.forEach(s => {
     const color = markerColor(s)
@@ -591,7 +460,8 @@ function initMap() {
       color: '#fff',
       weight: 2,
       fillColor: color,
-      fillOpacity: 0.95
+      fillOpacity: 0.95,
+      className: isBig ? 'station-marker station-marker--warning' : 'station-marker'
     })
     m.bindPopup(popupHtml(s))
     m.addTo(map!)
@@ -599,12 +469,200 @@ function initMap() {
     markers[s.name] = m
   })
 
+  fitMapToStations()
+  map.on('move zoom resize', refreshFlowGeometry)
+
+  // 弹窗由小尺寸 playground 容器向外溢出，Leaflet 首次读取到的尺寸可能偏小。
+  // 连续两帧校正尺寸和视野，避免河网挤在地图右下角。
+  requestAnimationFrame(() => {
+    if (!map) return
+    map.invalidateSize({ animate: false })
+    fitMapToStations()
+    requestAnimationFrame(refreshFlowGeometry)
+  })
+}
+
+function addRiverLayers(
+  points: [number, number][],
+  color: string,
+  highlight: string,
+  riverClass: FlowRiverKey
+) {
+  if (!map) return
+  L.polyline(points, {
+    color,
+    weight: 30,
+    opacity: 0.08,
+    interactive: false,
+    className: `river-glow river-glow--${riverClass}`
+  }).addTo(map)
+  L.polyline(points, {
+    color,
+    weight: 14,
+    opacity: 0.22,
+    interactive: false,
+    className: `river-bank river-bank--${riverClass}`
+  }).addTo(map)
+  L.polyline(points, {
+    color,
+    weight: 7,
+    opacity: 0.9,
+    interactive: false,
+    className: `river-body river-body--${riverClass}`
+  }).addTo(map)
+  L.polyline(points, {
+    color: highlight,
+    weight: 2.8,
+    opacity: 0.92,
+    interactive: false,
+    className: `river-current river-current--${riverClass}`
+  }).addTo(map)
+  L.polyline(points, {
+    color: '#ffffff',
+    weight: 3.6,
+    opacity: 0.88,
+    interactive: false,
+    className: `river-spark river-spark--${riverClass}`
+  }).addTo(map)
+}
+
+function fitMapToStations() {
+  if (!map || !stationList.value.length) return
   const lats = stationList.value.map(s => s.lat)
   const lons = stationList.value.map(s => s.lon)
   map.fitBounds(
     [[Math.min(...lats), Math.min(...lons)], [Math.max(...lats), Math.max(...lons)]],
-    { padding: [30, 30] }
+    { paddingTopLeft: [92, 100], paddingBottomRight: [92, 120], animate: false }
   )
+}
+
+function buildProjectedPath(river: [number, number][], color: string): FlowPath | null {
+  if (!map) return null
+  const points = river.map(([lon, lat]) => {
+    const point = map!.latLngToContainerPoint([lat, lon])
+    return { x: point.x, y: point.y }
+  })
+  if (points.length < 2) return null
+
+  const distances = [0]
+  let total = 0
+  for (let index = 1; index < points.length; index++) {
+    const dx = points[index].x - points[index - 1].x
+    const dy = points[index].y - points[index - 1].y
+    total += Math.sqrt(dx * dx + dy * dy)
+    distances.push(total)
+  }
+  return { points, distances, total, color }
+}
+
+function refreshFlowGeometry() {
+  const canvas = flowCanvasRef.value
+  const host = mapRef.value
+  if (!canvas || !host || !map) return
+
+  const width = Math.max(1, host.clientWidth)
+  const height = Math.max(1, host.clientHeight)
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5)
+  canvas.width = Math.round(width * pixelRatio)
+  canvas.height = Math.round(height * pixelRatio)
+  canvas.style.width = `${width}px`
+  canvas.style.height = `${height}px`
+
+  const context = canvas.getContext('2d')
+  context?.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
+  projectedFlowPaths.jialing = buildProjectedPath(RIVERS.jialing, '#63dcff') || undefined
+  projectedFlowPaths.yangtze = buildProjectedPath(RIVERS.yangtze, '#ffc45c') || undefined
+}
+
+function pointOnFlowPath(path: FlowPath, distance: number): FlowPoint {
+  const target = ((distance % path.total) + path.total) % path.total
+  let index = 1
+  while (index < path.distances.length && path.distances[index] < target) index++
+  const endIndex = Math.min(index, path.points.length - 1)
+  const startIndex = Math.max(0, endIndex - 1)
+  const startDistance = path.distances[startIndex]
+  const segmentLength = Math.max(1, path.distances[endIndex] - startDistance)
+  const ratio = (target - startDistance) / segmentLength
+  const start = path.points[startIndex]
+  const end = path.points[endIndex]
+  return {
+    x: start.x + (end.x - start.x) * ratio,
+    y: start.y + (end.y - start.y) * ratio
+  }
+}
+
+function drawFlowParticles(timestamp: number) {
+  flowAnimationFrame = requestAnimationFrame(drawFlowParticles)
+  if (timestamp - lastFlowFrame < 32) return
+  lastFlowFrame = timestamp
+
+  const canvas = flowCanvasRef.value
+  const context = canvas?.getContext('2d')
+  const host = mapRef.value
+  if (!canvas || !context || !host) return
+
+  context.clearRect(0, 0, host.clientWidth, host.clientHeight)
+  context.save()
+  context.globalCompositeOperation = 'lighter'
+
+  flowParticles.forEach(particle => {
+    const path = projectedFlowPaths[particle.river]
+    if (!path || path.total <= 0) return
+    const distance = particle.phase * path.total + timestamp * particle.speed / 1000
+    const point = pointOnFlowPath(path, distance)
+    const tail = pointOnFlowPath(path, distance - 13 - particle.radius * 2)
+    const gradient = context.createLinearGradient(tail.x, tail.y, point.x, point.y)
+    gradient.addColorStop(0, 'rgba(255,255,255,0)')
+    gradient.addColorStop(1, path.color)
+    context.beginPath()
+    context.moveTo(tail.x, tail.y)
+    context.lineTo(point.x, point.y)
+    context.strokeStyle = gradient
+    context.globalAlpha = particle.alpha
+    context.lineWidth = particle.radius * 1.4
+    context.shadowColor = path.color
+    context.shadowBlur = 8
+    context.stroke()
+
+    context.beginPath()
+    context.arc(point.x, point.y, particle.radius, 0, Math.PI * 2)
+    context.fillStyle = '#ffffff'
+    context.fill()
+  })
+
+  const chaotianmen = stationList.value.find(station => station.name === '朝天门')
+  if (chaotianmen && map) {
+    const center = map.latLngToContainerPoint([chaotianmen.lat, chaotianmen.lon])
+    const pulse = (timestamp / 26) % 34
+    context.globalAlpha = Math.max(0, 0.6 - pulse / 56)
+    context.shadowBlur = 12
+    context.strokeStyle = '#82f4ff'
+    context.lineWidth = 1.5
+    context.beginPath()
+    context.arc(center.x, center.y, 12 + pulse, 0, Math.PI * 2)
+    context.stroke()
+  }
+  context.restore()
+}
+
+function startFlowAnimation() {
+  if (flowAnimationFrame !== null) cancelAnimationFrame(flowAnimationFrame)
+  refreshFlowGeometry()
+  flowAnimationFrame = requestAnimationFrame(drawFlowParticles)
+}
+
+function observeMapSize() {
+  if (!mapRef.value || typeof ResizeObserver === 'undefined') return
+  mapResizeObserver = new ResizeObserver(() => {
+    if (mapResizeTimer) clearTimeout(mapResizeTimer)
+    mapResizeTimer = setTimeout(() => {
+      if (!map) return
+      map.invalidateSize({ animate: false })
+      fitMapToStations()
+      refreshFlowGeometry()
+    }, 80)
+  })
+  mapResizeObserver.observe(mapRef.value)
 }
 
 function popupHtml(s: Station): string {
@@ -701,36 +759,12 @@ async function calc() {
   if (calculating.value) return
   calculating.value = true
   simulateRise.value = null
-  simulateStationName.value = ''
+  simulateStationName.value = lockedStation.value
 
   try {
-    const triggerStations = stationList.value.filter(isTrigger)
-    const simulationResults = await Promise.all(
-      triggerStations.map(station =>
-        simulateStation(station).catch(error => {
-          console.error(`洪峰模拟计算失败: ${station.name}`, error)
-          return null
-        })
-      )
-    )
+    await nextTick()
     if (!isComponentAlive) return
-
-    const bestSimulation = simulationResults.reduce<any | null>((best, item) => {
-      if (!item) return best
-      return pickBetterSimulation(best, item)
-    }, null)
-
-    if (bestSimulation) {
-      simulateRise.value = bestSimulation.chaotianmenRise
-      simulateStationName.value = bestSimulation.name
-      applyWarningResult(bestSimulation.warningResult, bestSimulation.name)
-      return
-    }
-
-    applyWarningResult(getLocalWarningResult())
-  } catch (error) {
-    console.error('洪峰模拟计算失败:', error)
-    applyWarningResult(getLocalWarningResult())
+    applyWarningResult(getLocalWarningResult(), lockedStation.value || undefined)
   } finally {
     if (isComponentAlive) calculating.value = false
   }
@@ -751,7 +785,9 @@ function clearAll() {
   updateChart()
 }
 
-async function resetByLatestStationInfo() {
+function resetStaticData() {
+  stationList.value = STATIONS.map(station => ({ ...station }))
+  lockedStation.value = ''
   caojieFlow.value = null
   rainCount.value = null
   simulateRise.value = null
@@ -760,7 +796,11 @@ async function resetByLatestStationInfo() {
   resetMarkers()
   drawWarningPath(null)
   hideMapOverlay()
-  await fetchStationList()
+  stationList.value.forEach(station => {
+    if (isTrigger(station)) levels.value[station.name] = 0
+  })
+  rebuildMap()
+  updateChart()
 }
 
 function example(kind: string) {
@@ -889,29 +929,6 @@ function applyFromPopup(name: string) {
   updateChart()
 }
 
-// ---- Leaflet CSS 动态加载 & 图标修复 ----
-let leafletCSSLink: HTMLLinkElement | null = null
-
-function loadLeafletCSS() {
-  // 检查是否已加载
-  const existing = document.querySelector('link[href*="leaflet/dist/leaflet.css"]') as HTMLLinkElement | null
-  if (existing) { leafletCSSLink = existing; return }
-  leafletCSSLink = document.createElement('link')
-  leafletCSSLink.rel = 'stylesheet'
-  leafletCSSLink.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-  document.head.appendChild(leafletCSSLink)
-}
-
-function fixLeafletIcons() {
-  // 修复 Leaflet 默认 marker 图标路径
-  delete (L.Icon.Default.prototype as any)._getIconUrl
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png'
-  })
-}
-
 onMounted(() => {
   isComponentAlive = true
   // 初始化 levels
@@ -919,20 +936,12 @@ onMounted(() => {
     if (isTrigger(s)) levels.value[s.name] = 0
   })
 
-  // 动态加载 Leaflet CSS（绕过 webpack css-loader 的 images 别名冲突）
-  loadLeafletCSS()
-
-  // 修复 Leaflet 默认图标路径
-  fixLeafletIcons()
-
   nextTick(() => {
     initMap()
     initChart()
-    fetchStationList()
+    observeMapSize()
+    startFlowAnimation()
   })
-
-  // 获取水文站点实时数据
-  fetchStations()
 
   // 暴露给 Leaflet popup 内的 onclick
   ;(window as any).applyFromPopup = applyFromPopup
@@ -942,9 +951,12 @@ onBeforeUnmount(() => {
   isComponentAlive = false
   if (closeTimer) clearTimeout(closeTimer)
   if (pathAnimTimer) clearInterval(pathAnimTimer)
+  if (mapResizeTimer) clearTimeout(mapResizeTimer)
+  if (flowAnimationFrame !== null) cancelAnimationFrame(flowAnimationFrame)
+  mapResizeObserver?.disconnect()
+  mapResizeObserver = null
   if (waterChart) { waterChart.dispose(); waterChart = null }
   if (map) { map.remove(); map = null }
-  if (leafletCSSLink) { leafletCSSLink.remove(); leafletCSSLink = null }
   delete (window as any).applyFromPopup
 })
 
@@ -973,8 +985,8 @@ export default {
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
-  width: 1700px;
-  height: 1000px;
+  width: min(1700px, calc(100vw - 16px));
+  height: min(1000px, calc(100vh - 16px));
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1056,16 +1068,254 @@ export default {
   flex: 1;
   position: relative;
   min-width: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: #061726;
 }
 
 .map {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 38%, #14304a 0%, #0b1c2c 60%, #071019 100%);
+  z-index: 1;
+  background:
+    radial-gradient(circle at 76% 46%, rgba(17, 105, 144, .22) 0%, transparent 28%),
+    radial-gradient(ellipse at 44% 38%, #123853 0%, #0a2438 52%, #05131f 100%);
 }
 
-@keyframes riverFlow { to { stroke-dashoffset: -20; } }
-:deep(.river-flow) { stroke-dasharray: 7 13; animation: riverFlow 1.2s linear infinite; }
+.water-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  opacity: .3;
+  background-image:
+    linear-gradient(rgba(77, 193, 255, .07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77, 193, 255, .07) 1px, transparent 1px),
+    radial-gradient(circle at center, transparent 25%, rgba(1, 10, 20, .35) 100%);
+  background-size: 48px 48px, 48px 48px, 100% 100%;
+  mask-image: linear-gradient(135deg, rgba(0, 0, 0, .15), #000 48%, rgba(0, 0, 0, .25));
+}
+
+.flow-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 460;
+  pointer-events: none;
+}
+
+.flow-hud {
+  position: absolute;
+  left: 22px;
+  top: 22px;
+  z-index: 720;
+  width: 224px;
+  padding: 14px 16px 13px;
+  pointer-events: none;
+  overflow: hidden;
+  border: 1px solid rgba(92, 216, 255, .28);
+  border-left: 3px solid #52d9ff;
+  background: linear-gradient(115deg, rgba(5, 36, 64, .9), rgba(5, 24, 44, .62));
+  box-shadow: inset 0 0 24px rgba(30, 168, 255, .08), 0 8px 28px rgba(0, 7, 18, .28);
+  backdrop-filter: blur(8px);
+
+  &::after {
+    content: '';
+    position: absolute;
+    right: -24px;
+    top: -32px;
+    width: 90px;
+    height: 90px;
+    border: 1px solid rgba(82, 217, 255, .2);
+    border-radius: 50%;
+    box-shadow: 0 0 0 12px rgba(82, 217, 255, .025), 0 0 0 24px rgba(82, 217, 255, .018);
+  }
+}
+
+.flow-hud__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #6ee7ff;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.flow-hud__pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6fffe9;
+  box-shadow: 0 0 0 0 rgba(111, 255, 233, .62);
+  animation: hudPulse 1.8s ease-out infinite;
+}
+
+.flow-hud__title {
+  margin-top: 5px;
+  color: #f2fbff;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-shadow: 0 0 14px rgba(93, 218, 255, .35);
+}
+
+.flow-hud__routes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+  margin-top: 10px;
+  color: rgba(202, 235, 255, .74);
+  font-size: 11px;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  i {
+    position: relative;
+    width: 24px;
+    height: 2px;
+    overflow: hidden;
+    background: currentColor;
+    box-shadow: 0 0 7px currentColor;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -10px;
+      width: 8px;
+      height: 100%;
+      background: #fff;
+      animation: routeGlint 1.7s linear infinite;
+    }
+
+    &.jialing { color: #42cfff; }
+    &.yangtze { color: #ffad35; }
+  }
+}
+
+.flow-status {
+  position: absolute;
+  left: 22px;
+  bottom: 24px;
+  z-index: 720;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid rgba(70, 202, 255, .2);
+  border-radius: 3px;
+  background: rgba(4, 26, 48, .76);
+  color: #5ee5ff;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+
+  b {
+    color: rgba(215, 242, 255, .78);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+}
+
+.flow-status__wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+
+  i {
+    width: 2px;
+    height: 5px;
+    background: #5ee5ff;
+    box-shadow: 0 0 6px #5ee5ff;
+    animation: flowEqualizer .9s ease-in-out infinite alternate;
+  }
+
+  i:nth-child(2) { animation-delay: -.6s; }
+  i:nth-child(3) { animation-delay: -.3s; }
+  i:nth-child(4) { animation-delay: -.75s; }
+}
+
+@keyframes riverCurrent {
+  to { stroke-dashoffset: -76; }
+}
+
+@keyframes riverSpark {
+  to { stroke-dashoffset: -92; }
+}
+
+@keyframes riverGlow {
+  0%, 100% { opacity: .07; stroke-width: 28px; }
+  50% { opacity: .14; stroke-width: 35px; }
+}
+
+@keyframes markerPulse {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(255, 255, 255, .45)); }
+  50% { filter: drop-shadow(0 0 10px rgba(85, 224, 255, .95)); }
+}
+
+@keyframes hudPulse {
+  70% { box-shadow: 0 0 0 8px rgba(111, 255, 233, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(111, 255, 233, 0); }
+}
+
+@keyframes routeGlint {
+  to { transform: translateX(38px); }
+}
+
+@keyframes flowEqualizer {
+  to { height: 14px; opacity: .45; }
+}
+
+:deep(.river-glow) {
+  animation: riverGlow 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 13px currentColor);
+}
+
+:deep(.river-bank) {
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+:deep(.river-body) {
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+:deep(.river-current) {
+  stroke-linecap: round;
+  stroke-dasharray: 22 9 5 12;
+  animation: riverCurrent 2.15s linear infinite;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+:deep(.river-current--yangtze) {
+  animation-duration: 2.55s;
+}
+
+:deep(.river-spark) {
+  stroke-linecap: round;
+  stroke-dasharray: 1 28;
+  animation: riverSpark 1.65s linear infinite;
+  filter: drop-shadow(0 0 6px #fff);
+}
+
+:deep(.river-spark--yangtze) {
+  animation-duration: 1.95s;
+}
+
+:deep(.station-marker) {
+  animation: markerPulse 2.4s ease-in-out infinite;
+}
+
+:deep(.station-marker--warning) {
+  animation-duration: 1.25s;
+}
 
 :deep(.map-overlay-icon) {
   z-index: 1000 !important;
@@ -1457,11 +1707,25 @@ export default {
   box-shadow: 0 2px 8px rgba(0,0,0,.3);
   font-size: 12px;
   color: #b8d9ff;
-  z-index: 500;
+  z-index: 720;
   line-height: 1.7;
 
   .lg { display: flex; align-items: center; gap: 6px; }
   .sw { width: 14px; height: 3px; display: inline-block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :deep(.river-glow),
+  :deep(.river-current),
+  :deep(.river-spark),
+  :deep(.station-marker),
+  .flow-hud__pulse,
+  .flow-hud__routes i::after,
+  .flow-status__wave i {
+    animation: none !important;
+  }
+
+  .flow-canvas { display: none; }
 }
 
 :deep(.waterlog-station-label) {
@@ -1519,5 +1783,143 @@ input[type="number"] {
   z-index: 10000;
   background: transparent;
   pointer-events: auto;
+}
+</style>
+
+<!-- Leaflet 的项目内最小样式：避免线上 CDN，也避开工程 images 别名对官方 CSS 的 URL 解析冲突。 -->
+<style lang="scss">
+.waterlog-prediction-dia {
+  .leaflet-pane,
+  .leaflet-marker-icon,
+  .leaflet-pane > svg,
+  .leaflet-pane > canvas,
+  .leaflet-zoom-box,
+  .leaflet-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .leaflet-container {
+    overflow: hidden;
+    outline: 0;
+    -webkit-tap-highlight-color: transparent;
+    font-family: 'AlibabaPuHuiTi', sans-serif;
+  }
+
+  .leaflet-container .leaflet-overlay-pane svg {
+    max-width: none !important;
+    max-height: none !important;
+  }
+
+  .leaflet-pane { z-index: 400; }
+  .leaflet-tile-pane { z-index: 200; }
+  .leaflet-overlay-pane { z-index: 400; }
+  .leaflet-shadow-pane { z-index: 500; }
+  .leaflet-marker-pane { z-index: 600; }
+  .leaflet-tooltip-pane { z-index: 650; }
+  .leaflet-popup-pane { z-index: 700; }
+  .leaflet-map-pane canvas { z-index: 100; }
+  .leaflet-map-pane svg { z-index: 200; }
+
+  .leaflet-zoom-animated { transform-origin: 0 0; }
+  svg.leaflet-zoom-animated { will-change: transform; }
+  .leaflet-container.leaflet-zoom-anim .leaflet-zoom-animated {
+    transition: transform .25s cubic-bezier(0, 0, .25, 1);
+  }
+
+  .leaflet-marker-icon,
+  .leaflet-pane > svg path { pointer-events: none; }
+  .leaflet-marker-icon.leaflet-interactive,
+  .leaflet-pane > svg path.leaflet-interactive { pointer-events: auto; }
+  .leaflet-interactive { cursor: pointer; }
+  .leaflet-grab { cursor: grab; }
+  .leaflet-container.leaflet-dragging .leaflet-grab { cursor: grabbing; }
+
+  .leaflet-control {
+    position: relative;
+    z-index: 800;
+    float: left;
+    clear: both;
+    pointer-events: auto;
+  }
+
+  .leaflet-top,
+  .leaflet-bottom {
+    position: absolute;
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .leaflet-top { top: 0; }
+  .leaflet-bottom { bottom: 0; }
+  .leaflet-left { left: 0; }
+  .leaflet-right { right: 0; }
+  .leaflet-top .leaflet-control { margin-top: 10px; }
+  .leaflet-bottom .leaflet-control { margin-bottom: 10px; }
+  .leaflet-left .leaflet-control { margin-left: 10px; }
+  .leaflet-right .leaflet-control { margin-right: 10px; float: right; }
+
+  .leaflet-bar {
+    overflow: hidden;
+    border: 1px solid rgba(86, 207, 255, .32);
+    border-radius: 3px;
+    box-shadow: 0 4px 14px rgba(0, 5, 14, .4);
+  }
+
+  .leaflet-bar a {
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-bottom: 1px solid rgba(86, 207, 255, .24);
+    background: rgba(5, 34, 59, .9);
+    color: #a9ecff;
+    font: bold 20px/30px 'Lucida Console', Monaco, monospace;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .leaflet-bar a:last-child { border-bottom: 0; }
+  .leaflet-bar a:hover,
+  .leaflet-bar a:focus { background: rgba(16, 83, 126, .95); color: #fff; }
+  .leaflet-bar a.leaflet-disabled { cursor: default; opacity: .38; }
+
+  .leaflet-fade-anim .leaflet-popup { opacity: 0; transition: opacity .2s linear; }
+  .leaflet-fade-anim .leaflet-map-pane .leaflet-popup { opacity: 1; }
+  .leaflet-popup { position: absolute; margin-bottom: 20px; text-align: center; }
+  .leaflet-popup-content-wrapper { padding: 1px; text-align: left; }
+  .leaflet-popup-content { margin: 13px 24px 13px 20px; line-height: 1.35; }
+  .leaflet-popup-tip-container {
+    position: absolute;
+    left: 50%;
+    width: 40px;
+    height: 20px;
+    margin-top: -1px;
+    margin-left: -20px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .leaflet-popup-tip {
+    width: 17px;
+    height: 17px;
+    margin: -10px auto 0;
+    padding: 1px;
+    transform: rotate(45deg);
+  }
+  .leaflet-popup-content-wrapper,
+  .leaflet-popup-tip { background: #fff; color: #333; box-shadow: 0 3px 14px rgba(0, 0, 0, .4); }
+  .leaflet-container a.leaflet-popup-close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    border: 0;
+    background: transparent;
+    color: #757575;
+    font: 16px/24px Tahoma, Verdana, sans-serif;
+    text-align: center;
+    text-decoration: none;
+  }
 }
 </style>
