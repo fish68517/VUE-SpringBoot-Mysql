@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzGeoDig/export.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1783073042083,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1783073042083,
+            "name": "Commit-0",
+            "content": "import * as config from './config'\nimport configVue from './config.vue'\nimport indexVue from './index.vue'\n\nconst component = indexVue\n\nconst BzGeoDig = {\n  component,\n  config,\n  name: component.name,\n  version: component.version,\n  configVue\n}\n\nexport { BzGeoDig }\n"
+        }
+    ]
+}

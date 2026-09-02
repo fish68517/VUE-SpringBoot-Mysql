@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzFireRiskDevice/index.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1782808092712,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1782808092712,
+            "name": "Commit-0",
+            "content": "import { ConfigType, ChartFrameEnum } from '@/package/index.d'\nimport { ChatCategoryEnumName } from '@/package/public/index.d'\n\nexport const BzFireRiskDevice: ConfigType = {\n  key: 'BzFireRiskDevice',\n  chartKey: 'VBzFireRiskDevice',\n  conKey: 'VCBzFireRiskDevice',\n  eventKey: 'VEBzFireRiskDevice',\n  title: '风险点感知设备图层',\n  chartFrame: ChartFrameEnum.COMMON,\n  categoryName: ChatCategoryEnumName.MORE\n}\n"
+        }
+    ]
+}

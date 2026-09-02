@@ -1,0 +1,28 @@
+{
+  "dimensions": [
+    "name",
+    "value"
+  ],
+  "source": [
+    {
+      "name": "风险总数",
+      "value": 31
+    },
+    {
+      "name": "整改督办",
+      "value": 41
+    },
+    {
+      "name": "部门",
+      "value": 0
+    },
+    {
+      "name": "已完成",
+      "value": 0
+    },
+    {
+      "name": "第三次力量",
+      "value": 19
+    }
+  ]
+}

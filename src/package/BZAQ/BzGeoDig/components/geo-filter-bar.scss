@@ -1,0 +1,120 @@
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+  min-height: 42px;
+  padding: 10px 32px 0;
+  box-sizing: border-box;
+}
+
+.filter-item,
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.filter-label,
+.filter-total {
+  color: #8bbce6;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.filter-keyword {
+  width: 180px;
+  --n-color: rgba(16, 64, 126, 0.42) !important;
+  --n-color-focus: rgba(16, 64, 126, 0.42) !important;
+  --n-color-disabled: rgba(16, 64, 126, 0.42) !important;
+  --n-border: 1px solid rgba(83, 174, 255, 0.32) !important;
+  --n-border-hover: 1px solid rgba(83, 174, 255, 0.32) !important;
+  --n-border-focus: 1px solid rgba(83, 174, 255, 0.32) !important;
+  --n-box-shadow-focus: none !important;
+  --n-text-color: #d7e9ff !important;
+  --n-placeholder-color: rgba(215, 233, 255, 0.55) !important;
+}
+
+.filter-date-range {
+  width: 360px;
+}
+
+.filter-total {
+  margin-left: auto;
+}
+
+:deep(.filter-keyword.n-input),
+.filter-date-range :deep(.n-input) {
+  min-height: 28px !important;
+  height: 28px !important;
+  background: rgba(16, 64, 126, 0.42) !important;
+  border: 1px solid rgba(83, 174, 255, 0.32) !important;
+  border-radius: 2px !important;
+  box-sizing: border-box;
+}
+
+:deep(.filter-keyword.n-input .n-input-wrapper),
+.filter-date-range :deep(.n-input-wrapper) {
+  height: 26px !important;
+  line-height: 26px !important;
+}
+
+:deep(.filter-keyword.n-input .n-input__input-el),
+:deep(.filter-keyword.n-input .n-input__placeholder),
+.filter-date-range :deep(.n-input__input-el),
+.filter-date-range :deep(.n-input__placeholder) {
+  color: #d7e9ff !important;
+  font-size: 12px !important;
+}
+
+:deep(.filter-keyword.n-input:hover),
+:deep(.filter-keyword.n-input.n-input--focus),
+.filter-date-range :deep(.n-input:hover),
+.filter-date-range :deep(.n-input.n-input--focus) {
+  background: rgba(16, 64, 126, 0.42) !important;
+  border-color: rgba(83, 174, 255, 0.32) !important;
+  box-shadow: none !important;
+}
+
+.filter-actions :deep(.n-button) {
+  min-width: 56px;
+  border-radius: 2px;
+}
+
+// Naive UI 默认仅在悬停时显示轨道；列表弹窗中保持横纵滚动条常显。
+:deep(.fire-table) {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+
+  .n-data-table-base-table,
+  .n-data-table-base-table-body {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .n-scrollbar {
+    min-width: 0;
+    min-height: 0;
+  }
+}
+
+:deep(.fire-table .n-scrollbar-rail) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 3;
+}
+
+:deep(.fire-table .n-scrollbar-rail--horizontal) {
+  bottom: 2px !important;
+  height: 8px !important;
+}
+
+:deep(.fire-table .n-scrollbar-rail--vertical) {
+  width: 8px !important;
+}
+
+:deep(.fire-table .n-scrollbar-rail__scrollbar) {
+  background: rgba(83, 174, 255, 0.65) !important;
+}

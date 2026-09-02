@@ -61,14 +61,24 @@ const globalParams = useGlobalParamsStore()
 
 // 基础组件配置（只需要修改这个数组）
 const baseConfigs = [
+  // {
+  //   name: 'BarCommon',
+  //   path: 'Charts/Bars/BarCommon',
+  //   title: '组件1'
+  // },
+  // {
+  //   name: 'TimeCommon', 
+  //   path: 'Decorates/Mores/TimeCommon',
+  //   title: '组件2'
+  // },
   {
-    name: 'BarCommon',
-    path: 'Charts/Bars/BarCommon',
-    title: '组件1'
+    name: 'BzZhWarn', 
+    path: 'BZAQ/BzZhWarn',
+    title: '组件2'
   },
   {
-    name: 'TimeCommon', 
-    path: 'Decorates/Mores/TimeCommon',
+    name: 'BzGeoDig', 
+    path: 'BZAQ/BzGeoDig',
     title: '组件2'
   }
 ]

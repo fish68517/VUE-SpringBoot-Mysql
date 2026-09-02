@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzFireKpiSinOpen/index.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1783417758443,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1783417758443,
+            "name": "Commit-0",
+            "content": "import { ConfigType, ChartFrameEnum } from '@/package/index.d'\n\nexport const BzFireKpiSinOpen: ConfigType = {\n  key: 'BzFireKpiSinOpen',\n  chartKey: 'VBzFireKpiSinOpen',\n  conKey: 'VCBzFireKpiSinOpen',\n  eventKey: 'VEBzFireKpiSinOpen',\n  title: '消防KPI打开按钮',\n  chartFrame: ChartFrameEnum.COMMON\n}\n"
+        }
+    ]
+}

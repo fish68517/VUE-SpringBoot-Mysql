@@ -14,7 +14,7 @@
           <span class="size">组件高度: <input type="text" v-model="optionData.attr.h" /></span>
         </div>
         <div class="nav-section">
-          <div class="nav-buttons">
+          <div class="nav-buttons" style="display: flex; gap: 10px; flex-wrap: wrap;">
             <n-button style="padding: 0 10px; width: 120px;" @click="goToBus" type="warning">全局参数-事件测试</n-button>
           </div>
         </div>
@@ -132,7 +132,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, shallowRef, nextTick, onMounted } from 'vue'
+import { ref, watch, shallowRef, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ColorSelect } from '@/components/Pages/ChartItemSetting/components/index'
 import { GlobalThemeOverrides, darkTheme } from 'naive-ui'

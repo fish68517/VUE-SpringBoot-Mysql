@@ -1,0 +1,98 @@
+{
+    "sourceFile": "src/package/BZAQ/BzGeoKpiDia/index.vue",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 20,
+            "patches": [
+                {
+                    "date": 1782961500499,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1782972216560,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref(null)\n+const activePopup = ref('geo-risk-point-list')\n const showMask = ref(false)\n \n const containerStyle = computed(() => {\n   const width = Number(props.chartConfig?.attr?.w)\n"
+                },
+                {
+                    "date": 1782972366559,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-risk-point-list')\n+const activePopup = ref('geo-perception-device-list')\n const showMask = ref(false)\n \n const containerStyle = computed(() => {\n   const width = Number(props.chartConfig?.attr?.w)\n"
+                },
+                {
+                    "date": 1782975409763,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-perception-device-list')\n+const activePopup = ref('geo-risk-point-list')\n const showMask = ref(false)\n \n const containerStyle = computed(() => {\n   const width = Number(props.chartConfig?.attr?.w)\n"
+                },
+                {
+                    "date": 1782975445776,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-risk-point-list')\n+const activePopup = ref('geo-perception-device-list')\n const showMask = ref(false)\n \n const containerStyle = computed(() => {\n   const width = Number(props.chartConfig?.attr?.w)\n"
+                },
+                {
+                    "date": 1782975461009,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-perception-device-list')\n+const activePopup = ref(null)\n const showMask = ref(false)\n \n const containerStyle = computed(() => {\n   const width = Number(props.chartConfig?.attr?.w)\n"
+                },
+                {
+                    "date": 1783577939248,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,15 +11,31 @@\n       v-if=\"activePopup === 'geo-perception-device-list'\"\n       :style=\"popupStyle\"\n       @close=\"closeAllPopup\"\n     />\n+    <GeoGridMemberDetail\n+      v-if=\"activePopup === 'geo-grid-member-detail'\"\n+      :style=\"popupStyle\"\n+      :detail=\"popupData\"\n+      @close=\"closeAllPopup\"\n+    />\n+    <GeoPointDetail\n+      v-if=\"activePopup === 'geo-point-detail'\"\n+      :style=\"popupStyle\"\n+      :detail=\"popupData\"\n+      :show-trend=\"Boolean(popupPayload.showTrend)\"\n+      :point-type=\"popupPayload.pointType\"\n+      @close=\"closeAllPopup\"\n+    />\n   </div>\n </template>\n \n <script setup lang=\"ts\">\n import { computed, onBeforeUnmount, onMounted, ref } from 'vue'\n import GeoRiskPointList from './components/GeoRiskPointList.vue'\n import GeoPerceptionDeviceList from './components/GeoPerceptionDeviceList.vue'\n+import GeoGridMemberDetail from './components/GeoGridMemberDetail.vue'\n+import GeoPointDetail from './components/GeoPointDetail.vue'\n \n const props = defineProps({\n   chartConfig: {\n     type: Object,\n@@ -57,9 +73,11 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref(null)\n+const activePopup = ref(‘geo-point-detail)\n+const popupData = ref({})\n+const popupPayload = ref({})\n const showMask = ref(false)\n \n const containerStyle = computed(() => {\n   const width = Number(props.chartConfig?.attr?.w)\n@@ -76,21 +94,27 @@\n }))\n \n const allowedPopups = [\n   'geo-risk-point-list',\n-  'geo-perception-device-list'\n+  'geo-perception-device-list',\n+  'geo-grid-member-detail',\n+  'geo-point-detail'\n ]\n \n function openPopup(payload) {\n   if (!payload || !payload.diaName) return\n   if (allowedPopups.includes(payload.diaName)) {\n+    popupPayload.value = payload\n+    popupData.value = payload.data || payload\n     activePopup.value = payload.diaName\n     showMask.value = true\n   }\n }\n \n function closeAllPopup() {\n   activePopup.value = null\n+  popupData.value = {}\n+  popupPayload.value = {}\n   showMask.value = false\n }\n \n onMounted(() => {\n"
+                },
+                {
+                    "date": 1783578151243,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -73,9 +73,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref(‘geo-point-detail)\n+const activePopup = ref('geo-grid-member-detail')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1783578554769,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -73,9 +73,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-grid-member-detail')\n+const activePopup = ref('')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1783599680887,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -73,9 +73,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('')\n+const activePopup = ref('geo-point-detail')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1783600151452,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -73,9 +73,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-point-detail')\n+const activePopup = ref('')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1783663596280,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,8 +17,14 @@\n       :style=\"popupStyle\"\n       :detail=\"popupData\"\n       @close=\"closeAllPopup\"\n     />\n+    <GeoKeySlopeUnitDetail\n+      v-if=\"activePopup === 'geo-key-slope-unit-detail'\"\n+      :style=\"popupStyle\"\n+      :detail=\"popupData\"\n+      @close=\"closeAllPopup\"\n+    />\n     <GeoPointDetail\n       v-if=\"activePopup === 'geo-point-detail'\"\n       :style=\"popupStyle\"\n       :detail=\"popupData\"\n@@ -33,8 +39,9 @@\n import { computed, onBeforeUnmount, onMounted, ref } from 'vue'\n import GeoRiskPointList from './components/GeoRiskPointList.vue'\n import GeoPerceptionDeviceList from './components/GeoPerceptionDeviceList.vue'\n import GeoGridMemberDetail from './components/GeoGridMemberDetail.vue'\n+import GeoKeySlopeUnitDetail from './components/GeoKeySlopeUnitDetail.vue'\n import GeoPointDetail from './components/GeoPointDetail.vue'\n \n const props = defineProps({\n   chartConfig: {\n@@ -54,28 +61,34 @@\n const sourceName = 'BzGeoKpiDia'\n const OPEN_GEO_EVENT = 'OPEN_GEO_KPI_DIA'\n const LEGACY_OPEN_EVENT = 'OPEN_DIA'\n const CLOSE_EVENT = 'CLOSE_DIA'\n+const eventCallbackMap = new Map<string, Map<Function, Function>>()\n \n const eventBus = {\n   on(event, callback) {\n     if (!props.bus) return\n-    props.bus.on(event, ({ source, data }) => {\n+    const wrappedCallback = ({ source, data }) => {\n       if (source === sourceName) return\n       callback(data)\n-    })\n+    }\n+    if (!eventCallbackMap.has(event)) eventCallbackMap.set(event, new Map())\n+    eventCallbackMap.get(event)?.set(callback, wrappedCallback)\n+    props.bus.on(event, wrappedCallback)\n   },\n   off(event, callback) {\n     if (!props.bus) return\n-    props.bus.off(event, callback)\n+    const wrappedCallback = eventCallbackMap.get(event)?.get(callback)\n+    props.bus.off(event, wrappedCallback || callback)\n+    eventCallbackMap.get(event)?.delete(callback)\n   },\n   emit(event, data) {\n     if (!props.bus) return\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('')\n+const activePopup = ref('geo-grid-member-detail')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n@@ -96,8 +109,9 @@\n const allowedPopups = [\n   'geo-risk-point-list',\n   'geo-perception-device-list',\n   'geo-grid-member-detail',\n+  'geo-key-slope-unit-detail',\n   'geo-point-detail'\n ]\n \n function openPopup(payload) {\n"
+                },
+                {
+                    "date": 1783663610312,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -86,9 +86,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-grid-member-detail')\n+const activePopup = ref('')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1783667364756,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -86,9 +86,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('')\n+const activePopup = ref('geo-risk-point-list')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1783667861759,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -86,9 +86,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-risk-point-list')\n+const activePopup = ref('')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1783668306505,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -86,9 +86,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('')\n+const activePopup = ref('geo-risk-point-list')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1783673300765,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -86,9 +86,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-risk-point-list')\n+const activePopup = ref('')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1786500951033,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,8 +17,15 @@\n       :style=\"popupStyle\"\n       :detail=\"popupData\"\n       @close=\"closeAllPopup\"\n     />\n+    <GeoOldRiskPointDetail\n+      v-if=\"activePopup === 'geo-old-risk-point-detail'\"\n+      :style=\"popupStyle\"\n+      :detail=\"popupData\"\n+      :layer-name=\"popupPayload.layerName\"\n+      @close=\"closeAllPopup\"\n+    />\n     <GeoKeySlopeUnitDetail\n       v-if=\"activePopup === 'geo-key-slope-unit-detail'\"\n       :style=\"popupStyle\"\n       :detail=\"popupData\"\n@@ -39,8 +46,9 @@\n import { computed, onBeforeUnmount, onMounted, ref } from 'vue'\n import GeoRiskPointList from './components/GeoRiskPointList.vue'\n import GeoPerceptionDeviceList from './components/GeoPerceptionDeviceList.vue'\n import GeoGridMemberDetail from './components/GeoGridMemberDetail.vue'\n+import GeoOldRiskPointDetail from './components/GeoOldRiskPointDetail.vue'\n import GeoKeySlopeUnitDetail from './components/GeoKeySlopeUnitDetail.vue'\n import GeoPointDetail from './components/GeoPointDetail.vue'\n \n const props = defineProps({\n@@ -86,9 +94,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('')\n+const activePopup = ref('geo-risk-point-list')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n@@ -109,8 +117,9 @@\n const allowedPopups = [\n   'geo-risk-point-list',\n   'geo-perception-device-list',\n   'geo-grid-member-detail',\n+  'geo-old-risk-point-detail',\n   'geo-key-slope-unit-detail',\n   'geo-point-detail'\n ]\n \n"
+                },
+                {
+                    "date": 1786503513154,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -94,9 +94,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-risk-point-list')\n+const activePopup = ref('')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1786506949054,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -94,9 +94,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('')\n+const activePopup = ref('geo-risk-point-list')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                },
+                {
+                    "date": 1786514750482,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -94,9 +94,9 @@\n     props.bus.emit(event, { data, source: sourceName })\n   }\n }\n \n-const activePopup = ref('geo-risk-point-list')\n+const activePopup = ref('')\n const popupData = ref({})\n const popupPayload = ref({})\n const showMask = ref(false)\n \n"
+                }
+            ],
+            "date": 1782961500499,
+            "name": "Commit-0",
+            "content": "<template>\n  <div class=\"popup-container\" :style=\"containerStyle\">\n    <div v-if=\"showMask\" class=\"popup-mask\"></div>\n\n    <GeoRiskPointList\n      v-if=\"activePopup === 'geo-risk-point-list'\"\n      :style=\"popupStyle\"\n      @close=\"closeAllPopup\"\n    />\n    <GeoPerceptionDeviceList\n      v-if=\"activePopup === 'geo-perception-device-list'\"\n      :style=\"popupStyle\"\n      @close=\"closeAllPopup\"\n    />\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { computed, onBeforeUnmount, onMounted, ref } from 'vue'\nimport GeoRiskPointList from './components/GeoRiskPointList.vue'\nimport GeoPerceptionDeviceList from './components/GeoPerceptionDeviceList.vue'\n\nconst props = defineProps({\n  chartConfig: {\n    type: Object,\n    required: true\n  },\n  publicParamList: {\n    type: Object,\n    default: () => []\n  },\n  bus: {\n    type: Object,\n    default: null\n  }\n})\n\nconst sourceName = 'BzGeoKpiDia'\nconst OPEN_GEO_EVENT = 'OPEN_GEO_KPI_DIA'\nconst LEGACY_OPEN_EVENT = 'OPEN_DIA'\nconst CLOSE_EVENT = 'CLOSE_DIA'\n\nconst eventBus = {\n  on(event, callback) {\n    if (!props.bus) return\n    props.bus.on(event, ({ source, data }) => {\n      if (source === sourceName) return\n      callback(data)\n    })\n  },\n  off(event, callback) {\n    if (!props.bus) return\n    props.bus.off(event, callback)\n  },\n  emit(event, data) {\n    if (!props.bus) return\n    props.bus.emit(event, { data, source: sourceName })\n  }\n}\n\nconst activePopup = ref(null)\nconst showMask = ref(false)\n\nconst containerStyle = computed(() => {\n  const width = Number(props.chartConfig?.attr?.w)\n  const height = Number(props.chartConfig?.attr?.h)\n  return {\n    width: Number.isFinite(width) && width > 0 ? width + 'px' : '100%',\n    height: Number.isFinite(height) && height > 0 ? height + 'px' : '100%'\n  }\n})\n\nconst popupStyle = computed(() => ({\n  left: '50%',\n  top: '50%'\n}))\n\nconst allowedPopups = [\n  'geo-risk-point-list',\n  'geo-perception-device-list'\n]\n\nfunction openPopup(payload) {\n  if (!payload || !payload.diaName) return\n  if (allowedPopups.includes(payload.diaName)) {\n    activePopup.value = payload.diaName\n    showMask.value = true\n  }\n}\n\nfunction closeAllPopup() {\n  activePopup.value = null\n  showMask.value = false\n}\n\nonMounted(() => {\n  eventBus.on(OPEN_GEO_EVENT, openPopup)\n  eventBus.on(LEGACY_OPEN_EVENT, openPopup)\n  eventBus.on(CLOSE_EVENT, closeAllPopup)\n})\n\nonBeforeUnmount(() => {\n  eventBus.off(OPEN_GEO_EVENT, openPopup)\n  eventBus.off(LEGACY_OPEN_EVENT, openPopup)\n  eventBus.off(CLOSE_EVENT, closeAllPopup)\n})\n</script>\n\n<script lang=\"ts\">\nexport default {\n  name: 'BzGeoKpiDia',\n  version: '1.0.0'\n}\n</script>\n\n<style lang=\"scss\" scoped>\n.popup-container {\n  position: absolute;\n  left: 0;\n  top: 0;\n  overflow: visible;\n  pointer-events: none;\n}\n\n.popup-mask {\n  position: absolute;\n  left: 0;\n  top: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 1000;\n  pointer-events: auto;\n}\n\n.popup-container > :not(.popup-mask) {\n  pointer-events: auto;\n}\n</style>\n"
+        }
+    ]
+}

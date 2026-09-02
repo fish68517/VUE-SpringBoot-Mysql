@@ -1,0 +1,33 @@
+{
+  "dimensions": ["time", "rainfall"],
+  "source": [
+    {
+      "time": "04:00",
+      "rainfall": 30
+    },
+    {
+      "time": "05:00",
+      "rainfall": 50
+    },
+    {
+      "time": "06:00",
+      "rainfall": 70
+    },
+    {
+      "time": "07:00",
+      "rainfall": 65
+    },
+    {
+      "time": "08:00",
+      "rainfall": 80
+    },
+    {
+      "time": "09:00",
+      "rainfall": 75
+    },
+    {
+      "time": "10:00",
+      "rainfall": 60
+    }
+  ]
+}

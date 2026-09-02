@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzGeoLog/export.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1783660878259,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1783660878259,
+            "name": "Commit-0",
+            "content": "/*\r\n * @Author: kaix\r\n * @Date: 2023-03-24 15:44:58\r\n * @LastEditTime: 2023-09-04 08:58:21\r\n * @LastEditors: wangcong\r\n * @Description:\r\n */\r\nimport * as config from './config'\r\nimport configVue from './config.vue'\r\nimport indexVue from './index.vue'\r\n\r\nconst component = indexVue\r\n\r\nconst BzGeoLog = {\r\n  component,\r\n  config,\r\n  name: component.name,\r\n  version: component.version,\r\n  configVue,\r\n}\r\n\r\n\r\nexport { BzGeoLog }\r\n"
+        }
+    ]
+}

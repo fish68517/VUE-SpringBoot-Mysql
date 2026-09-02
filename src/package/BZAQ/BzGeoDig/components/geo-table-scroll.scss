@@ -1,0 +1,36 @@
+// 表格滚动条常显，避免横向或纵向轨道被误认为没有生成。
+:deep(.fire-table) {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+
+  .n-data-table-base-table,
+  .n-data-table-base-table-body {
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .n-scrollbar {
+    min-width: 0;
+    min-height: 0;
+  }
+}
+
+:deep(.fire-table .n-scrollbar-rail) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 3;
+}
+
+:deep(.fire-table .n-scrollbar-rail--horizontal) {
+  bottom: 2px !important;
+  height: 8px !important;
+}
+
+:deep(.fire-table .n-scrollbar-rail--vertical) {
+  width: 8px !important;
+}
+
+:deep(.fire-table .n-scrollbar-rail__scrollbar) {
+  background: rgba(83, 174, 255, 0.65) !important;
+}

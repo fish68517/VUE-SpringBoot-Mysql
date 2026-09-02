@@ -1,0 +1,22 @@
+{
+    "sourceFile": "src/package/BZAQ/BzFireDia/components/FireVideoPlayer.vue",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1783344671694,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1783346044793,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -70,8 +70,10 @@\n   display: flex;\n   align-items: center;\n   justify-content: space-between;\n   padding: 0 18px 0 22px;\n+  text-align: center\n+  ;\n }\n \n .fire-video-player__title {\n   min-width: 0;\n"
+                }
+            ],
+            "date": 1783344671694,
+            "name": "Commit-0",
+            "content": "<template>\n  <div class=\"fire-video-player\">\n    <div class=\"fire-video-player__header\">\n      <div class=\"fire-video-player__title\">{{ title || '视频播放' }}</div>\n      <button class=\"fire-video-player__close\" type=\"button\" @click=\"handleClose\">×</button>\n    </div>\n    <div class=\"fire-video-player__body\">\n      <video\n        v-if=\"videoUrl\"\n        class=\"fire-video-player__video\"\n        :src=\"videoUrl\"\n        autoplay\n        muted\n        loop\n        playsinline\n        controls\n      ></video>\n      <div v-else class=\"fire-video-player__empty\">暂无视频</div>\n    </div>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\ndefineProps({\n  title: {\n    type: String,\n    default: ''\n  },\n  videoUrl: {\n    type: String,\n    default: ''\n  }\n})\n\nconst emit = defineEmits(['close'])\n\nfunction handleClose() {\n  emit('close')\n}\n</script>\n\n<script lang=\"ts\">\nexport default {\n  name: 'FireVideoPlayer'\n}\n</script>\n\n<style scoped lang=\"scss\">\n.fire-video-player {\n  position: absolute;\n  z-index: 1001;\n  width: 600px;\n  height: 560px;\n  transform: translate(-50%, -50%);\n  display: flex;\n  flex-direction: column;\n  pointer-events: auto;\n  background:\n    url('../img/Group_2136640490.png') top center / 100% 58px no-repeat,\n    linear-gradient(180deg, rgba(6, 31, 73, 0.98) 0%, rgba(3, 16, 42, 0.98) 100%);\n  border: 1px solid rgba(55, 182, 255, 0.62);\n  box-shadow:\n    0 0 22px rgba(0, 180, 255, 0.28),\n    inset 0 0 18px rgba(43, 149, 255, 0.22);\n}\n\n.fire-video-player__header {\n  height: 58px;\n  flex: 0 0 58px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  padding: 0 18px 0 22px;\n}\n\n.fire-video-player__title {\n  min-width: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  font-size: 18px;\n  font-weight: 700;\n  color: #dff7ff;\n  text-align: center;\n  text-shadow: 0 0 8px rgba(43, 185, 255, 0.7);\n}\n\n.fire-video-player__close {\n  width: 28px;\n  height: 28px;\n  border: 1px solid rgba(88, 196, 255, 0.72);\n  border-radius: 2px;\n  color: #bcecff;\n  background: rgba(3, 27, 63, 0.72);\n  font-size: 22px;\n  line-height: 24px;\n  cursor: pointer;\n}\n\n.fire-video-player__body {\n  flex: 1;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding-bottom: 2px;\n}\n\n.fire-video-player__video,\n.fire-video-player__empty {\n  width: 500px;\n  height: 500px;\n  background: rgba(2, 13, 35, 0.92);\n  border: 1px solid rgba(57, 184, 255, 0.38);\n  box-shadow: inset 0 0 14px rgba(38, 156, 255, 0.18);\n}\n\n.fire-video-player__video {\n  display: block;\n  object-fit: contain;\n}\n\n.fire-video-player__empty {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: rgba(205, 238, 255, 0.78);\n  font-size: 16px;\n}\n</style>\n"
+        }
+    ]
+}

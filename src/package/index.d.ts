@@ -62,7 +62,8 @@ export type ConfigType = {
   version?: string,
   viewOnlyCodeBlocks?: boolean,
   chartWithMultiLevel?: boolean,
-  noScale?: boolean
+  noScale?: boolean,
+  eventKey?:string
 }
 
 // 组件新增条件

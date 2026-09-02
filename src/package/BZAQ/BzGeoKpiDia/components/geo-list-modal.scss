@@ -1,0 +1,271 @@
+@font-face {
+  font-family: 'AlibabaPuHuiTi';
+  src: url('../font/Alibaba_PuHuiTi_2.0_65_Medium_65_Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'D-DIN';
+  src: url('../font/D-DIN.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.geo-list-modal {
+  font-family: 'AlibabaPuHuiTi', sans-serif;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  width: 900px;
+  height: 650px;
+  display: flex;
+  flex-direction: column;
+  background:
+    url('../img/Group_2136640490.png') top center / 100% 48px no-repeat,
+    linear-gradient(180deg, rgba(3, 19, 54, 0.95) 0%, rgba(2, 12, 36, 0.95) 100%);
+  border: 1px solid rgba(37, 134, 255, 0.25);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+  color: #b8d9ff;
+  font-size: 14px;
+  overflow: hidden;
+  pointer-events: auto;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('../img/Rectangle_346242153.png') center / cover no-repeat;
+    opacity: 0.25;
+    z-index: -1;
+  }
+}
+
+.modal-header {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+  padding: 0 32px;
+
+  .header-title {
+    color: #cfe8ff;
+    font-size: 22px;
+    font-weight: 700;
+    text-shadow: 0 0 12px rgba(83, 174, 255, 0.5);
+  }
+
+  .close-btn {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border: 1px solid rgba(83, 174, 255, 0.3);
+    background: rgba(16, 64, 126, 0.4);
+    color: #aed5ff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: #ffffff;
+      border-color: rgba(83, 174, 255, 0.6);
+      background: rgba(24, 92, 179, 0.6);
+    }
+  }
+}
+
+.query-bar {
+  height: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 32px 0;
+}
+
+.query-input {
+  width: 240px;
+  background: #0d356b;
+}
+
+.query-select {
+  width: 180px;
+  background: #0d356b;
+}
+
+.query-select :deep(.n-base-selection),
+.query-select :deep(.n-base-selection-label) {
+  background: #0d356b;
+}
+
+.query-input,
+.query-select {
+  --query-control-bg: #0d356b;
+  --query-control-border: rgba(83, 174, 255, 0.35);
+  --query-control-border-hover: rgba(83, 174, 255, 0.6);
+
+  :deep(.n-input),
+  :deep(.n-base-selection) {
+    --n-color: var(--query-control-bg) !important;
+    --n-color-active: var(--query-control-bg) !important;
+    --n-color-focus: rgba(24, 92, 179, 0.6) !important;
+    --n-border: 1px solid var(--query-control-border) !important;
+    --n-border-hover: 1px solid var(--query-control-border-hover) !important;
+    --n-border-active: 1px solid var(--query-control-border) !important;
+    --n-border-focus: 1px solid var(--query-control-border-hover) !important;
+    --n-box-shadow-focus: 0 0 8px rgba(83, 174, 255, 0.22) !important;
+    --n-text-color: #d7e9ff !important;
+    --n-placeholder-color: rgba(215, 233, 255, 0.58) !important;
+    height: 32px;
+    background: var(--query-control-bg);
+  }
+
+  :deep(.n-input__input-el),
+  :deep(.n-base-selection-input),
+  :deep(.n-base-selection-placeholder) {
+    color: #d7e9ff;
+  }
+
+  :deep(.n-base-selection-label) {
+    height: 30px;
+    background: var(--query-control-bg) !important;
+  }
+
+  :deep(.n-base-selection__border),
+  :deep(.n-base-selection__state-border) {
+    border: 1px solid var(--query-control-border) !important;
+  }
+
+  :deep(.n-input:hover),
+  :deep(.n-base-selection:hover) {
+    background: rgba(24, 92, 179, 0.6);
+    border-color: var(--query-control-border-hover);
+  }
+}
+
+.query-btn {
+  min-width: 64px;
+  border: 1px solid rgba(83, 174, 255, 0.35);
+  background: rgba(16, 64, 126, 0.45);
+  color: #aed5ff;
+}
+
+.modal-content {
+  flex: 1;
+  min-height: 0;
+  padding: 16px 32px 8px 32px;
+  overflow: visible;
+}
+
+:deep(.geo-table) {
+  height: 100%;
+
+  .n-data-table-wrapper {
+    background: transparent;
+  }
+
+  .n-data-table-table {
+    background: transparent;
+    font-size: 14px;
+  }
+
+  .n-data-table-th {
+    height: 40px;
+    padding: 0 12px;
+    color: #8bbce6;
+    font-weight: 500;
+    background: #0b437c;
+    border: none;
+    white-space: nowrap;
+  }
+
+  .n-data-table-td {
+    height: 40px;
+    max-height: 40px;
+    padding: 0 12px;
+    color: #d7e9ff;
+    font-family: 'D-DIN', 'AlibabaPuHuiTi', sans-serif;
+    background: #0a325f;
+    border: none;
+    white-space: nowrap;
+  }
+
+  .n-data-table-th__title,
+  .n-data-table-td__ellipsis,
+  .n-ellipsis {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .n-data-table-tr:nth-child(even) .n-data-table-td {
+    background: #19406b;
+  }
+
+  .n-data-table-tr:hover .n-data-table-td {
+    background: rgba(29, 107, 202, 0.3);
+  }
+
+  .n-scrollbar-rail--vertical {
+    width: 6px;
+  }
+
+  .n-scrollbar-rail--horizontal {
+    height: 6px;
+  }
+
+  .n-scrollbar-rail__scrollbar {
+    background: rgba(71, 202, 255, 0.68);
+  }
+}
+
+.modal-footer {
+  height: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 32px;
+
+  :deep(.n-pagination) {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  :deep(.n-pagination-item),
+  :deep(.n-pagination-button) {
+    min-width: 32px;
+    height: 32px;
+    border: 1px solid rgba(83, 174, 255, 0.35);
+    background: rgba(16, 64, 126, 0.4);
+    color: #aed5ff;
+    font-size: 14px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  :deep(.n-pagination-item:hover),
+  :deep(.n-pagination-button:hover) {
+    color: #ffffff;
+    border-color: rgba(83, 174, 255, 0.6);
+    background: rgba(24, 92, 179, 0.6);
+  }
+
+  :deep(.n-pagination-item--active) {
+    background: rgba(37, 134, 255, 0.8) !important;
+    border-color: rgba(37, 134, 255, 0.9) !important;
+    color: #ffffff !important;
+  }
+}

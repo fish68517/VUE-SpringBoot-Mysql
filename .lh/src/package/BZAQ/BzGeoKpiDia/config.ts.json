@@ -1,0 +1,22 @@
+{
+    "sourceFile": "src/package/BZAQ/BzGeoKpiDia/config.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1782973825031,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1784967851896,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,9 +17,9 @@\n   eventConfig: []\n }\n \n export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/geo'\n-// export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n+// export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/geo';\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzGeoKpiDia.key\n   public chartConfig = cloneDeep(BzGeoKpiDia)\n"
+                }
+            ],
+            "date": 1782973825031,
+            "name": "Commit-0",
+            "content": "import { PublicConfigClass, echartOptionProfixHandle } from '@/package/public/index'\nimport { BzGeoKpiDia } from './index'\nimport { CreateComponentType } from '@/package/index.d'\nimport cloneDeep from 'lodash/cloneDeep'\nimport { chartInitNewAttrConfig } from '@/package/config/const'\n\nexport const includes = []\n\nexport const option = {\n  dataset: null,\n  requestAddress: '',\n  requestMethod: 'get',\n  usePublicParam: true,\n  enablePopup: true,\n  customEvents: [],\n  actions: [],\n  eventConfig: []\n}\n\nexport const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/geo'\n// export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n\nexport default class Config extends PublicConfigClass implements CreateComponentType {\n  public key = BzGeoKpiDia.key\n  public chartConfig = cloneDeep(BzGeoKpiDia)\n  public option = echartOptionProfixHandle(option, includes)\n  public newAttr = {\n    ...chartInitNewAttrConfig,\n    w: 1920,\n    h: 1080,\n    themeColor: {\n      useGlobalColor: false,\n      selfTheme: {\n        color: ['#04bcfa', '#0454cb', '#5fbfff'],\n        value: 'technology'\n      }\n    }\n  }\n}\n"
+        }
+    ]
+}

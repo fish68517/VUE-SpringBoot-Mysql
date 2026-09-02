@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzWaterlogRiskPointOpen/index.vue",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1782717301592,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1782717301592,
+            "name": "Commit-0",
+            "content": "<template>\n  <div class=\"bz-waterlog-risk-point-open\" @click=\"openRiskPointList\">\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nconst props = defineProps({\n  chartConfig: {\n    type: Object,\n    required: true\n  },\n  publicParamList: {\n    type: Object,\n    required: false,\n    default: () => []\n  },\n  bus: {\n    type: Object,\n    required: false,\n    default: null\n  }\n})\n\nconst sourceName = 'BzWaterlogRiskOpen'\nconst payload = {\n  diaName: 'waterlog-risk-point-list'\n}\n\nconst eventBus = {\n  on(event, callback) {\n    if (!props.bus) return\n    props.bus.on(event, ({ source, data }) => {\n      if (source === sourceName) return\n      callback(data)\n    })\n  },\n  off(event, callback) {\n    if (!props.bus) return\n    props.bus.off(event, callback)\n  },\n  emit(event, data) {\n    if (!props.bus) return\n    props.bus.emit(event, { data, source: sourceName })\n  }\n}\n\nfunction openRiskPointList() {\n  eventBus.emit('OPEN_WATER_DIA', payload)\n}\n</script>\n\n<script lang=\"ts\">\nexport default {\n  name: 'BzWaterlogRiskOpen',\n  version: '1.0.0'\n}\n</script>\n\n<style lang=\"scss\" scoped>\n.bz-waterlog-risk-point-open {\n  width: 100%;\n  height: 100%;\n  min-width: 120px;\n  min-height: 64px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-sizing: border-box;\n}\n\n.open-btn {\n  min-width: 132px;\n  height: 40px;\n  padding: 0 18px;\n  border: 1px solid rgba(66, 170, 255, 0.72);\n  border-radius: 4px;\n  background: linear-gradient(180deg, rgba(31, 121, 218, 0.92), rgba(5, 63, 137, 0.92));\n  box-shadow: 0 0 14px rgba(49, 142, 255, 0.38), inset 0 0 12px rgba(132, 213, 255, 0.18);\n  color: #eaf7ff;\n  font-size: 16px;\n  font-weight: 600;\n  line-height: 38px;\n  cursor: pointer;\n  transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;\n\n  &:hover {\n    border-color: rgba(111, 208, 255, 0.95);\n    box-shadow: 0 0 20px rgba(49, 175, 255, 0.55), inset 0 0 14px rgba(132, 213, 255, 0.24);\n    transform: translateY(-1px);\n  }\n\n  &:active {\n    transform: translateY(0);\n  }\n}\n</style>\n"
+        }
+    ]
+}

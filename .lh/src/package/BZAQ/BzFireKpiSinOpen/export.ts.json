@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzFireKpiSinOpen/export.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1783417761237,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1783417761237,
+            "name": "Commit-0",
+            "content": "import * as config from './config'\nimport configVue from './config.vue'\nimport indexVue from './index.vue'\n\nconst component = indexVue\n\nconst BzFireKpiSinOpen = {\n  component,\n  config,\n  name: component.name,\n  version: component.version,\n  configVue\n}\n\nexport { BzFireKpiSinOpen }\n"
+        }
+    ]
+}

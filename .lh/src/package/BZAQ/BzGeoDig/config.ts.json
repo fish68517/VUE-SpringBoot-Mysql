@@ -1,0 +1,38 @@
+{
+    "sourceFile": "src/package/BZAQ/BzGeoDig/config.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 5,
+            "patches": [
+                {
+                    "date": 1783073057145,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1783073064057,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,10 +20,10 @@\n export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n // export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n-  public key = BzFireKpiDia.key\n-  public chartConfig = cloneDeep(BzFireKpiDia)\n+  public key = BzGeoDig.key\n+  public chartConfig = cloneDeep(BzGeoDig)\n   public option = echartOptionProfixHandle(option, includes)\n   public newAttr = {\n     ...chartInitNewAttrConfig,\n     w: 1920,\n"
+                },
+                {
+                    "date": 1783074949916,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,10 +16,11 @@\n   actions: [],\n   eventConfig: []\n }\n \n-export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n+// export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n // export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n+// export const BASE_URL = 'http://192.168.112.150:11001';\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzGeoDig.key\n   public chartConfig = cloneDeep(BzGeoDig)\n"
+                },
+                {
+                    "date": 1783086833249,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,8 +19,9 @@\n \n // export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n // export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n // export const BASE_URL = 'http://192.168.112.150:11001';\n+export const BASE_URL = 'const BASE_URL = 'http://23.99.16.179:11001'';\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzGeoDig.key\n   public chartConfig = cloneDeep(BzGeoDig)\n"
+                },
+                {
+                    "date": 1783323092868,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,10 +18,10 @@\n }\n \n // export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n // export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n-// export const BASE_URL = 'http://192.168.112.150:11001';\n-export const BASE_URL = 'const BASE_URL = 'http://23.99.16.179:11001'';\n+export const BASE_URL = 'http://192.168.112.150:11001';\n+// export const BASE_URL = 'http://23.99.16.179:11001'\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzGeoDig.key\n   public chartConfig = cloneDeep(BzGeoDig)\n"
+                },
+                {
+                    "date": 1783326109749,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,10 +18,10 @@\n }\n \n // export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n // export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n-export const BASE_URL = 'http://192.168.112.150:11001';\n-// export const BASE_URL = 'http://23.99.16.179:11001'\n+// export const BASE_URL = 'http://192.168.112.150:11001';\n+export const BASE_URL = 'http://23.99.16.179:11001'\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzGeoDig.key\n   public chartConfig = cloneDeep(BzGeoDig)\n"
+                }
+            ],
+            "date": 1783073057145,
+            "name": "Commit-0",
+            "content": "import { PublicConfigClass, echartOptionProfixHandle } from '@/package/public/index'\nimport { BzGeoDig } from './index'\nimport { CreateComponentType } from '@/package/index.d'\nimport cloneDeep from 'lodash/cloneDeep'\nimport { chartInitNewAttrConfig } from '@/package/config/const'\n\nexport const includes = []\n\nexport const option = {\n  dataset: null,\n  requestAddress: '',\n  requestMethod: 'get',\n  usePublicParam: true,\n  enablePopup: true,\n  customEvents: [],\n  actions: [],\n  eventConfig: []\n}\n\nexport const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n// export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n\nexport default class Config extends PublicConfigClass implements CreateComponentType {\n  public key = BzFireKpiDia.key\n  public chartConfig = cloneDeep(BzFireKpiDia)\n  public option = echartOptionProfixHandle(option, includes)\n  public newAttr = {\n    ...chartInitNewAttrConfig,\n    w: 1920,\n    h: 1080,\n    themeColor: {\n      useGlobalColor: false,\n      selfTheme: {\n        color: ['#04bcfa', '#0454cb', '#5fbfff'],\n        value: 'technology'\n      }\n    }\n  }\n}\n"
+        }
+    ]
+}

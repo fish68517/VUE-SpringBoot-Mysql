@@ -1,0 +1,46 @@
+{
+    "sourceFile": "src/package/BZAQ/BzFireKpiDia/config.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 7,
+            "patches": [
+                {
+                    "date": 1782965546096,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1782965680022,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,9 +17,9 @@\n   eventConfig: []\n }\n \n export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n-// export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n+// export const BASE_URL = http://192.168.112.165:11001/api/boot/system/fire\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzFireKpiDia.key\n   public chartConfig = cloneDeep(BzFireKpiDia)\n"
+                },
+                {
+                    "date": 1782965698837,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,10 +16,10 @@\n   actions: [],\n   eventConfig: []\n }\n \n-export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n-// export const BASE_URL = http://192.168.112.165:11001/api/boot/system/fire\n+// export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n+export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzFireKpiDia.key\n   public chartConfig = cloneDeep(BzFireKpiDia)\n"
+                },
+                {
+                    "date": 1782965705221,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,9 +17,9 @@\n   eventConfig: []\n }\n \n // export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n-export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire\n+export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire;\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzFireKpiDia.key\n   public chartConfig = cloneDeep(BzFireKpiDia)\n"
+                },
+                {
+                    "date": 1782965712998,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,9 +17,9 @@\n   eventConfig: []\n }\n \n // export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n-export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire;\n+export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzFireKpiDia.key\n   public chartConfig = cloneDeep(BzFireKpiDia)\n"
+                },
+                {
+                    "date": 1782973747906,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,10 +16,10 @@\n   actions: [],\n   eventConfig: []\n }\n \n-// export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n-export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n+export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n+// export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzFireKpiDia.key\n   public chartConfig = cloneDeep(BzFireKpiDia)\n"
+                },
+                {
+                    "date": 1784970891564,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n   actions: [],\n   eventConfig: []\n }\n \n-export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n+export const BASE_URL = 'http://23.99.16.179:9002/api/boot/system/fire'\n // export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzFireKpiDia.key\n"
+                },
+                {
+                    "date": 1784970932575,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n   actions: [],\n   eventConfig: []\n }\n \n-export const BASE_URL = 'http://23.99.16.179:9002/api/boot/system/fire'\n+export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n // export const BASE_URL = 'http://192.168.112.165:11001/api/boot/system/fire';\n \n export default class Config extends PublicConfigClass implements CreateComponentType {\n   public key = BzFireKpiDia.key\n"
+                }
+            ],
+            "date": 1782965546096,
+            "name": "Commit-0",
+            "content": "import { PublicConfigClass, echartOptionProfixHandle } from '@/package/public/index'\nimport { BzFireKpiDia } from './index'\nimport { CreateComponentType } from '@/package/index.d'\nimport cloneDeep from 'lodash/cloneDeep'\nimport { chartInitNewAttrConfig } from '@/package/config/const'\n\nexport const includes = []\n\nexport const option = {\n  dataset: null,\n  requestAddress: '',\n  requestMethod: 'get',\n  usePublicParam: true,\n  enablePopup: true,\n  customEvents: [],\n  actions: [],\n  eventConfig: []\n}\n\nexport const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n// export const BASE_URL = 'http://23.99.16.179:11001/api/boot/system/fire'\n\nexport default class Config extends PublicConfigClass implements CreateComponentType {\n  public key = BzFireKpiDia.key\n  public chartConfig = cloneDeep(BzFireKpiDia)\n  public option = echartOptionProfixHandle(option, includes)\n  public newAttr = {\n    ...chartInitNewAttrConfig,\n    w: 1920,\n    h: 1080,\n    themeColor: {\n      useGlobalColor: false,\n      selfTheme: {\n        color: ['#04bcfa', '#0454cb', '#5fbfff'],\n        value: 'technology'\n      }\n    }\n  }\n}\n"
+        }
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "sourceFile": "build/webpack.prod.conf.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 5,
+            "patches": [
+                {
+                    "date": 1782555982187,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1782556064708,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin\r\n const { parseComponent } = require('./resolve-file.js')\r\n \r\n // ☆☆☆☆☆☆☆☆☆☆☆ 组件编码 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n-const compName = 'BzFire'\r\n+const compName = 'BzFireDia'\r\n // ☆☆☆☆☆☆☆☆☆☆☆ 改这里 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n \r\n /*\r\n  * entry: 组件打包入口文件  类似 'src/package/Decorates/Borders/Border03/export.ts'\r\n"
+                },
+                {
+                    "date": 1782722363909,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin\r\n const { parseComponent } = require('./resolve-file.js')\r\n \r\n // ☆☆☆☆☆☆☆☆☆☆☆ 组件编码 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n-const compName = 'BzFireDia'\r\n+const compName = 'BzWaterlog'\r\n // ☆☆☆☆☆☆☆☆☆☆☆ 改这里 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n \r\n /*\r\n  * entry: 组件打包入口文件  类似 'src/package/Decorates/Borders/Border03/export.ts'\r\n@@ -63,9 +63,9 @@\n       // filename: \"./css/[name].[contenthash].css\",\r\n       filename: '[name]@' + version + '.css',\r\n       chunkFilename: '[id]@' + version + '.css'\r\n     }),\r\n-    new BundleAnalyzerPlugin()\r\n+    ...(process.env.ANALYZE === 'true' ? [new BundleAnalyzerPlugin()] : [])\r\n     // 打包完成自动关闭\r\n     //   {\r\n     //     apply: (compiler) => {\r\n     //       compiler.hooks.done.tap('DonePlugin', (stats) => {\r\n"
+                },
+                {
+                    "date": 1782723557517,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin\r\n const { parseComponent } = require('./resolve-file.js')\r\n \r\n // ☆☆☆☆☆☆☆☆☆☆☆ 组件编码 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n-const compName = 'BzWaterlog'\r\n+const compName = 'BzWaterlogDia'\r\n // ☆☆☆☆☆☆☆☆☆☆☆ 改这里 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n \r\n /*\r\n  * entry: 组件打包入口文件  类似 'src/package/Decorates/Borders/Border03/export.ts'\r\n"
+                },
+                {
+                    "date": 1782724701596,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin\r\n const { parseComponent } = require('./resolve-file.js')\r\n \r\n // ☆☆☆☆☆☆☆☆☆☆☆ 组件编码 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n-const compName = process.env.COMP_NAME || 'BzWaterlog'\n+const compName = 'BzWaterlogDia'\r\n // ☆☆☆☆☆☆☆☆☆☆☆ 改这里 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n \r\n /*\r\n  * entry: 组件打包入口文件  类似 'src/package/Decorates/Borders/Border03/export.ts'\r\n"
+                },
+                {
+                    "date": 1782792743320,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,9 +16,9 @@\n const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin\r\n const { parseComponent } = require('./resolve-file.js')\r\n \r\n // ☆☆☆☆☆☆☆☆☆☆☆ 组件编码 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n-const compName = 'BzWaterlog'\r\n+const compName = 'BzFireDia'\r\n // ☆☆☆☆☆☆☆☆☆☆☆ 改这里 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n \r\n /*\r\n  * entry: 组件打包入口文件  类似 'src/package/Decorates/Borders/Border03/export.ts'\r\n"
+                }
+            ],
+            "date": 1782555982187,
+            "name": "Commit-0",
+            "content": "/*\r\n * @Author: kaix\r\n * @Date: 2023-05-24 10:27:22\r\n * @LastEditTime: 2025-07-04 15:10:29\r\n * @LastEditors: kaix\r\n * @Description: 组件库打包生产\r\n */\r\n'use strict'\r\nconst path = require('path')\r\nconst copyWebpackPlugin = require('copy-webpack-plugin')\r\nconst TerserPlugin = require('terser-webpack-plugin')\r\nconst { merge } = require('webpack-merge')\r\nconst WebpackBaseConfig = require('./webpack.base.conf')\r\nconst WebpackRulesConfig = require('./webpack.rules.conf')\r\nconst MiniCssExtractPlugin = require('mini-css-extract-plugin')\r\nconst BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin\r\nconst { parseComponent } = require('./resolve-file.js')\r\n\r\n// ☆☆☆☆☆☆☆☆☆☆☆ 组件编码 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\nconst compName = 'BzFire'\r\n// ☆☆☆☆☆☆☆☆☆☆☆ 改这里 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆\r\n\r\n/*\r\n * entry: 组件打包入口文件  类似 'src/package/Decorates/Borders/Border03/export.ts'\r\n * version: 每个组件的版本号 在 'src/package/Decorates/Borders/Border03/index.vue' 中定义\r\n */\r\nconst [entry, version] = parseComponent(compName)\r\n\r\nmodule.exports = merge(WebpackBaseConfig, {\r\n  mode: 'production',\r\n  entry: {\r\n    [compName]: {\r\n      import: path.resolve(__dirname, `../${entry}`),\r\n      library: {\r\n        name: `${compName}@${version}`,\r\n        type: 'amd'\r\n      }\r\n    }\r\n    // vendor: [\"axios\", \"vue-router\", \"vuex\"],\r\n  },\r\n  output: {\r\n    path: path.resolve(__dirname, '../dist'),\r\n    // 打包后的资源访问基础路径\r\n    publicPath: `../component/${compName}/${version}/`,\r\n    filename: `[name]@${version}.js`,\r\n    libraryTarget: 'amd', // 设置 libraryTarget 为 'amd'\r\n    umdNamedDefine: true,\r\n    globalObject: \"typeof self !== 'undefined' ? self : this\"\r\n  },\r\n  // 排除打包库\r\n  externals: {\r\n    vue: 'vue',\r\n    lodash: '_',\r\n    'naive-ui': 'naiveUi',\r\n    'echarts': 'echarts'\r\n  },\r\n  resolve: {\r\n    extensions: ['.ts', '.js'] // 确保能够解析导入时省略后缀的 .ts 文件\r\n  },\r\n  module: WebpackRulesConfig.module,\r\n  plugins: [\r\n    new MiniCssExtractPlugin({\r\n      // filename: \"./css/[name].[contenthash].css\",\r\n      filename: '[name]@' + version + '.css',\r\n      chunkFilename: '[id]@' + version + '.css'\r\n    }),\r\n    new BundleAnalyzerPlugin()\r\n    // 打包完成自动关闭\r\n    //   {\r\n    //     apply: (compiler) => {\r\n    //       compiler.hooks.done.tap('DonePlugin', (stats) => {\r\n    //         console.log('Compile is done !')\r\n    //         setTimeout(() => {\r\n    //           process.exit(0)\r\n    //         })\r\n    //       });\r\n    //     }\r\n    //  }\r\n  ],\r\n  optimization: {\r\n    // 分包策略\r\n    // splitChunks: {\r\n    //   cacheGroups: {\r\n    //     vendor: {\r\n    //       name: 'vendor',\r\n    //       test: /[\\\\/]node_modules[\\\\/]/,\r\n    //       chunks: 'all',\r\n    //       priority: 10,\r\n    //     },\r\n    //   },\r\n    // },\r\n    minimize: true,\r\n    minimizer: [\r\n      new TerserPlugin({\r\n        parallel: true,\r\n        extractComments: false,\r\n        terserOptions: {\r\n          compress: {\r\n            drop_console: false,\r\n            drop_debugger: true\r\n          }\r\n        }\r\n      })\r\n    ]\r\n  }\r\n})\r\n"
+        }
+    ]
+}

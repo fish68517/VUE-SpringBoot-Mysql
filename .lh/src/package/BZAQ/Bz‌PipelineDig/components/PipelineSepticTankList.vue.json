@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/Bz‌PipelineDig/components/PipelineSepticTankList.vue",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1786602937879,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1786602937879,
+            "name": "Commit-0",
+            "content": "<template>\n  <PipelineListModal\n    :title=\"title\" :columns=\"columns\" :rows=\"rows\"  :show-filters=\"false\" :scroll-x=\"1160\" @open-detail=\"emit('open-detail', $event)\"\n    @close=\"emit('close')\" />\n</template>\n\n<script setup lang=\"ts\">\nimport { computed, h } from 'vue'\nimport PipelineListModal from './PipelineListModal.vue'\n\nconst emit = defineEmits(['close', 'open-detail'])\nconst props = defineProps({\n  title: {\n    type: String,\n    default: '化粪池列表'\n  }\n})\nconst title = computed(() => props.title || '化粪池列表')\n\nconst columns = [\n  { title: '安装地址', key: 'installAddress', width: 270 },\n  {\n    title: '设备编码',\n    key: 'deviceCode',\n    width: 170,\n    render(row: any) {\n      return h('span', { class: 'link-cell' }, row.deviceCode)\n    }\n  },\n  { title: '设备名称', key: 'deviceName', width: 140 },\n  { title: '设备厂商', key: 'vendor', width: 170 },\n  { title: '所属街道', key: 'street', width: 110 },\n  { title: '终端所属部门', key: 'department', width: 150 },\n  { title: '建设项目名称', key: 'projectName', width: 170 }\n]\n\nconst rows = [\n  { installAddress: '重庆市渝中区化龙桥街道嘉陵江滨江路应急救援场桥下', deviceCode: 'HZC-500103-001', deviceName: '氨氮含量监测', vendor: '广州博控自动化技术有限公司', street: '化龙桥街道', department: '渝中区住建委', projectName: '化粪池在线监测项目' },\n  { installAddress: '重庆市渝中区大坪街道大黄路社区公共卫生间', deviceCode: 'HZC-500103-002', deviceName: '硫化氢监测', vendor: '北京万维盈创科技发展有限公司', street: '大坪街道', department: '渝中区城管局', projectName: '化粪池在线监测项目' },\n  { installAddress: '重庆市渝中区解放碑街道戴家巷崖壁步道', deviceCode: 'HZC-500103-003', deviceName: '氨氮含量监测', vendor: '广州博控自动化技术有限公司', street: '解放碑街道', department: '渝中区城管局', projectName: '化粪池在线监测项目' },\n  { installAddress: '重庆市渝中区两路口街道枇杷山正街104号', deviceCode: 'HZC-500103-004', deviceName: '硫化氢监测', vendor: '无锡雷磁仪器仪表有限公司', street: '两路口街道', department: '渝中区住建委', projectName: '化粪池在线监测项目' },\n  { installAddress: '重庆市渝中区朝天门街道陕西路社区道门口40号', deviceCode: 'HZC-500103-005', deviceName: '氨氮含量监测', vendor: '广州博控自动化技术有限公司', street: '朝天门街道', department: '渝中区城管局', projectName: '化粪池在线监测项目' },\n  { installAddress: '重庆市渝中区石油路街道石油路社区石油路24号', deviceCode: 'HZC-500103-006', deviceName: '硫化氢监测', vendor: '北京万维盈创科技发展有限公司', street: '石油路街道', department: '渝中区城管局', projectName: '化粪池在线监测项目' }\n].map((row, index) => ({ ...row, status: index % 2 === 0 ? '处置中' : '已完成' }))\n</script>\n\n<script lang=\"ts\">\nexport default {\n  name: 'PipelineSepticTankList'\n}\n</script>\n"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "sourceFile": ".gitignore",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1786677634907,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1786677634907,
+            "name": "Commit-0",
+            "content": "node_modules\r\n.DS_Store\r\ndist\r\ndist-ssr\r\n*.local\r\n.vscode\r\nstatic/libs/arcgis_js4.27\r\n.history\r\nbuild/webpack.prod.conf.js\r\n"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/Bz‌PipelineDig/components/PipelineWaterStationList.vue",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1786602944059,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1786602944059,
+            "name": "Commit-0",
+            "content": "<template>\n  <PipelineListModal\n    :title=\"title\" :columns=\"columns\" :rows=\"rows\" :scroll-x=\"1160\" :show-filters=\"false\" @open-detail=\"emit('open-detail', $event)\"\n    @close=\"emit('close')\" />\n</template>\n\n<script setup lang=\"ts\">\nimport { computed, h, onMounted, ref, watch } from 'vue'\nimport axios from 'axios'\nimport PipelineListModal from './PipelineListModal.vue'\n\nconst emit = defineEmits(['close', 'open-detail'])\nconst props = defineProps({\n  title: {\n    type: String,\n    default: '水质监测站'\n  },\n  payload: {\n    type: Object,\n    default: () => ({})\n  }\n})\nconst title = computed(() => props.title || '水质监测站')\nconst isWarning = computed(() => props.payload?.isWarning === true)\nconst BASE_URL = 'http://23.99.16.179:11001'\n\nconst columns = [\n  { title: '设备名称', key: 'deviceName', width: 210 },\n  {\n    title: '设备编码',\n    key: 'deviceCode',\n    width: 120,\n    render(row: any) {\n      return h('span', { class: 'link-cell' }, row.deviceCode)\n    }\n  },\n  { title: '安装地址', key: 'installAddress', width: 330 },\n  { title: '设备厂商', key: 'vendor', width: 160 },\n  { title: '所属街道', key: 'street', width: 110 },\n  { title: '终端所属部门', key: 'department', width: 150 },\n  { title: '建设项目名称', key: 'projectName', width: 170 }\n]\n\nconst rows = ref<any[]>([])\n\nfunction getResponseList(responseData: any) {\n  const data = responseData?.data ?? responseData\n  if (Array.isArray(data)) return data\n  if (Array.isArray(data?.content)) return data.content\n  if (Array.isArray(data?.records)) return data.records\n  if (Array.isArray(data?.list)) return data.list\n  if (Array.isArray(data?.rows)) return data.rows\n  return []\n}\n\nfunction normalizeRow(row: any, index: number) {\n  const deviceName = row.deviceName || row.name || '--'\n  const deviceCode = row.deviceCode || row.platformCode || row.code || '--'\n  const installAddress = row.installAddress || row.detailAddress || row.address || row.location || '--'\n\n  return {\n    ...row,\n    key: row.id || deviceCode || index,\n    deviceName,\n    deviceCode,\n    installAddress,\n    deviceType: row.deviceType || deviceName,\n    deviceAddress: installAddress,\n    vendor: row.vendor || row.deviceManufacturer || '--',\n    street: row.street || '--',\n    department: row.department || row.terminalDepartment || '--',\n    projectName: row.projectName || '--',\n    status: row.status || row.deviceStatus || row.networkStatus || (isWarning.value ? '处置中' : '已完成')\n  }\n}\n\nasync function fetchRows() {\n  try {\n    const res = await axios.post(`${BASE_URL}/api/boot/system/pipeline/waterQualityStation`, {\n      index: 1,\n      size: 1000,\n      isWarning: isWarning.value\n    })\n    rows.value = getResponseList(res?.data).map(normalizeRow)\n  } catch (error) {\n    console.error('获取水质监测站列表失败', error)\n    rows.value = []\n  }\n}\n\nwatch(() => props.payload?.isWarning, fetchRows)\n\nonMounted(fetchRows)\n</script>\n\n<script lang=\"ts\">\nexport default {\n  name: 'PipelineWaterStationList'\n}\n</script>\n"
+        }
+    ]
+}

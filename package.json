@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "cross-env --max_old_space_size=4096 envMode=development webpack serve --config ./build/webpack.dev.conf.js --color",
     "test": "cross-env envMode=test webpack serve --config ./build/webpack.dev.conf.js --color",
-    "build": "cross-env envMode=production webpack --config build/webpack.prod.conf.js  --color --analyze",
+    "build": "cross-env envMode=production webpack --config build/webpack.prod.conf.js --color",
+    "build:analyze": "cross-env envMode=production ANALYZE=true webpack --config build/webpack.prod.conf.js --color",
     "build:test": "cross-env envMode=test webpack --config build/webpack.prod.conf.js  --color --analyze",
     "lint": "eslint ./src",
     "typeCheck": "tsc --noEmit"

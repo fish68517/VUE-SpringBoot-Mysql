@@ -1,0 +1,9 @@
+{
+  "dimensions": ["name", "value"],
+  "source": [
+    {
+      "name": "流程进度",
+      "value": 0
+    }
+  ]
+}

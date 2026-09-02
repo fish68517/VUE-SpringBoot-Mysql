@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/Bz‌PipelineDig/components/PipelineMedicalSewageList.vue",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1786518602867,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1786518602867,
+            "name": "Commit-0",
+            "content": "<template>\n  <PipelineListModal title=\"医疗污水\" :columns=\"columns\" :rows=\"rows\" :scroll-x=\"1160\" @close=\"emit('close')\" />\n</template>\n\n<script setup lang=\"ts\">\nimport { h } from 'vue'\nimport PipelineListModal from './PipelineListModal.vue'\n\nconst emit = defineEmits(['close'])\n\nconst columns = [\n  { title: '安装地址', key: 'installAddress', width: 270 },\n  {\n    title: '设备编码',\n    key: 'deviceCode',\n    width: 170,\n    render(row: any) {\n      return h('span', { class: 'link-cell' }, row.deviceCode)\n    }\n  },\n  { title: '设备名称', key: 'deviceName', width: 140 },\n  { title: '设备厂商', key: 'vendor', width: 170 },\n  { title: '所属街道', key: 'street', width: 110 },\n  { title: '终端所属部门', key: 'department', width: 150 },\n  { title: '建设项目名称', key: 'projectName', width: 170 }\n]\n\nconst rows = [\n  { installAddress: '重庆市渝中区两路口街道中山一路社区中山一路136号', deviceCode: '756877100000002500004005', deviceName: '化学需氧量COD监测', vendor: '广州博控自动化技术有限公司', street: '两路口街道', department: '重庆医科大学附属儿童医院', projectName: '污染源在线监测项目' },\n  { installAddress: '重庆市渝中区两路口街道枇杷山正街社区枇杷山正街104号', deviceCode: '756877100000002500004001', deviceName: '悬浮物监测', vendor: '广州博控自动化技术有限公司', street: '两路口街道', department: '重庆市人民医院（三院院区）', projectName: '污染源在线监测项目' },\n  { installAddress: '重庆市渝中区两路口街道枇杷山正街社区枇杷山正街104号', deviceCode: '23053039', deviceName: '悬浮物监测', vendor: '无锡雷磁仪器仪表有限公司', street: '两路口街道', department: '重庆市人民医院（三院院区）', projectName: '重庆市人民医院三院院区住院部污水处理站项目' },\n  { installAddress: '重庆市渝中区两路口街道桂花园新村社区健康路1号', deviceCode: '500100121000002500004002', deviceName: '化学需氧量COD监测', vendor: '北京万维盈创科技发展有限公司', street: '两路口街道', department: '重庆市第四人民医院（重庆市急救医疗中心）', projectName: '污染源在线监测项目' },\n  { installAddress: '重庆市渝中区两路口街道桂花园新村社区健康路1号', deviceCode: '500100121000002500004001', deviceName: '流量监测', vendor: '北京万维盈创科技发展有限公司', street: '两路口街道', department: '重庆市第四人民医院（重庆市急救医疗中心）', projectName: '污染源在线监测项目' },\n  { installAddress: '重庆市渝中区朝天门街道陕西路社区道门口40号', deviceCode: '756877100000002500004003', deviceName: '流量监测', vendor: '广州博控自动化技术有限公司', street: '朝天门街道', department: '重庆市中医院（道门口院部）', projectName: '污染源在线监测项目' },\n  { installAddress: '重庆市渝中区石油路街道石油路社区石油路24号', deviceCode: '756877100000002500004007', deviceName: '余氯监测', vendor: '广州博控自动化技术有限公司', street: '石油路街道', department: '重庆医科大学附属第一医院', projectName: '污染源在线监测项目' },\n  { installAddress: '重庆市渝中区石油路街道石油路社区袁家岗友谊路1号', deviceCode: '020662249880002005607009', deviceName: '余氯监测', vendor: '台湾尚捷', street: '石油路街道', department: '重庆医科大学附属第一医院', projectName: '渝中区生态环境局国标法空气质量监测小型站采购' }\n].map((row, index) => ({ ...row, status: index % 2 === 0 ? '处置中' : '已完成' }))\n</script>\n\n<script lang=\"ts\">\nexport default {\n  name: 'PipelineMedicalSewageList'\n}\n</script>\n"
+        }
+    ]
+}

@@ -17,7 +17,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const { parseComponent } = require('./resolve-file.js')
 
 // ☆☆☆☆☆☆☆☆☆☆☆ 组件编码 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
-const compName = 'BarCommon'
+const compName ='Bz‌Pipeline'
 // ☆☆☆☆☆☆☆☆☆☆☆ 改这里 ☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆☆
 
 /*
@@ -64,7 +64,7 @@ module.exports = merge(WebpackBaseConfig, {
       filename: '[name]@' + version + '.css',
       chunkFilename: '[id]@' + version + '.css'
     }),
-    new BundleAnalyzerPlugin()
+    ...(process.env.ANALYZE === 'true' ? [new BundleAnalyzerPlugin()] : [])
     // 打包完成自动关闭
     //   {
     //     apply: (compiler) => {

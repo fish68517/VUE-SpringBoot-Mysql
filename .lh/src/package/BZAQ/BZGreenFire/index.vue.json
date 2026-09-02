@@ -1,0 +1,202 @@
+{
+    "sourceFile": "src/package/BZAQ/BZGreenFire/index.vue",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 46,
+            "patches": [
+                {
+                    "date": 1784958503177,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1784958579514,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -172,9 +172,8 @@\n   display: grid;\n   grid-template-columns: 1fr 187px;\n   gap: 8px;\n   height: calc(100% - 39px);\n-  min-height: 0;\n }\n \n .info-panel,\n .park-image {\n"
+                },
+                {
+                    "date": 1784958593359,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -171,9 +171,9 @@\n .content-grid {\n   display: grid;\n   grid-template-columns: 1fr 187px;\n   gap: 8px;\n-  height: calc(100% - 39px);\n+  height: 188;\n }\n \n .info-panel,\n .park-image {\n"
+                },
+                {
+                    "date": 1784958602786,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -169,11 +169,11 @@\n }\n \n .content-grid {\n   display: grid;\n-  grid-template-columns: 1fr 187px;\n+  grid-template-columns: 1fr 192px;\n   gap: 8px;\n-  height: 188;\n+  height: 188px;\n }\n \n .info-panel,\n .park-image {\n"
+                },
+                {
+                    "date": 1784958616176,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -169,9 +169,9 @@\n }\n \n .content-grid {\n   display: grid;\n-  grid-template-columns: 1fr 192px;\n+  grid-template-columns: 300px 192px;\n   gap: 8px;\n   height: 188px;\n }\n \n"
+                },
+                {
+                    "date": 1784958791896,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -132,9 +132,9 @@\n \n .park-tab {\n   position: relative;\n   flex: 0 0 auto;\n-  width: 88px;\n+  width: 94px;\n   height: 27px;\n   padding: 0 8px;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 3px;\n@@ -297,8 +297,9 @@\n }\n \n .park-image {\n   display: block;\n+  width: 192px;\n   object-fit: cover;\n }\n \n :deep(.n-scrollbar-rail) {\n"
+                },
+                {
+                    "date": 1784958871837,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n <template>\n   <div class=\"bz-green-fire\" :style=\"containerStyle\">\n-    <n-scrollbar class=\"park-scroll\" x-scrollable style=\"height: 39px; overflow: visible;\">\n+    <n-scrollbar class=\"park-scroll\" x-scrollable style=\"height: 24px; overflow: visible;\">\n       <div class=\"park-tabs\">\n         <button\n           v-for=\"park in parks\"\n           :key=\"park.name\"\n@@ -114,9 +114,9 @@\n   font-family: 'BZGreenFirePuHuiTi', Microsoft YaHei, Arial, sans-serif;\n }\n \n .park-scroll {\n-  height: 39px;\n+  height: 24px;\n   overflow: visible;\n }\n \n .park-tabs {\n@@ -124,9 +124,9 @@\n   align-items: flex-start;\n   gap: 10px;\n   width: max-content;\n   min-width: 100%;\n-  height: 39px;\n+  height: 24px;\n   padding-top: 10px;\n   box-sizing: border-box;\n }\n \n@@ -307,10 +307,10 @@\n }\n \n :deep(.n-scrollbar-container),\n :deep(.n-scrollbar-content) {\n-  height: 39px !important;\n-  max-height: 39px !important;\n+  height: 24px !important;\n+  max-height: 24px !important;\n   overflow: visible !important;\n }\n \n :deep(.n-scrollbar-rail--horizontal) {\n"
+                },
+                {
+                    "date": 1784958889525,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n <template>\n   <div class=\"bz-green-fire\" :style=\"containerStyle\">\n-    <n-scrollbar class=\"park-scroll\" x-scrollable style=\"height: 24px; overflow: visible;\">\n+    <n-scrollbar class=\"park-scroll\" x-scrollable style=\"height: 39px; overflow: visible;\">\n       <div class=\"park-tabs\">\n         <button\n           v-for=\"park in parks\"\n           :key=\"park.name\"\n@@ -114,9 +114,9 @@\n   font-family: 'BZGreenFirePuHuiTi', Microsoft YaHei, Arial, sans-serif;\n }\n \n .park-scroll {\n-  height: 24px;\n+  height: 39px;\n   overflow: visible;\n }\n \n .park-tabs {\n@@ -124,9 +124,9 @@\n   align-items: flex-start;\n   gap: 10px;\n   width: max-content;\n   min-width: 100%;\n-  height: 24px;\n+  height: 39px;\n   padding-top: 10px;\n   box-sizing: border-box;\n }\n \n@@ -307,10 +307,10 @@\n }\n \n :deep(.n-scrollbar-container),\n :deep(.n-scrollbar-content) {\n-  height: 24px !important;\n-  max-height: 24px !important;\n+  height: 39px !important;\n+  max-height: 39px !important;\n   overflow: visible !important;\n }\n \n :deep(.n-scrollbar-rail--horizontal) {\n"
+                },
+                {
+                    "date": 1784958944446,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -106,9 +106,9 @@\n }\n \n .bz-green-fire {\n   box-sizing: border-box;\n-  padding: 3px 10px 9px;\n+  padding: 3px 15px 9px 15px;\n   overflow: hidden;\n   color: #d9f7ff;\n   background: #041f3c;\n   font-family: 'BZGreenFirePuHuiTi', Microsoft YaHei, Arial, sans-serif;\n@@ -133,9 +133,9 @@\n .park-tab {\n   position: relative;\n   flex: 0 0 auto;\n   width: 94px;\n-  height: 27px;\n+  height: 24px;\n   padding: 0 8px;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 3px;\n   color: rgba(217, 247, 255, 0.55);\n"
+                },
+                {
+                    "date": 1784958997092,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -171,9 +171,9 @@\n .content-grid {\n   display: grid;\n   grid-template-columns: 300px 192px;\n   gap: 8px;\n-  height: 188px;\n+  height: 196px;\n }\n \n .info-panel,\n .park-image {\n"
+                },
+                {
+                    "date": 1784959060156,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -169,9 +169,9 @@\n }\n \n .content-grid {\n   display: grid;\n-  grid-template-columns: 300px 192px;\n+  grid-template-columns: 300px 200px;\n   gap: 8px;\n   height: 196px;\n }\n \n"
+                },
+                {
+                    "date": 1784959091940,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -297,9 +297,9 @@\n }\n \n .park-image {\n   display: block;\n-  width: 192px;\n+  width: 200px;\n   object-fit: cover;\n }\n \n :deep(.n-scrollbar-rail) {\n"
+                },
+                {
+                    "date": 1784959169147,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -259,9 +259,9 @@\n }\n \n .ai-card {\n   margin-top: 8px;\n-  padding: 8px 11px;\n+  padding: 8px 8px;\n   box-sizing: border-box;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 2px;\n   color: #d9f7ff;\n"
+                },
+                {
+                    "date": 1784959203936,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -106,9 +106,9 @@\n }\n \n .bz-green-fire {\n   box-sizing: border-box;\n-  padding: 3px 15px 9px 15px;\n+  padding: 3px 14px 9px 14px;\n   overflow: hidden;\n   color: #d9f7ff;\n   background: #041f3c;\n   font-family: 'BZGreenFirePuHuiTi', Microsoft YaHei, Arial, sans-serif;\n@@ -159,9 +159,9 @@\n   top: -10px;\n   z-index: 1;\n   min-width: 26px;\n   height: 16px;\n-  line-height: 15px;\n+  line-height: 14px;\n   box-sizing: border-box;\n   border: 1px solid #e8d74a;\n   color: #e8d74a;\n   font-size: 11px;\n@@ -259,9 +259,9 @@\n }\n \n .ai-card {\n   margin-top: 8px;\n-  padding: 8px 8px;\n+  padding: 4px 4px;\n   box-sizing: border-box;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 2px;\n   color: #d9f7ff;\n@@ -271,9 +271,9 @@\n .ai-title {\n   position: relative;\n   padding-left: 18px;\n   color: #fff;\n-  font-size: 15px;\n+  font-size: 14px;\n   font-weight: 700;\n }\n \n .ai-title::before {\n"
+                },
+                {
+                    "date": 1784959226844,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -121,9 +121,9 @@\n \n .park-tabs {\n   display: flex;\n   align-items: flex-start;\n-  gap: 10px;\n+  gap: 11px;\n   width: max-content;\n   min-width: 100%;\n   height: 39px;\n   padding-top: 10px;\n"
+                },
+                {
+                    "date": 1784959251682,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -121,9 +121,9 @@\n \n .park-tabs {\n   display: flex;\n   align-items: flex-start;\n-  gap: 11px;\n+  gap: 10px;\n   width: max-content;\n   min-width: 100%;\n   height: 39px;\n   padding-top: 10px;\n"
+                },
+                {
+                    "date": 1784959272986,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -82,9 +82,9 @@\n const containerStyle = computed(() => {\n   const width = Number(props.chartConfig?.attr?.w)\n   const height = Number(props.chartConfig?.attr?.h)\n   return {\n-    width: Number.isFinite(width) && width > 0 ? `${width}px` : '540px',\n+    width: Number.isFinite(width) && width > 0 ? `${width}px` : '530px',\n     height: Number.isFinite(height) && height > 0 ? `${height}px` : '245px'\n   }\n })\n </script>\n"
+                },
+                {
+                    "date": 1784959341398,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -134,9 +134,9 @@\n   position: relative;\n   flex: 0 0 auto;\n   width: 94px;\n   height: 24px;\n-  padding: 0 8px;\n+  padding: 0 6px;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 3px;\n   color: rgba(217, 247, 255, 0.55);\n   font-size: 13px;\n@@ -149,9 +149,9 @@\n .park-tab--active {\n   color: #ffffff;\n   border-color: #02a7ff;\n   background: linear-gradient(180deg, rgba(0, 139, 211, 0.96), rgba(6, 89, 166, 0.96));\n-  box-shadow: inset 0 0 14px rgba(95, 246, 255, 0.24), 0 0 8px rgba(0, 139, 211, 0.36);\n+  box-shadow: inset 0 0 14px rgba(95, 246, 255, 0.24), 0 0 6px rgba(0, 139, 211, 0.36);\n }\n \n .warning-tag {\n   position: absolute;\n@@ -170,9 +170,9 @@\n \n .content-grid {\n   display: grid;\n   grid-template-columns: 300px 200px;\n-  gap: 8px;\n+  gap: 6px;\n   height: 196px;\n }\n \n .info-panel,\n@@ -192,9 +192,9 @@\n .park-title {\n   display: flex;\n   align-items: center;\n   gap: 11px;\n-  margin-bottom: 8px;\n+  margin-bottom: 6px;\n }\n \n .park-title span {\n   color: #fff;\n@@ -242,25 +242,25 @@\n .warn-line {\n   display: flex;\n   align-items: center;\n   gap: 5px;\n-  margin-top: 8px;\n+  margin-top: 6px;\n   color: #b8d9ff;\n   font-size: 12px;\n }\n \n .warn-line strong {\n   height: 19px;\n-  line-height: 18px;\n+  line-height: 16px;\n   padding: 0 7px;\n   border: 1px solid #ff7b89;\n   color: #fff;\n   font-size: 12px;\n   background: rgba(151, 38, 72, 0.7);\n }\n \n .ai-card {\n-  margin-top: 8px;\n+  margin-top: 6px;\n   padding: 4px 4px;\n   box-sizing: border-box;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 2px;\n@@ -269,9 +269,9 @@\n }\n \n .ai-title {\n   position: relative;\n-  padding-left: 18px;\n+  padding-left: 16px;\n   color: #fff;\n   font-size: 14px;\n   font-weight: 700;\n }\n@@ -284,9 +284,9 @@\n   width: 13px;\n   height: 13px;\n   border-radius: 50%;\n   background: #d9f7ff;\n-  box-shadow: 8px 2px 0 -5px #d9f7ff;\n+  box-shadow: 6px 2px 0 -5px #d9f7ff;\n }\n \n .ai-card p {\n   margin: 5px 0 0;\n"
+                },
+                {
+                    "date": 1784959357616,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -134,9 +134,9 @@\n   position: relative;\n   flex: 0 0 auto;\n   width: 94px;\n   height: 24px;\n-  padding: 0 6px;\n+  padding: 0 4px;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 3px;\n   color: rgba(217, 247, 255, 0.55);\n   font-size: 13px;\n@@ -149,18 +149,18 @@\n .park-tab--active {\n   color: #ffffff;\n   border-color: #02a7ff;\n   background: linear-gradient(180deg, rgba(0, 139, 211, 0.96), rgba(6, 89, 166, 0.96));\n-  box-shadow: inset 0 0 14px rgba(95, 246, 255, 0.24), 0 0 6px rgba(0, 139, 211, 0.36);\n+  box-shadow: inset 0 0 14px rgba(95, 246, 255, 0.24), 0 0 4px rgba(0, 139, 211, 0.36);\n }\n \n .warning-tag {\n   position: absolute;\n   right: -7px;\n   top: -10px;\n   z-index: 1;\n-  min-width: 26px;\n-  height: 16px;\n+  min-width: 24px;\n+  height: 14px;\n   line-height: 14px;\n   box-sizing: border-box;\n   border: 1px solid #e8d74a;\n   color: #e8d74a;\n@@ -170,10 +170,10 @@\n \n .content-grid {\n   display: grid;\n   grid-template-columns: 300px 200px;\n-  gap: 6px;\n-  height: 196px;\n+  gap: 4px;\n+  height: 194px;\n }\n \n .info-panel,\n .park-image {\n@@ -192,9 +192,9 @@\n .park-title {\n   display: flex;\n   align-items: center;\n   gap: 11px;\n-  margin-bottom: 6px;\n+  margin-bottom: 4px;\n }\n \n .park-title span {\n   color: #fff;\n@@ -242,25 +242,25 @@\n .warn-line {\n   display: flex;\n   align-items: center;\n   gap: 5px;\n-  margin-top: 6px;\n+  margin-top: 4px;\n   color: #b8d9ff;\n   font-size: 12px;\n }\n \n .warn-line strong {\n   height: 19px;\n-  line-height: 16px;\n+  line-height: 14px;\n   padding: 0 7px;\n   border: 1px solid #ff7b89;\n   color: #fff;\n   font-size: 12px;\n   background: rgba(151, 38, 72, 0.7);\n }\n \n .ai-card {\n-  margin-top: 6px;\n+  margin-top: 4px;\n   padding: 4px 4px;\n   box-sizing: border-box;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 2px;\n@@ -269,9 +269,9 @@\n }\n \n .ai-title {\n   position: relative;\n-  padding-left: 16px;\n+  padding-left: 14px;\n   color: #fff;\n   font-size: 14px;\n   font-weight: 700;\n }\n@@ -284,9 +284,9 @@\n   width: 13px;\n   height: 13px;\n   border-radius: 50%;\n   background: #d9f7ff;\n-  box-shadow: 6px 2px 0 -5px #d9f7ff;\n+  box-shadow: 4px 2px 0 -5px #d9f7ff;\n }\n \n .ai-card p {\n   margin: 5px 0 0;\n"
+                },
+                {
+                    "date": 1784959396283,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -226,9 +226,9 @@\n \n .meta-grid {\n   display: grid;\n   grid-template-columns: 1fr 1fr;\n-  gap: 5px 12px;\n+  gap: 5px 4px;\n   color: #b8d9ff;\n   font-size: 12px;\n }\n \n"
+                },
+                {
+                    "date": 1784959412451,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -226,9 +226,9 @@\n \n .meta-grid {\n   display: grid;\n   grid-template-columns: 1fr 1fr;\n-  gap: 5px 4px;\n+  gap: 5px 0px;\n   color: #b8d9ff;\n   font-size: 12px;\n }\n \n"
+                },
+                {
+                    "date": 1784959444057,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -258,9 +258,8 @@\n   background: rgba(151, 38, 72, 0.7);\n }\n \n .ai-card {\n-  margin-top: 4px;\n   padding: 4px 4px;\n   box-sizing: border-box;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 2px;\n"
+                },
+                {
+                    "date": 1784959454311,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -258,8 +258,9 @@\n   background: rgba(151, 38, 72, 0.7);\n }\n \n .ai-card {\n+  margin-top: 4px;\n   padding: 4px 4px;\n   box-sizing: border-box;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 2px;\n"
+                },
+                {
+                    "date": 1784959478802,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -125,9 +125,9 @@\n   gap: 10px;\n   width: max-content;\n   min-width: 100%;\n   height: 39px;\n-  padding-top: 10px;\n+  padding-top: 4px;\n   box-sizing: border-box;\n }\n \n .park-tab {\n"
+                },
+                {
+                    "date": 1784959501607,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n <template>\n   <div class=\"bz-green-fire\" :style=\"containerStyle\">\n-    <n-scrollbar class=\"park-scroll\" x-scrollable style=\"height: 39px; overflow: visible;\">\n+    <n-scrollbar class=\"park-scroll\" x-scrollable style=\"height: 36px; overflow: visible;\">\n       <div class=\"park-tabs\">\n         <button\n           v-for=\"park in parks\"\n           :key=\"park.name\"\n@@ -114,9 +114,9 @@\n   font-family: 'BZGreenFirePuHuiTi', Microsoft YaHei, Arial, sans-serif;\n }\n \n .park-scroll {\n-  height: 39px;\n+  height: 36px;\n   overflow: visible;\n }\n \n .park-tabs {\n@@ -124,9 +124,9 @@\n   align-items: flex-start;\n   gap: 10px;\n   width: max-content;\n   min-width: 100%;\n-  height: 39px;\n+  height: 36px;\n   padding-top: 4px;\n   box-sizing: border-box;\n }\n \n@@ -307,10 +307,10 @@\n }\n \n :deep(.n-scrollbar-container),\n :deep(.n-scrollbar-content) {\n-  height: 39px !important;\n-  max-height: 39px !important;\n+  height: 36px !important;\n+  max-height: 36px !important;\n   overflow: visible !important;\n }\n \n :deep(.n-scrollbar-rail--horizontal) {\n"
+                },
+                {
+                    "date": 1784959565127,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -183,9 +183,9 @@\n   border: 1px solid rgba(29, 150, 255, 0.42);\n }\n \n .info-panel {\n-  padding: 11px 12px 9px;\n+  padding: 8px;\n   background: linear-gradient(100deg, rgba(7, 66, 125, 0.72), rgba(4, 35, 82, 0.78));\n   overflow: hidden;\n }\n \n"
+                },
+                {
+                    "date": 1784959597649,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -242,9 +242,9 @@\n .warn-line {\n   display: flex;\n   align-items: center;\n   gap: 5px;\n-  margin-top: 4px;\n+  margin-top: 8px;\n   color: #b8d9ff;\n   font-size: 12px;\n }\n \n@@ -258,9 +258,9 @@\n   background: rgba(151, 38, 72, 0.7);\n }\n \n .ai-card {\n-  margin-top: 4px;\n+  margin-top: 8px;\n   padding: 4px 4px;\n   box-sizing: border-box;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 2px;\n@@ -272,9 +272,8 @@\n   position: relative;\n   padding-left: 14px;\n   color: #fff;\n   font-size: 14px;\n-  font-weight: 700;\n }\n \n .ai-title::before {\n   content: '';\n"
+                },
+                {
+                    "date": 1784959634350,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -287,9 +287,8 @@\n   box-shadow: 4px 2px 0 -5px #d9f7ff;\n }\n \n .ai-card p {\n-  margin: 5px 0 0;\n   color: #d9f7ff;\n   font-size: 12px;\n   font-weight: 700;\n   line-height: 1.55;\n"
+                },
+                {
+                    "date": 1784959669518,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -226,9 +226,9 @@\n \n .meta-grid {\n   display: grid;\n   grid-template-columns: 1fr 1fr;\n-  gap: 5px 0px;\n+  gap: 4px 0px;\n   color: #b8d9ff;\n   font-size: 12px;\n }\n \n"
+                },
+                {
+                    "date": 1784959676491,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -226,9 +226,9 @@\n \n .meta-grid {\n   display: grid;\n   grid-template-columns: 1fr 1fr;\n-  gap: 4px 0px;\n+  gap: 2px 0px;\n   color: #b8d9ff;\n   font-size: 12px;\n }\n \n"
+                },
+                {
+                    "date": 1784959690838,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -258,9 +258,9 @@\n   background: rgba(151, 38, 72, 0.7);\n }\n \n .ai-card {\n-  margin-top: 8px;\n+  margin-top: 4px;\n   padding: 4px 4px;\n   box-sizing: border-box;\n   border: 1px solid rgba(39, 146, 225, 0.75);\n   border-radius: 2px;\n"
+                },
+                {
+                    "date": 1784959712861,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -179,9 +179,8 @@\n .park-image {\n   min-width: 0;\n   height: 100%;\n   box-sizing: border-box;\n-  border: 1px solid rgba(29, 150, 255, 0.42);\n }\n \n .info-panel {\n   padding: 8px;\n"
+                },
+                {
+                    "date": 1784960808149,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,9 +33,9 @@\n           <strong>高风险</strong>\n         </div>\n \n         <div class=\"ai-card\">\n-          <div class=\"ai-title\">AI分析</div>\n+          <div class=\"ai-title\"><img></img>AI分析</div>\n           <p>当前因持续高温少雨、植被干燥等原因，渝中区鹅岭公园存在橙色高等级绿地火灾风险</p>\n         </div>\n       </section>\n \n"
+                },
+                {
+                    "date": 1784960848797,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,9 +33,9 @@\n           <strong>高风险</strong>\n         </div>\n \n         <div class=\"ai-card\">\n-          <div class=\"ai-title\"><img></img>AI分析</div>\n+          <div class=\"ai-title\"><img src=\"../img/AI.png.png\" alt=\"AI图标\" />AI分析</div>\n           <p>当前因持续高温少雨、植被干燥等原因，渝中区鹅岭公园存在橙色高等级绿地火灾风险</p>\n         </div>\n       </section>\n \n"
+                },
+                {
+                    "date": 1784960855449,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,9 +33,9 @@\n           <strong>高风险</strong>\n         </div>\n \n         <div class=\"ai-card\">\n-          <div class=\"ai-title\"><img src=\"../img/AI.png.png\" alt=\"AI图标\" />AI分析</div>\n+          <div class=\"ai-title\"><img src=\"./img/AI.png.png\" alt=\"AI图标\" />AI分析</div>\n           <p>当前因持续高温少雨、植被干燥等原因，渝中区鹅岭公园存在橙色高等级绿地火灾风险</p>\n         </div>\n       </section>\n \n"
+                },
+                {
+                    "date": 1784960870899,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,9 +33,9 @@\n           <strong>高风险</strong>\n         </div>\n \n         <div class=\"ai-card\">\n-          <div class=\"ai-title\"><img src=\"./img/AI.png.png\" alt=\"AI图标\" />AI分析</div>\n+          <div class=\"ai-title\"><img src=\"./img/AI.png\" alt=\"AI图标\" />AI分析</div>\n           <p>当前因持续高温少雨、植被干燥等原因，渝中区鹅岭公园存在橙色高等级绿地火灾风险</p>\n         </div>\n       </section>\n \n"
+                },
+                {
+                    "date": 1784960881668,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,9 +33,9 @@\n           <strong>高风险</strong>\n         </div>\n \n         <div class=\"ai-card\">\n-          <div class=\"ai-title\"><img src=\"./img/AI.png\" alt=\"AI图标\" />AI分析</div>\n+          <div class=\"ai-title\"><img src=\"./img/AI.png\"  />AI分析</div>\n           <p>当前因持续高温少雨、植被干燥等原因，渝中区鹅岭公园存在橙色高等级绿地火灾风险</p>\n         </div>\n       </section>\n \n"
+                },
+                {
+                    "date": 1784960897498,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -273,19 +273,8 @@\n   color: #fff;\n   font-size: 14px;\n }\n \n-.ai-title::before {\n-  content: '';\n-  position: absolute;\n-  left: 0;\n-  top: 3px;\n-  width: 13px;\n-  height: 13px;\n-  border-radius: 50%;\n-  background: #d9f7ff;\n-  box-shadow: 4px 2px 0 -5px #d9f7ff;\n-}\n \n .ai-card p {\n   color: #d9f7ff;\n   font-size: 12px;\n"
+                },
+                {
+                    "date": 1784960908274,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -268,9 +268,8 @@\n }\n \n .ai-title {\n   position: relative;\n-  padding-left: 14px;\n   color: #fff;\n   font-size: 14px;\n }\n \n"
+                },
+                {
+                    "date": 1784960928996,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -267,8 +267,10 @@\n   background: linear-gradient(180deg, rgba(6, 95, 169, 0.76), rgba(4, 66, 130, 0.76));\n }\n \n .ai-title {\n+  display: flex;\n+  align-items: center;\n   position: relative;\n   color: #fff;\n   font-size: 14px;\n }\n"
+                },
+                {
+                    "date": 1784960946764,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -272,8 +272,9 @@\n   align-items: center;\n   position: relative;\n   color: #fff;\n   font-size: 14px;\n+  line-height: 16px;\n }\n \n \n .ai-card p {\n"
+                },
+                {
+                    "date": 1784960953326,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -272,9 +272,8 @@\n   align-items: center;\n   position: relative;\n   color: #fff;\n   font-size: 14px;\n-  line-height: 16px;\n }\n \n \n .ai-card p {\n"
+                },
+                {
+                    "date": 1784960963188,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -267,10 +267,8 @@\n   background: linear-gradient(180deg, rgba(6, 95, 169, 0.76), rgba(4, 66, 130, 0.76));\n }\n \n .ai-title {\n-  display: flex;\n-  align-items: center;\n   position: relative;\n   color: #fff;\n   font-size: 14px;\n }\n"
+                },
+                {
+                    "date": 1784960976825,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -271,8 +271,15 @@\n   position: relative;\n   color: #fff;\n   font-size: 14px;\n }\n+.ai-title img {\n+  position: absolute;\n+  left: -20px;\n+  top: 50%;\n+  transform: translateY(-50%);\n+  width: 16px;\n+  height: 16px;\n \n \n .ai-card p {\n   color: #d9f7ff;\n"
+                },
+                {
+                    "date": 1784960995740,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -272,16 +272,16 @@\n   color: #fff;\n   font-size: 14px;\n }\n .ai-title img {\n-  position: absolute;\n+  position: relative;\n   left: -20px;\n   top: 50%;\n   transform: translateY(-50%);\n   width: 16px;\n   height: 16px;\n+}\n \n-\n .ai-card p {\n   color: #d9f7ff;\n   font-size: 12px;\n   font-weight: 700;\n"
+                },
+                {
+                    "date": 1784961002440,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -273,9 +273,9 @@\n   font-size: 14px;\n }\n .ai-title img {\n   position: relative;\n-  top: 50%;\n+  top: 4px;\n   transform: translateY(-50%);\n   width: 16px;\n   height: 16px;\n }\n"
+                },
+                {
+                    "date": 1785996822066,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -148,9 +148,9 @@\n   font-family: 'BZGreenFirePuHuiTi', Microsoft YaHei, sans-serif;\n   font-size: 16px;\n   font-style: normal;\n   font-weight: 800;\n-  line-height: 22px;\n+  line-height: 35px;\n   background: linear-gradient(0deg, #5fbcff 1.4%, #fff 58.67%);\n   background-clip: text;\n   -webkit-background-clip: text;\n   -webkit-text-fill-color: transparent;\n"
+                }
+            ],
+            "date": 1784958503177,
+            "name": "Commit-0",
+            "content": "<template>\n  <div class=\"bz-green-fire\" :style=\"containerStyle\">\n    <n-scrollbar class=\"park-scroll\" x-scrollable style=\"height: 39px; overflow: visible;\">\n      <div class=\"park-tabs\">\n        <button\n          v-for=\"park in parks\"\n          :key=\"park.name\"\n          type=\"button\"\n          class=\"park-tab\"\n          :class=\"{ 'park-tab--active': park.name === activePark.name }\"\n          @click=\"activeParkName = park.name\"\n        >\n          {{ park.name }}\n          <span v-if=\"park.warning\" class=\"warning-tag\">预警</span>\n        </button>\n      </div>\n    </n-scrollbar>\n\n    <div class=\"content-grid\">\n      <section class=\"info-panel\">\n        <div class=\"park-title\">\n          <span>{{ activePark.name }}</span>\n          <em>鹅岭正街176号</em>\n        </div>\n        <div class=\"meta-grid\">\n          <span>公园面积：{{ activePark.area }}m²</span>\n          <span>实时客流：728人</span>\n          <span>负责人：{{ activePark.manager || '梁雪岗' }}</span>\n          <span>联系电话：{{ activePark.phone || '18702356678' }}</span>\n        </div>\n        <div class=\"warn-line\">\n          <span>预警信息：</span>\n          <strong>高风险</strong>\n        </div>\n\n        <div class=\"ai-card\">\n          <div class=\"ai-title\">AI分析</div>\n          <p>当前因持续高温少雨、植被干燥等原因，渝中区鹅岭公园存在橙色高等级绿地火灾风险</p>\n        </div>\n      </section>\n\n      <img class=\"park-image\" src=\"../BZThreeGeo/img/example.png\" alt=\"\" />\n    </div>\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { computed, ref } from 'vue'\nimport { NScrollbar } from 'naive-ui'\n\nconst props = defineProps({\n  chartConfig: {\n    type: Object,\n    required: true\n  },\n  publicParamList: {\n    type: Object,\n    required: false,\n    default: () => []\n  },\n  bus: {\n    type: Object,\n    required: false\n  }\n})\n\nconst parks = [\n  { name: '鹅岭公园', area: '6.5', manager: '陈俊', phone: '13452847983', remark: '安全负责人：陈俊13452847983', warning: true },\n  { name: '佛图关公园', area: '41.84', manager: '封逆', phone: '13908340170' },\n  { name: '人民公园', area: '1.02', manager: '刘素芳', phone: '13508389696' },\n  { name: '枇杷山公园', area: '6.54', manager: '黄自元', phone: '19923291277' },\n  { name: '珊瑚公园', area: '10', manager: '梁雪岗', phone: '13808352604' },\n  { name: '滨江公园', area: '6.28', manager: '梁雪岗', phone: '13808352604' },\n  { name: '虎头岩公园', area: '14.82', manager: '刘东', phone: '13752953417' },\n  { name: '红岩公园', area: '18.21', manager: '肖镇', phone: '13708367331' },\n  { name: '天地湖公园', area: '6.12', manager: '肖镇', phone: '13708367331' }\n]\n\nconst activeParkName = ref(parks[0].name)\nconst activePark = computed(() => parks.find(item => item.name === activeParkName.value) || parks[0])\n\nconst containerStyle = computed(() => {\n  const width = Number(props.chartConfig?.attr?.w)\n  const height = Number(props.chartConfig?.attr?.h)\n  return {\n    width: Number.isFinite(width) && width > 0 ? `${width}px` : '540px',\n    height: Number.isFinite(height) && height > 0 ? `${height}px` : '245px'\n  }\n})\n</script>\n\n<script lang=\"ts\">\nexport default {\n  name: 'BZGreenFire',\n  version: '1.0.0'\n}\n</script>\n\n<style lang=\"scss\" scoped>\n@font-face {\n  font-family: 'BZGreenFirePuHuiTi';\n  src: url('../BZThreeGeo/font/Alibaba_PuHuiTi_2.0_55_Regular_55_Regular.ttf') format('truetype');\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n}\n\n.bz-green-fire {\n  box-sizing: border-box;\n  padding: 3px 10px 9px;\n  overflow: hidden;\n  color: #d9f7ff;\n  background: #041f3c;\n  font-family: 'BZGreenFirePuHuiTi', Microsoft YaHei, Arial, sans-serif;\n}\n\n.park-scroll {\n  height: 39px;\n  overflow: visible;\n}\n\n.park-tabs {\n  display: flex;\n  align-items: flex-start;\n  gap: 10px;\n  width: max-content;\n  min-width: 100%;\n  height: 39px;\n  padding-top: 10px;\n  box-sizing: border-box;\n}\n\n.park-tab {\n  position: relative;\n  flex: 0 0 auto;\n  width: 88px;\n  height: 27px;\n  padding: 0 8px;\n  border: 1px solid rgba(39, 146, 225, 0.75);\n  border-radius: 3px;\n  color: rgba(217, 247, 255, 0.55);\n  font-size: 13px;\n  background: linear-gradient(180deg, rgba(12, 70, 122, 0.86), rgba(5, 50, 103, 0.86));\n  box-shadow: inset 0 0 12px rgba(77, 184, 255, 0.14);\n  cursor: pointer;\n  white-space: nowrap;\n}\n\n.park-tab--active {\n  color: #ffffff;\n  border-color: #02a7ff;\n  background: linear-gradient(180deg, rgba(0, 139, 211, 0.96), rgba(6, 89, 166, 0.96));\n  box-shadow: inset 0 0 14px rgba(95, 246, 255, 0.24), 0 0 8px rgba(0, 139, 211, 0.36);\n}\n\n.warning-tag {\n  position: absolute;\n  right: -7px;\n  top: -10px;\n  z-index: 1;\n  min-width: 26px;\n  height: 16px;\n  line-height: 15px;\n  box-sizing: border-box;\n  border: 1px solid #e8d74a;\n  color: #e8d74a;\n  font-size: 11px;\n  background: rgba(69, 78, 20, 0.94);\n}\n\n.content-grid {\n  display: grid;\n  grid-template-columns: 1fr 187px;\n  gap: 8px;\n  height: calc(100% - 39px);\n  min-height: 0;\n}\n\n.info-panel,\n.park-image {\n  min-width: 0;\n  height: 100%;\n  box-sizing: border-box;\n  border: 1px solid rgba(29, 150, 255, 0.42);\n}\n\n.info-panel {\n  padding: 11px 12px 9px;\n  background: linear-gradient(100deg, rgba(7, 66, 125, 0.72), rgba(4, 35, 82, 0.78));\n  overflow: hidden;\n}\n\n.park-title {\n  display: flex;\n  align-items: center;\n  gap: 11px;\n  margin-bottom: 8px;\n}\n\n.park-title span {\n  color: #fff;\n  font-size: 20px;\n  font-weight: 700;\n}\n\n.park-title em {\n  position: relative;\n  min-width: 0;\n  padding-left: 14px;\n  color: #30c7ff;\n  font-size: 12px;\n  font-style: normal;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.park-title em::before {\n  content: '';\n  position: absolute;\n  left: 0;\n  top: 2px;\n  width: 10px;\n  height: 12px;\n  background: radial-gradient(circle at 50% 34%, #30c7ff 0 3px, transparent 4px), linear-gradient(45deg, transparent 45%, #30c7ff 46% 54%, transparent 55%);\n}\n\n.meta-grid {\n  display: grid;\n  grid-template-columns: 1fr 1fr;\n  gap: 5px 12px;\n  color: #b8d9ff;\n  font-size: 12px;\n}\n\n.meta-grid span {\n  min-width: 0;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.warn-line {\n  display: flex;\n  align-items: center;\n  gap: 5px;\n  margin-top: 8px;\n  color: #b8d9ff;\n  font-size: 12px;\n}\n\n.warn-line strong {\n  height: 19px;\n  line-height: 18px;\n  padding: 0 7px;\n  border: 1px solid #ff7b89;\n  color: #fff;\n  font-size: 12px;\n  background: rgba(151, 38, 72, 0.7);\n}\n\n.ai-card {\n  margin-top: 8px;\n  padding: 8px 11px;\n  box-sizing: border-box;\n  border: 1px solid rgba(39, 146, 225, 0.75);\n  border-radius: 2px;\n  color: #d9f7ff;\n  background: linear-gradient(180deg, rgba(6, 95, 169, 0.76), rgba(4, 66, 130, 0.76));\n}\n\n.ai-title {\n  position: relative;\n  padding-left: 18px;\n  color: #fff;\n  font-size: 15px;\n  font-weight: 700;\n}\n\n.ai-title::before {\n  content: '';\n  position: absolute;\n  left: 0;\n  top: 3px;\n  width: 13px;\n  height: 13px;\n  border-radius: 50%;\n  background: #d9f7ff;\n  box-shadow: 8px 2px 0 -5px #d9f7ff;\n}\n\n.ai-card p {\n  margin: 5px 0 0;\n  color: #d9f7ff;\n  font-size: 12px;\n  font-weight: 700;\n  line-height: 1.55;\n}\n\n.park-image {\n  display: block;\n  object-fit: cover;\n}\n\n:deep(.n-scrollbar-rail) {\n  opacity: 1 !important;\n}\n\n:deep(.n-scrollbar-container),\n:deep(.n-scrollbar-content) {\n  height: 39px !important;\n  max-height: 39px !important;\n  overflow: visible !important;\n}\n\n:deep(.n-scrollbar-rail--horizontal) {\n  bottom: 0 !important;\n  height: 4px !important;\n}\n\n:deep(.n-scrollbar-rail__scrollbar) {\n  background: rgba(95, 246, 255, 0.55) !important;\n}\n</style>\n"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzGeoDia/index.vue",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1782961460325,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1782961460325,
+            "name": "Commit-0",
+            "content": "<template>\n  <div class=\"popup-container\" :style=\"containerStyle\">\n    <div v-if=\"showMask\" class=\"popup-mask\"></div>\n\n    <GeoRiskPointList\n      v-if=\"activePopup === 'geo-risk-point-list'\"\n      :style=\"popupStyle\"\n      @close=\"closeAllPopup\"\n    />\n    <GeoPerceptionDeviceList\n      v-if=\"activePopup === 'geo-perception-device-list'\"\n      :style=\"popupStyle\"\n      @close=\"closeAllPopup\"\n    />\n  </div>\n</template>\n\n<script setup lang=\"ts\">\nimport { computed, onBeforeUnmount, onMounted, ref } from 'vue'\nimport GeoRiskPointList from './components/GeoRiskPointList.vue'\nimport GeoPerceptionDeviceList from './components/GeoPerceptionDeviceList.vue'\n\nconst props = defineProps({\n  chartConfig: {\n    type: Object,\n    required: true\n  },\n  publicParamList: {\n    type: Object,\n    default: () => []\n  },\n  bus: {\n    type: Object,\n    default: null\n  }\n})\n\nconst sourceName = 'BzGeoKpiDia'\nconst OPEN_GEO_EVENT = 'OPEN_GEO_DIA'\nconst LEGACY_OPEN_EVENT = 'OPEN_DIA'\nconst CLOSE_EVENT = 'CLOSE_DIA'\n\nconst eventBus = {\n  on(event, callback) {\n    if (!props.bus) return\n    props.bus.on(event, ({ source, data }) => {\n      if (source === sourceName) return\n      callback(data)\n    })\n  },\n  off(event, callback) {\n    if (!props.bus) return\n    props.bus.off(event, callback)\n  },\n  emit(event, data) {\n    if (!props.bus) return\n    props.bus.emit(event, { data, source: sourceName })\n  }\n}\n\nconst activePopup = ref(null)\nconst showMask = ref(false)\n\nconst containerStyle = computed(() => {\n  const width = Number(props.chartConfig?.attr?.w)\n  const height = Number(props.chartConfig?.attr?.h)\n  return {\n    width: Number.isFinite(width) && width > 0 ? width + 'px' : '100%',\n    height: Number.isFinite(height) && height > 0 ? height + 'px' : '100%'\n  }\n})\n\nconst popupStyle = computed(() => ({\n  left: '50%',\n  top: '50%'\n}))\n\nconst allowedPopups = [\n  'geo-risk-point-list',\n  'geo-perception-device-list'\n]\n\nfunction openPopup(payload) {\n  if (!payload || !payload.diaName) return\n  if (allowedPopups.includes(payload.diaName)) {\n    activePopup.value = payload.diaName\n    showMask.value = true\n  }\n}\n\nfunction closeAllPopup() {\n  activePopup.value = null\n  showMask.value = false\n}\n\nonMounted(() => {\n  eventBus.on(OPEN_GEO_EVENT, openPopup)\n  eventBus.on(LEGACY_OPEN_EVENT, openPopup)\n  eventBus.on(CLOSE_EVENT, closeAllPopup)\n})\n\nonBeforeUnmount(() => {\n  eventBus.off(OPEN_GEO_EVENT, openPopup)\n  eventBus.off(LEGACY_OPEN_EVENT, openPopup)\n  eventBus.off(CLOSE_EVENT, closeAllPopup)\n})\n</script>\n\n<script lang=\"ts\">\nexport default {\n  name: 'BzGeoKpiDia',\n  version: '1.0.0'\n}\n</script>\n\n<style lang=\"scss\" scoped>\n.popup-container {\n  position: absolute;\n  left: 0;\n  top: 0;\n  overflow: visible;\n  pointer-events: none;\n}\n\n.popup-mask {\n  position: absolute;\n  left: 0;\n  top: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 1000;\n  pointer-events: auto;\n}\n\n.popup-container > :not(.popup-mask) {\n  pointer-events: auto;\n}\n</style>\n"
+        }
+    ]
+}

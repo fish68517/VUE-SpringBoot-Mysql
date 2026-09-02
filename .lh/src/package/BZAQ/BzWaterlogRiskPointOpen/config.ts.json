@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzWaterlogRiskPointOpen/config.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1782788783866,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1782788783866,
+            "name": "Commit-0",
+            "content": "import { PublicConfigClass, echartOptionProfixHandle } from '@/package/public/index'\nimport { BzWaterlogRiskOpen } from './index'\nimport { CreateComponentType } from '@/package/index.d'\nimport cloneDeep from 'lodash/cloneDeep'\nimport { chartInitNewAttrConfig } from '@/package/config/const'\n\nexport const includes = []\n\nexport const option = {\n  dataset: null,\n  requestAddress: '',\n  requestMethod: 'get',\n  usePublicParam: true,\n  enablePopup: true,\n  customEvents: [],\n  actions: [],\n  eventConfig: []\n}\n\nexport default class Config extends PublicConfigClass implements CreateComponentType {\n  public key = BzWaterlogRiskOpen.key\n  public chartConfig = cloneDeep(BzWaterlogRiskOpen)\n  public option = echartOptionProfixHandle(option, includes)\n  public newAttr = {\n    ...chartInitNewAttrConfig,\n    w: 180,\n    h: 80,\n    themeColor: {\n      useGlobalColor: false,\n      selfTheme: {\n        color: ['#2f8cff', '#11d9ff', '#00f09e'],\n        value: 'technology'\n      }\n    }\n  }\n}\n"
+        }
+    ]
+}

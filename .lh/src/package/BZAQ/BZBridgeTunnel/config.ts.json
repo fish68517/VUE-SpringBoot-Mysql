@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BZBridgeTunnel/config.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1786606180185,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1786606180185,
+            "name": "Commit-0",
+            "content": "import { PublicConfigClass, echartOptionProfixHandle } from '@/package/public/index'\nimport { BZBridgeTunnel } from './index'\nimport { CreateComponentType } from '@/package/index.d'\nimport cloneDeep from 'lodash/cloneDeep'\nimport dataJson from './data.json'\nimport { chartInitConfig, chartInitNewAttrConfig } from '@/package/config/const'\n\nexport const includes = []\n\nexport const option = {\n  dataset: dataJson,\n  requestAddress: '',\n  requestMethod: 'get',\n  usePublicParam: true,\n  enablePopup: true,\n  showBackground: 'show',\n  customEvents: [\n    {\n      label: '单击',\n      value: 'customClick'\n    },\n    {\n      label: '双击',\n      value: 'customDblclick'\n    }\n  ],\n  actions: [\n    {\n      label: '组件显示隐藏',\n      value: 'showHide'\n    },\n    {\n      label: '更新公共参数',\n      value: 'updatePublcParam'\n    },\n    {\n      label: '信息提示',\n      value: 'showMessage'\n    },\n    {\n      label: '跳转页面',\n      value: 'jumpPage'\n    },\n    {\n      label: '打开链接',\n      value: 'openLink'\n    },\n    {\n      label: '更新状态',\n      value: 'updateStatus'\n    },\n    {\n      label: '更新组件数据',\n      value: 'updateComponentData'\n    },\n    {\n      label: '数据导出',\n      value: 'dataExport'\n    },\n    {\n      label: '更新配置项',\n      value: 'editOption'\n    }\n  ],\n  eventConfig: []\n}\n\nexport default class Config extends PublicConfigClass implements CreateComponentType {\n  public key = BZBridgeTunnel.key\n  public chartConfig = cloneDeep(BZBridgeTunnel)\n  public option = echartOptionProfixHandle(option, includes)\n  public attr = { ...chartInitConfig, w: 540, h: 424, zIndex: 1 }\n  public newAttr = {\n    ...chartInitNewAttrConfig,\n    themeColor: {\n      useGlobalColor: false,\n      selfTheme: {\n        color: ['#04bcfa', '#0454cb', '#056ff1', '#47dea2', '#16b8d6', '#f1b736'],\n        value: 'technology'\n      }\n    }\n  }\n}\n"
+        }
+    ]
+}

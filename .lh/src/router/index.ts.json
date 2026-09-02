@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/router/index.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1782716024843,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1782716024843,
+            "name": "Commit-0",
+            "content": "/*\r\n * @Author: kaix\r\n * @Date: 2025-07-04 11:09:37\r\n * @LastEditTime: 2025-07-04 11:30:10\r\n * @LastEditors: kaix\r\n * @Description: \r\n */\r\nimport { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'\r\nimport Playground from '@/demo/Playground.vue'\r\n\r\n// 懒加载的测试页面\r\nconst BusTest = () => import('@/demo/BusTest.vue');\r\nconst FireTest = () => import('@/package/BZAQ/BzFire/index.vue');\r\n\r\nconst routes: Array<RouteRecordRaw> = [\r\n  {\r\n    path: '/',\r\n    name: 'Home',\r\n    component: Playground,\r\n    meta: {\r\n      title: '组件调试playground'\r\n    }\r\n  },\r\n  {\r\n    path: '/bus',\r\n    name: 'BusTest',\r\n    component: BusTest,\r\n    meta: {\r\n      title: '全局参数-自定义事件测试页面'\r\n    }\r\n  },\r\n]\r\n\r\nconst router = createRouter({\r\n  history: createWebHistory(),\r\n  routes\r\n})\r\n\r\n// 路由守卫\r\nrouter.beforeEach((to, from, next) => {\r\n  // 设置页面标题\r\n  if (to.meta.title) {\r\n    document.title = to.meta.title as string\r\n  }\r\n  next()\r\n})\r\n\r\nexport default router "
+        }
+    ]
+}

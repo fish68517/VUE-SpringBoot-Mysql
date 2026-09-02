@@ -24,6 +24,10 @@ module.exports = {
         },
       },
       {
+        test: /\.pdf$/,
+        type: "asset/inline",
+      },
+      {
         test: /\.(png|jpg|svg|gif)$/,
         type: "asset/resource",
         generator: {

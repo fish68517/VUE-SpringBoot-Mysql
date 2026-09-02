@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzGeoLog/index.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1783660874500,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1783660874500,
+            "name": "Commit-0",
+            "content": "/*\n * @Author: kaix\n * @Date: 2023-03-22 10:25:24\n * @LastEditTime: 2023-09-04 08:58:54\n * @LastEditors: wangcong\n * @Description:\n */\nimport { ConfigType, ChartFrameEnum } from '@/package/index.d'\n\nexport const BzGeoLog: ConfigType = {\n  key: 'BzGeoLog',\n  chartKey: 'VBzGeoLog',\n  conKey: 'VCBzGeoLog',\n  eventKey: 'VEBzGeoLog',\n  title: 'AI文本',\n  chartFrame: ChartFrameEnum.ECHARTS\n}\n"
+        }
+    ]
+}

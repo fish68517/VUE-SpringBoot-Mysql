@@ -1,0 +1,18 @@
+{
+    "sourceFile": "src/package/BZAQ/BzGeoDig/config.vue",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1783073053000,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1783073053000,
+            "name": "Commit-0",
+            "content": "<template>\n  <GlobalSetting :is-use-custom=\"true\" :tabData=\"tabData\">\n    <template #other>\n      <div class=\"config-row\">地弹窗组件</div>\n    </template>\n  </GlobalSetting>\n</template>\n\n<script setup lang=\"ts\">\nimport { PropType, ref } from 'vue'\nimport { newAttrInter } from '@/package/index.d'\nimport { GlobalSetting } from '@/components/Pages/ChartItemSetting'\nimport { TableDataType } from '@/types/public.d'\n\ndefineProps({\n  optionData: {\n    type: Object as PropType<any>,\n    required: true\n  },\n  newAttr: {\n    type: Object as PropType<newAttrInter>,\n    required: true\n  }\n})\n\nconst tabData = ref<Array<TableDataType>>([\n  {\n    name: '配置',\n    slotName: 'other'\n  }\n])\n</script>\n\n<style lang=\"scss\" scoped>\n@import '@/styles/pages/form.scss';\n\n.config-row {\n  padding: 0 20px;\n  line-height: 32px;\n}\n</style>\n"
+        }
+    ]
+}
