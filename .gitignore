@@ -1,7 +1,6 @@
 node_modules
-.DS_Store
 dist
-dist-ssr
-*.local
+.idea
 .vscode
-static/libs/arcgis_js4.27
+*.log
+*.local
