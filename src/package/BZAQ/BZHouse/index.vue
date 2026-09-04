@@ -1,5 +1,11 @@
 <template>
+  <BZHouseHotWorkTriple2
+    v-if="useHotWorkTriple2"
+    :chart-config="props.chartConfig"
+    :bus="props.bus"
+  />
   <div
+    v-else
     ref="houseRootRef"
     class="bz-house"
     :class="{
@@ -9,8 +15,7 @@
     :style="containerStyle"
     @wheel.capture="handleHouseScrollWheel"
   >
-    <BZHouseHotWorkTriple v-if="isTripleScreen" />
-    <div v-else class="house-inner">
+    <div class="house-inner">
       <div ref="houseScrollRef" class="house-scroll">
       <section class="house-block house-block--managed">
         <div class="block-content">
@@ -355,7 +360,7 @@ import { NCarousel } from 'naive-ui'
 import axios from 'axios'
 import frameIcon from './img/Frame.png'
 import placeholderImg from './img/zhanwei.png'
-import BZHouseHotWorkTriple from './components/BZHouseHotWorkTriple.vue'
+import BZHouseHotWorkTriple2 from './components/BZHouseHotWorkTriple2.vue'
 
 const props = defineProps({
   chartConfig: {
@@ -373,6 +378,9 @@ const props = defineProps({
   }
 })
 
+// BZHouse 当前入口使用新版：上部房屋模块滚动，底部动火动焊固定。
+const useHotWorkTriple2 = true
+
 const containerStyle = computed(() => {
   const width = Number(props.chartConfig?.attr?.w)
   const height = Number(props.chartConfig?.attr?.h)
@@ -384,8 +392,6 @@ const containerStyle = computed(() => {
 
 const showBackground = computed(() => props.chartConfig?.option?.showBackground !== 'hide')
 const isTripleScreen = computed(() => props.chartConfig?.option?.screenMode === 'triple')
-// 本次交付为离线静态预览，保留原接口函数但不在组件加载时发起远程请求。
-const useStaticPreview = true
 const houseRootRef = ref<HTMLElement | null>(null)
 const houseScrollRef = ref<HTMLElement | null>(null)
 
@@ -764,7 +770,7 @@ function openHouseFireHotWorkHidden() {
 }
 
 onMounted(() => {
-  if (useStaticPreview || isTripleScreen.value) return
+  if (useHotWorkTriple2) return
   fetchOnlineManagedStatus()
   fetchOnlineFourColor()
   fetchOnlineEventStatus()
