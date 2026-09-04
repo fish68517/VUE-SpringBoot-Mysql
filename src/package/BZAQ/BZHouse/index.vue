@@ -1,6 +1,6 @@
 <template>
-  <BZHouseHotWorkTriple2
-    v-if="useHotWorkTriple2"
+  <BZHouseHotWorkTriple3
+    v-if="useHotWorkTriple3"
     :chart-config="props.chartConfig"
     :bus="props.bus"
   />
@@ -360,7 +360,7 @@ import { NCarousel } from 'naive-ui'
 import axios from 'axios'
 import frameIcon from './img/Frame.png'
 import placeholderImg from './img/zhanwei.png'
-import BZHouseHotWorkTriple2 from './components/BZHouseHotWorkTriple2.vue'
+import BZHouseHotWorkTriple3 from './components/BZHouseHotWorkTriple3.vue'
 
 const props = defineProps({
   chartConfig: {
@@ -378,8 +378,8 @@ const props = defineProps({
   }
 })
 
-// BZHouse 当前入口使用新版：上部房屋模块滚动，底部动火动焊固定。
-const useHotWorkTriple2 = true
+// BZHouse 当前入口使用第三版：单屏保留房屋模块，三联屏保留固定动火动焊布局。
+const useHotWorkTriple3 = true
 
 const containerStyle = computed(() => {
   const width = Number(props.chartConfig?.attr?.w)
@@ -770,7 +770,7 @@ function openHouseFireHotWorkHidden() {
 }
 
 onMounted(() => {
-  if (useHotWorkTriple2) return
+  if (useHotWorkTriple3) return
   fetchOnlineManagedStatus()
   fetchOnlineFourColor()
   fetchOnlineEventStatus()
