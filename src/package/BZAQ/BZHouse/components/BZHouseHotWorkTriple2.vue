@@ -50,34 +50,73 @@
       <div class="hot-work-title"><span>动火动焊</span></div>
 
       <div class="hot-work-grid">
-        <button type="button" class="work-card" @click="openGridDanger">
-          <div class="work-card__title"><i></i><span>网格巡查隐患</span><em>GRID INSPECTION</em></div>
-          <div class="metric-row metric-row--two">
-            <span><em>未整改</em><b class="amber">47<small>件</small></b></span>
-            <span><em>已整改</em><b>43971<small>件</small></b></span>
+        <section class="safety-panel" @click="openGridDanger">
+          <div class="work-card__title"><i></i><strong>网格巡查隐患</strong></div>
+          <div class="summary-grid summary-grid--two">
+            <div><span>未整改</span><b class="number number--amber">47<small>件</small></b></div>
+            <div><span>已整改</span><b class="number number--green">43971<small>件</small></b></div>
           </div>
-          <div class="progress"><i style="width: 99.89%"></i></div>
-          <div class="progress-meta"><span>整改进度</span><span>43971 / 44018</span></div>
-          <div class="work-card__footer">
-            <span>近4日新增 <b class="amber">554</b> 件</span>
-            <span>高频隐患 <b>4</b> 类</span>
+          <div class="progress-block">
+            <div class="progress-track"><i style="width: 99.89%"></i></div>
+            <div class="progress-meta"><span>整改进度</span><span>43971 / 44018</span></div>
           </div>
-        </button>
 
-        <button type="button" class="work-card" @click="openHotWorkDanger">
-          <div class="work-card__title"><i></i><span>近期动火作业隐患</span><em>HOT WORK</em></div>
-          <div class="metric-row metric-row--three">
-            <span><em>隐患总数</em><b class="amber">471<small>件</small></b></span>
-            <span><em>未完成</em><b>0<small>件</small></b></span>
-            <span><em>已结案</em><b>471<small>件</small></b></span>
+          <div class="inspection-detail">
+            <div class="bar-card">
+              <div class="bar-card__head">
+                <span>新增隐患</span><time>2026-08-29 ~ 09-01</time>
+              </div>
+              <div class="bar-card__summary">
+                <b class="number number--amber">554<small>件</small></b>
+                <span>日均新增 <strong>139</strong> 件</span>
+              </div>
+              <div class="bars" aria-label="近四日新增隐患柱状图">
+                <div v-for="bar in inspectionBars" :key="bar.date" class="bar-item">
+                  <b>{{ bar.value }}</b><i :style="{ height: `${bar.height}%` }"></i><span>{{ bar.date }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="event-card">
+              <h4>高频隐患点</h4>
+              <ul>
+                <li v-for="item in dangerPoints" :key="item.name">
+                  <span>{{ item.name }}</span><b :class="{ 'event-level--many': item.level === '多发' }">{{ item.level }}</b>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div class="progress"><i style="width: 100%"></i></div>
-          <div class="progress-meta"><span>处置进度</span><span>471 / 471 · 全部结案</span></div>
-          <div class="work-card__footer">
-            <span>近7天隐患 <b class="amber">7</b> 起</span>
-            <span>平均处置 <b>42</b> 分钟</span>
+        </section>
+
+        <section class="safety-panel" @click="openHotWorkDanger">
+          <div class="work-card__title"><i></i><strong>近期动火作业隐患</strong></div>
+          <div class="summary-grid summary-grid--three filing-grid">
+            <div><span>近7天动火作业备案</span><b class="number number--amber">7<small>起</small></b></div>
+            <div><span>发现隐患 · 已整改</span><b class="number number--green">0<small>件</small></b></div>
+            <div><span>发现隐患 · 未完成</span><b class="number number--green">0<small>件</small></b></div>
           </div>
-        </button>
+          <div class="summary-grid summary-grid--three work-total">
+            <div><span>隐患总数</span><b class="number number--amber">471<small>件</small></b></div>
+            <div><span>未完成</span><b class="number number--green">0<small>件</small></b></div>
+            <div><span>已结案</span><b class="number number--green">471<small>件</small></b></div>
+          </div>
+          <div class="progress-block">
+            <div class="progress-track"><i style="width: 100%"></i></div>
+            <div class="progress-meta"><span>处置进度</span><span>471 / 471 · 全部结案</span></div>
+          </div>
+          <div class="work-footer">
+            <div class="efficiency-card">
+              <span>处置时效</span>
+              <b>42<small>分钟</small></b>
+              <em>平均处置时长</em>
+            </div>
+            <div class="source-card">
+              <div class="source-card__head"><span>事件来源</span><b>合计 471 件</b></div>
+              <ul>
+                <li v-for="item in eventSources" :key="item.name"><span>{{ item.name }}</span><b>{{ item.value }} 件</b></li>
+              </ul>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   </div>
@@ -139,6 +178,27 @@ const houseSections = [
     ],
     photos: commonPhotos
   }
+]
+
+const inspectionBars = [
+  { date: '08-29', value: 132, height: 62 },
+  { date: '08-30', value: 145, height: 82 },
+  { date: '08-31', value: 138, height: 70 },
+  { date: '09-01', value: 139, height: 74 }
+]
+
+const dangerPoints = [
+  { name: '灭火器未放在醒目位置', level: '高发' },
+  { name: '消防控制室锁闭', level: '高发' },
+  { name: '设备设施安全隐患', level: '多发' },
+  { name: '疏散通道堆放杂物', level: '多发' }
+]
+
+const eventSources = [
+  { name: '群众上报', value: 362 },
+  { name: '网格员巡查', value: 58 },
+  { name: '物联感知', value: 31 },
+  { name: '部门移送', value: 20 }
 ]
 
 function emitDia(diaName: string, extra: Record<string, unknown> = {}) {
@@ -345,12 +405,19 @@ button {
 .photo-card p { height: 18px; margin: 0; padding: 0 5px; overflow: hidden; color: #bfe8ff; font-size: 9px; line-height: 18px; white-space: nowrap; text-overflow: ellipsis; }
 
 .hot-work-fixed {
-  flex: 0 0 284px;
+  --hot-cyan: #31dcff;
+  --hot-green: #20edbd;
+  --hot-amber: #ffbd2f;
+  flex: 0 0 460px;
   box-sizing: border-box;
-  padding: 0 8px 10px;
-  background: linear-gradient(180deg, rgba(1, 14, 36, 0.98), rgba(3, 29, 62, 0.98));
+  min-height: 0;
+  padding: 0 10px 9px;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(18, 117, 217, 0.13), transparent 24px, transparent calc(100% - 24px), rgba(18, 117, 217, 0.13)),
+    linear-gradient(180deg, rgba(1, 13, 34, 0.99), rgba(3, 28, 60, 0.99));
   border-top: 1px solid rgba(16, 106, 196, 0.82);
-  box-shadow: 0 -10px 24px rgba(0, 18, 47, 0.72);
+  box-shadow: 0 -10px 24px rgba(0, 18, 47, 0.76), inset 0 0 22px rgba(9, 92, 176, 0.14);
 }
 
 .hot-work-title {
@@ -358,53 +425,157 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 47px;
-  margin: 0 -8px 7px;
+  height: 43px;
+  margin: 0 -10px 5px;
   overflow: hidden;
-  background: url('../img/bg_title_long.png') center / 100% 100% no-repeat;
+  background:
+    url('../img/bg_title_long.png') center / 100% 100% no-repeat,
+    linear-gradient(180deg, rgba(0, 17, 43, 0.94), rgba(4, 54, 103, 0.76), rgba(0, 17, 43, 0.94));
 }
 
-.hot-work-title span { color: #eefbff; font-size: 21px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 11px #32c4ff; }
+.hot-work-title::before,
+.hot-work-title::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  width: 39%;
+  height: 20px;
+  border-top: 2px solid rgba(10, 117, 206, 0.85);
+  border-radius: 0 60% 0 0;
+  box-shadow: 0 -4px 12px rgba(18, 124, 216, 0.48);
+}
 
-.hot-work-grid { display: grid; grid-template-columns: 1fr; gap: 7px; }
+.hot-work-title::before { left: 0; transform: skewX(25deg); }
+.hot-work-title::after { right: 0; transform: scaleX(-1) skewX(25deg); }
+.hot-work-title span { position: relative; z-index: 1; color: #eefbff; font-size: 21px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 0 11px #32c4ff; }
 
-.work-card {
+.hot-work-grid { display: grid; grid-template-columns: 1fr; gap: 6px; }
+
+.safety-panel {
   box-sizing: border-box;
   width: 100%;
-  min-height: 106px;
-  padding: 6px 9px;
-  border: 1px solid rgba(25, 119, 207, 0.82);
-  background: linear-gradient(90deg, rgba(4, 48, 101, 0.94), rgba(3, 33, 74, 0.86));
-  box-shadow: inset 0 0 15px rgba(16, 112, 206, 0.14);
+  padding: 5px 9px 6px;
+  border: 1px solid rgba(18, 88, 166, 0.58);
+  background: rgba(3, 37, 78, 0.54);
+  box-shadow: inset 0 0 16px rgba(16, 112, 206, 0.12);
+  cursor: pointer;
 }
 
-.work-card:hover { filter: brightness(1.1); }
+.safety-panel:hover { filter: brightness(1.06); }
 
-.work-card__title { display: flex; align-items: center; height: 21px; margin-bottom: 4px; background: linear-gradient(90deg, rgba(5, 96, 171, 0.76), transparent); }
-.work-card__title i { width: 16px; height: 16px; margin: 0 6px 0 2px; border-radius: 50%; background: radial-gradient(circle, #6eebff 0 12%, #0985d0 42%, #053e85 70%); box-shadow: 0 0 7px #1ba7ff; }
-.work-card__title span { font-size: 15px; font-weight: 700; }
-.work-card__title em { margin-left: auto; padding-right: 5px; color: rgba(69, 178, 239, 0.54); font: 9px 'Triple2DIN'; letter-spacing: 1px; }
+.work-card__title {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 28px;
+  margin: 0 0 5px;
+  padding-left: 31px;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(5, 105, 183, 0.9), rgba(4, 75, 139, 0.56) 78%, transparent);
+  color: #f0fbff;
+  font-size: 17px;
+  font-style: italic;
+  letter-spacing: 1px;
+  text-shadow: 0 0 8px #32baff;
+}
 
-.metric-row { display: grid; gap: 5px; }
-.metric-row--two { grid-template-columns: repeat(2, 1fr); }
-.metric-row--three { grid-template-columns: repeat(3, 1fr); }
-.metric-row > span { display: flex; align-items: flex-end; justify-content: space-between; min-width: 0; height: 25px; padding: 0 7px 2px; box-sizing: border-box; border-left: 2px solid #29c8f5; background: linear-gradient(90deg, rgba(5, 77, 145, 0.58), transparent); }
-.metric-row em { color: #afd5ed; font-size: 11px; font-style: normal; white-space: nowrap; }
-.metric-row b { color: #31efc0; font: 20px 'Triple2DIN'; text-shadow: 0 0 7px currentColor; }
-.metric-row b.amber { color: #ffc33c; }
-.metric-row small { margin-left: 2px; font: 8px 'Triple2Text'; }
+.work-card__title i {
+  position: absolute;
+  left: 4px;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 40%, #74eaff 0 8%, #0889cf 35%, #063f89 65%, transparent 70%);
+  box-shadow: 0 0 8px #12aaff;
+}
 
-.progress { height: 6px; margin-top: 5px; overflow: hidden; border-radius: 4px; background: rgba(2, 25, 55, 0.96); }
-.progress i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #16d6a0, #34f3c1); box-shadow: 0 0 7px #20e8b9; }
-.progress-meta { display: flex; justify-content: space-between; margin-top: 2px; color: #5f87a9; font-size: 8px; }
-.work-card__footer { display: flex; justify-content: space-between; margin-top: 3px; padding-top: 3px; border-top: 1px solid rgba(26, 102, 175, 0.36); color: #75a5c7; font-size: 9px; }
-.work-card__footer b { color: #31eeca; font-family: 'Triple2DIN'; }
-.work-card__footer b.amber { color: #ffc13a; }
+.work-card__title i::after { content: ''; position: absolute; inset: 5px; border: 1px solid rgba(154, 240, 255, 0.74); border-radius: 50%; }
+.work-card__title strong { font-weight: 700; }
+
+.summary-grid { display: grid; gap: 4px; margin: 0 5px 4px; }
+.summary-grid--two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.summary-grid--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.summary-grid > div {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-width: 0;
+  min-height: 31px;
+  padding: 2px 8px 3px;
+  box-sizing: border-box;
+  border-left: 2px solid #1fc5fa;
+  background: linear-gradient(90deg, rgba(5, 75, 141, 0.64), rgba(3, 42, 89, 0.25));
+}
+
+.summary-grid span { min-width: 0; overflow: hidden; color: #86aac8; font-size: 10px; white-space: nowrap; text-overflow: ellipsis; }
+.number { color: var(--hot-cyan); font: 20px/1 'Triple2DIN'; text-shadow: 0 0 7px currentColor; }
+.number small { margin-left: 2px; color: #84a8c5; font: 8px 'Triple2Text'; text-shadow: none; }
+.number--amber { color: var(--hot-amber); }
+.number--green { color: var(--hot-green); }
+
+.progress-block { margin: 1px 5px 4px; }
+.progress-track { height: 6px; overflow: hidden; border-radius: 5px; background: rgba(3, 30, 64, 0.96); box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.72); }
+.progress-track i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #16d79e, #35f4c3); box-shadow: 0 0 8px #21e8bd; }
+.progress-meta { display: flex; justify-content: space-between; margin-top: 2px; color: #557ea7; font-size: 8px; }
+
+.inspection-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0 5px; }
+.bar-card,
+.event-card,
+.efficiency-card,
+.source-card { box-sizing: border-box; min-width: 0; border: 1px solid rgba(25, 98, 175, 0.56); background: rgba(2, 28, 62, 0.72); }
+.bar-card { height: 79px; padding: 5px 7px 3px; }
+.bar-card__head { display: flex; align-items: center; justify-content: space-between; color: #658fb6; font-size: 8px; }
+.bar-card__head::before { content: ''; width: 2px; height: 9px; margin-right: 5px; background: #18c9ff; box-shadow: 0 0 5px #18c9ff; }
+.bar-card__head span { margin-right: auto; }
+.bar-card__head time { color: #7698b8; font-size: 8px; }
+.bar-card__summary { display: flex; align-items: flex-end; justify-content: space-between; height: 21px; }
+.bar-card__summary span { color: #6489aa; font-size: 8px; }
+.bar-card__summary strong { color: #7299ba; font-family: 'Triple2DIN'; }
+.bars { display: flex; align-items: flex-end; justify-content: space-around; height: 42px; }
+.bar-item { display: grid; grid-template-rows: 10px 23px 9px; justify-items: center; align-items: end; width: 20%; color: #6995bd; font-size: 7px; }
+.bar-item b { color: #8bc8fb; font: 8px 'Triple2DIN'; }
+.bar-item i { width: 19px; max-height: 23px; min-height: 5px; background: linear-gradient(180deg, #43caff, #1168d0); box-shadow: 0 0 5px rgba(36, 171, 255, 0.72); }
+.event-card { height: 79px; padding: 5px 7px; }
+.event-card h4 { position: relative; margin: 0 0 3px; padding-left: 8px; color: #78a4c7; font-size: 9px; font-weight: 400; }
+.event-card h4::before { content: ''; position: absolute; left: 0; top: 1px; width: 2px; height: 9px; background: #18c9ff; box-shadow: 0 0 5px #18c9ff; }
+.event-card ul,
+.source-card ul { margin: 0; padding: 0; list-style: none; }
+.event-card li,
+.source-card li { display: flex; justify-content: space-between; gap: 6px; min-width: 0; height: 14px; color: #91b8d7; font-size: 8px; line-height: 14px; }
+.event-card li span,
+.source-card li span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.event-card li b { flex: 0 0 auto; color: #ffc532; }
+.event-card li b.event-level--many { color: #d8edf9; }
+
+.filing-grid { margin-top: 1px; }
+.filing-grid > div { display: grid; justify-items: center; min-height: 42px; padding: 4px 3px; border: 1px solid rgba(25, 98, 175, 0.5); background: rgba(2, 28, 62, 0.55); }
+.filing-grid span { max-width: 100%; font-size: 9px; }
+.filing-grid .number { font-size: 18px; }
+.work-total { margin-top: 5px; }
+.work-footer { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0 5px; }
+.efficiency-card,
+.source-card { height: 58px; padding: 6px 8px; }
+.efficiency-card { display: grid; grid-template-columns: 1fr auto; align-items: center; }
+.efficiency-card span,
+.source-card__head span { position: relative; padding-left: 7px; color: #78a6c9; font-size: 9px; }
+.efficiency-card span::before,
+.source-card__head span::before { content: ''; position: absolute; left: 0; top: 1px; width: 2px; height: 8px; background: #18c9ff; }
+.efficiency-card b { grid-row: span 2; color: var(--hot-green); font: 24px 'Triple2DIN'; text-shadow: 0 0 8px rgba(32, 237, 189, 0.58); }
+.efficiency-card b small { margin-left: 3px; color: #88b4d4; font: 8px 'Triple2Text'; text-shadow: none; }
+.efficiency-card em { color: #648cab; font-size: 8px; font-style: normal; }
+.source-card__head { display: flex; justify-content: space-between; margin-bottom: 1px; padding-bottom: 2px; border-bottom: 1px solid rgba(23, 100, 178, 0.46); }
+.source-card__head b { color: #7fb2d5; font-size: 8px; }
+.source-card li { height: 10px; line-height: 10px; }
+.source-card li b { flex: 0 0 auto; color: #d8edf9; }
 
 @media (max-width: 430px) {
   .status-chip, .risk-chip { padding: 0 3px; font-size: 11px; }
   .code-panel { grid-template-columns: 88px 1fr; }
   .code-chip { padding: 0 3px; font-size: 10px; }
-  .hot-work-fixed { flex-basis: 278px; }
+  .hot-work-fixed { flex-basis: 460px; padding-right: 6px; padding-left: 6px; }
+  .hot-work-title { margin-right: -6px; margin-left: -6px; }
+  .summary-grid > div { padding-right: 4px; padding-left: 4px; }
+  .inspection-detail,
+  .work-footer { gap: 4px; }
 }
 </style>
