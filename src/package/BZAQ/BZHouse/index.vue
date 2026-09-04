@@ -9,7 +9,8 @@
     :style="containerStyle"
     @wheel.capture="handleHouseScrollWheel"
   >
-    <div class="house-inner">
+    <BZHouseHotWorkTriple v-if="isTripleScreen" />
+    <div v-else class="house-inner">
       <div ref="houseScrollRef" class="house-scroll">
       <section class="house-block house-block--managed">
         <div class="block-content">
@@ -354,6 +355,7 @@ import { NCarousel } from 'naive-ui'
 import axios from 'axios'
 import frameIcon from './img/Frame.png'
 import placeholderImg from './img/zhanwei.png'
+import BZHouseHotWorkTriple from './components/BZHouseHotWorkTriple.vue'
 
 const props = defineProps({
   chartConfig: {
@@ -382,6 +384,8 @@ const containerStyle = computed(() => {
 
 const showBackground = computed(() => props.chartConfig?.option?.showBackground !== 'hide')
 const isTripleScreen = computed(() => props.chartConfig?.option?.screenMode === 'triple')
+// 本次交付为离线静态预览，保留原接口函数但不在组件加载时发起远程请求。
+const useStaticPreview = true
 const houseRootRef = ref<HTMLElement | null>(null)
 const houseScrollRef = ref<HTMLElement | null>(null)
 
@@ -760,6 +764,7 @@ function openHouseFireHotWorkHidden() {
 }
 
 onMounted(() => {
+  if (useStaticPreview || isTripleScreen.value) return
   fetchOnlineManagedStatus()
   fetchOnlineFourColor()
   fetchOnlineEventStatus()
