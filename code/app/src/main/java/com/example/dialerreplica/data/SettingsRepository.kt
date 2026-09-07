@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
@@ -19,8 +20,14 @@ class SettingsRepository(private val context: Context) {
     fun booleanFlow(key: Preferences.Key<Boolean>, defaultValue: Boolean): Flow<Boolean> =
         context.dialerSettings.data.map { it[key] ?: defaultValue }
 
+    fun intFlow(key: Preferences.Key<Int>, defaultValue: Int): Flow<Int> =
+        context.dialerSettings.data.map { it[key] ?: defaultValue }
+
     suspend fun getString(key: Preferences.Key<String>): String? =
         context.dialerSettings.data.first()[key]
+
+    suspend fun getInt(key: Preferences.Key<Int>, defaultValue: Int): Int =
+        context.dialerSettings.data.first()[key] ?: defaultValue
 
     suspend fun setString(key: Preferences.Key<String>, value: String?) {
         context.dialerSettings.edit { preferences ->
@@ -29,6 +36,10 @@ class SettingsRepository(private val context: Context) {
     }
 
     suspend fun setBoolean(key: Preferences.Key<Boolean>, value: Boolean) {
+        context.dialerSettings.edit { it[key] = value }
+    }
+
+    suspend fun setInt(key: Preferences.Key<Int>, value: Int) {
         context.dialerSettings.edit { it[key] = value }
     }
 
@@ -50,6 +61,11 @@ class SettingsRepository(private val context: Context) {
         val PROMPT_BUSY_URI = stringPreferencesKey("voice_prompt_busy_uri")
         val PROMPT_ENDED_URI = stringPreferencesKey("voice_prompt_ended_uri")
         val NEXT_OUTCOME = stringPreferencesKey("next_outcome")
+        val CONNECT_DELAY_SECONDS = intPreferencesKey("connect_delay_seconds")
+        val REMOTE_HANGUP_SECONDS = intPreferencesKey("remote_hangup_seconds")
+
+        const val DEFAULT_CONNECT_DELAY_SECONDS = 3
+        const val DEFAULT_REMOTE_HANGUP_SECONDS = 6
 
         val MEDIA_KEYS = listOf(
             BACKGROUND_URI,

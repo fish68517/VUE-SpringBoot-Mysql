@@ -56,6 +56,9 @@ class CallSessionService : Service() {
     private lateinit var attribution: NumberAttributionRepository
     private var tickerJob: Job? = null
     private var transitionJob: Job? = null
+    private var ringbackJob: Job? = null
+    private var endJob: Job? = null
+    private var latestStartId = 0
     private var dialStartedElapsed = 0L
     private var connectedElapsed = 0L
     private var recordingStartedElapsed = 0L
@@ -77,6 +80,7 @@ class CallSessionService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        latestStartId = startId
         when (intent?.action) {
             ACTION_START -> startSession(intent.getStringExtra(EXTRA_NUMBER).orEmpty())
             ACTION_TOGGLE_RECORD -> toggleRecording()
@@ -93,6 +97,7 @@ class CallSessionService : Service() {
         val number = normalizePhoneNumber(raw)
         if (number.isBlank()) return
         transitionJob?.cancel()
+        ringbackJob?.cancel()
         tickerJob?.cancel()
         player.stop()
         recorder.release()
@@ -116,20 +121,35 @@ class CallSessionService : Service() {
         )
         promote(recording = false)
         startTicker()
-        scope.launch {
+        val sessionId = CallSessionBus.snapshot.value.sessionId
+        ringbackJob = scope.launch {
             settings.getString(SettingsRepository.PROMPT_CALLING_URI)?.let { player.play(it) }
+            delay(RINGBACK_DELAY_MS)
+            val current = CallSessionBus.snapshot.value
+            if (current.sessionId != sessionId || current.phase != CallPhase.DIALING) return@launch
+            CallSessionBus.update(current.copy(ringbackActive = true))
             if (settings.getString(SettingsRepository.RINGBACK_VIDEO_URI).isNullOrBlank()) {
                 settings.getString(SettingsRepository.RINGBACK_AUDIO_URI)?.let { player.play(it, looping = true) }
             }
         }
         transitionJob = scope.launch {
-            delay(3_000)
+            val connectDelaySeconds = settings.getInt(
+                SettingsRepository.CONNECT_DELAY_SECONDS,
+                SettingsRepository.DEFAULT_CONNECT_DELAY_SECONDS,
+            ).coerceIn(MIN_CONNECT_DELAY_SECONDS, MAX_CONNECT_DELAY_SECONDS)
+            val remoteHangupSeconds = settings.getInt(
+                SettingsRepository.REMOTE_HANGUP_SECONDS,
+                SettingsRepository.DEFAULT_REMOTE_HANGUP_SECONDS,
+            ).coerceIn(MIN_REMOTE_HANGUP_SECONDS, MAX_REMOTE_HANGUP_SECONDS)
+            delay(connectDelaySeconds * 1_000L)
+            if (CallSessionBus.snapshot.value.sessionId != sessionId) return@launch
             when (settings.getString(SettingsRepository.NEXT_OUTCOME) ?: "CONNECTED") {
                 "BUSY" -> requestEnd(CallEndReason.BUSY)
                 "UNREACHABLE" -> requestEnd(CallEndReason.UNREACHABLE)
                 "REMOTE_HANGUP" -> {
                     connect()
-                    delay(6_000)
+                    delay(remoteHangupSeconds * 1_000L)
+                    if (CallSessionBus.snapshot.value.sessionId != sessionId) return@launch
                     requestEnd(CallEndReason.REMOTE_HANGUP)
                 }
                 else -> connect()
@@ -140,11 +160,18 @@ class CallSessionService : Service() {
     private fun connect() {
         val current = CallSessionBus.snapshot.value
         if (current.phase != CallPhase.DIALING) return
+        ringbackJob?.cancel()
         player.stop()
         connectedElapsed = SystemClock.elapsedRealtime()
         connectedWall = System.currentTimeMillis()
-        CallSessionBus.update(current.copy(phase = CallPhase.CONNECTED, callElapsedMs = 0))
-        scope.launch { settings.getString(SettingsRepository.PROMPT_CONNECTED_URI)?.let { player.play(it) } }
+        CallSessionBus.update(current.copy(phase = CallPhase.CONNECTED, ringbackActive = false, callElapsedMs = 0))
+        scope.launch {
+            val promptUri = settings.getString(SettingsRepository.PROMPT_CONNECTED_URI)
+            val latest = CallSessionBus.snapshot.value
+            if (latest.sessionId == current.sessionId && latest.phase == CallPhase.CONNECTED) {
+                promptUri?.let { player.play(it) }
+            }
+        }
         promote(recording = false)
     }
 
@@ -185,6 +212,7 @@ class CallSessionService : Service() {
             current.phase == CallPhase.SELF_HANGING_UP || current.phase == CallPhase.REMOTE_ENDED
         ) return
         transitionJob?.cancel()
+        ringbackJob?.cancel()
         player.stop()
         recorder.stop()?.let { result ->
             lastRecordingUri = Uri.fromFile(result.file).toString()
@@ -198,7 +226,14 @@ class CallSessionService : Service() {
             CallEndReason.UNREACHABLE -> CallPhase.UNREACHABLE
             CallEndReason.INTERRUPTED -> CallPhase.ENDED
         }
-        CallSessionBus.update(current.copy(phase = phase, recording = false, recordingPath = lastRecordingUri, recordingElapsedMs = lastRecordingDuration))
+        val endingSnapshot = current.copy(
+            phase = phase,
+            ringbackActive = false,
+            recording = false,
+            recordingPath = lastRecordingUri,
+            recordingElapsedMs = lastRecordingDuration,
+        )
+        CallSessionBus.update(endingSnapshot)
         promote(recording = false)
         scope.launch {
             val promptKey = when (reason) {
@@ -206,42 +241,50 @@ class CallSessionService : Service() {
                 CallEndReason.UNREACHABLE -> SettingsRepository.PROMPT_UNREACHABLE_URI
                 else -> SettingsRepository.PROMPT_ENDED_URI
             }
-            settings.getString(promptKey)?.let { player.play(it) }
+            val promptUri = settings.getString(promptKey)
+            if (CallSessionBus.snapshot.value.sessionId == endingSnapshot.sessionId) {
+                promptUri?.let { player.play(it) }
+            }
         }
-        transitionJob = scope.launch {
+        val endingStartId = latestStartId
+        val endedAt = System.currentTimeMillis()
+        val duration = if (connectedElapsed > 0) SystemClock.elapsedRealtime() - connectedElapsed else 0
+        val endingRecord = CallRecordEntity(
+            rawNumber = endingSnapshot.rawNumber,
+            formattedNumber = endingSnapshot.formattedNumber,
+            location = endingSnapshot.location,
+            result = reason.name,
+            dialStartedAt = dialStartedWall,
+            connectedAt = connectedWall,
+            endedAt = endedAt,
+            durationMs = duration,
+            recordingUri = lastRecordingUri,
+            recordingName = lastRecordingName,
+            recordingDurationMs = lastRecordingDuration,
+            recordingSource = if (lastRecordingUri == null) null else "APP",
+        )
+        endJob = scope.launch {
             delay(if (reason == CallEndReason.LOCAL_HANGUP) 750 else 1_300)
-            finishSession(reason)
+            finishSession(endingSnapshot, endingRecord, endingStartId)
         }
     }
 
-    private suspend fun finishSession(reason: CallEndReason) {
-        val current = CallSessionBus.snapshot.value
-        val endedAt = System.currentTimeMillis()
-        val duration = if (connectedElapsed > 0) SystemClock.elapsedRealtime() - connectedElapsed else 0
-        AppDatabase.get(this).callRecordDao().insert(
-            CallRecordEntity(
-                rawNumber = current.rawNumber,
-                formattedNumber = current.formattedNumber,
-                location = current.location,
-                result = reason.name,
-                dialStartedAt = dialStartedWall,
-                connectedAt = connectedWall,
-                endedAt = endedAt,
-                durationMs = duration,
-                recordingUri = lastRecordingUri,
-                recordingName = lastRecordingName,
-                recordingDurationMs = lastRecordingDuration,
-                recordingSource = if (lastRecordingUri == null) null else "APP",
-            ),
-        )
+    private suspend fun finishSession(
+        endingSnapshot: CallSessionSnapshot,
+        record: CallRecordEntity,
+        endingStartId: Int,
+    ) {
+        AppDatabase.get(this).callRecordDao().insert(record)
+        if (CallSessionBus.snapshot.value.sessionId != endingSnapshot.sessionId) return
         tickerJob?.cancel()
         player.stop()
-        CallSessionBus.update(current.copy(phase = CallPhase.ENDED, callElapsedMs = duration, recording = false))
+        CallSessionBus.update(endingSnapshot.copy(phase = CallPhase.ENDED, callElapsedMs = record.durationMs))
         updateNotification()
         delay(250)
+        if (CallSessionBus.snapshot.value.sessionId != endingSnapshot.sessionId) return
         CallSessionBus.update(CallSessionSnapshot())
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
-        stopSelf()
+        stopSelfResult(endingStartId)
     }
 
     private fun startTicker() {
@@ -312,6 +355,8 @@ class CallSessionService : Service() {
 
     override fun onDestroy() {
         transitionJob?.cancel()
+        ringbackJob?.cancel()
+        endJob?.cancel()
         tickerJob?.cancel()
         recorder.release()
         player.stop()
@@ -324,6 +369,11 @@ class CallSessionService : Service() {
         private const val NOTIFICATION_ID = 4107
         private const val EXTRA_NUMBER = "number"
         private const val EXTRA_ACTION_NAME = "action_name"
+        private const val RINGBACK_DELAY_MS = 2_000L
+        private const val MIN_CONNECT_DELAY_SECONDS = 2
+        private const val MAX_CONNECT_DELAY_SECONDS = 30
+        private const val MIN_REMOTE_HANGUP_SECONDS = 1
+        private const val MAX_REMOTE_HANGUP_SECONDS = 120
         const val ACTION_START = "dialer.START"
         const val ACTION_TOGGLE_RECORD = "dialer.TOGGLE_RECORD"
         const val ACTION_TOGGLE_ACTION = "dialer.TOGGLE_ACTION"

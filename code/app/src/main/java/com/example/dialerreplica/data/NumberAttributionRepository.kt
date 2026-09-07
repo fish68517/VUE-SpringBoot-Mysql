@@ -29,6 +29,8 @@ class NumberAttributionRepository(context: Context) {
 
     fun lookup(raw: String): NumberAttribution {
         val number = normalizePhoneNumber(raw)
+        if (number.length < 3) return NumberAttribution()
+
         exactPrefixes.keys
             .asSequence()
             .filter(number::startsWith)

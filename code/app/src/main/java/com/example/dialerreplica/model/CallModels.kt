@@ -25,6 +25,7 @@ data class CallSessionSnapshot(
     val formattedNumber: String = "",
     val location: String = "",
     val phase: CallPhase = CallPhase.IDLE,
+    val ringbackActive: Boolean = false,
     val callElapsedMs: Long = 0,
     val recording: Boolean = false,
     val recordingElapsedMs: Long = 0,
@@ -42,5 +43,4 @@ data class NumberAttribution(
         get() = listOf(province + city, operator.removePrefix("中国"))
             .filter { it.isNotBlank() }
             .joinToString(" ")
-            .ifBlank { "未知地区" }
 }
