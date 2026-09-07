@@ -55,6 +55,9 @@ interface CallRecordDao {
 
     @Query("DELETE FROM call_records WHERE id = :recordId")
     suspend fun delete(recordId: Long)
+
+    @Query("DELETE FROM call_records WHERE rawNumber = :rawNumber")
+    suspend fun deleteByNumber(rawNumber: String)
 }
 
 @Database(entities = [CallRecordEntity::class], version = 1, exportSchema = true)

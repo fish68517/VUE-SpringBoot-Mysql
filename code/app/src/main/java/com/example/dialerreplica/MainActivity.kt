@@ -58,7 +58,6 @@ import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.Button
@@ -118,6 +117,7 @@ import com.example.dialerreplica.service.CallSessionBus
 import com.example.dialerreplica.service.CallSessionService
 import com.example.dialerreplica.service.formatDuration
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -133,6 +133,9 @@ private const val BottomNavigationScale = 0.88f
 // 统一控制主页整个拨号面板高度；大于 1.0f 时面板顶部向上扩展。
 private const val DialerPanelHeightScale = 1.04f
 
+// 通话缩小功能尚未确定实施；false 时隐藏入口并关闭自动画中画。
+private const val CallMinimizeVisible = false
+
 private enum class AppScreen { DIALER, CALLING, HISTORY, RECORD_DETAIL, SETTINGS }
 
 class MainActivity : ComponentActivity() {
@@ -145,7 +148,9 @@ class MainActivity : ComponentActivity() {
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
         val phase = CallSessionBus.snapshot.value.phase
-        if (phase == CallPhase.DIALING || phase == CallPhase.CONNECTED) enterCallPictureInPicture()
+        if (CallMinimizeVisible && (phase == CallPhase.DIALING || phase == CallPhase.CONNECTED)) {
+            enterCallPictureInPicture()
+        }
     }
 
     fun enterCallPictureInPicture() {
@@ -169,7 +174,7 @@ private fun DialerReplicaApp() {
     val localPlayer = remember { LocalMediaPlayer(context) }
     val session by CallSessionBus.snapshot.collectAsStateWithLifecycle()
     val records by database.callRecordDao().observeAll().collectAsStateWithLifecycle(initialValue = emptyList())
-    val displayedRecords = records.ifEmpty { demoRecords() }
+    val displayedRecords = records
     val clipboardAutoFill by settings.booleanFlow(SettingsRepository.CLIPBOARD_AUTO_FILL, true).collectAsStateWithLifecycle(initialValue = true)
     val backgroundUri by settings.stringFlow(SettingsRepository.BACKGROUND_URI).collectAsStateWithLifecycle(initialValue = null)
     val ringbackAudioUri by settings.stringFlow(SettingsRepository.RINGBACK_AUDIO_URI).collectAsStateWithLifecycle(initialValue = null)
@@ -308,18 +313,30 @@ private fun DialerReplicaApp() {
             },
             ::launchCall,
         )
-        AppScreen.RECORD_DETAIL -> CallRecordDetailScreen(
-            displayedRecords.firstOrNull { it.id == selectedRecordId },
-            { screen = AppScreen.HISTORY },
-            { uri -> localPlayer.toggle(uri) },
-            { recordId ->
-                if (recordId > 0) {
-                    pendingRecordId = recordId
-                    recordingFileLauncher.launch(arrayOf("audio/*"))
-                }
-            },
-            ::launchCall,
-        )
+        AppScreen.RECORD_DETAIL -> {
+            val selectedRecord = displayedRecords.firstOrNull { it.id == selectedRecordId }
+            val numberRecords = selectedRecord?.let { selected ->
+                displayedRecords.filter { it.rawNumber == selected.rawNumber }.sortedByDescending { it.endedAt }
+            }.orEmpty()
+            CallRecordDetailScreen(
+                selectedRecord,
+                numberRecords,
+                { screen = AppScreen.HISTORY },
+                { uri -> localPlayer.toggle(uri) },
+                { recordId ->
+                    if (recordId > 0) {
+                        pendingRecordId = recordId
+                        recordingFileLauncher.launch(arrayOf("audio/*"))
+                    }
+                },
+                ::launchCall,
+                { rawNumber ->
+                    selectedRecordId = null
+                    screen = AppScreen.HISTORY
+                    scope.launch(Dispatchers.IO) { database.callRecordDao().deleteByNumber(rawNumber) }
+                },
+            )
+        }
         AppScreen.SETTINGS -> HiddenSettingsScreen(
             settings,
             { screen = if (session.phase == CallPhase.IDLE) AppScreen.HISTORY else AppScreen.CALLING },
@@ -482,15 +499,48 @@ private fun CallingScreen(session: CallSessionSnapshot, backgroundUri: String?, 
         CallingBackground(backgroundUri, videoUri, ringbackAudioConfigured)
         Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha = .25f)))
         Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 31.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) { TextButton(onClick = onMinimize) { Text("缩小", color = Color.White.copy(alpha = .8f)) } }
+            Row(Modifier.fillMaxWidth().height(48.dp), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
+                if (CallMinimizeVisible) {
+                    TextButton(onClick = onMinimize) { Text("缩小", color = Color.White.copy(alpha = .8f)) }
+                }
+            }
             Spacer(Modifier.height(60.dp))
             Text(session.formattedNumber.ifBlank { " " }, color = Color.White, fontSize = 31.sp, fontWeight = FontWeight.Medium)
             Text(session.location, color = Color.White.copy(alpha = .72f), fontSize = 14.sp, modifier = Modifier.padding(top = 6.dp))
-            Text(callStateText(session), color = Color.White.copy(alpha = .82f), fontSize = 14.sp, modifier = Modifier.padding(top = 10.dp))
+            AnimatedCallStateText(session, Modifier.padding(top = 10.dp))
             Spacer(Modifier.weight(1f))
             CallingActionGrid(session, connected, onRecord, onAction, onHangup, onSettings)
             Spacer(Modifier.height(25.dp))
         }
+    }
+}
+
+@Composable
+private fun AnimatedCallStateText(session: CallSessionSnapshot, modifier: Modifier = Modifier) {
+    var visibleDotCount by remember(session.sessionId) { mutableIntStateOf(0) }
+    LaunchedEffect(session.sessionId, session.phase) {
+        visibleDotCount = 0
+        if (session.phase == CallPhase.DIALING) {
+            while (true) {
+                delay(420)
+                visibleDotCount = (visibleDotCount + 1) % 4
+            }
+        }
+    }
+    val textColor = Color.White.copy(alpha = .82f)
+    if (session.phase == CallPhase.DIALING) {
+        Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+            Text("正在拨号", color = textColor, fontSize = 14.sp)
+            repeat(3) { index ->
+                Text(
+                    ".",
+                    color = if (index < visibleDotCount) textColor else Color.Transparent,
+                    fontSize = 14.sp,
+                )
+            }
+        }
+    } else {
+        Text(callStateText(session), color = textColor, fontSize = 14.sp, modifier = modifier)
     }
 }
 
@@ -546,6 +596,8 @@ private fun CallingActionButton(icon: ImageVector, label: String, enabled: Boole
 @Composable
 private fun CallHistoryScreen(records: List<CallRecordEntity>, onDigit: (String) -> Unit, onDelete: () -> Unit, onCall: () -> Unit, onOpenDialer: () -> Unit, onSettings: () -> Unit, onPlayRecording: (String) -> Unit, onOpenRecord: (CallRecordEntity) -> Unit, onRedial: (String) -> Unit) {
     var titleTaps by remember { mutableIntStateOf(0) }
+    var selectedTab by rememberSaveable { mutableIntStateOf(0) }
+    val visibleRecords = if (selectedTab == 0) records else records.filter(CallRecordEntity::isMissedCall)
     Box(Modifier.fillMaxSize().background(Color.White)) {
         Column(Modifier.fillMaxSize().statusBarsPadding().padding(horizontal = 20.dp)) {
             Row(Modifier.fillMaxWidth().padding(top = 18.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -553,11 +605,41 @@ private fun CallHistoryScreen(records: List<CallRecordEntity>, onDigit: (String)
                 Spacer(Modifier.weight(1f))
                 Icon(Icons.Outlined.MoreVert, "更多", tint = MainInk, modifier = Modifier.size(25.dp).clickable(onClick = onSettings))
             }
-            LazyColumn(Modifier.padding(top = 18.dp).padding(bottom = 424.dp)) {
-                items(records, key = { it.id }) { record -> HistoryRow(record, onPlayRecording, onOpenRecord, onRedial); HorizontalDivider(color = Color(0xFFE8E8E8)) }
+            Spacer(Modifier.height(24.dp))
+            HistoryFilterTabs(selectedTab) { selectedTab = it }
+            val listModifier = Modifier.weight(1f).fillMaxWidth().padding(top = 12.dp, bottom = 424.dp)
+            if (visibleRecords.isEmpty()) {
+                Box(listModifier, contentAlignment = Alignment.TopCenter) {
+                    Text(if (selectedTab == 0) "暂无通话记录" else "暂无未接来电", color = SecondaryInk, fontSize = 14.sp, modifier = Modifier.padding(top = 30.dp))
+                }
+            } else {
+                LazyColumn(listModifier) {
+                    items(visibleRecords, key = { it.id }) { record ->
+                        HistoryRow(record, onPlayRecording, onOpenRecord, onRedial)
+                        HorizontalDivider(color = Color(0xFFE8E8E8))
+                    }
+                }
             }
         }
         DialPadPanel(Modifier.align(Alignment.BottomCenter).height(424.dp), false, onDigit, onDelete, onCall, onOpenDialer)
+    }
+}
+
+@Composable
+private fun HistoryFilterTabs(selectedTab: Int, onSelected: (Int) -> Unit) {
+    Row(Modifier.fillMaxWidth().height(40.dp), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+        listOf("全部通话", "未接来电").forEachIndexed { index, label ->
+            val selected = selectedTab == index
+            Column(
+                Modifier.width(82.dp).fillMaxHeight().clickable { onSelected(index) },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Bottom,
+            ) {
+                Text(label, color = if (selected) DialerGreen else SecondaryInk, fontSize = 16.sp, fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal)
+                Spacer(Modifier.height(5.dp))
+                Box(Modifier.width(62.dp).height(2.dp).background(if (selected) DialerGreen else Color.Transparent))
+            }
+        }
     }
 }
 
@@ -571,42 +653,161 @@ private fun HistoryRow(record: CallRecordEntity, onPlay: (String) -> Unit, onOpe
             record.recordingUri?.let { uri -> Text("▶ 录音 ${formatDuration(record.recordingDurationMs)}", color = DialerGreen, fontSize = 10.sp, modifier = Modifier.clickable { onPlay(uri) }) }
         }
         Text(displayHistoryTime(record.endedAt), color = SecondaryInk, fontSize = 11.sp)
-        Icon(Icons.Outlined.MoreHoriz, "记录详情", tint = SecondaryInk, modifier = Modifier.padding(start = 8.dp).size(22.dp).clickable { onOpen(record) })
+        Image(
+            painter = painterResource(R.drawable.detail_des),
+            contentDescription = "记录详情",
+            modifier = Modifier.padding(start = 6.dp).size(32.dp).clickable { onOpen(record) },
+            contentScale = ContentScale.Fit,
+            colorFilter = ColorFilter.tint(SecondaryInk),
+        )
     }
 }
 
+private fun CallRecordEntity.isMissedCall(): Boolean =
+    result == "MISSED" || result == "MISSED_CALL" || result == "INCOMING_MISSED"
+
 @Composable
-private fun CallRecordDetailScreen(record: CallRecordEntity?, onBack: () -> Unit, onPlay: (String) -> Unit, onImport: (Long) -> Unit, onRedial: (String) -> Unit) {
+private fun CallRecordDetailScreen(
+    record: CallRecordEntity?,
+    numberRecords: List<CallRecordEntity>,
+    onBack: () -> Unit,
+    onPlay: (String) -> Unit,
+    onImport: (Long) -> Unit,
+    onRedial: (String) -> Unit,
+    onClear: (String) -> Unit,
+) {
     BackHandler(onBack = onBack)
     if (record == null) {
         LaunchedEffect(Unit) { onBack() }
         return
     }
-    Column(Modifier.fillMaxSize().background(Color.White).statusBarsPadding().navigationBarsPadding()) {
-        Row(Modifier.fillMaxWidth().height(64.dp).padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回", modifier = Modifier.size(26.dp).clickable(onClick = onBack))
-            Text("通话记录详情", fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 15.dp))
-        }
-        Column(Modifier.fillMaxWidth().padding(horizontal = 24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(Modifier.height(34.dp))
-            Box(Modifier.size(72.dp).clip(CircleShape).background(Color(0xFFB8C1D4)), contentAlignment = Alignment.Center) { Icon(Icons.Outlined.Person, null, tint = Color.White, modifier = Modifier.size(44.dp)) }
-            Text(record.formattedNumber, color = MainInk, fontSize = 25.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 18.dp).clickable { onRedial(record.rawNumber) })
-            if (record.location.isNotBlank()) Text(record.location, color = SecondaryInk, fontSize = 14.sp, modifier = Modifier.padding(top = 6.dp))
-            Text("通话时长 ${formatDuration(record.durationMs)} · ${displayHistoryTime(record.endedAt)}", color = SecondaryInk, fontSize = 13.sp, modifier = Modifier.padding(top = 8.dp))
-            Button({ onRedial(record.rawNumber) }, Modifier.fillMaxWidth().padding(top = 28.dp), colors = ButtonDefaults.buttonColors(containerColor = DialerGreen)) { Text("再次拨打") }
-            HorizontalDivider(Modifier.padding(vertical = 22.dp))
-            if (record.recordingUri != null) {
-                Text("录音 ${formatDuration(record.recordingDurationMs)}", color = MainInk, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                Button({ onPlay(record.recordingUri) }, Modifier.fillMaxWidth().padding(top = 10.dp)) { Icon(Icons.Outlined.PlayArrow, null); Text("播放 / 暂停录音", modifier = Modifier.padding(start = 8.dp)) }
-                if (record.id > 0) TextButton({ onImport(record.id) }, Modifier.fillMaxWidth()) { Text("更换录音") }
-            } else if (record.id > 0) {
-                Text("此记录暂无录音", color = SecondaryInk, fontSize = 14.sp)
-                Button({ onImport(record.id) }, Modifier.fillMaxWidth().padding(top = 10.dp)) { Text("插入录音") }
-            } else {
-                Text("示例记录不支持插入录音", color = SecondaryInk, fontSize = 14.sp)
+    val detailBackground = Color(0xFFF4F5F9)
+    Box(Modifier.fillMaxSize().background(detailBackground)) {
+        LazyColumn(
+            Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 12.dp).padding(bottom = 86.dp),
+        ) {
+            item {
+                Row(Modifier.fillMaxWidth().height(56.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回", tint = MainInk, modifier = Modifier.size(28.dp).clickable(onClick = onBack))
+                }
             }
+            item {
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Spacer(Modifier.height(10.dp))
+                    Box(
+                        Modifier.size(96.dp).clip(CircleShape).background(
+                            Brush.verticalGradient(listOf(Color(0xFFC8D1E4), Color(0xFF9EABC4))),
+                        ),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(Icons.Outlined.Person, null, tint = Color.White, modifier = Modifier.size(62.dp))
+                    }
+                    Text(record.formattedNumber, color = MainInk, fontSize = 31.sp, fontWeight = FontWeight.Medium, modifier = Modifier.padding(top = 14.dp).clickable { onRedial(record.rawNumber) })
+                    Spacer(Modifier.height(24.dp))
+                }
+            }
+            item {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    DetailQuickAction(Icons.Outlined.Phone, "呼叫", Modifier.weight(1f)) { onRedial(record.rawNumber) }
+                    DetailQuickImageAction(R.drawable.dialer_message, "信息", Modifier.weight(1f)) {}
+                    DetailQuickImageAction(R.drawable.dialer_video, "视频", Modifier.weight(1f)) {}
+                }
+            }
+            item {
+                Column(
+                    Modifier.fillMaxWidth().padding(top = 12.dp).clip(RoundedCornerShape(18.dp)).background(Color.White).padding(horizontal = 14.dp, vertical = 12.dp),
+                ) {
+                    Text(record.formattedNumber, color = MainInk, fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                    if (record.location.isNotBlank()) Text(record.location, color = SecondaryInk, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp))
+                }
+            }
+            item {
+                Row(Modifier.fillMaxWidth().padding(horizontal = 2.dp, vertical = 18.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text("通话记录", color = MainInk, fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                    Spacer(Modifier.weight(1f))
+                    Text("清空", color = DialerGreen, fontSize = 16.sp, modifier = Modifier.clickable { onClear(record.rawNumber) })
+                }
+            }
+            item {
+                Column(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).background(Color.White).padding(horizontal = 14.dp)) {
+                    numberRecords.forEachIndexed { index, itemRecord ->
+                        CallDetailRecordRow(itemRecord, onPlay)
+                        if (index != numberRecords.lastIndex) HorizontalDivider(color = Color(0xFFE7E7E7))
+                    }
+                }
+            }
+            item { Spacer(Modifier.height(12.dp)) }
+        }
+        DetailBottomActions(
+            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding(),
+            onMore = { if (record.id > 0) onImport(record.id) },
+        )
+    }
+}
+
+@Composable
+private fun DetailQuickAction(icon: ImageVector, label: String, modifier: Modifier, onClick: () -> Unit) {
+    Column(
+        modifier.height(70.dp).clip(RoundedCornerShape(20.dp)).background(Color.White).clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Icon(icon, label, tint = Color(0xFF6F6F6F), modifier = Modifier.size(24.dp))
+        Text(label, color = Color(0xFF626262), fontSize = 14.sp, modifier = Modifier.padding(top = 5.dp))
+    }
+}
+
+@Composable
+private fun DetailQuickImageAction(drawableRes: Int, label: String, modifier: Modifier, onClick: () -> Unit) {
+    Column(
+        modifier.height(70.dp).clip(RoundedCornerShape(20.dp)).background(Color.White).clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Image(painterResource(drawableRes), label, Modifier.size(24.dp), colorFilter = ColorFilter.tint(Color(0xFF6F6F6F)))
+        Text(label, color = Color(0xFF626262), fontSize = 14.sp, modifier = Modifier.padding(top = 5.dp))
+    }
+}
+
+@Composable
+private fun CallDetailRecordRow(record: CallRecordEntity, onPlay: (String) -> Unit) {
+    Column(Modifier.fillMaxWidth().padding(vertical = 11.dp)) {
+        Text(displayDetailTime(record.endedAt), color = MainInk, fontSize = 18.sp, fontWeight = FontWeight.Medium)
+        Text("▸ HD  ${record.formattedNumber}", color = SecondaryInk, fontSize = 12.sp, modifier = Modifier.padding(top = 5.dp))
+        Text(detailRecordResult(record), color = SecondaryInk, fontSize = 13.sp, modifier = Modifier.padding(top = 3.dp))
+        record.recordingUri?.let { uri ->
+            Text("▶ 录音 ${formatDuration(record.recordingDurationMs)}", color = DialerGreen, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp).clickable { onPlay(uri) })
         }
     }
+}
+
+@Composable
+private fun DetailBottomActions(modifier: Modifier = Modifier, onMore: () -> Unit) {
+    Row(modifier.fillMaxWidth().height(86.dp).background(Color(0xFFF4F5F9)), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically) {
+        DetailBottomAction(Icons.Outlined.Add, "新建联系人") {}
+        DetailBottomAction(Icons.Outlined.Person, "保存至已有联系人") {}
+        DetailBottomAction(Icons.Outlined.MoreVert, "更多", onMore)
+    }
+}
+
+@Composable
+private fun DetailBottomAction(icon: ImageVector, label: String, onClick: () -> Unit) {
+    Column(Modifier.width(108.dp).clickable(onClick = onClick), horizontalAlignment = Alignment.CenterHorizontally) {
+        Icon(icon, label, tint = MainInk, modifier = Modifier.size(27.dp))
+        Text(label, color = MainInk, fontSize = 11.sp, modifier = Modifier.padding(top = 5.dp), maxLines = 1)
+    }
+}
+
+private fun displayDetailTime(timeMillis: Long): String = if (timeMillis <= 0) {
+    "--:--"
+} else {
+    java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault()).format(java.util.Date(timeMillis))
+}
+
+private fun detailRecordResult(record: CallRecordEntity): String = when {
+    record.isMissedCall() -> "未接来电"
+    record.connectedAt == null -> "未接通"
+    else -> "${(record.durationMs / 1_000).coerceAtLeast(0)} 秒"
 }
 
 @Composable
@@ -709,8 +910,3 @@ private fun displayHistoryTime(timeMillis: Long): String {
     val elapsed = System.currentTimeMillis() - timeMillis
     return when { elapsed < 60_000 -> "刚刚"; elapsed < 3_600_000 -> "${elapsed / 60_000}分钟前"; elapsed < 86_400_000 -> "${elapsed / 3_600_000}小时前"; else -> "昨天" }
 }
-
-private fun demoRecords(): List<CallRecordEntity> = listOf(
-    CallRecordEntity(-1, "15955039377", "159 5503 9377", "安徽滁州 移动", "LOCAL_HANGUP", 0, null, 0, 0),
-    CallRecordEntity(-2, "15716358803", "157 1635 8803", "河南濮阳 移动", "REMOTE_HANGUP", 0, null, 0, 0),
-)
