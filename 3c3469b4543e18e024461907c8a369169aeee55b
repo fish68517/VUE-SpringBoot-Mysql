@@ -1,0 +1,35 @@
+code/README.md
+  s_1a9a42d2a4d389::t_c7c1b4db7af645 1-87
+code/eslint.config.js
+  s_1a9a42d2a4d389::t_fbfe12c98861f2 1-13
+code/package-lock.json
+  s_1a9a42d2a4d389::t_23b12e0c43ffb6 1-4886
+code/package.json
+  s_1a9a42d2a4d389::t_fc868a4de7f7ae 1-40
+code/src/layout/AppMain.vue
+  s_1a9a42d2a4d389::t_e92d1092f19247 1-35
+code/src/layout/TagsView.vue
+  s_1a9a42d2a4d389::t_fd6b80252e14d2 1-102
+code/src/router/index.ts
+  s_1a9a42d2a4d389::t_ff438afd5df0b8 1-32
+code/src/views/event/create.vue
+  s_1a9a42d2a4d389::t_ce106b607ca044 1-107
+code/src/views/login/index.vue
+  s_1a9a42d2a4d389::t_44cda4cd076c92 1-275
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "3c3469b4543e18e024461907c8a369169aeee55b",
+  "prompts": {},
+  "sessions": {
+    "s_1a9a42d2a4d389": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a03cc5-ebd0-7862-a085-1fdddf05e1f2",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

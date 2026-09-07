@@ -1,0 +1,22 @@
+src/package/BZAQ/BZHouse/components/BZHouseHotWorkTriple3.vue
+  s_a16231bd8fe0a8::t_a21f139ae370cd 1-320
+src/package/BZAQ/BZHouse/index.vue
+  s_a16231bd8fe0a8::t_d1f160b4e75e2e 381
+  s_a16231bd8fe0a8::t_8427fe83b58574 2-3,363,382,773
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d5d62f4ca64b5ff92de61b039d7895fa6b9d0399",
+  "prompts": {},
+  "sessions": {
+    "s_a16231bd8fe0a8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06304-2b6f-7432-a60f-b2a3ed6c883a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
