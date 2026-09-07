@@ -1,16 +1,19 @@
 <template>
-  <BZHouseHotWorkTriple2
-    v-if="isTripleScreen"
-    :chart-config="props.chartConfig"
-    :bus="props.bus"
-  />
-
   <div
-    v-else
-    class="house-single"
-    :class="{ 'house-single--transparent': !showBackground }"
+    :class="[
+      isTripleScreen ? 'house-triple3' : 'house-single',
+      { 'house-single--transparent': !showBackground }
+    ]"
     :style="containerStyle"
   >
+    <BZHouseHotWorkTriple2
+      v-if="isTripleScreen"
+      class="house-triple3__houses"
+      :chart-config="props.chartConfig"
+      :bus="props.bus"
+    />
+
+    <template v-else>
     <section v-for="house in houseSections" :key="house.key" class="single-module">
       <button type="button" class="single-module__title" @click="openHouseList(house.name)">
         <span>{{ house.name }}</span>
@@ -63,19 +66,22 @@
         <button type="button" class="event-empty" @click="openHouseRisk(house.name)">暂无事件</button>
       </div>
     </section>
-    <section class="single-hot-work">
+    </template>
+
+    <section class="hot-work-panel" :class="{ 'hot-work-panel--fixed': isTripleScreen }">
       <div class="hot-work-title"><span>动火动焊</span></div>
 
       <div class="hot-work-grid">
         <section class="safety-panel" @click="openGridDanger">
           <div class="work-card__title"><i></i><strong>网格巡查隐患</strong></div>
           <div class="summary-grid summary-grid--two">
-            <div><span>未整改</span><b class="number number--amber">47<small>件</small></b></div>
-            <div><span>已整改</span><b class="number number--green">43971<small>件</small></b></div>
+            <div><span>未整改</span><b class="number number--amber">24<small>件</small></b></div>
+            <div><span>已整改</span><b class="number number--green">4211<small>件</small></b></div>
           </div>
-          <div class="progress-block">
-            <div class="progress-track"><i style="width: 99.89%"></i></div>
-            <div class="progress-meta"><span>整改进度</span><span>43971 / 44018</span></div>
+          <div class="progress-line">
+            <span>整改进度</span>
+            <div class="progress-track"><i style="width: 88%"></i></div>
+            <b>4200 / 4211</b>
           </div>
 
           <div class="inspection-detail">
@@ -84,8 +90,8 @@
                 <span>新增隐患</span><time>2026-08-29 ~ 09-01</time>
               </div>
               <div class="bar-card__summary">
-                <b class="number number--amber">554<small>件</small></b>
-                <span>日均新增 <strong>139</strong> 件</span>
+                <b class="number number--cyan">123<small>件</small></b>
+                <span>日均新增 <strong>24件 ↑</strong></span>
               </div>
               <div class="bars" aria-label="近四日新增隐患柱状图">
                 <div v-for="bar in inspectionBars" :key="bar.date" class="bar-item">
@@ -106,28 +112,38 @@
 
         <section class="safety-panel" @click="openHotWorkDanger">
           <div class="work-card__title"><i></i><strong>近期动火作业隐患</strong></div>
-          <div class="summary-grid summary-grid--three filing-grid">
-            <div><span>近7天动火作业备案</span><b class="number number--amber">7<small>起</small></b></div>
-            <div><span>发现隐患 · 已整改</span><b class="number number--green">0<small>件</small></b></div>
-            <div><span>发现隐患 · 未完成</span><b class="number number--green">0<small>件</small></b></div>
+          <div class="work-orbs">
+            <div v-for="item in hotWorkOverview" :key="item.label" class="work-orb-item">
+              <div class="work-orb" :class="{ 'work-orb--amber': item.tone === 'amber' }">
+                <b>{{ item.value }}</b><small>{{ item.unit }}</small>
+              </div>
+              <span>{{ item.label }}</span>
+            </div>
           </div>
           <div class="summary-grid summary-grid--three work-total">
-            <div><span>隐患总数</span><b class="number number--amber">471<small>件</small></b></div>
-            <div><span>未完成</span><b class="number number--green">0<small>件</small></b></div>
-            <div><span>已结案</span><b class="number number--green">471<small>件</small></b></div>
+            <div><span>隐患总数</span><b class="number number--amber">24<small>件</small></b></div>
+            <div><span>未完成</span><b class="number number--amber">24<small>件</small></b></div>
+            <div><span>已销案</span><b class="number number--cyan">24<small>件</small></b></div>
           </div>
-          <div class="progress-block">
-            <div class="progress-track"><i style="width: 100%"></i></div>
-            <div class="progress-meta"><span>处置进度</span><span>471 / 471 · 全部结案</span></div>
+          <div class="progress-line">
+            <span>处置进度</span>
+            <div class="progress-track"><i style="width: 88%"></i></div>
+            <b>471 / 471 全部销案</b>
           </div>
           <div class="work-footer">
             <div class="efficiency-card">
-              <span>处置时效</span>
-              <b>42<small>分钟</small></b>
-              <em>平均处置时长</em>
+              <div class="efficiency-card__head"><span>处置时效</span></div>
+              <div class="efficiency-card__summary">
+                <b>12<small>分钟</small></b><span>平均处置时长 <strong>12分钟</strong></span>
+              </div>
+              <div class="bars bars--handling" aria-label="近四日处置时效柱状图">
+                <div v-for="bar in handlingBars" :key="bar.date" class="bar-item">
+                  <b>{{ bar.value }}</b><i :style="{ height: `${bar.height}%` }"></i><span>{{ bar.date }}</span>
+                </div>
+              </div>
             </div>
             <div class="source-card">
-              <div class="source-card__head"><span>事件来源</span><b>合计 471 件</b></div>
+              <div class="source-card__head"><span>事件来源</span><b>合计：720件</b></div>
               <ul>
                 <li v-for="item in eventSources" :key="item.name"><span>{{ item.name }}</span><b>{{ item.value }} 件</b></li>
               </ul>
@@ -196,24 +212,37 @@ const houseSections = [
 ]
 
 const inspectionBars = [
-  { date: '08-29', value: 132, height: 62 },
-  { date: '08-30', value: 145, height: 82 },
-  { date: '08-31', value: 138, height: 70 },
-  { date: '09-01', value: 139, height: 74 }
+  { date: '08-29', value: 213, height: 75 },
+  { date: '08-30', value: 213, height: 75 },
+  { date: '08-31', value: 124, height: 46 },
+  { date: '09-01', value: 12, height: 25 }
 ]
 
 const dangerPoints = [
-  { name: '灭火器未放在醒目位置', level: '高发' },
-  { name: '消防控制室锁闭', level: '高发' },
-  { name: '设备设施安全隐患', level: '多发' },
-  { name: '疏散通道堆放杂物', level: '多发' }
+  { name: '灭火器未放在显著位置', level: '高发' },
+  { name: '消防设施被遮挡', level: '高发' },
+  { name: '设施设备安全隐患', level: '多发' },
+  { name: '动火现场监护缺失', level: '多发' }
+]
+
+const hotWorkOverview = [
+  { label: '近7天动火作业报备', value: 42, unit: '起', tone: 'cyan' },
+  { label: '发现隐患 · 已销案', value: 42, unit: '件', tone: 'cyan' },
+  { label: '发现隐患 · 未完成', value: 42, unit: '件', tone: 'amber' }
+]
+
+const handlingBars = [
+  { date: '08-29', value: 959, height: 82 },
+  { date: '08-30', value: 741, height: 68 },
+  { date: '08-31', value: 147, height: 37 },
+  { date: '09-01', value: 112, height: 30 }
 ]
 
 const eventSources = [
-  { name: '群众上报', value: 362 },
-  { name: '网格员巡查', value: 58 },
-  { name: '物联感知', value: 31 },
-  { name: '部门移送', value: 20 }
+  { name: '群众上报', value: 720 },
+  { name: '网格员巡查', value: 453 },
+  { name: '物联感知', value: 320 },
+  { name: '部门移送', value: 180 }
 ]
 
 function openGridDanger() {
@@ -419,8 +448,8 @@ button {
   .code-chip { padding: 0 4px; font-size: 11px; }
   .code-chip b { font-size: 11px; }
 }
-// 新增样式仅作用于单屏动火动焊模块。
-.single-hot-work {
+// 单屏和三联屏共用的动火动焊模块。
+.hot-work-panel {
   --hot-cyan: #31dcff;
   --hot-green: #20edbd;
   --hot-amber: #ffbd2f;
@@ -484,29 +513,31 @@ button {
   position: relative;
   display: flex;
   align-items: center;
-  height: 28px;
+  width: 100%;
+  height: 31px;
   margin: 0 0 5px;
-  padding-left: 31px;
+  padding-left: 39px;
+  box-sizing: border-box;
   overflow: hidden;
-  background: linear-gradient(90deg, rgba(5, 105, 183, 0.9), rgba(4, 75, 139, 0.56) 78%, transparent);
-  color: #f0fbff;
-  font-size: 17px;
+  background: url('../img/bg_second_title.png') center / 100% 100% no-repeat;
+  color: #f2fbff;
+  font-size: 20px;
+  font-weight: 700;
   font-style: italic;
   letter-spacing: 1px;
-  text-shadow: 0 0 8px #32baff;
+  text-shadow: 0 0 9px #33baff;
 }
 
 .work-card__title i {
   position: absolute;
-  left: 4px;
-  width: 23px;
-  height: 23px;
+  left: 5px;
+  width: 27px;
+  height: 27px;
   border-radius: 50%;
-  background: radial-gradient(circle at 30% 40%, #74eaff 0 8%, #0889cf 35%, #063f89 65%, transparent 70%);
-  box-shadow: 0 0 8px #12aaff;
+  background: radial-gradient(circle at 30% 38%, #79ecff 0 8%, #098dce 36%, #063c82 66%, transparent 70%);
+  box-shadow: 0 0 9px #16a9ff;
 }
 
-.work-card__title i::after { content: ''; position: absolute; inset: 5px; border: 1px solid rgba(154, 240, 255, 0.74); border-radius: 50%; }
 .work-card__title strong { font-weight: 700; }
 
 .summary-grid { display: grid; gap: 4px; margin: 0 5px 4px; }
@@ -584,4 +615,195 @@ button {
 .source-card__head b { color: #7fb2d5; font-size: 8px; }
 .source-card li { height: 10px; line-height: 10px; }
 .source-card li b { flex: 0 0 auto; color: #d8edf9; }
+
+.house-triple3 {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-width: 340px;
+  min-height: 420px;
+  overflow: hidden;
+  color: #d9f3ff;
+  background:
+    linear-gradient(90deg, rgba(0, 104, 210, 0.2), transparent 34px),
+    linear-gradient(180deg, #03234a, #041d3c 54%, #031936);
+  border: 1px solid rgba(31, 134, 229, 0.72);
+  font-family: 'Triple3Text', 'Microsoft YaHei', sans-serif;
+}
+
+.house-triple3__houses {
+  flex: 1 1 auto;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0;
+  border: 0;
+}
+
+.house-triple3 :deep(.hot-work-fixed) { display: none; }
+
+.hot-work-panel {
+  margin: 6px -8px 0;
+  padding: 0 10px 10px;
+  background:
+    linear-gradient(90deg, rgba(18, 117, 217, 0.15), transparent 24px, transparent calc(100% - 24px), rgba(18, 117, 217, 0.15)),
+    linear-gradient(180deg, rgba(1, 13, 34, 0.99), rgba(3, 28, 60, 0.99));
+  border: 1px solid rgba(24, 113, 202, 0.72);
+  box-shadow: 0 -9px 22px rgba(0, 18, 47, 0.74), inset 0 0 24px rgba(9, 92, 176, 0.16);
+}
+
+.hot-work-panel--fixed {
+  flex: 0 0 570px;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.hot-work-title {
+  height: 42px;
+  margin-bottom: 7px;
+}
+
+.hot-work-grid { gap: 7px; }
+
+.safety-panel {
+  padding: 5px 8px 7px;
+  border-color: rgba(21, 104, 190, 0.68);
+  background: linear-gradient(180deg, rgba(4, 43, 88, 0.7), rgba(2, 28, 61, 0.68));
+}
+
+.work-card__title {
+  margin-bottom: 7px;
+}
+
+.summary-grid {
+  gap: 7px;
+  margin: 0 0 5px;
+}
+
+.summary-grid > div {
+  min-height: 31px;
+  padding: 3px 8px;
+  border: 1px solid rgba(25, 102, 185, 0.52);
+  border-left: 2px solid #21caff;
+  background: repeating-linear-gradient(112deg, rgba(7, 79, 145, 0.62) 0 2px, rgba(4, 51, 105, 0.56) 2px 5px);
+}
+
+.summary-grid span { color: #b7d7ec; font-size: 11px; }
+.number { font-size: 20px; }
+.number--cyan { color: var(--hot-cyan); }
+
+.progress-line {
+  display: grid;
+  grid-template-columns: 72px minmax(80px, 1fr) 96px;
+  align-items: center;
+  gap: 8px;
+  min-height: 26px;
+  margin: 0 1px 6px;
+  color: #d2e9f8;
+  font-size: 11px;
+}
+
+.progress-line .progress-track { height: 8px; margin: 0; border-radius: 0; background: rgba(64, 98, 135, 0.48); }
+.progress-line .progress-track i { border-radius: 0; background: linear-gradient(90deg, #149cf1, #2ce7e9); box-shadow: none; }
+.progress-line .progress-track i::after { content: ''; float: right; width: 2px; height: 12px; margin-top: -2px; background: #e8ffff; box-shadow: 0 0 5px #72ffff; }
+.progress-line > b { color: #43edff; font: 15px 'Triple3DIN'; white-space: nowrap; text-align: right; text-shadow: 0 0 6px rgba(49, 220, 255, 0.55); }
+
+.inspection-detail {
+  gap: 7px;
+  margin: 0;
+}
+
+.bar-card,
+.event-card {
+  height: 100px;
+  padding: 6px 8px;
+  border-color: rgba(25, 98, 175, 0.64);
+}
+
+.bar-card__head { height: 17px; font-size: 8px; }
+.bar-card__summary { height: 27px; }
+.bar-card__summary .number { font-size: 24px; }
+.bar-card__summary strong { color: #ff6150; }
+.bars { height: 47px; border-top: 1px dotted rgba(44, 156, 224, 0.42); }
+.bar-item { grid-template-rows: 11px 26px 10px; font-size: 8px; }
+.bar-item b { font-size: 9px; }
+.bar-item i { width: 21px; max-height: 26px; background: linear-gradient(180deg, #35e1ef, #1175cf); }
+
+.event-card h4 { margin-bottom: 6px; font-size: 10px; }
+.event-card li { height: 21px; padding: 0 5px; background: linear-gradient(90deg, rgba(5, 80, 146, 0.6), rgba(3, 43, 91, 0.25)); font-size: 10px; line-height: 21px; }
+.event-card li + li { margin-top: 2px; }
+
+.work-orbs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 4px 7px;
+}
+
+.work-orb-item { min-width: 0; text-align: center; }
+.work-orb-item > span { display: block; overflow: hidden; color: #b5d5e9; font-size: 9px; white-space: nowrap; text-overflow: ellipsis; }
+
+.work-orb {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 40px;
+  margin: 0 auto 2px;
+  color: #48f0ff;
+  background: radial-gradient(ellipse at center, rgba(20, 189, 225, 0.28), rgba(3, 46, 91, 0.84) 62%, transparent 66%);
+  border-bottom: 2px solid rgba(40, 198, 237, 0.72);
+  border-radius: 50%;
+  box-shadow: 0 8px 8px rgba(0, 12, 33, 0.7), inset 0 -7px 9px rgba(24, 173, 218, 0.22);
+}
+
+.work-orb::after { content: ''; position: absolute; left: 4px; right: 4px; bottom: -5px; height: 4px; border-radius: 50%; background: rgba(34, 176, 220, 0.34); }
+.work-orb b { font: 18px 'Triple3DIN'; text-shadow: 0 0 7px currentColor; }
+.work-orb small { margin-left: 2px; color: #d2edf8; font-size: 8px; }
+.work-orb--amber { color: #ffd33a; }
+
+.work-total { margin-top: 0; }
+.work-total > div { min-height: 34px; }
+
+.work-footer {
+  gap: 7px;
+  margin: 0;
+}
+
+.efficiency-card,
+.source-card {
+  height: 95px;
+  padding: 7px 8px;
+  border-color: rgba(25, 98, 175, 0.64);
+}
+
+.efficiency-card { display: block; }
+.efficiency-card__head,
+.source-card__head { height: 17px; border-bottom: 0; }
+.efficiency-card__head span,
+.source-card__head span { color: #d0e8f5; font-size: 11px; }
+.efficiency-card__summary { display: flex; align-items: flex-end; justify-content: space-between; height: 28px; }
+.efficiency-card__summary b { color: #45f1ff; font: 24px 'Triple3DIN'; text-shadow: 0 0 8px rgba(49, 220, 255, 0.58); }
+.efficiency-card__summary b small { margin-left: 2px; color: #8eb8d2; font: 9px 'Triple3Text'; }
+.efficiency-card__summary span { color: #789db9; font-size: 8px; }
+.efficiency-card__summary strong { color: #a8c9dc; }
+.bars--handling { height: 39px; }
+
+.source-card__head { display: flex; justify-content: space-between; margin: 0 0 4px; padding: 0; }
+.source-card__head b { color: #8eb4cc; font-size: 9px; }
+.source-card li { height: 16px; padding: 0 7px; background: linear-gradient(90deg, rgba(4, 81, 148, 0.64), rgba(3, 43, 91, 0.25)); font-size: 10px; line-height: 16px; }
+.source-card li + li { margin-top: 2px; }
+.source-card li b { color: #65d9ff; font: 12px 'Triple3DIN'; }
+
+@media (max-width: 430px) {
+  .hot-work-panel--fixed { flex-basis: 570px; }
+  .progress-line { grid-template-columns: 54px minmax(58px, 1fr) 82px; gap: 5px; }
+  .progress-line > b { font-size: 12px; }
+  .summary-grid > div { padding-right: 4px; padding-left: 4px; }
+  .inspection-detail,
+  .work-footer { gap: 4px; }
+  .event-card li,
+  .source-card li { padding-right: 3px; padding-left: 3px; font-size: 8px; }
+}
 </style>

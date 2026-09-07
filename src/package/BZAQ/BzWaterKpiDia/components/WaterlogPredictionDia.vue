@@ -146,8 +146,20 @@
             输入某站水位后点击「计算预警」。<br>仅可输入一个站点，其他站点将自动锁定。
           </div>
           <template v-else>
-            <div class="level-big" :style="{ color: resultColor }">
-              {{ result.hasWarning ? result.levelName + '预警' : '当前无预警' }}
+            <div
+              class="level-big"
+              :class="result.hasWarning ? 'level-big--warning' : 'level-big--safe'"
+              :style="{ '--status-color': result.hasWarning ? resultColor : '#69eaff' }"
+              role="status"
+              :aria-live="result.hasWarning ? 'assertive' : 'polite'"
+            >
+              <span class="level-big__pulse" aria-hidden="true"></span>
+              <span class="level-big__label">
+                {{ result.hasWarning ? result.levelName + '预警' : '当前无预警' }}
+              </span>
+              <span class="level-big__signal" aria-hidden="true">
+                <i></i><i></i><i></i><i></i>
+              </span>
             </div>
             <div v-if="simulateRise !== null" class="kv">
               <span class="k">朝天门上涨</span>
@@ -1593,7 +1605,120 @@ export default {
   padding: 10px 0 12px;
   background: transparent;
 
-  .level-big { font-size: 30px; font-weight: 700; text-align: center; padding: 8px 0; }
+  .level-big {
+    --status-color: #69eaff;
+    position: relative;
+    isolation: isolate;
+    min-height: 68px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--status-color) 58%, transparent);
+    border-radius: 5px;
+    color: var(--status-color);
+    background:
+      linear-gradient(90deg, transparent, color-mix(in srgb, var(--status-color) 13%, transparent), transparent),
+      repeating-linear-gradient(135deg, rgba(67, 190, 255, .035) 0 7px, transparent 7px 14px),
+      rgba(4, 25, 53, .72);
+    box-shadow:
+      inset 0 0 22px color-mix(in srgb, var(--status-color) 11%, transparent),
+      0 0 13px color-mix(in srgb, var(--status-color) 15%, transparent);
+
+    &::before {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      top: -35%;
+      bottom: -35%;
+      left: -42%;
+      width: 34%;
+      transform: skewX(-20deg);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .32), transparent);
+      animation: warningStatusSweep 2.7s ease-in-out infinite;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      z-index: -1;
+      border: 1px solid color-mix(in srgb, var(--status-color) 21%, transparent);
+      clip-path: polygon(0 0, 24px 0, 24px 1px, calc(100% - 24px) 1px, calc(100% - 24px) 0, 100% 0, 100% 100%, calc(100% - 24px) 100%, calc(100% - 24px) calc(100% - 1px), 24px calc(100% - 1px), 24px 100%, 0 100%);
+      opacity: .9;
+    }
+  }
+
+  .level-big__label {
+    position: relative;
+    z-index: 2;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-align: center;
+    text-shadow: 0 0 8px currentColor, 0 0 18px color-mix(in srgb, currentColor 55%, transparent);
+  }
+
+  .level-big__pulse {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 12px currentColor;
+  }
+
+  .level-big__signal {
+    position: absolute;
+    right: 14px;
+    bottom: 12px;
+    z-index: 2;
+    height: 18px;
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+
+    i {
+      display: block;
+      width: 3px;
+      height: 5px;
+      border-radius: 2px 2px 0 0;
+      background: currentColor;
+      box-shadow: 0 0 6px currentColor;
+      animation: warningSignal 1s ease-in-out infinite alternate;
+    }
+
+    i:nth-child(2) { animation-delay: -.75s; }
+    i:nth-child(3) { animation-delay: -.5s; }
+    i:nth-child(4) { animation-delay: -.25s; }
+  }
+
+  .level-big--safe {
+    animation: warningSafeFrame 2.2s ease-in-out infinite;
+
+    .level-big__label { animation: warningSafeText 2.2s ease-in-out infinite; }
+    .level-big__pulse { animation: warningSafePulse 2.2s ease-out infinite; }
+  }
+
+  .level-big--warning {
+    border-width: 2px;
+    background:
+      linear-gradient(90deg, transparent, color-mix(in srgb, var(--status-color) 24%, transparent), transparent),
+      repeating-linear-gradient(135deg, color-mix(in srgb, var(--status-color) 7%, transparent) 0 7px, transparent 7px 14px),
+      rgba(28, 12, 22, .86);
+    animation: warningAlarmFrame .82s ease-in-out infinite;
+
+    &::before { animation-duration: 1.05s; }
+    .level-big__label { animation: warningAlarmText .82s ease-in-out infinite; }
+    .level-big__pulse { animation: warningAlarmPulse 1.05s ease-out infinite; }
+    .level-big__signal i { animation-duration: .55s; }
+  }
   .kv {
     display: flex;
     justify-content: space-between;
@@ -1621,6 +1746,46 @@ export default {
     li { padding: 2px 0; }
   }
   .hint { font-size: 12px; color: rgba(184, 217, 255, .66); }
+}
+
+@keyframes warningStatusSweep {
+  0% { left: -42%; opacity: 0; }
+  18% { opacity: .8; }
+  76%, 100% { left: 118%; opacity: 0; }
+}
+
+@keyframes warningSignal {
+  to { height: 18px; opacity: .48; }
+}
+
+@keyframes warningSafeFrame {
+  0%, 100% { box-shadow: inset 0 0 18px rgba(105, 234, 255, .08), 0 0 8px rgba(105, 234, 255, .12); }
+  50% { box-shadow: inset 0 0 30px rgba(105, 234, 255, .2), 0 0 20px rgba(105, 234, 255, .32); }
+}
+
+@keyframes warningSafeText {
+  0%, 100% { opacity: .78; transform: scale(1); text-shadow: 0 0 6px currentColor; }
+  50% { opacity: 1; transform: scale(1.045); text-shadow: 0 0 10px currentColor, 0 0 22px currentColor; }
+}
+
+@keyframes warningSafePulse {
+  0% { opacity: .7; transform: scale(.65); }
+  78%, 100% { opacity: 0; transform: scale(8.5, 2.1); }
+}
+
+@keyframes warningAlarmFrame {
+  0%, 100% { box-shadow: inset 0 0 22px color-mix(in srgb, var(--status-color) 17%, transparent), 0 0 9px color-mix(in srgb, var(--status-color) 28%, transparent); }
+  50% { box-shadow: inset 0 0 42px color-mix(in srgb, var(--status-color) 34%, transparent), 0 0 27px color-mix(in srgb, var(--status-color) 68%, transparent); }
+}
+
+@keyframes warningAlarmText {
+  0%, 100% { transform: scale(1); opacity: .86; }
+  45% { transform: scale(1.075); opacity: 1; text-shadow: 0 0 12px currentColor, 0 0 30px currentColor; }
+}
+
+@keyframes warningAlarmPulse {
+  0% { opacity: .92; transform: scale(.55); }
+  75%, 100% { opacity: 0; transform: scale(9.2, 2.4); }
 }
 
 .chart-box {
@@ -1721,7 +1886,12 @@ export default {
   :deep(.station-marker),
   .flow-hud__pulse,
   .flow-hud__routes i::after,
-  .flow-status__wave i {
+  .flow-status__wave i,
+  .level-big,
+  .level-big::before,
+  .level-big__label,
+  .level-big__pulse,
+  .level-big__signal i {
     animation: none !important;
   }
 
