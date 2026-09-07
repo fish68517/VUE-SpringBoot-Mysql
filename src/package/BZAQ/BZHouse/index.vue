@@ -378,7 +378,7 @@ const props = defineProps({
   }
 })
 
-// BZHouse 当前入口使用第三版：单屏保留房屋模块，三联屏保留固定动火动焊布局。
+// BZHouse 第三版：单屏在房屋模块后追加动火动焊，三联屏保持固定动火动焊布局。
 const useHotWorkTriple3 = true
 
 const containerStyle = computed(() => {
