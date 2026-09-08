@@ -75,11 +75,11 @@
         <section class="safety-panel" @click="openGridDanger">
           <div class="work-card__title"><i></i><strong>网格巡查隐患</strong></div>
           <div class="summary-grid summary-grid--two">
-            <div><span>未整改</span><b class="number number--amber">24<small>件</small></b></div>
-            <div><span>已整改</span><b class="number number--green">4211<small>件</small></b></div>
+            <div><span class="risk-label-text">未整改</span><b class="number number--amber">24<small>件</small></b></div>
+            <div><span class="risk-label-text">已整改</span><b class="number number--green">4211<small>件</small></b></div>
           </div>
           <div class="progress-line">
-            <span>整改进度</span>
+            <span class="risk-label-text">整改进度</span>
             <div class="progress-track"><i style="width: 88%"></i></div>
             <b>4200 / 4211</b>
           </div>
@@ -87,7 +87,7 @@
           <div class="inspection-detail">
             <div class="bar-card">
               <div class="bar-card__head">
-                <span>新增隐患</span><time>2026-08-29 ~ 09-01</time>
+                <span class="risk-label-text">新增隐患</span><time>2026-08-29 ~ 09-01</time>
               </div>
               <div class="bar-card__summary">
                 <b class="number number--cyan">123<small>件</small></b>
@@ -100,10 +100,10 @@
               </div>
             </div>
             <div class="event-card">
-              <h4>高频隐患点</h4>
+              <h4 class="risk-label-text">高频隐患点</h4>
               <ul>
                 <li v-for="item in dangerPoints" :key="item.name">
-                  <span>{{ item.name }}</span><b :class="{ 'event-level--many': item.level === '多发' }">{{ item.level }}</b>
+                  <span class="risk-label-text">{{ item.name }}</span><b :class="{ 'event-level--many': item.level === '多发' }">{{ item.level }}</b>
                 </li>
               </ul>
             </div>
@@ -121,18 +121,18 @@
             </div>
           </div>
           <div class="summary-grid summary-grid--three work-total">
-            <div><span>隐患总数</span><b class="number number--amber">24<small>件</small></b></div>
-            <div><span>未完成</span><b class="number number--amber">24<small>件</small></b></div>
-            <div><span>已销案</span><b class="number number--cyan">24<small>件</small></b></div>
+            <div><span class="risk-label-text">隐患总数</span><b class="number number--amber">24<small>件</small></b></div>
+            <div><span class="risk-label-text">未完成</span><b class="number number--amber">24<small>件</small></b></div>
+            <div><span class="risk-label-text">已销案</span><b class="number number--cyan">24<small>件</small></b></div>
           </div>
           <div class="progress-line">
-            <span>处置进度</span>
+            <span class="risk-label-text">处置进度</span>
             <div class="progress-track"><i style="width: 88%"></i></div>
             <b>471 / 471 全部销案</b>
           </div>
           <div class="work-footer">
             <div class="efficiency-card">
-              <div class="efficiency-card__head"><span>处置时效</span></div>
+              <div class="efficiency-card__head"><span class="risk-label-text">处置时效</span></div>
               <div class="efficiency-card__summary">
                 <b>12<small>分钟</small></b><span>平均处置时长 <strong>12分钟</strong></span>
               </div>
@@ -143,9 +143,9 @@
               </div>
             </div>
             <div class="source-card">
-              <div class="source-card__head"><span>事件来源</span><b>合计：720件</b></div>
+              <div class="source-card__head"><span class="risk-label-text">事件来源</span><b>合计：720件</b></div>
               <ul>
-                <li v-for="item in eventSources" :key="item.name"><span>{{ item.name }}</span><b>{{ item.value }} 件</b></li>
+                <li v-for="item in eventSources" :key="item.name"><span class="risk-label-text">{{ item.name }}</span><b>{{ item.value }} 件</b></li>
               </ul>
             </div>
           </div>
@@ -652,7 +652,7 @@ button {
 }
 
 .hot-work-panel--fixed {
-  flex: 0 0 570px;
+  flex: 0 0 635px;
   min-height: 0;
   margin: 0;
   overflow: hidden;
@@ -715,7 +715,7 @@ button {
 
 .bar-card,
 .event-card {
-  height: 100px;
+  height: 126px;
   padding: 6px 8px;
   border-color: rgba(25, 98, 175, 0.64);
 }
@@ -724,12 +724,29 @@ button {
 .bar-card__summary { height: 27px; }
 .bar-card__summary .number { font-size: 24px; }
 .bar-card__summary strong { color: #ff6150; }
-.bars { height: 47px; border-top: 1px dotted rgba(44, 156, 224, 0.42); }
-.bar-item { grid-template-rows: 11px 26px 10px; font-size: 8px; }
+.bars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: end;
+  column-gap: 8px;
+  height: 64px;
+  padding: 4px 5px 1px;
+  box-sizing: border-box;
+  border-top: 1px dotted rgba(44, 156, 224, 0.42);
+}
+.bar-item {
+  grid-template-rows: 12px minmax(32px, 1fr) 12px;
+  row-gap: 2px;
+  width: 100%;
+  height: 100%;
+  font-size: 8px;
+}
 .bar-item b { font-size: 9px; }
-.bar-item i { width: 21px; max-height: 26px; background: linear-gradient(180deg, #35e1ef, #1175cf); }
+.bar-item i { width: 21px; max-height: 34px; background: linear-gradient(180deg, #35e1ef, #1175cf); }
 
-.event-card h4 { margin-bottom: 6px; font-size: 10px; }
+.bar-card__head::before,
+.event-card h4::before { display: none; }
+.event-card h4 { margin-bottom: 6px; padding-left: 0; font-size: 10px; }
 .event-card li { height: 21px; padding: 0 5px; background: linear-gradient(90deg, rgba(5, 80, 146, 0.6), rgba(3, 43, 91, 0.25)); font-size: 10px; line-height: 21px; }
 .event-card li + li { margin-top: 2px; }
 
@@ -773,7 +790,7 @@ button {
 
 .efficiency-card,
 .source-card {
-  height: 95px;
+  height: 130px;
   padding: 7px 8px;
   border-color: rgba(25, 98, 175, 0.64);
 }
@@ -788,7 +805,7 @@ button {
 .efficiency-card__summary b small { margin-left: 2px; color: #8eb8d2; font: 9px 'Triple3Text'; }
 .efficiency-card__summary span { color: #789db9; font-size: 8px; }
 .efficiency-card__summary strong { color: #a8c9dc; }
-.bars--handling { height: 39px; }
+.bars--handling { height: 64px; }
 
 .source-card__head { display: flex; justify-content: space-between; margin: 0 0 4px; padding: 0; }
 .source-card__head b { color: #8eb4cc; font-size: 9px; }
@@ -796,8 +813,18 @@ button {
 .source-card li + li { margin-top: 2px; }
 .source-card li b { color: #65d9ff; font: 12px 'Triple3DIN'; }
 
+// 复用群租空间“风险感知”的文字规格，统一动火动焊指标标签。
+.hot-work-panel .risk-label-text {
+  color: #d9f3ff;
+  font-family: 'Triple3Text', 'Microsoft YaHei', sans-serif;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  text-shadow: none;
+}
+
 @media (max-width: 430px) {
-  .hot-work-panel--fixed { flex-basis: 570px; }
+  .hot-work-panel--fixed { flex-basis: 635px; }
   .progress-line { grid-template-columns: 54px minmax(58px, 1fr) 82px; gap: 5px; }
   .progress-line > b { font-size: 12px; }
   .summary-grid > div { padding-right: 4px; padding-left: 4px; }

@@ -235,6 +235,60 @@ let overlayMarker: L.Marker | null = null
 let flowAnimationFrame: number | null = null
 let mapResizeObserver: ResizeObserver | null = null
 let mapResizeTimer: ReturnType<typeof setTimeout> | null = null
+
+// 离线高德瓦片实际按 z/y/x.jpg 存放，Leaflet 查找键统一转换为 x/y。
+const OFFLINE_TILE_CONFIG = {
+  z: 10,
+  minX: 811,
+  maxX: 823,
+  minY: 418,
+  maxY: 426,
+  tileSize: 256
+} as const
+
+type WebpackAsset = string | { default: string }
+
+const offlineTileContext = require.context('../../../../assets/map/10', true, /\.jpg$/)
+const offlineTileMap: Record<string, string> = {}
+
+offlineTileContext.keys().forEach(key => {
+  const match = key.match(/^\.\/(\d+)\/(\d+)\.jpg$/)
+  if (!match) return
+  const [, tileY, tileX] = match
+  const asset = offlineTileContext(key) as WebpackAsset
+  offlineTileMap[`${tileX}/${tileY}`] = typeof asset === 'string' ? asset : asset.default
+})
+
+function tileToLngLat(x: number, y: number, z: number) {
+  const scale = Math.pow(2, z)
+  const lng = x / scale * 360 - 180
+  const lat = Math.atan(Math.sinh(Math.PI * (1 - 2 * y / scale))) * 180 / Math.PI
+  return { lng, lat }
+}
+
+const offlineTileBounds = (() => {
+  const northWest = tileToLngLat(OFFLINE_TILE_CONFIG.minX, OFFLINE_TILE_CONFIG.minY, OFFLINE_TILE_CONFIG.z)
+  const southEast = tileToLngLat(OFFLINE_TILE_CONFIG.maxX + 1, OFFLINE_TILE_CONFIG.maxY + 1, OFFLINE_TILE_CONFIG.z)
+  return L.latLngBounds([southEast.lat, northWest.lng], [northWest.lat, southEast.lng])
+})()
+
+function createOfflineTileLayer() {
+  const layer = L.tileLayer('', {
+    tileSize: OFFLINE_TILE_CONFIG.tileSize,
+    minZoom: 8,
+    maxZoom: 12,
+    minNativeZoom: OFFLINE_TILE_CONFIG.z,
+    maxNativeZoom: OFFLINE_TILE_CONFIG.z,
+    bounds: offlineTileBounds,
+    noWrap: true,
+    keepBuffer: 2,
+    updateWhenIdle: false,
+    className: 'waterlog-offline-tile'
+  })
+
+  layer.getTileUrl = coords => offlineTileMap[`${coords.x}/${coords.y}`] || L.Util.emptyImageUrl
+  return layer
+}
 let lastFlowFrame = 0
 
 type FlowRiverKey = 'jialing' | 'yangtze'
@@ -455,8 +509,14 @@ function initMap() {
     attributionControl: false,
     zoomControl: true,
     zoomAnimation: true,
-    fadeAnimation: true
+    fadeAnimation: true,
+    minZoom: 8,
+    maxZoom: 12,
+    maxBounds: offlineTileBounds,
+    maxBoundsViscosity: 0.72
   }).setView([29.55, 106.35], 9)
+
+  createOfflineTileLayer().addTo(map)
 
   const jl = RIVERS.jialing.map(p => [p[1], p[0]] as [number, number])
   const yz = RIVERS.yangtze.map(p => [p[1], p[0]] as [number, number])
@@ -1099,7 +1159,7 @@ export default {
   inset: 0;
   z-index: 200;
   pointer-events: none;
-  opacity: .3;
+  opacity: .22;
   background-image:
     linear-gradient(rgba(77, 193, 255, .07) 1px, transparent 1px),
     linear-gradient(90deg, rgba(77, 193, 255, .07) 1px, transparent 1px),
@@ -1960,6 +2020,7 @@ input[type="number"] {
 <style lang="scss">
 .waterlog-prediction-dia {
   .leaflet-pane,
+  .leaflet-tile,
   .leaflet-marker-icon,
   .leaflet-pane > svg,
   .leaflet-pane > canvas,
@@ -1980,6 +2041,20 @@ input[type="number"] {
   .leaflet-container .leaflet-overlay-pane svg {
     max-width: none !important;
     max-height: none !important;
+  }
+
+  .leaflet-tile {
+    width: 256px;
+    height: 256px;
+    max-width: none !important;
+    max-height: none !important;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .leaflet-layer.waterlog-offline-tile .leaflet-tile {
+    opacity: .86;
+    filter: invert(.78) sepia(.72) saturate(2.2) hue-rotate(158deg) brightness(.78) contrast(1.05);
   }
 
   .leaflet-pane { z-index: 400; }
