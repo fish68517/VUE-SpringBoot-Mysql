@@ -1,0 +1,35 @@
+src/package/BZAQ/BZHouse/components/BZHouseHotWorkTriple3.vue
+  s_a16231bd8fe0a8::t_a7fa5f17881d5e 71-77,84
+src/package/BZAQ/BZHouse/index.vue
+  s_a16231bd8fe0a8::t_d65241a2eeba45 381
+src/package/BZAQ/BzHFAndwelding/index.ts
+  s_a16231bd8fe0a8::t_4d1cb316b6e44a 1-10
+src/package/BZAQ/BzHFAndwelding/config.ts
+  s_a16231bd8fe0a8::t_4d1cb316b6e44a 1-38
+src/package/BZAQ/BzHFAndwelding/export.ts
+  s_a16231bd8fe0a8::t_4d1cb316b6e44a 1-13
+src/package/BZAQ/BzHFAndwelding/index.vue
+  s_a16231bd8fe0a8::t_01a8b37cf40f88 384,388,411
+  s_a16231bd8fe0a8::t_4d1cb316b6e44a 1-58,60-367,379-381,386,390-409,412-419
+  s_a16231bd8fe0a8::t_3a9460ea85e53a 59,368-378,382-383,385,387,389,410
+src/package/BZAQ/BzHFAndwelding/config.vue
+  s_a16231bd8fe0a8::t_4d1cb316b6e44a 1-14
+src/package/BZAQ/BZHouse/components/BZHouseHotWorkTriple3-back.vue
+  s_a16231bd8fe0a8::t_41cc38429b7e5c 1-836
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "7c821d9927e8442c11c48f8a259b98cd206263bb",
+  "prompts": {},
+  "sessions": {
+    "s_a16231bd8fe0a8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06304-2b6f-7432-a60f-b2a3ed6c883a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
