@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "updated_at": "2026-09-07",
   "records": [
     {"prefix":"1595503","province":"安徽","city":"滁州","operator":"中国移动","number_type":"mobile"},
@@ -9,7 +9,8 @@
     {"prefix":"1905503","province":"安徽","city":"滁州","operator":"中国电信","number_type":"mobile"},
     {"prefix":"1655503","province":"安徽","city":"滁州","operator":"中国移动转售","number_type":"mobile"},
     {"prefix":"1732928","province":"河南","city":"濮阳","operator":"中国电信","number_type":"mobile"},
-    {"prefix":"1766523","province":"广东","city":"深圳","operator":"中国联通","number_type":"mobile"}
+    {"prefix":"1766523","province":"广东","city":"深圳","operator":"中国联通","number_type":"mobile"},
+    {"prefix":"1587123","province":"湖北","city":"随州","operator":"中国移动","number_type":"mobile"}
   ],
   "special_prefixes": {
     "190": "中国电信",

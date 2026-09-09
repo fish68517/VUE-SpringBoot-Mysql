@@ -7,6 +7,7 @@ import org.json.JSONObject
 class NumberAttributionRepository(context: Context) {
     private val exactPrefixes = mutableMapOf<String, NumberAttribution>()
     private val specialPrefixes = mutableMapOf<String, String>()
+    private val phoneSegmentDatabase = PhoneSegmentDatabase.load(context.applicationContext)
 
     init {
         runCatching {
@@ -37,6 +38,10 @@ class NumberAttributionRepository(context: Context) {
             .maxByOrNull(String::length)
             ?.let { return exactPrefixes.getValue(it) }
 
+        // 完整号码优先按前 7 位从离线号段库精确查询归属地与运营商。
+        // number_prefixes.json 仍是更高优先级的人工修正规则，便于随时修补个别号段。
+        phoneSegmentDatabase?.lookup(number)?.let { return it }
+
         specialPrefixes.entries.firstOrNull { number.startsWith(it.key) }?.let {
             return NumberAttribution(operator = it.value, numberType = "mobile")
         }
@@ -55,6 +60,91 @@ class NumberAttributionRepository(context: Context) {
         }
         return NumberAttribution(operator = operator, numberType = if (operator.isBlank()) "unknown" else "mobile")
     }
+}
+
+private class PhoneSegmentDatabase private constructor(private val data: ByteArray) {
+    private val indicesStartOffset = readLittleEndianInt(data, 4)
+    private val recordCount = (data.size - indicesStartOffset) / INDEX_LENGTH
+
+    fun lookup(number: String): NumberAttribution? {
+        if (number.length < PREFIX_LENGTH) return null
+        val targetPrefix = number.take(PREFIX_LENGTH).toIntOrNull() ?: return null
+        var low = 0
+        var high = recordCount - 1
+
+        while (low <= high) {
+            val middle = low + (high - low) / 2
+            val indexOffset = indicesStartOffset + middle * INDEX_LENGTH
+            val currentPrefix = readLittleEndianInt(data, indexOffset)
+            when {
+                currentPrefix < targetPrefix -> low = middle + 1
+                currentPrefix > targetPrefix -> high = middle - 1
+                else -> return readAttribution(indexOffset)
+            }
+        }
+        return null
+    }
+
+    private fun readAttribution(indexOffset: Int): NumberAttribution? {
+        val recordOffset = readLittleEndianInt(data, indexOffset + INT_LENGTH)
+        if (recordOffset !in HEADER_LENGTH until indicesStartOffset) return null
+
+        var recordEnd = recordOffset
+        while (recordEnd < indicesStartOffset && data[recordEnd].toInt() != 0) recordEnd++
+        if (recordEnd <= recordOffset || recordEnd >= indicesStartOffset) return null
+
+        val fields = String(data, recordOffset, recordEnd - recordOffset, Charsets.UTF_8).split('|')
+        if (fields.size < 2) return null
+        val operator = operatorFromIspType(data[indexOffset + INT_LENGTH * 2].toInt() and 0xFF)
+        return NumberAttribution(
+            province = fields[0].trim(),
+            city = fields[1].trim(),
+            operator = operator,
+            numberType = if (operator.isBlank()) "unknown" else "mobile",
+        )
+    }
+
+    companion object {
+        private const val PHONE_DATA_ASSET = "phone.dat"
+        private const val HEADER_LENGTH = 8
+        private const val INT_LENGTH = 4
+        private const val INDEX_LENGTH = 9
+        private const val PREFIX_LENGTH = 7
+
+        @Volatile
+        private var cachedData: ByteArray? = null
+
+        fun load(context: Context): PhoneSegmentDatabase? = runCatching {
+            val bytes = cachedData ?: synchronized(this) {
+                cachedData ?: context.assets.open(PHONE_DATA_ASSET).use { it.readBytes() }
+                    .also { cachedData = it }
+            }
+            val indicesStart = readLittleEndianInt(bytes, INT_LENGTH)
+            require(indicesStart in HEADER_LENGTH until bytes.size)
+            require((bytes.size - indicesStart) % INDEX_LENGTH == 0)
+            PhoneSegmentDatabase(bytes)
+        }.getOrNull()
+
+        private fun operatorFromIspType(type: Int): String = when (type) {
+            1 -> "中国移动"
+            2 -> "中国联通"
+            3 -> "中国电信"
+            4 -> "中国电信虚拟运营商"
+            5 -> "中国联通虚拟运营商"
+            6 -> "中国移动虚拟运营商"
+            7 -> "中国广电"
+            8 -> "中国广电虚拟运营商"
+            else -> ""
+        }
+    }
+}
+
+private fun readLittleEndianInt(data: ByteArray, offset: Int): Int {
+    require(offset >= 0 && offset + 4 <= data.size)
+    return (data[offset].toInt() and 0xFF) or
+        ((data[offset + 1].toInt() and 0xFF) shl 8) or
+        ((data[offset + 2].toInt() and 0xFF) shl 16) or
+        ((data[offset + 3].toInt() and 0xFF) shl 24)
 }
 
 fun normalizePhoneNumber(raw: String): String {

@@ -40,7 +40,14 @@ data class NumberAttribution(
     val numberType: String = "unknown",
 ) {
     val displayText: String
-        get() = listOf(province + city, operator.removePrefix("中国"))
+        get() = listOf(
+            when {
+                province.isBlank() -> city
+                city.isBlank() || city == province -> province
+                else -> province + city
+            },
+            operator.removePrefix("中国"),
+        )
             .filter { it.isNotBlank() }
             .joinToString(" ")
 }

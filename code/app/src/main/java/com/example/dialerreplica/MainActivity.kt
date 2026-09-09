@@ -49,10 +49,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Backspace
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.CallEnd
 import androidx.compose.material.icons.outlined.Dialpad
-import androidx.compose.material.icons.outlined.Face
-import androidx.compose.material.icons.outlined.GraphicEq
 import androidx.compose.material.icons.outlined.MicOff
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.MoreVert
@@ -132,6 +129,10 @@ private const val BottomNavigationScale = 0.88f
 
 // 统一控制主页整个拨号面板高度；大于 1.0f 时面板顶部向上扩展。
 private const val DialerPanelHeightScale = 1.04f
+
+// 拨号数字列与底部工具键共用同一组水平布局参数，保证三列中心线完全一致。
+private val DialPadHorizontalPadding = 29.dp
+private val DialPadColumnSpacing = 12.dp
 
 // 通话缩小功能尚未确定实施；false 时隐藏入口并关闭自动画中画。
 private const val CallMinimizeVisible = false
@@ -373,7 +374,7 @@ private fun NumberHeader(digits: String, location: String, modifier: Modifier = 
 private fun DialPadPanel(modifier: Modifier, showTopActions: Boolean, onDigit: (String) -> Unit, onDelete: () -> Unit, onCall: () -> Unit, onOpenDialer: () -> Unit) {
     Column(modifier.fillMaxWidth().shadow(8.dp, RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp)).clip(RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp)).background(Color.White)) {
         if (showTopActions) TopDialerActions()
-        KeypadGrid(Modifier.weight(1f).padding(horizontal = 29.dp), onDigit)
+        KeypadGrid(Modifier.weight(1f).padding(horizontal = DialPadHorizontalPadding), onDigit)
         UtilityRow(onDelete, onCall)
         BottomDialerNavigation(onOpenDialer, showTopActions)
     }
@@ -423,7 +424,7 @@ private val keyRows = listOf(
 private fun KeypadGrid(modifier: Modifier, onDigit: (String) -> Unit) {
     Column(modifier, verticalArrangement = Arrangement.SpaceEvenly) {
         keyRows.forEach { row ->
-            Row(Modifier.fillMaxWidth().weight(1f), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(Modifier.fillMaxWidth().weight(1f), horizontalArrangement = Arrangement.spacedBy(DialPadColumnSpacing)) {
                 row.forEach { key ->
                     DialKey(key, Modifier.weight(1f).fillMaxHeight()) {
                         if (key.value.single().isDigit()) onDigit(key.value)
@@ -465,13 +466,23 @@ private fun DialKey(key: DialKeySpec, modifier: Modifier, onClick: () -> Unit) {
 
 @Composable
 private fun UtilityRow(onDelete: () -> Unit, onCall: () -> Unit) {
-    Row(Modifier.fillMaxWidth().height(68.dp).padding(horizontal = 29.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-        Icon(Icons.Outlined.Dialpad, "拨号盘", tint = MainInk, modifier = Modifier.size(27.dp))
-        Box(Modifier.size(56.dp).clip(CircleShape).clickable(onClick = onCall), contentAlignment = Alignment.Center) {
-            Image(painterResource(R.drawable.dialer_call), "呼叫", Modifier.fillMaxSize(), colorFilter = ColorFilter.tint(DialerGreen))
-            Text("HD", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.TopEnd).padding(top = 9.dp, end = 5.dp))
+    Row(
+        Modifier.fillMaxWidth().height(68.dp).padding(horizontal = DialPadHorizontalPadding),
+        horizontalArrangement = Arrangement.spacedBy(DialPadColumnSpacing),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+            Icon(Icons.Outlined.Dialpad, "拨号盘", tint = MainInk, modifier = Modifier.size(27.dp))
         }
-        Icon(Icons.AutoMirrored.Outlined.Backspace, "删除", tint = MainInk, modifier = Modifier.size(27.dp).clickable(onClick = onDelete))
+        Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+            Box(Modifier.size(56.dp).clip(CircleShape).clickable(onClick = onCall), contentAlignment = Alignment.Center) {
+                Image(painterResource(R.drawable.dialer_call), "呼叫", Modifier.fillMaxSize(), colorFilter = ColorFilter.tint(DialerGreen))
+                Text("HD", color = Color.White, fontSize = 9.sp, fontWeight = FontWeight.Bold, modifier = Modifier.align(Alignment.TopEnd).padding(top = 9.dp, end = 5.dp))
+            }
+        }
+        Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+            Icon(Icons.AutoMirrored.Outlined.Backspace, "删除", tint = MainInk, modifier = Modifier.size(27.dp).clickable(onClick = onDelete))
+        }
     }
 }
 
@@ -528,19 +539,32 @@ private fun AnimatedCallStateText(session: CallSessionSnapshot, modifier: Modifi
         }
     }
     val textColor = Color.White.copy(alpha = .82f)
-    if (session.phase == CallPhase.DIALING) {
-        Row(modifier, verticalAlignment = Alignment.CenterVertically) {
-            Text("正在拨号", color = textColor, fontSize = 14.sp)
-            repeat(3) { index ->
-                Text(
-                    ".",
-                    color = if (index < visibleDotCount) textColor else Color.Transparent,
-                    fontSize = 14.sp,
-                )
+    when (session.phase) {
+        CallPhase.DIALING -> {
+            Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+                Text("正在拨号", color = textColor, fontSize = 14.sp)
+                repeat(3) { index ->
+                    Text(
+                        ".",
+                        color = if (index < visibleDotCount) textColor else Color.Transparent,
+                        fontSize = 14.sp,
+                    )
+                }
             }
         }
-    } else {
-        Text(callStateText(session), color = textColor, fontSize = 14.sp, modifier = modifier)
+        CallPhase.CONNECTED -> {
+            Row(modifier, verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(R.drawable.call_hd),
+                    contentDescription = "HD",
+                    modifier = Modifier.width(20.dp).height(11.dp),
+                    alpha = .82f,
+                )
+                Spacer(Modifier.width(5.dp))
+                Text(formatDuration(session.callElapsedMs), color = textColor, fontSize = 14.sp)
+            }
+        }
+        else -> Text(callStateText(session), color = textColor, fontSize = 14.sp, modifier = modifier)
     }
 }
 
@@ -566,8 +590,8 @@ private fun CallingBackground(backgroundUri: String?, videoUri: String?, ringbac
 private fun CallingActionGrid(session: CallSessionSnapshot, connected: Boolean, onRecord: () -> Unit, onAction: (String) -> Unit, onHangup: () -> Unit, onSettings: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            CallingActionButton(Icons.Outlined.GraphicEq, if (session.recording) "录音 ${formatDuration(session.recordingElapsedMs)}" else "录音", connected, session.recording, onRecord)
-            CallingActionButton(Icons.Outlined.Face, "AI 接听", connected, session.activeAction == "AI 接听", onClick = { onAction("AI 接听") })
+            CallingImageActionButton(R.drawable.call_recording, if (session.recording) "录音 ${formatDuration(session.recordingElapsedMs)}" else "录音", connected, onRecord)
+            CallingImageActionButton(R.drawable.call_ai_answer, "AI 接听", connected, onClick = { onAction("AI 接听") })
             CallingActionButton(Icons.Outlined.Add, "添加通话", false, false, onClick = {})
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -576,20 +600,39 @@ private fun CallingActionGrid(session: CallSessionSnapshot, connected: Boolean, 
             CallingActionButton(Icons.Outlined.MoreHoriz, "更多", true, false, onSettings)
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            CallingActionButton(Icons.Outlined.Dialpad, "拨号盘", connected, session.activeAction == "拨号盘", onClick = { onAction("拨号盘") })
-            CallingActionButton(Icons.Outlined.CallEnd, "挂断", true, false, onHangup, true)
-            CallingActionButton(Icons.AutoMirrored.Outlined.VolumeUp, "扬声器", connected, session.activeAction == "扬声器", onClick = { onAction("扬声器") })
+            CallingActionButton(Icons.Outlined.Dialpad, "拨号盘", connected, session.activeAction == "拨号盘", onClick = { onAction("拨号盘") }, showLabel = false)
+            CallingImageActionButton(R.drawable.call_hangup, "挂断", true, onClick = onHangup, showLabel = false)
+            CallingActionButton(Icons.AutoMirrored.Outlined.VolumeUp, "扬声器", connected, session.activeAction == "扬声器", onClick = { onAction("扬声器") }, showLabel = false)
         }
     }
 }
 
 @Composable
-private fun CallingActionButton(icon: ImageVector, label: String, enabled: Boolean, active: Boolean, onClick: () -> Unit, isHangup: Boolean = false) {
-    val background = when { isHangup -> HangupRed; active -> Color.White.copy(alpha = .75f); else -> Color.White.copy(alpha = if (enabled) .25f else .13f) }
+private fun CallingImageActionButton(imageRes: Int, label: String, enabled: Boolean, onClick: () -> Unit, showLabel: Boolean = true) {
+    val contentAlpha = if (enabled) 1f else .42f
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(84.dp)) {
+        Image(
+            painter = painterResource(imageRes),
+            contentDescription = label,
+            modifier = Modifier.size(68.dp).clip(CircleShape).clickable(enabled = enabled, onClick = onClick),
+            contentScale = ContentScale.Fit,
+            alpha = contentAlpha,
+        )
+        if (showLabel) {
+            Text(label, color = Color.White.copy(alpha = contentAlpha), fontSize = if (label.length > 6) 10.sp else 13.sp, modifier = Modifier.padding(top = 7.dp), maxLines = 1)
+        }
+    }
+}
+
+@Composable
+private fun CallingActionButton(icon: ImageVector, label: String, enabled: Boolean, active: Boolean, onClick: () -> Unit, showLabel: Boolean = true) {
+    val background = if (active) Color.White.copy(alpha = .75f) else Color.White.copy(alpha = if (enabled) .25f else .13f)
     val tint = when { active -> MainInk; enabled -> Color.White; else -> Color.White.copy(alpha = .42f) }
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(84.dp)) {
         Box(Modifier.size(68.dp).clip(CircleShape).background(background).clickable(enabled = enabled, onClick = onClick), contentAlignment = Alignment.Center) { Icon(icon, label, tint = tint, modifier = Modifier.size(29.dp)) }
-        Text(label, color = tint, fontSize = if (label.length > 6) 10.sp else 13.sp, modifier = Modifier.padding(top = 7.dp), maxLines = 1)
+        if (showLabel) {
+            Text(label, color = tint, fontSize = if (label.length > 6) 10.sp else 13.sp, modifier = Modifier.padding(top = 7.dp), maxLines = 1)
+        }
     }
 }
 
@@ -877,7 +920,7 @@ private fun MediaSettingRow(label: String, settings: SettingsRepository, key: Pr
 
 private fun callStateText(session: CallSessionSnapshot): String = when (session.phase) {
     CallPhase.DIALING -> "正在拨号。"
-    CallPhase.CONNECTED -> "通话中 ${formatDuration(session.callElapsedMs)}"
+    CallPhase.CONNECTED -> formatDuration(session.callElapsedMs)
     CallPhase.SELF_HANGING_UP -> "正在挂断…"
     CallPhase.REMOTE_ENDED, CallPhase.ENDED -> "通话结束"
     CallPhase.UNREACHABLE -> "无法接通"
