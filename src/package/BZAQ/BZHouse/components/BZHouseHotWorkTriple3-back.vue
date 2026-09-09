@@ -68,20 +68,96 @@
     </section>
     </template>
 
-    <BzHFAndwelding
-      v-if="isTripleScreen"
-      class="house-triple3__hot-work"
-      :chart-config="props.chartConfig"
-      :bus="props.bus"
-      embedded
-    />
+    <section class="hot-work-panel" :class="{ 'hot-work-panel--fixed': isTripleScreen }">
+      <div class="hot-work-title"><span>动火动焊</span></div>
+
+      <div class="hot-work-grid">
+        <section class="safety-panel" @click="openGridDanger">
+          <div class="work-card__title"><i></i><strong>网格巡查隐患</strong></div>
+          <div class="summary-grid summary-grid--two">
+            <div><span class="risk-label-text">未整改</span><b class="number number--amber">24<small>件</small></b></div>
+            <div><span class="risk-label-text">已整改</span><b class="number number--green">4211<small>件</small></b></div>
+          </div>
+          <div class="progress-line">
+            <span class="risk-label-text">整改进度</span>
+            <div class="progress-track"><i style="width: 88%"></i></div>
+            <b>4200 / 4211</b>
+          </div>
+
+          <div class="inspection-detail">
+            <div class="bar-card">
+              <div class="bar-card__head">
+                <span class="risk-label-text">新增隐患</span><time>2026-08-29 ~ 09-01</time>
+              </div>
+              <div class="bar-card__summary">
+                <b class="number number--cyan">123<small>件</small></b>
+                <span>日均新增 <strong>24件 ↑</strong></span>
+              </div>
+              <div class="bars" aria-label="近四日新增隐患柱状图">
+                <div v-for="bar in inspectionBars" :key="bar.date" class="bar-item">
+                  <b>{{ bar.value }}</b><i :style="{ height: `${bar.height}%` }"></i><span>{{ bar.date }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="event-card">
+              <h4 class="risk-label-text">高频隐患点</h4>
+              <ul>
+                <li v-for="item in dangerPoints" :key="item.name">
+                  <span class="risk-label-text">{{ item.name }}</span><b :class="{ 'event-level--many': item.level === '多发' }">{{ item.level }}</b>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="safety-panel" @click="openHotWorkDanger">
+          <div class="work-card__title"><i></i><strong>近期动火作业隐患</strong></div>
+          <div class="work-orbs">
+            <div v-for="item in hotWorkOverview" :key="item.label" class="work-orb-item">
+              <div class="work-orb" :class="{ 'work-orb--amber': item.tone === 'amber' }">
+                <b>{{ item.value }}</b><small>{{ item.unit }}</small>
+              </div>
+              <span>{{ item.label }}</span>
+            </div>
+          </div>
+          <div class="summary-grid summary-grid--three work-total">
+            <div><span class="risk-label-text">隐患总数</span><b class="number number--amber">24<small>件</small></b></div>
+            <div><span class="risk-label-text">未完成</span><b class="number number--amber">24<small>件</small></b></div>
+            <div><span class="risk-label-text">已销案</span><b class="number number--cyan">24<small>件</small></b></div>
+          </div>
+          <div class="progress-line">
+            <span class="risk-label-text">处置进度</span>
+            <div class="progress-track"><i style="width: 88%"></i></div>
+            <b>471 / 471 全部销案</b>
+          </div>
+          <div class="work-footer">
+            <div class="efficiency-card">
+              <div class="efficiency-card__head"><span class="risk-label-text">处置时效</span></div>
+              <div class="efficiency-card__summary">
+                <b>12<small>分钟</small></b><span>平均处置时长 <strong>12分钟</strong></span>
+              </div>
+              <div class="bars bars--handling" aria-label="近四日处置时效柱状图">
+                <div v-for="bar in handlingBars" :key="bar.date" class="bar-item">
+                  <b>{{ bar.value }}</b><i :style="{ height: `${bar.height}%` }"></i><span>{{ bar.date }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="source-card">
+              <div class="source-card__head"><span class="risk-label-text">事件来源</span><b>合计：720件</b></div>
+              <ul>
+                <li v-for="item in eventSources" :key="item.name"><span class="risk-label-text">{{ item.name }}</span><b>{{ item.value }} 件</b></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import BZHouseHotWorkTriple2 from './BZHouseHotWorkTriple2.vue'
-import BzHFAndwelding from '../../BzHFAndwelding/index.vue'
 
 const props = defineProps({
   chartConfig: { type: Object, required: true },
@@ -134,6 +210,48 @@ const houseSections = [
     ]
   }
 ]
+
+const inspectionBars = [
+  { date: '08-29', value: 213, height: 75 },
+  { date: '08-30', value: 213, height: 75 },
+  { date: '08-31', value: 124, height: 46 },
+  { date: '09-01', value: 12, height: 25 }
+]
+
+const dangerPoints = [
+  { name: '灭火器未放在显著位置', level: '高发' },
+  { name: '消防设施被遮挡', level: '高发' },
+  { name: '设施设备安全隐患', level: '多发' },
+  { name: '动火现场监护缺失', level: '多发' }
+]
+
+const hotWorkOverview = [
+  { label: '近7天动火作业报备', value: 42, unit: '起', tone: 'cyan' },
+  { label: '发现隐患 · 已销案', value: 42, unit: '件', tone: 'cyan' },
+  { label: '发现隐患 · 未完成', value: 42, unit: '件', tone: 'amber' }
+]
+
+const handlingBars = [
+  { date: '08-29', value: 959, height: 82 },
+  { date: '08-30', value: 741, height: 68 },
+  { date: '08-31', value: 147, height: 37 },
+  { date: '09-01', value: 112, height: 30 }
+]
+
+const eventSources = [
+  { name: '群众上报', value: 720 },
+  { name: '网格员巡查', value: 453 },
+  { name: '物联感知', value: 320 },
+  { name: '部门移送', value: 180 }
+]
+
+function openGridDanger() {
+  emitDia('house-grid-inspection-hidden')
+}
+
+function openHotWorkDanger() {
+  emitDia('house-fire-work-hidden')
+}
 
 function emitDia(diaName: string, extra: Record<string, unknown> = {}) {
   props.bus?.emit('OPEN_HOUSE_DIA', {

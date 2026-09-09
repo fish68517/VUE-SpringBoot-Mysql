@@ -378,7 +378,7 @@ const props = defineProps({
   }
 })
 
-// BZHouse 第三版：单屏在房屋模块后追加动火动焊，三联屏保持固定动火动焊布局。
+// BZHouse 第三版：单屏仅展示三类房屋，三联屏组合房屋区域与公共动火动焊组件。
 const useHotWorkTriple3 = true
 
 const containerStyle = computed(() => {
