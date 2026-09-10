@@ -68,13 +68,14 @@
     </section>
     </template>
 
-    <BzHFAndwelding
-      v-if="isTripleScreen"
-      class="house-triple3__hot-work"
-      :chart-config="props.chartConfig"
-      :bus="props.bus"
-      embedded
-    />
+    <div v-if="isTripleScreen" class="house-triple3__hot-work-viewport">
+      <BzHFAndwelding
+        class="house-triple3__hot-work"
+        :chart-config="props.chartConfig"
+        :bus="props.bus"
+        embedded
+      />
+    </div>
   </div>
 </template>
 
@@ -519,6 +520,36 @@ button {
   height: auto !important;
   min-height: 0;
   border: 0;
+}
+
+// 仅三联屏启用：以原动火动焊高度的一半作为可视窗口，完整内容通过独立滚动条查看。
+.house-triple3__hot-work-viewport {
+  box-sizing: border-box;
+  flex: 0 0 317.5px;
+  width: 100%;
+  height: 317.5px;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-color: rgba(55, 205, 255, 0.92) rgba(3, 40, 82, 0.82);
+  scrollbar-width: thin;
+}
+
+.house-triple3__hot-work-viewport::-webkit-scrollbar { width: 7px; }
+.house-triple3__hot-work-viewport::-webkit-scrollbar-track {
+  background: rgba(3, 40, 82, 0.82);
+  box-shadow: inset 0 0 5px rgba(0, 7, 24, 0.78);
+}
+.house-triple3__hot-work-viewport::-webkit-scrollbar-thumb {
+  border: 1px solid rgba(80, 218, 255, 0.46);
+  border-radius: 7px;
+  background: linear-gradient(180deg, #42d9ff, #167ccf);
+  box-shadow: 0 0 7px rgba(43, 190, 255, 0.72);
+}
+
+.house-triple3__hot-work {
+  display: block;
+  width: 100% !important;
 }
 
 .house-triple3 :deep(.hot-work-fixed) { display: none; }
