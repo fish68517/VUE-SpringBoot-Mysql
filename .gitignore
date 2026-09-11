@@ -4,3 +4,5 @@ dist
 .vscode
 *.log
 *.local
+scripts/map-source/
+scripts/.map-venv/

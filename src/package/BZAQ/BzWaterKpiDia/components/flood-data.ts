@@ -2,13 +2,16 @@
 
 export interface Station {
   name: string
-  river: string
+  river: '嘉陵江' | '长江'
   lon: number
   lat: number
   dist: number
   warning: number | null
   guarantee: number | null
   z?: number | null
+  stcd?: string
+  source?: 'base' | 'mock' | 'api'
+  missingFields?: string[]
 }
 
 export const STATIONS: Station[] = [
@@ -28,6 +31,19 @@ export const STATIONS: Station[] = [
   { name: '菜园坝', river: '长江', lon: 106.5496, lat: 29.5514, dist: 7.1, warning: 183.0, guarantee: 186.0 },
   { name: '玄坛庙', river: '长江', lon: 106.590662, lat: 29.567781, dist: 2.7, warning: 180.3, guarantee: 183.3 }
 ]
+
+/** 右侧站点列表固定业务顺序，接口只补数据，不改变洪水传播顺序。 */
+export const DISPLAY_ROUTE_ORDER = [
+  '鸭嘴', '东津沱', '北碚（三）', '磁器口', '化龙桥', '大溪沟', '千厮门',
+  '泸州（三）', '塔坪', '钓二嘴', '李家沱', '菜园坝', '玄坛庙',
+  '朝天门', '郭家沱'
+] as const
+
+/** 水情接口可能返回半角括号，统一为当前页面使用的展示名。 */
+export const STATION_NAME_ALIASES: Record<string, string> = {
+  '北碚(三)': '北碚（三）',
+  '泸州(三)': '泸州（三）'
+}
 
 /** [lng, lat] 数组 */
 export const RIVERS: {

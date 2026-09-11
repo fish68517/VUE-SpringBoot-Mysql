@@ -50,6 +50,22 @@
           <span>FLOWING</span>
           <b>双河道粒子流</b>
         </div>
+        <button
+          class="particle-toggle"
+          type="button"
+          :class="{ 'particle-toggle--active': particleEnabled }"
+          :aria-pressed="particleEnabled"
+          @click.stop="toggleParticleAnimation"
+        >
+          <span class="particle-toggle__switch" aria-hidden="true"><i></i></span>
+          粒子动画
+        </button>
+        <div class="map-attribution">
+          行政区：China-GeoData · 河网：
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">
+            © OpenStreetMap contributors · ODbL
+          </a>
+        </div>
         <div class="legend">
           <div class="lg"><span class="sw" style="background:#2196F3;height:4px;"></span> 嘉陵江</div>
           <div class="lg"><span class="sw" style="background:#FF9800;height:4px;"></span> 长江</div>
@@ -66,16 +82,28 @@
         <div class="section-title">
           <span>站点当前水位（米）</span>
         </div>
+        <div class="river-tabs" role="tablist" aria-label="河流站点" :data-source="stationDataSource">
+          <button
+            class="river-tab river-tab--jialing is-active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+          >嘉陵江</button>
+          <span
+            class="river-tab river-tab--yangtze"
+            role="tab"
+            aria-disabled="true"
+            title="长江站点已合并显示在下方列表"
+          >长江</span>
+        </div>
         <div class="station-list">
-          <template v-for="group in stationGroups" :key="group.title">
-            <div class="river-group">
-              <span class="river-title" :class="group.cls">{{ group.title }}</span>
-            </div>
+          <div v-if="stationLoading" class="station-loading">站点数据加载中...</div>
+          <template v-else>
             <div
-              v-for="s in group.items"
+              v-for="s in stationList"
               :key="s.name"
               class="station-row"
-              :class="{ 'no-threshold': s.warning === null || s.warning === undefined }"
+              :class="{ 'no-threshold': !hasThresholds(s) }"
             >
               <span class="dot" :style="{ background: markerColor(s) }"></span>
               <span class="name">{{ s.name }}</span>
@@ -84,7 +112,7 @@
               </span>
               <input
                 v-model.number="levels[s.name]"
-                :disabled="!isTrigger(s)"
+                :disabled="!isTrigger(s) || isInputDisabled(s.name)"
                 type="number"
                 step="0.1"
                 @input="onStationInput(s.name)"
@@ -195,7 +223,10 @@
         </div> -->
 
         <div class="hint">
-          注：化龙桥/大溪沟/千厮门/郭家沱/塔坪/钓二嘴 警戒与保证水位在原表中为「/」（无数据），地图以灰色标记，暂不参与触发。
+          <template v-if="unavailableStationNames.length">
+            注：{{ unavailableStationNames.join('、') }} 暂缺完整警戒/保证水位，地图以灰色标记且不参与触发。<br>
+          </template>
+          朝天门为预警目标站，郭家沱为出境参考站，不作为上游触发输入。
         </div>
         </div>
       </div>
@@ -214,6 +245,10 @@ import { STATIONS, RIVERS, COLORS, LEVEL_COLOR } from './flood-data'
 import type { Station } from './flood-data'
 import { evaluateWarning, fmtHours } from './flood-engine'
 import type { WarningResult } from './flood-engine'
+import { loadHydrologyStations } from './waterlog-station.service'
+import type { StationDataSource } from './waterlog-station.service'
+import adminGeoJson from './map-data/waterlog-admin.gcj02.geojson'
+import riverGeoJson from './map-data/waterlog-rivers.gcj02.geojson'
 
 echarts.use([LineChart, GridComponent, TooltipComponent, LegendComponent, CanvasRenderer])
 
@@ -235,6 +270,7 @@ let overlayMarker: L.Marker | null = null
 let flowAnimationFrame: number | null = null
 let mapResizeObserver: ResizeObserver | null = null
 let mapResizeTimer: ReturnType<typeof setTimeout> | null = null
+const particleEnabled = ref(true)
 
 // 离线高德瓦片实际按 z/y/x.jpg 存放，Leaflet 查找键统一转换为 x/y。
 const OFFLINE_TILE_CONFIG = {
@@ -289,6 +325,58 @@ function createOfflineTileLayer() {
   layer.getTileUrl = coords => offlineTileMap[`${coords.x}/${coords.y}`] || L.Util.emptyImageUrl
   return layer
 }
+
+function configureMapPanes() {
+  if (!map) return
+  const panes: Array<[string, number]> = [
+    ['adminPane', 260],
+    ['riverBasePane', 320],
+    ['riverMainPane', 410],
+    ['warningPane', 680],
+  ]
+  panes.forEach(([name, zIndex]) => {
+    const pane = map!.getPane(name) || map!.createPane(name)
+    pane.style.zIndex = String(zIndex)
+    pane.style.pointerEvents = 'none'
+  })
+}
+
+function addReferenceLayers() {
+  if (!map) return
+  const adminRenderer = L.canvas({ pane: 'adminPane', padding: 0.35 })
+  const riverRenderer = L.canvas({ pane: 'riverBasePane', padding: 0.35 })
+
+  L.geoJSON(adminGeoJson as any, {
+    pane: 'adminPane',
+    renderer: adminRenderer,
+    interactive: false,
+    style: feature => {
+      const adcode = Number(feature?.properties?.adcode || 0)
+      const fills = ['#0e3359', '#123d68', '#174871']
+      return {
+        pane: 'adminPane',
+        renderer: adminRenderer,
+        fillColor: fills[Math.abs(adcode) % fills.length],
+        fillOpacity: 0.46,
+        color: '#071f3d',
+        weight: 0.8,
+        opacity: 0.9,
+      }
+    },
+  }).addTo(map)
+
+  L.geoJSON(riverGeoJson as any, {
+    pane: 'riverBasePane',
+    renderer: riverRenderer,
+    interactive: false,
+    style: feature => {
+      const rank = Number(feature?.properties?.rank || 3)
+      if (rank === 1) return { pane: 'riverBasePane', renderer: riverRenderer, color: '#20aef7', weight: 2, opacity: 0.86 }
+      if (rank === 2) return { pane: 'riverBasePane', renderer: riverRenderer, color: '#0f99ee', weight: 1.25, opacity: 0.72 }
+      return { pane: 'riverBasePane', renderer: riverRenderer, color: '#087bcf', weight: 0.72, opacity: 0.5 }
+    },
+  }).addTo(map)
+}
 let lastFlowFrame = 0
 
 type FlowRiverKey = 'jialing' | 'yangtze'
@@ -315,6 +403,9 @@ let waterChart: echarts.ECharts | null = null
 
 // ---- 数据 ----
 const stationList = ref<Station[]>(STATIONS.map(station => ({ ...station })))
+let loadedStationSnapshot: Station[] = STATIONS.map(station => ({ ...station }))
+const stationLoading = ref(true)
+const stationDataSource = ref<StationDataSource>('base')
 const levels = ref<Record<string, number>>({})
 const result = ref<WarningResult | null>(null)
 const caojieFlow = ref<number | null>(null)
@@ -334,31 +425,25 @@ const resultColor = computed(() => {
 
 const chaotianmenLevel = computed(() => {
   const station = stationList.value.find(s => s.name === '朝天门')
-  const level = station ? normalizeNumber(levels.value[station.name] ?? station.z) : null
+  const level = station ? normalizeNumber(station.z) : null
   return level === null ? '-' : `${level.toFixed(2)} m`
 })
 
-const stationGroups = computed(() => [
-  {
-    title: '嘉陵江',
-    cls: 'jialing',
-    items: stationList.value.filter(s => s.river === '嘉陵江')
-  },
-  // {
-  //   title: '长江',
-  //   cls: 'yangtze',
-  //   items: stationList.value.filter(s => s.river === '长江')
-  // }
-])
+const unavailableStationNames = computed(() => stationList.value
+  .filter(station => !hasThresholds(station))
+  .map(station => station.name))
+
+function hasThresholds(station: Station): boolean {
+  return station.warning != null && station.guarantee != null
+}
 
 function isTrigger(s: Station): boolean {
-  return s.name !== '朝天门' && s.name !== '郭家沱'
+  return s.name !== '朝天门' && s.name !== '郭家沱' && hasThresholds(s)
 }
 
 function markerColor(s: Station): string {
   if (s.name === '朝天门') return '#E53935'
-  if (s.name === '郭家沱') return '#9E9E9E'
-  if (s.warning === null || s.warning === undefined) return '#9E9E9E'
+  if (!hasThresholds(s)) return '#9E9E9E'
   return COLORS[s.river] || '#9E9E9E'
 }
 
@@ -375,8 +460,8 @@ function isInputDisabled(stationName: string): boolean {
 
 // 输入时检查锁定状态
 function onStationInput(stationName: string) {
-  const v = levels.value[stationName] || 0
-  if (v !== 0) {
+  const value = normalizeNumber(levels.value[stationName])
+  if (value !== null && value !== 0) {
     // 有值了，锁定其他站点
     lockedStation.value = stationName
   } else {
@@ -384,6 +469,22 @@ function onStationInput(stationName: string) {
     lockedStation.value = ''
   }
   updateChart()
+}
+
+function cloneStations(stations: Station[]): Station[] {
+  return stations.map(station => ({
+    ...station,
+    missingFields: station.missingFields ? [...station.missingFields] : undefined
+  }))
+}
+
+function initializeStationLevels() {
+  const nextLevels: Record<string, number> = {}
+  stationList.value.forEach(station => {
+    nextLevels[station.name] = 0
+  })
+  levels.value = nextLevels
+  lockedStation.value = ''
 }
 
 // ---- 初始化 ----
@@ -516,7 +617,9 @@ function initMap() {
     maxBoundsViscosity: 0.72
   }).setView([29.55, 106.35], 9)
 
+  configureMapPanes()
   createOfflineTileLayer().addTo(map)
+  addReferenceLayers()
 
   const jl = RIVERS.jialing.map(p => [p[1], p[0]] as [number, number])
   const yz = RIVERS.yangtze.map(p => [p[1], p[0]] as [number, number])
@@ -562,6 +665,7 @@ function addRiverLayers(
 ) {
   if (!map) return
   L.polyline(points, {
+    pane: 'riverMainPane',
     color,
     weight: 30,
     opacity: 0.08,
@@ -569,6 +673,7 @@ function addRiverLayers(
     className: `river-glow river-glow--${riverClass}`
   }).addTo(map)
   L.polyline(points, {
+    pane: 'riverMainPane',
     color,
     weight: 14,
     opacity: 0.22,
@@ -576,6 +681,7 @@ function addRiverLayers(
     className: `river-bank river-bank--${riverClass}`
   }).addTo(map)
   L.polyline(points, {
+    pane: 'riverMainPane',
     color,
     weight: 7,
     opacity: 0.9,
@@ -583,6 +689,7 @@ function addRiverLayers(
     className: `river-body river-body--${riverClass}`
   }).addTo(map)
   L.polyline(points, {
+    pane: 'riverMainPane',
     color: highlight,
     weight: 2.8,
     opacity: 0.92,
@@ -590,6 +697,7 @@ function addRiverLayers(
     className: `river-current river-current--${riverClass}`
   }).addTo(map)
   L.polyline(points, {
+    pane: 'riverMainPane',
     color: '#ffffff',
     weight: 3.6,
     opacity: 0.88,
@@ -664,6 +772,10 @@ function pointOnFlowPath(path: FlowPath, distance: number): FlowPoint {
 }
 
 function drawFlowParticles(timestamp: number) {
+  if (!particleEnabled.value) {
+    flowAnimationFrame = null
+    return
+  }
   flowAnimationFrame = requestAnimationFrame(drawFlowParticles)
   if (timestamp - lastFlowFrame < 32) return
   lastFlowFrame = timestamp
@@ -720,7 +832,24 @@ function drawFlowParticles(timestamp: number) {
 function startFlowAnimation() {
   if (flowAnimationFrame !== null) cancelAnimationFrame(flowAnimationFrame)
   refreshFlowGeometry()
+  if (!particleEnabled.value) {
+    flowAnimationFrame = null
+    return
+  }
   flowAnimationFrame = requestAnimationFrame(drawFlowParticles)
+}
+
+function toggleParticleAnimation() {
+  particleEnabled.value = !particleEnabled.value
+  if (particleEnabled.value) {
+    startFlowAnimation()
+    return
+  }
+  if (flowAnimationFrame !== null) cancelAnimationFrame(flowAnimationFrame)
+  flowAnimationFrame = null
+  const canvas = flowCanvasRef.value
+  const context = canvas?.getContext('2d')
+  if (canvas && context) context.clearRect(0, 0, canvas.width, canvas.height)
 }
 
 function observeMapSize() {
@@ -858,8 +987,8 @@ function clearAll() {
 }
 
 function resetStaticData() {
-  stationList.value = STATIONS.map(station => ({ ...station }))
-  lockedStation.value = ''
+  stationList.value = cloneStations(loadedStationSnapshot)
+  initializeStationLevels()
   caojieFlow.value = null
   rainCount.value = null
   simulateRise.value = null
@@ -868,9 +997,6 @@ function resetStaticData() {
   resetMarkers()
   drawWarningPath(null)
   hideMapOverlay()
-  stationList.value.forEach(station => {
-    if (isTrigger(station)) levels.value[station.name] = 0
-  })
   rebuildMap()
   updateChart()
 }
@@ -934,8 +1060,8 @@ function drawWarningPath(nearestName: string | null) {
   const lo = Math.min(iNear, iCtm), hi = Math.max(iNear, iCtm)
   const seg = river.slice(lo, hi + 1).map(p => [p[1], p[0]] as [number, number])
 
-  const glow = L.polyline([], { color: '#E53935', weight: 12, opacity: 0.18 }).addTo(map)
-  const main = L.polyline([], { color: '#E53935', weight: 5, opacity: 0.95 }).addTo(map)
+  const glow = L.polyline([], { pane: 'warningPane', color: '#E53935', weight: 12, opacity: 0.18 }).addTo(map)
+  const main = L.polyline([], { pane: 'warningPane', color: '#E53935', weight: 5, opacity: 0.95 }).addTo(map)
   warningPathLayers.push(glow, main)
 
   let i = 1
@@ -998,22 +1124,31 @@ function applyFromPopup(name: string) {
     const v = parseFloat(popInput.value)
     levels.value[name] = isNaN(v) ? 0 : v
   }
-  updateChart()
+  onStationInput(name)
 }
 
-onMounted(() => {
+onMounted(async () => {
   isComponentAlive = true
-  // 初始化 levels
-  stationList.value.forEach(s => {
-    if (isTrigger(s)) levels.value[s.name] = 0
-  })
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+    particleEnabled.value = false
+  }
+  const stationResult = await loadHydrologyStations()
+  if (!isComponentAlive) return
+  stationList.value = cloneStations(stationResult.stations)
+  loadedStationSnapshot = cloneStations(stationResult.stations)
+  stationDataSource.value = stationResult.source
+  stationLoading.value = false
+  initializeStationLevels()
+  if (stationResult.error) {
+    console.warn('水情站点数据加载失败，已保留本地基线站点:', stationResult.error)
+  }
 
-  nextTick(() => {
-    initMap()
-    initChart()
-    observeMapSize()
-    startFlowAnimation()
-  })
+  await nextTick()
+  if (!isComponentAlive) return
+  initMap()
+  initChart()
+  observeMapSize()
+  startFlowAnimation()
 
   // 暴露给 Leaflet popup 内的 onclick
   ;(window as any).applyFromPopup = applyFromPopup
@@ -1038,7 +1173,7 @@ defineExpose({ closePopup })
 <script lang="ts">
 export default {
   name: 'WaterlogPredictionDia',
-  version: '2.0.0'
+  version: '2.2.0'
 }
 </script>
 
@@ -1159,7 +1294,7 @@ export default {
   inset: 0;
   z-index: 200;
   pointer-events: none;
-  opacity: .22;
+  opacity: .1;
   background-image:
     linear-gradient(rgba(77, 193, 255, .07) 1px, transparent 1px),
     linear-gradient(90deg, rgba(77, 193, 255, .07) 1px, transparent 1px),
@@ -1171,8 +1306,81 @@ export default {
 .flow-canvas {
   position: absolute;
   inset: 0;
-  z-index: 460;
+  z-index: 440;
   pointer-events: none;
+}
+
+.particle-toggle {
+  position: absolute;
+  right: 14px;
+  top: 16px;
+  z-index: 730;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid rgba(83, 187, 255, .34);
+  border-radius: 3px;
+  background: rgba(4, 25, 51, .86);
+  box-shadow: inset 0 0 15px rgba(41, 157, 235, .08), 0 5px 16px rgba(0, 7, 20, .3);
+  color: rgba(201, 231, 249, .78);
+  font-size: 11px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+
+  &:hover,
+  &.particle-toggle--active {
+    border-color: rgba(80, 221, 255, .68);
+    color: #e7fbff;
+  }
+}
+
+.particle-toggle__switch {
+  position: relative;
+  width: 28px;
+  height: 14px;
+  border-radius: 8px;
+  background: rgba(88, 115, 141, .56);
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, .55);
+
+  i {
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #b7c8d6;
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+  }
+}
+
+.particle-toggle--active .particle-toggle__switch {
+  background: rgba(17, 169, 226, .74);
+
+  i {
+    transform: translateX(14px);
+    background: #ecfeff;
+    box-shadow: 0 0 8px #63ecff;
+  }
+}
+
+.map-attribution {
+  position: absolute;
+  right: 12px;
+  bottom: 7px;
+  z-index: 725;
+  padding: 2px 6px;
+  border-radius: 2px;
+  background: rgba(2, 18, 37, .66);
+  color: rgba(169, 204, 226, .62);
+  font-size: 9px;
+  line-height: 1.35;
+
+  a {
+    color: rgba(126, 213, 255, .78);
+    text-decoration: none;
+  }
 }
 
 .flow-hud {
@@ -1451,13 +1659,14 @@ export default {
   box-shadow: inset 0 0 18px rgba(60, 177, 255, .12);
 
   + .station-list,
+  + .river-tabs,
   + .result {
     margin-top: 8px;
   }
 }
 
 .station-list {
-  height: 360px;
+  height: 326px;
   overflow-y: auto;
   padding: 2px 0 10px;
 
@@ -1475,21 +1684,50 @@ export default {
   }
 }
 
-.river-group {
+.river-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 6px;
+}
 
-  .river-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: #fff;
-    padding: 4px 10px;
-    border-radius: 4px;
-    margin: 10px 0 6px;
-    display: inline-block;
+.river-tab {
+  min-width: 72px;
+  height: 29px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid rgba(74, 189, 255, .38);
+  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(27, 120, 205, .92), rgba(12, 76, 145, .92));
+  box-shadow: inset 0 0 12px rgba(91, 211, 255, .12), 0 0 8px rgba(14, 111, 202, .16);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  color: #fff;
+}
 
-    &.jialing { background: #2196F3; }
-    &.yangtze { background: #FF9800; }
-  }
+.river-tab--jialing.is-active {
+  border-color: rgba(83, 205, 255, .76);
+  background: linear-gradient(180deg, #2196f3, #1377c7);
+}
+
+.river-tab--yangtze {
+  color: #ffb13b;
+  text-shadow: 0 0 7px rgba(255, 152, 0, .5);
+  cursor: default;
+}
+
+.station-loading {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(184, 217, 255, .64);
+  font-size: 12px;
 }
 
 .station-row {
@@ -2053,8 +2291,8 @@ input[type="number"] {
   }
 
   .leaflet-layer.waterlog-offline-tile .leaflet-tile {
-    opacity: .86;
-    filter: invert(.78) sepia(.72) saturate(2.2) hue-rotate(158deg) brightness(.78) contrast(1.05);
+    opacity: .7;
+    filter: invert(.82) sepia(.74) saturate(2.35) hue-rotate(158deg) brightness(.66) contrast(1.1);
   }
 
   .leaflet-pane { z-index: 400; }

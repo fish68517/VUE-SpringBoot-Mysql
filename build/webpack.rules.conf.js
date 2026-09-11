@@ -28,6 +28,10 @@ module.exports = {
         type: "asset/inline",
       },
       {
+        test: /\.geojson$/i,
+        type: "json",
+      },
+      {
         test: /\.(png|jpg|svg|gif)$/,
         type: "asset/resource",
         generator: {

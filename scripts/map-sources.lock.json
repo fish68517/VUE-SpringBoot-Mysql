@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-09-10T02:58:24.1080967Z",
+  "bboxWgs84": [105.1171875, 28.613459424004414, 109.6875, 31.353636941500987],
+  "displayCrs": "GCJ-02",
+  "sources": [
+    {
+      "id": "china-geodata-admin",
+      "url": "https://raw.githubusercontent.com/Supeset/China-GeoData/5822c4c0a0bdfd73327f9454976c8661bfd6ad9f/geojson/china_province_city_full.geojson",
+      "commit": "5822c4c0a0bdfd73327f9454976c8661bfd6ad9f",
+      "retrievedAt": "2026-09-10T02:51:55Z",
+      "bytes": 3869209,
+      "sha256": "a268d74d3fba89bcc35f9febd8843a9cb77792a3690044dc8b26f21e8acf1bcd",
+      "license": "MIT",
+      "sourceCrs": "GCJ-02"
+    },
+    {
+      "id": "osm-chongqing",
+      "url": "https://download.geofabrik.de/asia/china/chongqing-latest.osm.pbf",
+      "retrievedAt": "2026-09-10T02:52:52Z",
+      "bytes": 30821348,
+      "sha256": "28ec183b8f654754cca5a4e6592ecfa4d14327ebabd9a343e0ce2d46661936f0",
+      "license": "ODbL-1.0",
+      "sourceCrs": "WGS84"
+    },
+    {
+      "id": "osm-sichuan",
+      "url": "https://download.geofabrik.de/asia/china/sichuan-latest.osm.pbf",
+      "retrievedAt": "2026-09-10T02:53:03Z",
+      "bytes": 106340744,
+      "sha256": "96947fec77a8b97c22b38bcf74e26cbe5b1fe8cb30f84fe382d488719330ac0b",
+      "license": "ODbL-1.0",
+      "sourceCrs": "WGS84"
+    },
+    {
+      "id": "osm-guizhou",
+      "url": "https://download.openstreetmap.fr/extracts/asia/china/guizhou-latest.osm.pbf",
+      "retrievedAt": "2026-09-10T02:55:58Z",
+      "bytes": 30895624,
+      "sha256": "a0f2d214e6a5e9a359538653b25979e103a1d5a647f71cb2a56f328322c9799d",
+      "license": "ODbL-1.0",
+      "sourceCrs": "WGS84"
+    },
+    {
+      "id": "osm-hubei",
+      "url": "https://download.openstreetmap.fr/extracts/asia/china/hubei-latest.osm.pbf",
+      "retrievedAt": "2026-09-10T02:56:07Z",
+      "bytes": 58462673,
+      "sha256": "71a19e757a8224f4769660d7e2648c715cb175564881d68a1c2c6f45b514a559",
+      "license": "ODbL-1.0",
+      "sourceCrs": "WGS84"
+    },
+    {
+      "id": "osm-hunan",
+      "url": "https://download.openstreetmap.fr/extracts/asia/china/hunan-latest.osm.pbf",
+      "retrievedAt": "2026-09-10T02:56:21Z",
+      "bytes": 54112135,
+      "sha256": "149c6f96559dcc0c127ca38e51a40d5fc6d37680fc592673ae06f8ba016508ca",
+      "license": "ODbL-1.0",
+      "sourceCrs": "WGS84"
+    }
+  ]
+}
