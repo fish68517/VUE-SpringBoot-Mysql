@@ -123,12 +123,17 @@ class CallSessionService : Service() {
         startTicker()
         val sessionId = CallSessionBus.snapshot.value.sessionId
         ringbackJob = scope.launch {
+            val ringbackVideoUri = if (SettingsRepository.ENABLE_RANDOM_RINGBACK_VIDEO) {
+                settings.getRingbackVideoUris().randomOrNull()
+            } else {
+                settings.getString(SettingsRepository.RINGBACK_VIDEO_URI)
+            }
             settings.getString(SettingsRepository.PROMPT_CALLING_URI)?.let { player.play(it) }
             delay(RINGBACK_DELAY_MS)
             val current = CallSessionBus.snapshot.value
             if (current.sessionId != sessionId || current.phase != CallPhase.DIALING) return@launch
-            CallSessionBus.update(current.copy(ringbackActive = true))
-            if (settings.getString(SettingsRepository.RINGBACK_VIDEO_URI).isNullOrBlank()) {
+            CallSessionBus.update(current.copy(ringbackActive = true, ringbackVideoUri = ringbackVideoUri))
+            if (ringbackVideoUri.isNullOrBlank()) {
                 settings.getString(SettingsRepository.RINGBACK_AUDIO_URI)?.let { player.play(it, looping = true) }
             }
         }
@@ -164,7 +169,7 @@ class CallSessionService : Service() {
         player.stop()
         connectedElapsed = SystemClock.elapsedRealtime()
         connectedWall = System.currentTimeMillis()
-        CallSessionBus.update(current.copy(phase = CallPhase.CONNECTED, ringbackActive = false, callElapsedMs = 0))
+        CallSessionBus.update(current.copy(phase = CallPhase.CONNECTED, ringbackActive = false, ringbackVideoUri = null, callElapsedMs = 0))
         scope.launch {
             val promptUri = settings.getString(SettingsRepository.PROMPT_CONNECTED_URI)
             val latest = CallSessionBus.snapshot.value

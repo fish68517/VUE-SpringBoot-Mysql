@@ -26,6 +26,7 @@ data class CallSessionSnapshot(
     val location: String = "",
     val phase: CallPhase = CallPhase.IDLE,
     val ringbackActive: Boolean = false,
+    val ringbackVideoUri: String? = null,
     val callElapsedMs: Long = 0,
     val recording: Boolean = false,
     val recordingElapsedMs: Long = 0,

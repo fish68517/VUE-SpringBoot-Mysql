@@ -50,6 +50,7 @@ import androidx.compose.material.icons.automirrored.outlined.Backspace
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Dialpad
+import androidx.compose.material.icons.outlined.GraphicEq
 import androidx.compose.material.icons.outlined.MicOff
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.MoreVert
@@ -134,8 +135,8 @@ private const val DialerPanelHeightScale = 1.04f
 private val DialPadHorizontalPadding = 29.dp
 private val DialPadColumnSpacing = 12.dp
 
-// 通话缩小功能尚未确定实施；false 时隐藏入口并关闭自动画中画。
-private const val CallMinimizeVisible = false
+// true：显示通话缩小入口及顶部悬浮条；false：隐藏缩小功能。
+private const val CallMinimizeVisible = true
 
 private enum class AppScreen { DIALER, CALLING, HISTORY, RECORD_DETAIL, SETTINGS }
 
@@ -179,11 +180,11 @@ private fun DialerReplicaApp() {
     val clipboardAutoFill by settings.booleanFlow(SettingsRepository.CLIPBOARD_AUTO_FILL, true).collectAsStateWithLifecycle(initialValue = true)
     val backgroundUri by settings.stringFlow(SettingsRepository.BACKGROUND_URI).collectAsStateWithLifecycle(initialValue = null)
     val ringbackAudioUri by settings.stringFlow(SettingsRepository.RINGBACK_AUDIO_URI).collectAsStateWithLifecycle(initialValue = null)
-    val ringbackVideoUri by settings.stringFlow(SettingsRepository.RINGBACK_VIDEO_URI).collectAsStateWithLifecycle(initialValue = null)
 
     var screen by rememberSaveable { mutableStateOf(AppScreen.DIALER) }
     var digits by rememberSaveable { mutableStateOf("1") }
     var hadSession by remember { mutableStateOf(false) }
+    var callMinimized by rememberSaveable { mutableStateOf(false) }
     var lastClipboardNumber by rememberSaveable { mutableStateOf("") }
     var pendingSettingKey by remember { mutableStateOf<Preferences.Key<String>?>(null) }
     var pendingRecordId by remember { mutableStateOf<Long?>(null) }
@@ -197,9 +198,21 @@ private fun DialerReplicaApp() {
         val key = pendingSettingKey
         if (uri != null && key != null) {
             takeReadPermission(context, uri)
-            scope.launch { settings.setString(key, uri.toString()) }
+            scope.launch {
+                if (key == SettingsRepository.RINGBACK_VIDEO_URI) {
+                    settings.setSingleRingbackVideoUri(uri.toString())
+                } else {
+                    settings.setString(key, uri.toString())
+                }
+            }
         }
         pendingSettingKey = null
+    }
+    val ringbackVideoFilesLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
+        if (uris.isNotEmpty()) {
+            uris.forEach { takeReadPermission(context, it) }
+            scope.launch { settings.setRingbackVideoUris(uris.map { it.toString() }) }
+        }
     }
     val recordingFileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         val recordId = pendingRecordId
@@ -219,9 +232,10 @@ private fun DialerReplicaApp() {
     LaunchedEffect(session.phase) {
         if (session.phase != CallPhase.IDLE) {
             hadSession = true
-            screen = AppScreen.CALLING
+            if (!callMinimized) screen = AppScreen.CALLING
         } else if (hadSession) {
             hadSession = false
+            callMinimized = false
             screen = AppScreen.HISTORY
         }
     }
@@ -260,6 +274,7 @@ private fun DialerReplicaApp() {
         val normalized = normalizePhoneNumber(number)
         if (normalized.isBlank()) return
         digits = normalized
+        callMinimized = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -276,73 +291,116 @@ private fun DialerReplicaApp() {
     }
 
     fun pickSetting(key: Preferences.Key<String>, mimeTypes: Array<String>) {
-        pendingSettingKey = key
-        settingFileLauncher.launch(mimeTypes)
+        if (SettingsRepository.ENABLE_RANDOM_RINGBACK_VIDEO && key == SettingsRepository.RINGBACK_VIDEO_URI) {
+            ringbackVideoFilesLauncher.launch(mimeTypes)
+        } else {
+            pendingSettingKey = key
+            settingFileLauncher.launch(mimeTypes)
+        }
     }
 
-    when (screen) {
-        AppScreen.DIALER -> DialerScreen(
-            digits,
-            attributionRepository.lookup(digits).displayText,
-            { if (digits.length < 15) digits += it },
-            { if (digits.isNotEmpty()) digits = digits.dropLast(1) },
-            ::startCall,
-            { screen = AppScreen.HISTORY },
-        )
-        AppScreen.CALLING -> CallingScreen(
-            session,
-            backgroundUri,
-            if (session.phase == CallPhase.DIALING && session.ringbackActive) ringbackVideoUri else null,
-            !ringbackAudioUri.isNullOrBlank(),
-            ::toggleRecording,
-            { CallSessionService.toggleAction(context, it) },
-            { CallSessionService.localHangup(context) },
-            { screen = AppScreen.SETTINGS },
-            activity::enterCallPictureInPicture,
-        )
-        AppScreen.HISTORY -> CallHistoryScreen(
-            displayedRecords,
-            { if (digits.length < 15) digits += it },
-            { if (digits.isNotEmpty()) digits = digits.dropLast(1) },
-            ::startCall,
-            { screen = AppScreen.DIALER },
-            { screen = AppScreen.SETTINGS },
-            { localPlayer.toggle(it) },
-            { record ->
-                selectedRecordId = record.id
-                screen = AppScreen.RECORD_DETAIL
-            },
-            ::launchCall,
-        )
-        AppScreen.RECORD_DETAIL -> {
-            val selectedRecord = displayedRecords.firstOrNull { it.id == selectedRecordId }
-            val numberRecords = selectedRecord?.let { selected ->
-                displayedRecords.filter { it.rawNumber == selected.rawNumber }.sortedByDescending { it.endedAt }
-            }.orEmpty()
-            CallRecordDetailScreen(
-                selectedRecord,
-                numberRecords,
+    // 两个返回入口共用状态和操作，恢复当前会话，不重新发起呼叫。
+    val showCallReturnEntry = CallMinimizeVisible && screen != AppScreen.CALLING && session.phase.isActiveCall()
+    val restoreCurrentCall: () -> Unit = {
+        if (session.phase.isActiveCall()) {
+            callMinimized = false
+            screen = AppScreen.CALLING
+        }
+    }
+
+    Box(Modifier.fillMaxSize()) {
+        when (screen) {
+            AppScreen.DIALER -> DialerScreen(
+                digits,
+                attributionRepository.lookup(digits).displayText,
+                { if (digits.length < 15) digits += it },
+                { if (digits.isNotEmpty()) digits = digits.dropLast(1) },
+                ::startCall,
                 { screen = AppScreen.HISTORY },
-                { uri -> localPlayer.toggle(uri) },
-                { recordId ->
-                    if (recordId > 0) {
-                        pendingRecordId = recordId
-                        recordingFileLauncher.launch(arrayOf("audio/*"))
-                    }
-                },
-                ::launchCall,
-                { rawNumber ->
-                    selectedRecordId = null
+            )
+            AppScreen.CALLING -> CallingScreen(
+                session,
+                backgroundUri,
+                if (session.phase == CallPhase.DIALING && session.ringbackActive) session.ringbackVideoUri else null,
+                !ringbackAudioUri.isNullOrBlank(),
+                ::toggleRecording,
+                { CallSessionService.toggleAction(context, it) },
+                { CallSessionService.localHangup(context) },
+                { screen = AppScreen.SETTINGS },
+                {
+                    callMinimized = true
                     screen = AppScreen.HISTORY
-                    scope.launch(Dispatchers.IO) { database.callRecordDao().deleteByNumber(rawNumber) }
                 },
             )
+            AppScreen.HISTORY -> CallHistoryScreen(
+                displayedRecords,
+                { if (digits.length < 15) digits += it },
+                { if (digits.isNotEmpty()) digits = digits.dropLast(1) },
+                ::startCall,
+                { screen = AppScreen.DIALER },
+                { screen = AppScreen.SETTINGS },
+                { localPlayer.toggle(it) },
+                { record ->
+                    selectedRecordId = record.id
+                    screen = AppScreen.RECORD_DETAIL
+                },
+                ::launchCall,
+                showReturnToCall = showCallReturnEntry,
+                onReturnToCall = restoreCurrentCall,
+            )
+            AppScreen.RECORD_DETAIL -> {
+                val selectedRecord = displayedRecords.firstOrNull { it.id == selectedRecordId }
+                val numberRecords = selectedRecord?.let { selected ->
+                    displayedRecords.filter { it.rawNumber == selected.rawNumber }.sortedByDescending { it.endedAt }
+                }.orEmpty()
+                CallRecordDetailScreen(
+                    selectedRecord,
+                    numberRecords,
+                    { screen = AppScreen.HISTORY },
+                    { uri -> localPlayer.toggle(uri) },
+                    { recordId ->
+                        if (recordId > 0) {
+                            pendingRecordId = recordId
+                            recordingFileLauncher.launch(arrayOf("audio/*"))
+                        }
+                    },
+                    ::launchCall,
+                    { rawNumber ->
+                        selectedRecordId = null
+                        screen = AppScreen.HISTORY
+                        scope.launch(Dispatchers.IO) { database.callRecordDao().deleteByNumber(rawNumber) }
+                    },
+                )
+            }
+            AppScreen.SETTINGS -> HiddenSettingsScreen(
+                settings,
+                { screen = if (session.phase == CallPhase.IDLE || callMinimized) AppScreen.HISTORY else AppScreen.CALLING },
+                ::pickSetting,
+            )
         }
-        AppScreen.SETTINGS -> HiddenSettingsScreen(
-            settings,
-            { screen = if (session.phase == CallPhase.IDLE) AppScreen.HISTORY else AppScreen.CALLING },
-            ::pickSetting,
-        )
+        if (showCallReturnEntry) {
+            MinimizedCallPill(
+                session = session,
+                modifier = Modifier.align(Alignment.TopCenter),
+                onRestore = restoreCurrentCall,
+            )
+        }
+    }
+}
+
+private fun CallPhase.isActiveCall(): Boolean = this == CallPhase.DIALING || this == CallPhase.CONNECTED
+
+@Composable
+private fun MinimizedCallPill(session: CallSessionSnapshot, modifier: Modifier = Modifier, onRestore: () -> Unit) {
+    val statusText = if (session.phase == CallPhase.CONNECTED) formatDuration(session.callElapsedMs) else "拨号中"
+    val shape = RoundedCornerShape(22.dp)
+    Row(
+        modifier.padding(top = 7.dp).width(132.dp).height(40.dp).shadow(4.dp, shape).clip(shape).background(Color.Black).clickable(onClick = onRestore),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(Icons.Outlined.GraphicEq, "正在通话", tint = DialerGreen, modifier = Modifier.size(25.dp))
+        Text(statusText, color = DialerGreen, fontSize = 14.sp, fontWeight = FontWeight.Medium)
     }
 }
 
@@ -637,20 +695,36 @@ private fun CallingActionButton(icon: ImageVector, label: String, enabled: Boole
 }
 
 @Composable
-private fun CallHistoryScreen(records: List<CallRecordEntity>, onDigit: (String) -> Unit, onDelete: () -> Unit, onCall: () -> Unit, onOpenDialer: () -> Unit, onSettings: () -> Unit, onPlayRecording: (String) -> Unit, onOpenRecord: (CallRecordEntity) -> Unit, onRedial: (String) -> Unit) {
+private fun CallHistoryScreen(records: List<CallRecordEntity>, onDigit: (String) -> Unit, onDelete: () -> Unit, onCall: () -> Unit, onOpenDialer: () -> Unit, onSettings: () -> Unit, onPlayRecording: (String) -> Unit, onOpenRecord: (CallRecordEntity) -> Unit, onRedial: (String) -> Unit, showReturnToCall: Boolean, onReturnToCall: () -> Unit) {
     var titleTaps by remember { mutableIntStateOf(0) }
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     val visibleRecords = if (selectedTab == 0) records else records.filter(CallRecordEntity::isMissedCall)
-    Box(Modifier.fillMaxSize().background(Color.White)) {
-        Column(Modifier.fillMaxSize().statusBarsPadding().padding(horizontal = 20.dp)) {
+    Column(Modifier.fillMaxSize().background(Color.White).statusBarsPadding()) {
+        // 固定页头独立于下方拨号盘的叠放区域，返回栏不会被拨号盘覆盖。
+        Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
             Row(Modifier.fillMaxWidth().padding(top = 18.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text("电话", color = MainInk, fontSize = 30.sp, fontWeight = FontWeight.Bold, modifier = Modifier.clickable { titleTaps++; if (titleTaps >= 5) { titleTaps = 0; onSettings() } })
                 Spacer(Modifier.weight(1f))
                 Icon(Icons.Outlined.MoreVert, "更多", tint = MainInk, modifier = Modifier.size(25.dp).clickable(onClick = onSettings))
             }
             Spacer(Modifier.height(24.dp))
+            if (showReturnToCall) {
+                Box(
+                    Modifier.fillMaxWidth().height(44.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color(0xFF5BC747))
+                        .clickable(onClick = onReturnToCall)
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.CenterStart,
+                ) {
+                    Text("点击返回通话", color = Color.White, fontSize = 14.sp)
+                }
+                Spacer(Modifier.height(12.dp))
+            }
             HistoryFilterTabs(selectedTab) { selectedTab = it }
-            val listModifier = Modifier.weight(1f).fillMaxWidth().padding(top = 12.dp, bottom = 424.dp)
+        }
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            val listModifier = Modifier.fillMaxSize().padding(horizontal = 20.dp).padding(top = 12.dp, bottom = 424.dp)
             if (visibleRecords.isEmpty()) {
                 Box(listModifier, contentAlignment = Alignment.TopCenter) {
                     Text(if (selectedTab == 0) "暂无通话记录" else "暂无未接来电", color = SecondaryInk, fontSize = 14.sp, modifier = Modifier.padding(top = 30.dp))
@@ -663,8 +737,8 @@ private fun CallHistoryScreen(records: List<CallRecordEntity>, onDigit: (String)
                     }
                 }
             }
+            DialPadPanel(Modifier.align(Alignment.BottomCenter).height(424.dp), false, onDigit, onDelete, onCall, onOpenDialer)
         }
-        DialPadPanel(Modifier.align(Alignment.BottomCenter).height(424.dp), false, onDigit, onDelete, onCall, onOpenDialer)
     }
 }
 
@@ -727,13 +801,8 @@ private fun CallRecordDetailScreen(
     val detailBackground = Color(0xFFF4F5F9)
     Box(Modifier.fillMaxSize().background(detailBackground)) {
         LazyColumn(
-            Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 12.dp).padding(bottom = 86.dp),
+            Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 12.dp).padding(top = 56.dp, bottom = 86.dp),
         ) {
-            item {
-                Row(Modifier.fillMaxWidth().height(56.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回", tint = MainInk, modifier = Modifier.size(28.dp).clickable(onClick = onBack))
-                }
-            }
             item {
                 Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     Spacer(Modifier.height(10.dp))
@@ -781,6 +850,12 @@ private fun CallRecordDetailScreen(
             }
             item { Spacer(Modifier.height(12.dp)) }
         }
+        Box(
+            Modifier.align(Alignment.TopStart).statusBarsPadding().padding(start = 16.dp, top = 8.dp).size(40.dp).clickable(onClick = onBack),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回", tint = MainInk, modifier = Modifier.size(28.dp))
+        }
         DetailBottomActions(
             modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding(),
             onMore = { if (record.id > 0) onImport(record.id) },
@@ -816,7 +891,23 @@ private fun DetailQuickImageAction(drawableRes: Int, label: String, modifier: Mo
 private fun CallDetailRecordRow(record: CallRecordEntity, onPlay: (String) -> Unit) {
     Column(Modifier.fillMaxWidth().padding(vertical = 11.dp)) {
         Text(displayDetailTime(record.endedAt), color = MainInk, fontSize = 18.sp, fontWeight = FontWeight.Medium)
-        Text("▸ HD  ${record.formattedNumber}", color = SecondaryInk, fontSize = 12.sp, modifier = Modifier.padding(top = 5.dp))
+        Row(Modifier.padding(top = 5.dp), verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(R.drawable.detail_call_type),
+                contentDescription = "电话类型",
+                modifier = Modifier.width(18.dp).height(16.dp),
+                contentScale = ContentScale.Fit,
+            )
+            Spacer(Modifier.width(3.dp))
+            Image(
+                painter = painterResource(R.drawable.detail_hd),
+                contentDescription = "HD 通话",
+                modifier = Modifier.size(16.dp),
+                contentScale = ContentScale.Fit,
+            )
+            Spacer(Modifier.width(5.dp))
+            Text(record.formattedNumber, color = SecondaryInk, fontSize = 12.sp)
+        }
         Text(detailRecordResult(record), color = SecondaryInk, fontSize = 13.sp, modifier = Modifier.padding(top = 3.dp))
         record.recordingUri?.let { uri ->
             Text("▶ 录音 ${formatDuration(record.recordingDurationMs)}", color = DialerGreen, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp).clickable { onPlay(uri) })
@@ -890,9 +981,20 @@ private fun HiddenSettingsScreen(settings: SettingsRepository, onBack: () -> Uni
             }
             HorizontalDivider()
             Text("本地媒体", fontSize = 17.sp, fontWeight = FontWeight.Bold)
-            mediaRows.forEach { (label, key, types) -> MediaSettingRow(label, settings, key) { onPick(key, types) } }
+            mediaRows.forEach { (label, key, types) ->
+                if (SettingsRepository.ENABLE_RANDOM_RINGBACK_VIDEO && key == SettingsRepository.RINGBACK_VIDEO_URI) {
+                    RingbackVideoSettingRow(settings) { onPick(key, types) }
+                } else {
+                    MediaSettingRow(label, settings, key) { onPick(key, types) }
+                }
+            }
             TextButton({ scope.launch { settings.clearMedia() } }, Modifier.fillMaxWidth()) { Text("恢复全部默认媒体", color = HangupRed) }
-            Text("所有文件通过系统文件选择器导入；资源失效时自动使用默认背景和提示。", color = SecondaryInk, fontSize = 12.sp)
+            Text(
+                if (SettingsRepository.ENABLE_RANDOM_RINGBACK_VIDEO) "彩铃视频支持多选，每次拨号会从已保存视频中随机选择一首。其他资源失效时自动使用默认背景和提示。"
+                else "所有文件通过系统文件选择器导入；资源失效时自动使用默认背景和提示。",
+                color = SecondaryInk,
+                fontSize = 12.sp,
+            )
         }
     }
 }
@@ -913,7 +1015,30 @@ private fun MediaSettingRow(label: String, settings: SettingsRepository, key: Pr
     val value by settings.stringFlow(key).collectAsStateWithLifecycle(initialValue = null)
     Row(Modifier.fillMaxWidth().height(52.dp), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) { Text(label, color = MainInk, fontSize = 15.sp); Text(if (value.isNullOrBlank()) "使用默认" else "已设置", color = SecondaryInk, fontSize = 11.sp) }
-        if (!value.isNullOrBlank()) TextButton({ scope.launch { settings.setString(key, null) } }) { Text("清除") }
+        if (!value.isNullOrBlank()) {
+            TextButton({
+                scope.launch {
+                    if (key == SettingsRepository.RINGBACK_VIDEO_URI) settings.setSingleRingbackVideoUri(null)
+                    else settings.setString(key, null)
+                }
+            }) { Text("清除") }
+        }
+        Button(onPick) { Text("选择文件") }
+    }
+}
+
+@Composable
+private fun RingbackVideoSettingRow(settings: SettingsRepository, onPick: () -> Unit) {
+    val scope = rememberCoroutineScope()
+    val values by settings.ringbackVideoUrisFlow().collectAsStateWithLifecycle(initialValue = emptySet())
+    Row(Modifier.fillMaxWidth().height(52.dp), verticalAlignment = Alignment.CenterVertically) {
+        Column(Modifier.weight(1f)) {
+            Text("彩铃视频", color = MainInk, fontSize = 15.sp)
+            Text(if (values.isEmpty()) "使用默认" else "已保存 ${values.size} 个", color = SecondaryInk, fontSize = 11.sp)
+        }
+        if (values.isNotEmpty()) {
+            TextButton({ scope.launch { settings.setRingbackVideoUris(emptyList()) } }) { Text("清除") }
+        }
         Button(onPick) { Text("选择文件") }
     }
 }
