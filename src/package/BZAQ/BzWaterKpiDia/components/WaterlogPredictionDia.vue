@@ -171,7 +171,7 @@
         </div>
         <div class="result">
           <div v-if="!result" class="hint" style="padding:0;">
-            输入某站水位后点击「计算预警」。<br>仅可输入一个站点，其他站点将自动锁定。
+            输入站点水位后点击「计算预警」。<br>{{ stationInputHint }}
           </div>
           <template v-else>
             <div
@@ -418,6 +418,9 @@ const calculating = ref(false)
 const lockedStation = ref('')
 let isComponentAlive = false
 
+// true：允许多个站点自由输入，计算时只采用数值最大的站点；false：保持原单站锁定逻辑。
+const ENABLE_FREE_STATION_INPUT = true
+
 const resultColor = computed(() => {
   if (!result.value) return '#9E9E9E'
   return LEVEL_COLOR[result.value.levelName] || '#9E9E9E'
@@ -432,6 +435,10 @@ const chaotianmenLevel = computed(() => {
 const unavailableStationNames = computed(() => stationList.value
   .filter(station => !hasThresholds(station))
   .map(station => station.name))
+
+const stationInputHint = computed(() => ENABLE_FREE_STATION_INPUT
+  ? '可自由输入多个站点，计算时仅采用水位数值最大的站点。'
+  : '仅可输入一个站点，其他站点将自动锁定。')
 
 function hasThresholds(station: Station): boolean {
   return station.warning != null && station.guarantee != null
@@ -454,12 +461,19 @@ function fmtThr(v: number | null | undefined): string {
 // ---- 单站点输入锁定逻辑 ----
 // 判断某个站点的输入框是否可编辑
 function isInputDisabled(stationName: string): boolean {
+  if (ENABLE_FREE_STATION_INPUT) return false
   if (!lockedStation.value) return false
   return lockedStation.value !== stationName
 }
 
 // 输入时检查锁定状态
 function onStationInput(stationName: string) {
+  if (ENABLE_FREE_STATION_INPUT) {
+    lockedStation.value = ''
+    updateChart()
+    return
+  }
+
   const value = normalizeNumber(levels.value[stationName])
   if (value !== null && value !== 0) {
     // 有值了，锁定其他站点
@@ -504,8 +518,43 @@ function escapeHtml(value: string) {
   }[char] || char))
 }
 
-function getLocalWarningResult() {
-  const localResult = evaluateWarning(stationList.value, levels.value)
+function getMaxInputStation() {
+  return stationList.value.reduce<Station | null>((selected, station) => {
+    if (!isTrigger(station)) return selected
+    const value = normalizeNumber(levels.value[station.name])
+    if (value === null || value <= 0) return selected
+    if (!selected) return station
+    const selectedValue = normalizeNumber(levels.value[selected.name]) || 0
+    return value > selectedValue ? station : selected
+  }, null)
+}
+
+function getCalculationContext() {
+  if (!ENABLE_FREE_STATION_INPUT) {
+    return {
+      levels: levels.value,
+      stationName: lockedStation.value || undefined
+    }
+  }
+
+  const maxStation = getMaxInputStation()
+  const calculationLevels = Object.fromEntries(
+    stationList.value.map(station => [
+      station.name,
+      maxStation && station.name === maxStation.name
+        ? normalizeNumber(levels.value[station.name]) || 0
+        : 0
+    ])
+  )
+
+  return {
+    levels: calculationLevels,
+    stationName: maxStation?.name
+  }
+}
+
+function getLocalWarningResult(calculationLevels: Record<string, number> = levels.value) {
+  const localResult = evaluateWarning(stationList.value, calculationLevels)
   localResult.arrivalTime = fmtHours(localResult.arrivalHours)
   localResult.warningTime = localResult.warningImmediate ? '已不足1小时(立即)' : fmtHours(localResult.warningHours)
   return localResult
@@ -960,12 +1009,16 @@ async function calc() {
   if (calculating.value) return
   calculating.value = true
   simulateRise.value = null
-  simulateStationName.value = lockedStation.value
+  const calculationContext = getCalculationContext()
+  simulateStationName.value = calculationContext.stationName || ''
 
   try {
     await nextTick()
     if (!isComponentAlive) return
-    applyWarningResult(getLocalWarningResult(), lockedStation.value || undefined)
+    applyWarningResult(
+      getLocalWarningResult(calculationContext.levels),
+      calculationContext.stationName
+    )
   } finally {
     if (isComponentAlive) calculating.value = false
   }
