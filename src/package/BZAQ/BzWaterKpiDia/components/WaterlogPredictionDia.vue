@@ -60,6 +60,17 @@
           <span class="particle-toggle__switch" aria-hidden="true"><i></i></span>
           粒子动画
         </button>
+        <button
+          class="particle-toggle chongqing-toggle"
+          type="button"
+          :class="{ 'particle-toggle--active': chongqingOnly }"
+          :aria-pressed="chongqingOnly"
+          title="开启后仅显示重庆行政边界内的地图和河网，关闭恢复原范围"
+          @click.stop="toggleChongqingOnly"
+        >
+          <span class="particle-toggle__switch" aria-hidden="true"><i></i></span>
+          重庆
+        </button>
         <div class="map-attribution">
           行政区：China-GeoData · 河网：
           <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">
@@ -268,6 +279,40 @@ let flowAnimationFrame: number | null = null
 let mapResizeObserver: ResizeObserver | null = null
 let mapResizeTimer: ReturnType<typeof setTimeout> | null = null
 const particleEnabled = ref(true)
+const chongqingOnly = ref(false)
+// 将重庆各区县组成裁剪区域；瓦片、河网、站点及粒子统一裁剪，跨界河流不会整条保留。
+const chongqingPolygons = (adminGeoJson as any).features
+  .filter((feature: any) => String(feature.properties?.adcode).startsWith('50'))
+  .flatMap((feature: any) => feature.geometry.type === 'MultiPolygon'
+    ? feature.geometry.coordinates : [feature.geometry.coordinates]) as number[][][][]
+
+function updateChongqingClip() {
+  if (!map) return
+  const pane = map.getPane('mapPane')
+  const canvas = flowCanvasRef.value
+  if (!pane) return
+  if (!chongqingOnly.value) {
+    pane.style.clipPath = ''
+    if (canvas) canvas.style.clipPath = ''
+    return
+  }
+  function boundaryPath(container: boolean) {
+    return chongqingPolygons.flatMap(polygon => polygon.map(ring =>
+      ring.map(([lng, lat], index) => {
+        const p = container ? map!.latLngToContainerPoint([lat, lng]) : map!.latLngToLayerPoint([lat, lng])
+        return `${index ? 'L' : 'M'}${p.x} ${p.y}`
+      }).join(' ') + ' Z'
+    )).join(' ')
+  }
+  // mapPane 使用图层坐标，独立粒子画布使用容器坐标；拖动、缩放时同步更新。
+  pane.style.clipPath = `path(evenodd, "${boundaryPath(false)}")`
+  if (canvas) canvas.style.clipPath = `path(evenodd, "${boundaryPath(true)}")`
+}
+
+function toggleChongqingOnly() {
+  chongqingOnly.value = !chongqingOnly.value
+  updateChongqingClip()
+}
 
 // 离线高德瓦片实际按 z/y/x.jpg 存放，Leaflet 查找键统一转换为 x/y。
 const OFFLINE_TILE_CONFIG = {
@@ -785,6 +830,7 @@ function buildProjectedPath(river: [number, number][], color: string): FlowPath 
 }
 
 function refreshFlowGeometry() {
+  updateChongqingClip()
   const canvas = flowCanvasRef.value
   const host = mapRef.value
   if (!canvas || !host || !map) return
@@ -1362,6 +1408,8 @@ export default {
   z-index: 440;
   pointer-events: none;
 }
+
+.chongqing-toggle { margin-top: 48px; }
 
 .particle-toggle {
   position: absolute;

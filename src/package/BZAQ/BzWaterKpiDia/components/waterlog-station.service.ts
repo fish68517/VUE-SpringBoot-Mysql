@@ -13,6 +13,10 @@ import {
 const HYDROLOGY_BASE_URL = 'http://23.210.227.34:23343/yzqzlzx'
 export const ALL_STATION_URL = `${HYDROLOGY_BASE_URL}/api/boot/system/common/getAllHydrologyStationInfo`
 
+// 水情接口诊断日志开关：false 不打印、不上传、不生成日志文件；true 恢复调试日志。
+// 仅控制日志，不影响真实接口请求、站点数据和错误返回；已有日志文件不会删除。
+export const ENABLE_STATION_DIAGNOSTIC_LOG = false
+
 type RawStation = Record<string, any>
 
 export type StationDataSource = 'base' | 'mock' | 'api'
@@ -74,7 +78,7 @@ export function normalizeAndMergeStations(
   const rawStationMap = new Map<string, RawStation>()
   rawStations.forEach(rawStation => {
     if (!rawStation || typeof rawStation !== 'object') return
-    const name = normalizeStationName(rawStation.stnmShort || rawStation.stnm)
+    const name = normalizeStationName(rawStation.stnm || rawStation.stnmShort)
     if (name) rawStationMap.set(name, rawStation)
   })
 
@@ -99,10 +103,11 @@ export function normalizeAndMergeStations(
 
     const longitude = firstFiniteNumber(rawStation.lon, rawStation.lgtd)
     const latitude = firstFiniteNumber(rawStation.lat, rawStation.lttd)
-    const warning = firstPositiveNumber(rawStation.ivhz, rawStation.wrz, rawStation.ogrsw, rawStation.taz)
+    const warning = firstPositiveNumber(rawStation.ivhz)
     const guarantee = firstPositiveNumber(rawStation.grz)
     const distance = firstFiniteNumber(rawStation.dist, rawStation.distance)
-    const currentLevel = firstFiniteNumber(rawStation.z, rawStation.sw)
+    // Postman 实际响应使用小写 z；兼容明确的同名大写 Z，不能用 sw 替代。
+    const currentLevel = firstFiniteNumber(rawStation.z, rawStation.Z)
     const stationCodeValue = rawStation.stcd ?? rawStation.reqStcd
 
     return [{
@@ -154,7 +159,10 @@ export async function loadHydrologyStations(): Promise<StationLoadResult> {
   let httpStatus: number | null = null
   let output: StationLoadResult
   try {
-    const response = await axios.post(ALL_STATION_URL, null, { timeout: 10000 })
+    const response = await axios.post(
+      process.env.NODE_ENV === 'development' ? '/__waterlog_api/api/boot/system/common/getAllHydrologyStationInfo' : ALL_STATION_URL,
+      null, { timeout: 10000 }
+    )
     rawResponse = response.data
     httpStatus = response.status
     output = {
@@ -172,6 +180,8 @@ export async function loadHydrologyStations(): Promise<StationLoadResult> {
       error: error instanceof Error ? error : new Error(String(error))
     }
   }
+  if (!ENABLE_STATION_DIAGNOSTIC_LOG) return output
+
   const diagnostic = {
     日志类型: '水情站点接口诊断',
     记录时间: new Date().toISOString(),
@@ -181,7 +191,7 @@ export async function loadHydrologyStations(): Promise<StationLoadResult> {
     耗时毫秒: Date.now() - started,
     结果: output.error ? '请求或响应解析失败' : output.stations.some(s => s.missingFields?.length) ? '接口返回，但部分站点缺少数据' : '站点数据完整',
     错误说明: output.error?.message ?? null,
-    排查提示: httpStatus === null ? '未收到HTTP响应，请检查接口网络、服务状态、浏览器跨域或混合内容拦截；不能仅凭此断定后端错误。' : '对照接口原始响应和站点检查，确认站名及 z/sw、ivhz/wrz、grz 字段。',
+    排查提示: httpStatus === null ? '未收到HTTP响应，请检查接口网络、服务状态；本地开发通过同源代理请求，避免浏览器跨域限制。' : '对照接口原始响应和站点检查，确认 stnm、z（或Z）、ivhz、grz 字段。',
     接口原始响应: rawResponse,
     站点检查: output.stations.map(station => ({
       站名: station.name,

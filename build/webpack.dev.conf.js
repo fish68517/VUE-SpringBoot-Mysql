@@ -49,7 +49,16 @@ module.exports = merge(WebpackBaseConfig, {
       // logging: 'warn',
       overlay: false
     },
-    proxy: config.proxy
+    proxy: {
+      ...config.proxy,
+      // 仅代理水情接口，避免 Postman 正常但浏览器被跨域限制；不改变真实数据。
+      '/__waterlog_api': {
+        target: 'http://23.210.227.34:23343',
+        changeOrigin: true,
+        pathRewrite: { '^/__waterlog_api': '/yzqzlzx' },
+        proxyTimeout: 10000
+      }
+    }
   },
   plugins: [
     new HtmlWebpackPlugin({
