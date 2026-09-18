@@ -32,7 +32,7 @@ function normalizeStationName(value: unknown): string {
 
 function firstFiniteNumber(...values: unknown[]): number | null {
   for (const value of values) {
-    if (value === '' || value === null || value === undefined) continue
+    if (value === null || value === undefined || typeof value === 'boolean' || (typeof value === 'string' && !value.trim())) continue
     const numberValue = Number(value)
     if (Number.isFinite(numberValue)) return numberValue
   }
@@ -41,7 +41,7 @@ function firstFiniteNumber(...values: unknown[]): number | null {
 
 function firstPositiveNumber(...values: unknown[]): number | null {
   for (const value of values) {
-    if (value === '' || value === null || value === undefined) continue
+    if (value === null || value === undefined || typeof value === 'boolean' || (typeof value === 'string' && !value.trim())) continue
     const parsed = Number(value)
     if (Number.isFinite(parsed) && parsed > 0) return parsed
   }
@@ -73,6 +73,7 @@ export function normalizeAndMergeStations(
 ): Station[] {
   const rawStationMap = new Map<string, RawStation>()
   rawStations.forEach(rawStation => {
+    if (!rawStation || typeof rawStation !== 'object') return
     const name = normalizeStationName(rawStation.stnmShort || rawStation.stnm)
     if (name) rawStationMap.set(name, rawStation)
   })
@@ -86,10 +87,12 @@ export function normalizeAndMergeStations(
     if (!rawStation) {
       return [{
         ...baseStation,
-        source: 'base' as const,
+        warning: null,
+        guarantee: null,
+        z: null,
+        source,
         missingFields: [
-          ...(baseStation.warning == null ? ['warning'] : []),
-          ...(baseStation.guarantee == null ? ['guarantee'] : [])
+          '站点未返回', '当前水位', '警戒水位', '保证水位'
         ]
       }]
     }
@@ -97,8 +100,7 @@ export function normalizeAndMergeStations(
     const longitude = firstFiniteNumber(rawStation.lon, rawStation.lgtd)
     const latitude = firstFiniteNumber(rawStation.lat, rawStation.lttd)
     const warning = firstPositiveNumber(rawStation.ivhz, rawStation.wrz, rawStation.ogrsw, rawStation.taz)
-      ?? baseStation.warning
-    const guarantee = firstPositiveNumber(rawStation.grz) ?? baseStation.guarantee
+    const guarantee = firstPositiveNumber(rawStation.grz)
     const distance = firstFiniteNumber(rawStation.dist, rawStation.distance)
     const currentLevel = firstFiniteNumber(rawStation.z, rawStation.sw)
     const stationCodeValue = rawStation.stcd ?? rawStation.reqStcd
@@ -110,14 +112,15 @@ export function normalizeAndMergeStations(
       dist: distance !== null && distance >= 0 ? distance : baseStation.dist,
       warning,
       guarantee,
-      z: currentLevel ?? baseStation.z ?? null,
+      z: currentLevel,
       stcd: stationCodeValue === null || stationCodeValue === undefined
         ? baseStation.stcd
         : String(stationCodeValue),
       source,
       missingFields: [
-        ...(warning == null ? ['warning'] : []),
-        ...(guarantee == null ? ['guarantee'] : [])
+        ...(currentLevel == null ? ['当前水位'] : []),
+        ...(warning == null ? ['警戒水位'] : []),
+        ...(guarantee == null ? ['保证水位'] : [])
       ]
     }]
   })
@@ -126,7 +129,7 @@ export function normalizeAndMergeStations(
 function cloneBaseStations(): Station[] {
   return DISPLAY_ROUTE_ORDER.flatMap(name => {
     const station = STATIONS.find(item => item.name === name)
-    return station ? [{ ...station, source: 'base' as const }] : []
+    return station ? [{ ...station, warning: null, guarantee: null, z: null, source: 'base' as const }] : []
   })
 }
 
@@ -146,17 +149,59 @@ export async function loadHydrologyStations(): Promise<StationLoadResult> {
     }
   }
 
+  const started = Date.now()
+  let rawResponse: unknown = null
+  let httpStatus: number | null = null
+  let output: StationLoadResult
   try {
     const response = await axios.post(ALL_STATION_URL, null, { timeout: 10000 })
-    return {
+    rawResponse = response.data
+    httpStatus = response.status
+    output = {
       stations: normalizeAndMergeStations(getRawStations(response), 'api'),
       source: 'api'
     }
   } catch (error) {
-    return {
+    if (axios.isAxiosError(error)) {
+      httpStatus = error.response?.status ?? null
+      rawResponse = error.response?.data ?? rawResponse
+    }
+    output = {
       stations: cloneBaseStations(),
       source: 'base',
       error: error instanceof Error ? error : new Error(String(error))
     }
   }
+  const diagnostic = {
+    日志类型: '水情站点接口诊断',
+    记录时间: new Date().toISOString(),
+    说明: '当前水位缺失或请求失败时留空；不使用模拟水位或本地阈值兜底。坐标和距离缺失时沿用地图基础定位资料。',
+    请求: { 地址: ALL_STATION_URL, 方法: 'POST', 参数: null, 超时毫秒: 10000 },
+    HTTP状态: httpStatus,
+    耗时毫秒: Date.now() - started,
+    结果: output.error ? '请求或响应解析失败' : output.stations.some(s => s.missingFields?.length) ? '接口返回，但部分站点缺少数据' : '站点数据完整',
+    错误说明: output.error?.message ?? null,
+    排查提示: httpStatus === null ? '未收到HTTP响应，请检查接口网络、服务状态、浏览器跨域或混合内容拦截；不能仅凭此断定后端错误。' : '对照接口原始响应和站点检查，确认站名及 z/sw、ivhz/wrz、grz 字段。',
+    接口原始响应: rawResponse,
+    站点检查: output.stations.map(station => ({
+      站名: station.name,
+      当前水位: station.z ?? null,
+      警戒水位: station.warning,
+      保证水位: station.guarantee,
+      缺失项目: station.missingFields ?? (output.error ? ['接口失败，数据不可用'] : []),
+      数据来源: station.source
+    }))
+  }
+  // 不记录请求头，避免把登录凭据写入日志。
+  const json = JSON.stringify(diagnostic, (key, value) => /token|authorization|password|cookie|secret/i.test(key) ? '[已隐藏]' : value, 2)
+  console.info(json)
+  if (process.env.NODE_ENV === 'development') {
+    try {
+      const saved = await axios.post('/__waterlog_diagnostics', JSON.parse(json), { timeout: 3000 })
+      console.info(JSON.stringify({ 水情日志保存成功: saved.data }, null, 2))
+    } catch (error) {
+      console.error(JSON.stringify({ 水情日志保存失败: error instanceof Error ? error.message : String(error), 处理方式: '请重启 npm run dev；原始诊断JSON仍保留在控制台。' }, null, 2))
+    }
+  }
+  return output
 }

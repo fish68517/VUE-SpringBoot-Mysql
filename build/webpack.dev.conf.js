@@ -34,6 +34,9 @@ module.exports = merge(WebpackBaseConfig, {
     runtimeChunk: 'single'
   },
   devServer: {
+    onBeforeSetupMiddleware(server) {
+      require('./waterlog-log-middleware').install(server.app)
+    },
     static: {
       directory: path.join(__dirname, '../static'),
       watch: true

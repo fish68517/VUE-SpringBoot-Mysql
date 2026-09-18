@@ -6,3 +6,4 @@ dist
 *.local
 scripts/map-source/
 scripts/.map-venv/
+src/package/BZAQ/BzHFAndwelding/水情接口日志_*.json

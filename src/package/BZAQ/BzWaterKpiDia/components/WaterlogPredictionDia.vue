@@ -89,35 +89,32 @@
             role="tab"
             aria-selected="true"
           >嘉陵江</button>
-          <span
-            class="river-tab river-tab--yangtze"
-            role="tab"
-            aria-disabled="true"
-            title="长江站点已合并显示在下方列表"
-          >长江</span>
         </div>
         <div class="station-list">
           <div v-if="stationLoading" class="station-loading">站点数据加载中...</div>
           <template v-else>
-            <div
-              v-for="s in stationList"
-              :key="s.name"
-              class="station-row"
-              :class="{ 'no-threshold': !hasThresholds(s) }"
-            >
-              <span class="dot" :style="{ background: markerColor(s) }"></span>
-              <span class="name">{{ s.name }}</span>
-              <span class="info">
-                警戒 {{ fmtThr(s.warning) }} / 保证 {{ fmtThr(s.guarantee) }}<br>{{ s.dist }} km
-              </span>
-              <input
-                v-model.number="levels[s.name]"
-                :disabled="!isTrigger(s) || isInputDisabled(s.name)"
-                type="number"
-                step="0.1"
-                @input="onStationInput(s.name)"
-              />
-            </div>
+            <template v-for="s in stationList" :key="s.name">
+              <div v-if="s.name === '泸州（三）'" class="river-tabs" aria-label="长江站点">
+                <span class="river-tab river-tab--yangtze">长江</span>
+              </div>
+              <div
+                class="station-row"
+                :class="{ 'no-threshold': !hasThresholds(s) }"
+              >
+                <span class="dot" :style="{ background: markerColor(s) }"></span>
+                <span class="name">{{ s.name }}</span>
+                <span class="info">
+                  警戒 {{ fmtThr(s.warning) }} / 保证 {{ fmtThr(s.guarantee) }}<br>{{ s.dist }} km
+                </span>
+                <input
+                  v-model.number="levels[s.name]"
+                  :disabled="!isTrigger(s) || isInputDisabled(s.name)"
+                  type="number"
+                  step="0.1"
+                  @input="onStationInput(s.name)"
+                />
+              </div>
+            </template>
           </template>
         </div>
 
@@ -406,7 +403,7 @@ const stationList = ref<Station[]>(STATIONS.map(station => ({ ...station })))
 let loadedStationSnapshot: Station[] = STATIONS.map(station => ({ ...station }))
 const stationLoading = ref(true)
 const stationDataSource = ref<StationDataSource>('base')
-const levels = ref<Record<string, number>>({})
+const levels = ref<Record<string, number | null | string>>({})
 const result = ref<WarningResult | null>(null)
 const caojieFlow = ref<number | null>(null)
 const rainCount = ref<number | null>(null)
@@ -493,9 +490,9 @@ function cloneStations(stations: Station[]): Station[] {
 }
 
 function initializeStationLevels() {
-  const nextLevels: Record<string, number> = {}
+  const nextLevels: Record<string, number | null> = {}
   stationList.value.forEach(station => {
-    nextLevels[station.name] = 0
+    nextLevels[station.name] = normalizeNumber(station.z)
   })
   levels.value = nextLevels
   lockedStation.value = ''
@@ -532,7 +529,10 @@ function getMaxInputStation() {
 function getCalculationContext() {
   if (!ENABLE_FREE_STATION_INPUT) {
     return {
-      levels: levels.value,
+      levels: Object.fromEntries(stationList.value.map(station => [
+        station.name,
+        station.name === lockedStation.value ? normalizeNumber(levels.value[station.name]) ?? 0 : 0
+      ])),
       stationName: lockedStation.value || undefined
     }
   }
@@ -553,7 +553,7 @@ function getCalculationContext() {
   }
 }
 
-function getLocalWarningResult(calculationLevels: Record<string, number> = levels.value) {
+function getLocalWarningResult(calculationLevels: Record<string, number>) {
   const localResult = evaluateWarning(stationList.value, calculationLevels)
   localResult.arrivalTime = fmtHours(localResult.arrivalHours)
   localResult.warningTime = localResult.warningImmediate ? '已不足1小时(立即)' : fmtHours(localResult.warningHours)
@@ -923,7 +923,7 @@ function popupHtml(s: Station): string {
     保证水位：${fmtThr(s.guarantee)} m`
   if (isTrigger(s)) {
     html += `<br><div style="display:flex;gap:4px;align-items:center;margin-top:2px;">
-      <input id="pop_${s.name}" type="number" step="0.1" value="${levels.value[s.name] ?? 0}" style="width:78px;padding:4px;border:1px solid #ccc;border-radius:3px;">
+      <input id="pop_${s.name}" type="number" step="0.1" value="${levels.value[s.name] ?? ''}" style="width:78px;padding:4px;border:1px solid #ccc;border-radius:3px;">
       <button onclick="applyFromPopup('${s.name}')" style="padding:4px 8px;border:none;border-radius:3px;background:#2196F3;color:#fff;cursor:pointer;">设置</button>
     </div>`
   }
@@ -974,7 +974,7 @@ function updateChart() {
       {
         name: '当前水位',
         type: 'line',
-        data: trigger.map(s => levels.value[s.name] || 0),
+        data: trigger.map(s => normalizeNumber(levels.value[s.name])),
         itemStyle: { color: '#E53935' },
         areaStyle: { color: 'rgba(229,57,53,.10)' },
         smooth: true,
@@ -1175,7 +1175,7 @@ function applyFromPopup(name: string) {
   const popInput = document.getElementById('pop_' + name) as HTMLInputElement | null
   if (popInput) {
     const v = parseFloat(popInput.value)
-    levels.value[name] = isNaN(v) ? 0 : v
+    levels.value[name] = isNaN(v) ? null : v
   }
   onStationInput(name)
 }
@@ -1193,7 +1193,7 @@ onMounted(async () => {
   stationLoading.value = false
   initializeStationLevels()
   if (stationResult.error) {
-    console.warn('水情站点数据加载失败，已保留本地基线站点:', stationResult.error)
+    console.warn(JSON.stringify({ 水情加载失败: stationResult.error.message, 处理结果: '水位和阈值留空，保留站点名称及地图定位' }, null, 2))
   }
 
   await nextTick()

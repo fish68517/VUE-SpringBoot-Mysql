@@ -3,7 +3,7 @@
  *
  * 注意：MOCK-* 编码和补齐的阈值只用于 UI/算法调试，不能作为真实水文数据使用。
  */
-export const USE_STATION_MOCK = true
+export const USE_STATION_MOCK = false
 
 export const MOCK_ALL_HYDROLOGY_RESPONSE = {
   traceId: 'waterlog-station-mock',
