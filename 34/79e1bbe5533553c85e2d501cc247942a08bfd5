@@ -1,0 +1,277 @@
+code/.gitignore
+  s_0da89cee3dd4c6::t_a373a86884c28c 1-7
+code/.prettierignore
+  s_0da89cee3dd4c6::t_0c6cc37e70a129 1-7
+code/.prettierrc.json
+  s_0da89cee3dd4c6::t_7df94241114d70 1
+code/App.vue
+  s_0da89cee3dd4c6::t_f2100e0480ec18 1-19
+code/README.md
+  s_0da89cee3dd4c6::t_d853e84585406a 1-76
+code/account/permissions.json
+  s_0da89cee3dd4c6::t_e3e78911360142 1-18
+code/account/roles.json
+  s_0da89cee3dd4c6::t_c86fb8184ba06e 1-14
+code/account/users.json
+  s_0da89cee3dd4c6::t_c32c8f05f38ddf 1-166
+code/components/AlarmPanel.vue
+  s_0da89cee3dd4c6::t_34b798f7866238 1-276
+code/components/DevicePanel.vue
+  s_0da89cee3dd4c6::t_8d1cd27ca24b0c 1-194
+code/components/DmaPanel.vue
+  s_0da89cee3dd4c6::t_fc6fd742b4c8b1 1-166
+code/components/InspectionTools.vue
+  s_0da89cee3dd4c6::t_508a2dff9ef1b7 1-329
+code/components/MapCanvas.vue
+  s_0da89cee3dd4c6::t_b66897967dc502 1-57
+code/components/MapManagement.vue
+  s_0da89cee3dd4c6::t_1d7cceb4362712 1-386
+code/components/MapPanel.vue
+  s_0da89cee3dd4c6::t_b909202055e8aa 1-332
+code/components/OperationsPanel.vue
+  s_0da89cee3dd4c6::t_fd7e620e8765d3 1-340
+code/components/OrderPanel.vue
+  s_0da89cee3dd4c6::t_e5395daeadbf59 1-286
+code/components/PageHost.vue
+  s_0da89cee3dd4c6::t_3d261189edd6ef 1-85
+code/components/PortalPanel.vue
+  s_0da89cee3dd4c6::t_9fe79781ebe4e0 1-213
+code/components/ReportsPanel.vue
+  s_0da89cee3dd4c6::t_698af5d580e1b8 1-171
+code/components/SelectField.vue
+  s_0da89cee3dd4c6::t_b4c2f755aea8ea 1-50
+code/components/SettingsPanel.vue
+  s_0da89cee3dd4c6::t_5efcc50c6b03cc 1-128
+code/components/StatusTag.vue
+  s_0da89cee3dd4c6::t_4b53a2ad2de3dc 1-28
+code/components/TaskPanel.vue
+  s_0da89cee3dd4c6::t_ad75fa0978038f 1-429
+code/components/VideoPanel.vue
+  s_0da89cee3dd4c6::t_02e57c9bba92d7 1-78
+code/data/alarms.json
+  s_0da89cee3dd4c6::t_348c0c267f40f7 1-632
+code/data/approvals.json
+  s_0da89cee3dd4c6::t_ef391817556386 1
+code/data/assets/attachments.json
+  s_0da89cee3dd4c6::t_0ad85f441ee115 1-7
+code/data/assets/inspection.svg
+  s_0da89cee3dd4c6::t_3537e1c3cf5fed 1
+code/data/devices.json
+  s_0da89cee3dd4c6::t_5c0fe10b22ba60 1-272
+code/data/dictionaries.json
+  s_0da89cee3dd4c6::t_b592e06b14cea7 1-57
+code/data/dma.json
+  s_0da89cee3dd4c6::t_ac413787e977c8 1-114
+code/data/facilities.json
+  s_0da89cee3dd4c6::t_11881da62dac37 1-1802
+code/data/inspection-routes.json
+  s_0da89cee3dd4c6::t_7b4cccb176dcb4 1-62
+code/data/inspection-templates.json
+  s_0da89cee3dd4c6::t_b7e6c4060d74ee 1-37
+code/data/inspections.json
+  s_0da89cee3dd4c6::t_e0a66fe2b326a7 1-986
+code/data/manifest.json
+  s_0da89cee3dd4c6::t_6b5d661ce743b2 1-8
+code/data/metrics/series.json
+  s_0da89cee3dd4c6::t_4f85443aacd959 1-3092
+code/data/metrics/usage.json
+  s_0da89cee3dd4c6::t_fe3d98f34192ab 1-872
+code/data/notifications.json
+  s_0da89cee3dd4c6::t_573eb5bc4da843 1
+code/data/operation-logs.json
+  s_0da89cee3dd4c6::t_fda29dba0ab4eb 1
+code/data/phase2.json
+  s_0da89cee3dd4c6::t_afe8c806c8e885 1-6614
+code/data/pipes.json
+  s_0da89cee3dd4c6::t_356f2ee83cb16d 1-3682
+code/data/portal.json
+  s_0da89cee3dd4c6::t_a0c39ffd6b4914 1-98
+code/data/regions.json
+  s_0da89cee3dd4c6::t_3d2f5cf0f49e62 1-182
+code/data/scenarios/dma-leakage.json
+  s_0da89cee3dd4c6::t_dc7b14814fbd1a 1-6
+code/data/scenarios/normal.json
+  s_0da89cee3dd4c6::t_60bb5884aaa18a 1-6
+code/data/scenarios/pressure-alarm.json
+  s_0da89cee3dd4c6::t_7ecff859535af1 1-6
+code/data/workorders.json
+  s_0da89cee3dd4c6::t_f8c3fa6bf0a23a 1-842
+code/domain/metrics.ts
+  s_0da89cee3dd4c6::t_58b23fff9ee3ec 1-46
+code/domain/phase2.ts
+  s_0da89cee3dd4c6::t_0183db6a767932 1-170
+code/domain/presentation.ts
+  s_0da89cee3dd4c6::t_e651658a36766a 1-13
+code/domain/reports.ts
+  s_0da89cee3dd4c6::t_f8daf92bf670a3 1-78
+code/domain/types.ts
+  s_0da89cee3dd4c6::t_72e399f31c1488 1-101
+code/domain/validate-phase2.ts
+  s_0da89cee3dd4c6::t_16f09cd524a5de 1-281
+code/domain/validation.ts
+  s_0da89cee3dd4c6::t_37943db8be1567 1-75
+code/env.d.ts
+  s_0da89cee3dd4c6::t_87ac681cc8e419 1-6
+code/index.html
+  s_0da89cee3dd4c6::t_adc56b45c71bdb 1
+code/layouts/BusinessLayout.vue
+  s_0da89cee3dd4c6::t_5ebd9adea12b02 1-100
+code/main.ts
+  s_0da89cee3dd4c6::t_d4254967fe6266 1-8
+code/manifest.json
+  s_0da89cee3dd4c6::t_a6df18b7a786a3 1-38
+code/navigation/routeMap.ts
+  s_0da89cee3dd4c6::t_6b91c9a7a4d9df 1-95
+code/package-lock.json
+  s_0da89cee3dd4c6::t_c38874bdc536f6 1-7664
+code/package.json
+  s_0da89cee3dd4c6::t_304326d6349a9b 1-47
+code/pages.json
+  s_0da89cee3dd4c6::t_00185350fdf852 1-248
+code/pages/alarms/detail.vue
+  s_0da89cee3dd4c6::t_82b29afa1a2769 1-6
+code/pages/alarms/index.vue
+  s_0da89cee3dd4c6::t_97dcb683b3a4b1 1-6
+code/pages/dashboard/index.vue
+  s_0da89cee3dd4c6::t_7dddb694991aa2 1-623
+code/pages/datahub/device.vue
+  s_0da89cee3dd4c6::t_d6924c53bf4d15 1-6
+code/pages/datahub/index.vue
+  s_0da89cee3dd4c6::t_18d82eaf4a895c 1-6
+code/pages/dma/detail.vue
+  s_0da89cee3dd4c6::t_dbeeafd340fea1 1-6
+code/pages/dma/index.vue
+  s_0da89cee3dd4c6::t_26ca1fc9b598d0 1-6
+code/pages/energy/index.vue
+  s_0da89cee3dd4c6::t_2ebde396d2a19f 1-6
+code/pages/facilities/detail.vue
+  s_0da89cee3dd4c6::t_2a060b1476bec9 1-6
+code/pages/inspection/config.vue
+  s_0da89cee3dd4c6::t_1ebb15e4be2276 1-6
+code/pages/inspection/detail.vue
+  s_0da89cee3dd4c6::t_7c3c959ec18c00 1-6
+code/pages/inspection/edit.vue
+  s_0da89cee3dd4c6::t_da92ab449597c6 1-6
+code/pages/inspection/index.vue
+  s_0da89cee3dd4c6::t_8427c06999628a 1-6
+code/pages/inspection/replay.vue
+  s_0da89cee3dd4c6::t_703f627c4fef71 1-6
+code/pages/login/index.vue
+  s_0da89cee3dd4c6::t_1c5bc0f60e7a57 1-245
+code/pages/logs/index.vue
+  s_0da89cee3dd4c6::t_aec648054f4391 1-6
+code/pages/map/analysis.vue
+  s_0da89cee3dd4c6::t_366864f56c0644 1-6
+code/pages/map/changes.vue
+  s_0da89cee3dd4c6::t_9e2c2adadb131b 1-6
+code/pages/map/config.vue
+  s_0da89cee3dd4c6::t_be660e7d5801ed 1-6
+code/pages/map/index.vue
+  s_0da89cee3dd4c6::t_abe007133a885c 1-6
+code/pages/mobile/home.vue
+  s_0da89cee3dd4c6::t_283871083faf47 1-6
+code/pages/mobile/map.vue
+  s_0da89cee3dd4c6::t_8c6df4a96b5884 1-6
+code/pages/mobile/profile.vue
+  s_0da89cee3dd4c6::t_3f673b92efa125 1-6
+code/pages/mobile/report.vue
+  s_0da89cee3dd4c6::t_07dbecc5622f2c 1-6
+code/pages/mobile/tasks.vue
+  s_0da89cee3dd4c6::t_513c20e1c50987 1-6
+code/pages/portal/detail.vue
+  s_0da89cee3dd4c6::t_84864f0bc4a2a9 1-6
+code/pages/portal/index.vue
+  s_0da89cee3dd4c6::t_1ed6066f6177f1 1-6
+code/pages/reports/index.vue
+  s_0da89cee3dd4c6::t_95cd9e45ef7a24 1-6
+code/pages/settings/advanced.vue
+  s_0da89cee3dd4c6::t_50600dace49347 1-6
+code/pages/settings/index.vue
+  s_0da89cee3dd4c6::t_b8ce5c0dcd3be2 1-6
+code/pages/video/index.vue
+  s_0da89cee3dd4c6::t_1656868d0432e7 1-6
+code/pages/workorders/detail.vue
+  s_0da89cee3dd4c6::t_548e6b3b48357e 1-6
+code/pages/workorders/edit.vue
+  s_0da89cee3dd4c6::t_9914fc7d4d2453 1-6
+code/pages/workorders/index.vue
+  s_0da89cee3dd4c6::t_b004192cb4deae 1-6
+code/platform/export.ts
+  s_0da89cee3dd4c6::t_b662ff751c9540 1-20
+code/platform/files.ts
+  s_0da89cee3dd4c6::t_afc617f2197d5e 1-79
+code/platform/storage.ts
+  s_0da89cee3dd4c6::t_f5854e575b50aa 1-6
+code/renderjs.d.ts
+  s_0da89cee3dd4c6::t_d8aa236c012390 1-8
+code/repositories/seed.ts
+  s_0da89cee3dd4c6::t_d35f149a6a86e0 1-64
+code/scripts/browser-acceptance.mjs
+  s_0da89cee3dd4c6::t_b7c856be32f0ee 1-272
+code/scripts/browser-phase2.mjs
+  s_0da89cee3dd4c6::t_3b73e10553191d 1-340
+code/scripts/browser-stability.mjs
+  s_0da89cee3dd4c6::t_539ab8b06ea363 1-39
+code/scripts/check-data.ts
+  s_0da89cee3dd4c6::t_17ff7ce0e542d1 1-50
+code/scripts/create-pages.ts
+  s_0da89cee3dd4c6::t_70ccf48b8b6cd2 1-38
+code/scripts/prepare.mjs
+  s_0da89cee3dd4c6::t_c9d645ca3846b1 1-15
+code/scripts/preview.mjs
+  s_0da89cee3dd4c6::t_aaebfa79f3dc40 1-40
+code/scripts/release-check.mjs
+  s_0da89cee3dd4c6::t_c0160c3c21f9a0 1-35
+code/scripts/uni.mjs
+  s_0da89cee3dd4c6::t_2f07a22e3bb435 1-17
+code/services/mock/engine.ts
+  s_0da89cee3dd4c6::t_fcada84804ff36 1-403
+code/services/mock/phase2-engine.ts
+  s_0da89cee3dd4c6::t_4c5e5d739dc910 1-326
+code/stores/demo.ts
+  s_0da89cee3dd4c6::t_98b2e2cb8a9237 1-74
+code/styles/app.scss
+  s_0da89cee3dd4c6::t_c75331c2427cce 1-890
+code/tests/engine.test.ts
+  s_0da89cee3dd4c6::t_906465aed66eca 1-208
+code/tests/phase2.test.ts
+  s_0da89cee3dd4c6::t_fce0623284c987 1-280
+code/tsconfig.json
+  s_0da89cee3dd4c6::t_9a0c1d959393bc 1-11
+code/uni.scss
+  s_0da89cee3dd4c6::t_a880942cd7f65f 1-2
+code/vite.config.ts
+  s_0da89cee3dd4c6::t_a12bf13bd58b38 1-8
+code/启动H5开发.cmd
+  s_0da89cee3dd4c6::t_1783776c52e61f 1-14
+doc/第一阶段使用与数据维护说明.md
+  s_0da89cee3dd4c6::t_f088fccd094b78 1-81
+doc/第一阶段本地构建与交接说明.md
+  s_0da89cee3dd4c6::t_d7d5ef6810dcf6 1-46
+doc/第一阶段验收记录.md
+  s_0da89cee3dd4c6::t_08100ebdabdf01 1-112
+doc/第二阶段使用与数据维护说明.md
+  s_0da89cee3dd4c6::t_e57db5d0f2199f 1-69
+doc/第二阶段本地构建与交接说明.md
+  s_0da89cee3dd4c6::t_d4d42b44af4d3c 1-75
+doc/第二阶段验收记录.md
+  s_0da89cee3dd4c6::t_a9c9782532f071 1-78
+.gitignore
+  s_0da89cee3dd4c6::t_b88ad970c05f37 1-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "3479e1bbe5533553c85e2d501cc247942a08bfd5",
+  "prompts": {},
+  "sessions": {
+    "s_0da89cee3dd4c6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0bf3a-f577-7310-b70f-ed05030fa81f",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
