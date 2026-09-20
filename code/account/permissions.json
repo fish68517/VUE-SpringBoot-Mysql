@@ -1,0 +1,18 @@
+{
+  "admin": [
+    "read",
+    "write",
+    "dispatch",
+    "review",
+    "export",
+    "reset"
+  ],
+  "operator": [
+    "read",
+    "write",
+    "export"
+  ],
+  "guest": [
+    "read"
+  ]
+}

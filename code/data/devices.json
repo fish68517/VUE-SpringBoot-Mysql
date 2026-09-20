@@ -1,0 +1,272 @@
+[
+  {
+    "id": "DEV-001",
+    "facilityId": "FAC-001",
+    "name": "中原路压力监测点采集终端",
+    "type": "sensor",
+    "status": "offline",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-002",
+    "facilityId": "FAC-002",
+    "name": "二七区压力监测点01采集终端",
+    "type": "sensor",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-003",
+    "facilityId": "FAC-003",
+    "name": "管城回族区流量计01采集终端",
+    "type": "meter",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-004",
+    "facilityId": "FAC-004",
+    "name": "金水区泵站01采集终端",
+    "type": "pump",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 75
+  },
+  {
+    "id": "DEV-005",
+    "facilityId": "FAC-005",
+    "name": "惠济区阀门01采集终端",
+    "type": "valve",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-006",
+    "facilityId": "FAC-006",
+    "name": "郑东片区压力监测点01采集终端",
+    "type": "sensor",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-007",
+    "facilityId": "FAC-007",
+    "name": "中原区流量计02采集终端",
+    "type": "meter",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-008",
+    "facilityId": "FAC-008",
+    "name": "二七区泵站02采集终端",
+    "type": "pump",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 75
+  },
+  {
+    "id": "DEV-009",
+    "facilityId": "FAC-009",
+    "name": "管城回族区阀门02采集终端",
+    "type": "valve",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-010",
+    "facilityId": "FAC-010",
+    "name": "金水区压力监测点02采集终端",
+    "type": "sensor",
+    "status": "offline",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-011",
+    "facilityId": "FAC-011",
+    "name": "惠济区流量计02采集终端",
+    "type": "meter",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-012",
+    "facilityId": "FAC-012",
+    "name": "郑东片区泵站02采集终端",
+    "type": "pump",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 75
+  },
+  {
+    "id": "DEV-013",
+    "facilityId": "FAC-013",
+    "name": "中原区阀门03采集终端",
+    "type": "valve",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-014",
+    "facilityId": "FAC-014",
+    "name": "二七区压力监测点03采集终端",
+    "type": "sensor",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-015",
+    "facilityId": "FAC-015",
+    "name": "管城回族区流量计03采集终端",
+    "type": "meter",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-016",
+    "facilityId": "FAC-016",
+    "name": "金水区泵站03采集终端",
+    "type": "pump",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 75
+  },
+  {
+    "id": "DEV-017",
+    "facilityId": "FAC-017",
+    "name": "惠济区阀门03采集终端",
+    "type": "valve",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-018",
+    "facilityId": "FAC-018",
+    "name": "郑东片区压力监测点03采集终端",
+    "type": "sensor",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-019",
+    "facilityId": "FAC-019",
+    "name": "中原区流量计04采集终端",
+    "type": "meter",
+    "status": "offline",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-020",
+    "facilityId": "FAC-020",
+    "name": "二七区泵站04采集终端",
+    "type": "pump",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 75
+  },
+  {
+    "id": "DEV-021",
+    "facilityId": "FAC-021",
+    "name": "管城回族区阀门04采集终端",
+    "type": "valve",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-022",
+    "facilityId": "FAC-022",
+    "name": "金水区压力监测点04采集终端",
+    "type": "sensor",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-023",
+    "facilityId": "FAC-023",
+    "name": "惠济区流量计04采集终端",
+    "type": "meter",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-024",
+    "facilityId": "FAC-024",
+    "name": "郑东片区泵站04采集终端",
+    "type": "pump",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 75
+  },
+  {
+    "id": "DEV-025",
+    "facilityId": "FAC-025",
+    "name": "中原区阀门05采集终端",
+    "type": "valve",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-026",
+    "facilityId": "FAC-026",
+    "name": "二七区压力监测点05采集终端",
+    "type": "sensor",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-027",
+    "facilityId": "FAC-027",
+    "name": "管城回族区流量计05采集终端",
+    "type": "meter",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-028",
+    "facilityId": "FAC-028",
+    "name": "金水区泵站05采集终端",
+    "type": "pump",
+    "status": "offline",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 75
+  },
+  {
+    "id": "DEV-029",
+    "facilityId": "FAC-029",
+    "name": "惠济区阀门05采集终端",
+    "type": "valve",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  },
+  {
+    "id": "DEV-030",
+    "facilityId": "FAC-030",
+    "name": "郑东片区压力监测点05采集终端",
+    "type": "sensor",
+    "status": "online",
+    "samplingIntervalSec": 60,
+    "ratedPowerKw": 0
+  }
+]

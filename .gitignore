@@ -1,0 +1,36 @@
+# Dependencies and local npm cache
+node_modules/
+.npm-cache/
+
+# uni-app builds, local previews and test evidence
+unpackage/
+coverage/
+*.tsbuildinfo
+
+# Files recreated by code/scripts/prepare.mjs
+/code/generated/
+/code/static/vendor/
+/code/static/demo-assets/
+
+# Local environment configuration (keep example templates)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Local signing credentials
+*.keystore
+*.jks
+*.p12
+*.pfx
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini

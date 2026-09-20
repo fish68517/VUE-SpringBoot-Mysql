@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 2,
+  "datasetVersion": "phase2-20260921-v1",
+  "defaultScenario": "pressure-alarm",
+  "simulationTime": "2026-09-20T09:00:00+08:00",
+  "coordinateSystem": "local-demo-1000x600",
+  "notice": "全部为虚构演示数据"
+}

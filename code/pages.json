@@ -1,0 +1,248 @@
+{
+  "pages": [
+    {
+      "path": "pages/map/changes",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "点线变更与审核"
+      }
+    },
+    {
+      "path": "pages/map/config",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "图层与审核配置"
+      }
+    },
+    {
+      "path": "pages/map/analysis",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "爆管影响分析"
+      }
+    },
+    {
+      "path": "pages/logs/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "操作日志"
+      }
+    },
+    {
+      "path": "pages/inspection/config",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "巡检模板与路线"
+      }
+    },
+    {
+      "path": "pages/inspection/replay",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "人员轨迹与统计"
+      }
+    },
+    {
+      "path": "pages/energy/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "能耗与设备运行"
+      }
+    },
+    {
+      "path": "pages/video/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "视频中心"
+      }
+    },
+    {
+      "path": "pages/settings/advanced",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "门户、通知与快照"
+      }
+    },
+    {
+      "path": "pages/mobile/report",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "移动事件上报"
+      }
+    },
+    {
+      "path": "pages/login/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "演示登录"
+      }
+    },
+    {
+      "path": "pages/dashboard/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "供水运行总览"
+      }
+    },
+    {
+      "path": "pages/portal/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "工作门户"
+      }
+    },
+    {
+      "path": "pages/portal/detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "信息详情"
+      }
+    },
+    {
+      "path": "pages/alarms/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "报警中心"
+      }
+    },
+    {
+      "path": "pages/alarms/detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "告警详情"
+      }
+    },
+    {
+      "path": "pages/workorders/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "工单中心"
+      }
+    },
+    {
+      "path": "pages/workorders/detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "工单详情"
+      }
+    },
+    {
+      "path": "pages/workorders/edit",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "新建工单"
+      }
+    },
+    {
+      "path": "pages/map/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "管控一张图"
+      }
+    },
+    {
+      "path": "pages/facilities/detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "设施详情"
+      }
+    },
+    {
+      "path": "pages/dma/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "DMA 分区计量"
+      }
+    },
+    {
+      "path": "pages/dma/detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "分区详情"
+      }
+    },
+    {
+      "path": "pages/inspection/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "管网巡检"
+      }
+    },
+    {
+      "path": "pages/inspection/detail",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "巡检任务详情"
+      }
+    },
+    {
+      "path": "pages/inspection/edit",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "发布巡检任务"
+      }
+    },
+    {
+      "path": "pages/datahub/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "设备监测"
+      }
+    },
+    {
+      "path": "pages/datahub/device",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "设备详情"
+      }
+    },
+    {
+      "path": "pages/reports/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "综合统计报表"
+      }
+    },
+    {
+      "path": "pages/settings/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "演示设置"
+      }
+    },
+    {
+      "path": "pages/mobile/home",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "个人工作台"
+      }
+    },
+    {
+      "path": "pages/mobile/tasks",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "我的任务"
+      }
+    },
+    {
+      "path": "pages/mobile/map",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "移动地图"
+      }
+    },
+    {
+      "path": "pages/mobile/profile",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "我的账号"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationStyle": "custom",
+    "backgroundColor": "#f4f7fb",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "郑州智慧供水"
+  }
+}

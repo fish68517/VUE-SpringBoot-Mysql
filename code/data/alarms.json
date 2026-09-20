@@ -1,0 +1,632 @@
+[
+  {
+    "id": "ALM-001",
+    "title": "管网压力偏低",
+    "facilityId": "FAC-001",
+    "dmaId": "DMA-001",
+    "level": "urgent",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.16,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-002",
+    "title": "分区流量波动",
+    "facilityId": "FAC-002",
+    "dmaId": "DMA-002",
+    "level": "important",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.164,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-003",
+    "title": "水表离线提示",
+    "facilityId": "FAC-003",
+    "dmaId": "DMA-003",
+    "level": "normal",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.168,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-004",
+    "title": "管网压力异常",
+    "facilityId": "FAC-004",
+    "dmaId": "DMA-004",
+    "level": "urgent",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.17200000000000001,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-005",
+    "title": "分区流量波动",
+    "facilityId": "FAC-005",
+    "dmaId": "DMA-005",
+    "level": "important",
+    "status": "closed",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.176,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-006",
+    "title": "水表离线提示",
+    "facilityId": "FAC-006",
+    "dmaId": "DMA-006",
+    "level": "normal",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.18,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-007",
+    "title": "管网压力异常",
+    "facilityId": "FAC-007",
+    "dmaId": "DMA-007",
+    "level": "urgent",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.184,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-008",
+    "title": "分区流量波动",
+    "facilityId": "FAC-008",
+    "dmaId": "DMA-008",
+    "level": "important",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.188,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-009",
+    "title": "水表离线提示",
+    "facilityId": "FAC-009",
+    "dmaId": "DMA-003",
+    "level": "normal",
+    "status": "closed",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.192,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-010",
+    "title": "管网压力异常",
+    "facilityId": "FAC-010",
+    "dmaId": "DMA-004",
+    "level": "urgent",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.196,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-011",
+    "title": "分区流量波动",
+    "facilityId": "FAC-011",
+    "dmaId": "DMA-005",
+    "level": "important",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.2,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-012",
+    "title": "水表离线提示",
+    "facilityId": "FAC-012",
+    "dmaId": "DMA-006",
+    "level": "normal",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.20400000000000001,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-013",
+    "title": "管网压力异常",
+    "facilityId": "FAC-013",
+    "dmaId": "DMA-001",
+    "level": "urgent",
+    "status": "closed",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.20800000000000002,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-014",
+    "title": "分区流量波动",
+    "facilityId": "FAC-014",
+    "dmaId": "DMA-002",
+    "level": "important",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.21200000000000002,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-015",
+    "title": "水表离线提示",
+    "facilityId": "FAC-015",
+    "dmaId": "DMA-003",
+    "level": "normal",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.216,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-016",
+    "title": "管网压力异常",
+    "facilityId": "FAC-016",
+    "dmaId": "DMA-004",
+    "level": "urgent",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.22,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-017",
+    "title": "分区流量波动",
+    "facilityId": "FAC-017",
+    "dmaId": "DMA-005",
+    "level": "important",
+    "status": "closed",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.224,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-018",
+    "title": "水表离线提示",
+    "facilityId": "FAC-018",
+    "dmaId": "DMA-006",
+    "level": "normal",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.228,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-019",
+    "title": "管网压力异常",
+    "facilityId": "FAC-019",
+    "dmaId": "DMA-007",
+    "level": "urgent",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.232,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-020",
+    "title": "分区流量波动",
+    "facilityId": "FAC-020",
+    "dmaId": "DMA-008",
+    "level": "important",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.236,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-021",
+    "title": "水表离线提示",
+    "facilityId": "FAC-021",
+    "dmaId": "DMA-003",
+    "level": "normal",
+    "status": "closed",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.24,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-022",
+    "title": "管网压力异常",
+    "facilityId": "FAC-022",
+    "dmaId": "DMA-004",
+    "level": "urgent",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.244,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-023",
+    "title": "分区流量波动",
+    "facilityId": "FAC-023",
+    "dmaId": "DMA-005",
+    "level": "important",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.248,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-024",
+    "title": "水表离线提示",
+    "facilityId": "FAC-024",
+    "dmaId": "DMA-006",
+    "level": "normal",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.252,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-025",
+    "title": "管网压力异常",
+    "facilityId": "FAC-025",
+    "dmaId": "DMA-001",
+    "level": "urgent",
+    "status": "closed",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.256,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-026",
+    "title": "分区流量波动",
+    "facilityId": "FAC-026",
+    "dmaId": "DMA-002",
+    "level": "important",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.26,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-027",
+    "title": "水表离线提示",
+    "facilityId": "FAC-027",
+    "dmaId": "DMA-003",
+    "level": "normal",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.264,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-028",
+    "title": "管网压力异常",
+    "facilityId": "FAC-028",
+    "dmaId": "DMA-004",
+    "level": "urgent",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.268,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-029",
+    "title": "分区流量波动",
+    "facilityId": "FAC-029",
+    "dmaId": "DMA-005",
+    "level": "important",
+    "status": "closed",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.272,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  },
+  {
+    "id": "ALM-030",
+    "title": "水表离线提示",
+    "facilityId": "FAC-030",
+    "dmaId": "DMA-006",
+    "level": "normal",
+    "status": "pending",
+    "occurredAt": "2026-09-20T09:00:00+08:00",
+    "ruleId": "RULE-PRESSURE",
+    "value": 0.276,
+    "unit": "MPa",
+    "assigneeId": null,
+    "workOrderId": null,
+    "history": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "系统模拟",
+        "text": "场景监测规则触发"
+      }
+    ]
+  }
+]

@@ -1,0 +1,57 @@
+{
+  "facilityTypes": {
+    "valve": "阀门",
+    "sensor": "压力监测",
+    "meter": "水表",
+    "pump": "泵站"
+  },
+  "levels": {
+    "urgent": "紧急",
+    "important": "重要",
+    "normal": "一般"
+  },
+  "alarmStatuses": {
+    "pending": "待处理",
+    "accepted": "已受理",
+    "processing": "处理中",
+    "review": "待复核",
+    "closed": "已关闭"
+  },
+  "orderStatuses": {
+    "pending": "待派发",
+    "assigned": "待接单",
+    "processing": "处理中",
+    "review": "待验收",
+    "completed": "已完成"
+  },
+  "orderTypes": {
+    "hotline": "热线",
+    "repair": "维修",
+    "leak": "检漏",
+    "inspection": "日常巡检"
+  },
+  "taskStatuses": {
+    "draft": "草稿",
+    "pending": "待执行",
+    "processing": "执行中",
+    "completed": "已完成",
+    "cancelled": "已取消"
+  },
+  "scenarios": [
+    {
+      "id": "pressure-alarm",
+      "name": "压力异常处置",
+      "description": "重点设施压力异常，完整演示派单、处置与验收。"
+    },
+    {
+      "id": "normal",
+      "name": "正常运行",
+      "description": "告警均已关闭，展示日常运行与任务台账。"
+    },
+    {
+      "id": "dma-leakage",
+      "name": "DMA 漏损关注",
+      "description": "查看异常分区与关联告警，检漏深度流程于第二阶段补齐。"
+    }
+  ]
+}

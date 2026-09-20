@@ -1,0 +1,842 @@
+[
+  {
+    "id": "WO-001",
+    "title": "热线用水咨询 · 中原路压力监测点",
+    "type": "hotline",
+    "status": "completed",
+    "facilityId": "FAC-001",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "巡查完成，设施状态正常。",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-002",
+    "title": "管线维修 · 二七区压力监测点01",
+    "type": "repair",
+    "status": "assigned",
+    "facilityId": "FAC-002",
+    "assigneeId": "USER-003",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-003",
+    "title": "区域检漏 · 管城回族区流量计01",
+    "type": "leak",
+    "status": "assigned",
+    "facilityId": "FAC-003",
+    "assigneeId": "USER-004",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-004",
+    "title": "日常设施巡检 · 金水区泵站01",
+    "type": "inspection",
+    "status": "pending",
+    "facilityId": "FAC-004",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-005",
+    "title": "热线用水咨询 · 惠济区阀门01",
+    "type": "hotline",
+    "status": "assigned",
+    "facilityId": "FAC-005",
+    "assigneeId": "USER-006",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-006",
+    "title": "管线维修 · 郑东片区压力监测点01",
+    "type": "repair",
+    "status": "completed",
+    "facilityId": "FAC-006",
+    "assigneeId": "USER-007",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "巡查完成，设施状态正常。",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-007",
+    "title": "区域检漏 · 中原区流量计02",
+    "type": "leak",
+    "status": "pending",
+    "facilityId": "FAC-007",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-008",
+    "title": "日常设施巡检 · 二七区泵站02",
+    "type": "inspection",
+    "status": "assigned",
+    "facilityId": "FAC-008",
+    "assigneeId": "USER-009",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-009",
+    "title": "热线用水咨询 · 管城回族区阀门02",
+    "type": "hotline",
+    "status": "assigned",
+    "facilityId": "FAC-009",
+    "assigneeId": "USER-010",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-010",
+    "title": "管线维修 · 金水区压力监测点02",
+    "type": "repair",
+    "status": "pending",
+    "facilityId": "FAC-010",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-011",
+    "title": "区域检漏 · 惠济区流量计02",
+    "type": "leak",
+    "status": "completed",
+    "facilityId": "FAC-011",
+    "assigneeId": "USER-012",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "巡查完成，设施状态正常。",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-012",
+    "title": "日常设施巡检 · 郑东片区泵站02",
+    "type": "inspection",
+    "status": "assigned",
+    "facilityId": "FAC-012",
+    "assigneeId": "USER-013",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-013",
+    "title": "热线用水咨询 · 中原区阀门03",
+    "type": "hotline",
+    "status": "pending",
+    "facilityId": "FAC-013",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-014",
+    "title": "管线维修 · 二七区压力监测点03",
+    "type": "repair",
+    "status": "assigned",
+    "facilityId": "FAC-014",
+    "assigneeId": "USER-003",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-015",
+    "title": "区域检漏 · 管城回族区流量计03",
+    "type": "leak",
+    "status": "assigned",
+    "facilityId": "FAC-015",
+    "assigneeId": "USER-004",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-016",
+    "title": "日常设施巡检 · 金水区泵站03",
+    "type": "inspection",
+    "status": "completed",
+    "facilityId": "FAC-016",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "巡查完成，设施状态正常。",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-017",
+    "title": "热线用水咨询 · 惠济区阀门03",
+    "type": "hotline",
+    "status": "assigned",
+    "facilityId": "FAC-017",
+    "assigneeId": "USER-006",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-018",
+    "title": "管线维修 · 郑东片区压力监测点03",
+    "type": "repair",
+    "status": "assigned",
+    "facilityId": "FAC-018",
+    "assigneeId": "USER-007",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-019",
+    "title": "区域检漏 · 中原区流量计04",
+    "type": "leak",
+    "status": "pending",
+    "facilityId": "FAC-019",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-020",
+    "title": "日常设施巡检 · 二七区泵站04",
+    "type": "inspection",
+    "status": "assigned",
+    "facilityId": "FAC-020",
+    "assigneeId": "USER-009",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-021",
+    "title": "热线用水咨询 · 管城回族区阀门04",
+    "type": "hotline",
+    "status": "completed",
+    "facilityId": "FAC-021",
+    "assigneeId": "USER-010",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "巡查完成，设施状态正常。",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-022",
+    "title": "管线维修 · 金水区压力监测点04",
+    "type": "repair",
+    "status": "pending",
+    "facilityId": "FAC-022",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-023",
+    "title": "区域检漏 · 惠济区流量计04",
+    "type": "leak",
+    "status": "assigned",
+    "facilityId": "FAC-023",
+    "assigneeId": "USER-012",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-024",
+    "title": "日常设施巡检 · 郑东片区泵站04",
+    "type": "inspection",
+    "status": "assigned",
+    "facilityId": "FAC-024",
+    "assigneeId": "USER-013",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-025",
+    "title": "热线用水咨询 · 中原区阀门05",
+    "type": "hotline",
+    "status": "pending",
+    "facilityId": "FAC-025",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-026",
+    "title": "管线维修 · 二七区压力监测点05",
+    "type": "repair",
+    "status": "completed",
+    "facilityId": "FAC-026",
+    "assigneeId": "USER-003",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "巡查完成，设施状态正常。",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-027",
+    "title": "区域检漏 · 管城回族区流量计05",
+    "type": "leak",
+    "status": "assigned",
+    "facilityId": "FAC-027",
+    "assigneeId": "USER-004",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-028",
+    "title": "日常设施巡检 · 金水区泵站05",
+    "type": "inspection",
+    "status": "pending",
+    "facilityId": "FAC-028",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-029",
+    "title": "热线用水咨询 · 惠济区阀门05",
+    "type": "hotline",
+    "status": "assigned",
+    "facilityId": "FAC-029",
+    "assigneeId": "USER-006",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-030",
+    "title": "管线维修 · 郑东片区压力监测点05",
+    "type": "repair",
+    "status": "assigned",
+    "facilityId": "FAC-030",
+    "assigneeId": "USER-007",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-031",
+    "title": "区域检漏 · 中原区流量计06",
+    "type": "leak",
+    "status": "completed",
+    "facilityId": "FAC-031",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "巡查完成，设施状态正常。",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-032",
+    "title": "日常设施巡检 · 二七区泵站06",
+    "type": "inspection",
+    "status": "assigned",
+    "facilityId": "FAC-032",
+    "assigneeId": "USER-009",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-033",
+    "title": "热线用水咨询 · 管城回族区阀门06",
+    "type": "hotline",
+    "status": "assigned",
+    "facilityId": "FAC-033",
+    "assigneeId": "USER-010",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-034",
+    "title": "管线维修 · 金水区压力监测点06",
+    "type": "repair",
+    "status": "pending",
+    "facilityId": "FAC-034",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-035",
+    "title": "区域检漏 · 惠济区流量计06",
+    "type": "leak",
+    "status": "assigned",
+    "facilityId": "FAC-035",
+    "assigneeId": "USER-012",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-036",
+    "title": "日常设施巡检 · 郑东片区泵站06",
+    "type": "inspection",
+    "status": "completed",
+    "facilityId": "FAC-036",
+    "assigneeId": "USER-013",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "巡查完成，设施状态正常。",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-037",
+    "title": "热线用水咨询 · 中原区阀门07",
+    "type": "hotline",
+    "status": "pending",
+    "facilityId": "FAC-037",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-038",
+    "title": "管线维修 · 二七区压力监测点07",
+    "type": "repair",
+    "status": "assigned",
+    "facilityId": "FAC-038",
+    "assigneeId": "USER-003",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-039",
+    "title": "区域检漏 · 管城回族区流量计07",
+    "type": "leak",
+    "status": "assigned",
+    "facilityId": "FAC-039",
+    "assigneeId": "USER-004",
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  },
+  {
+    "id": "WO-040",
+    "title": "日常设施巡检 · 金水区泵站07",
+    "type": "inspection",
+    "status": "pending",
+    "facilityId": "FAC-040",
+    "assigneeId": null,
+    "createdBy": "USER-001",
+    "sourceType": "manual",
+    "sourceId": null,
+    "createdAt": "2026-09-20T09:00:00+08:00",
+    "description": "按计划检查设施并填写现场处理结果（演示）。",
+    "result": "",
+    "steps": [
+      {
+        "time": "2026-09-20T09:00:00+08:00",
+        "actor": "调度管理员",
+        "text": "创建演示工单"
+      }
+    ]
+  }
+]

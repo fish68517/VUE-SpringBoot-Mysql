@@ -1,0 +1,1802 @@
+[
+  {
+    "id": "FAC-001",
+    "name": "中原路压力监测点",
+    "type": "sensor",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      90,
+      102
+    ],
+    "status": "normal",
+    "deviceId": "DEV-001",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-002",
+    "name": "二七区压力监测点01",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      400.0976518176948,
+      96.48362767041768
+    ],
+    "status": "normal",
+    "deviceId": "DEV-002",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-003",
+    "name": "管城回族区流量计01",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      700.9115691219082,
+      85.0062379614343
+    ],
+    "status": "normal",
+    "deviceId": "DEV-003",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-004",
+    "name": "金水区泵站01",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      91.6934400967184,
+      338.12009004079465
+    ],
+    "status": "normal",
+    "deviceId": "DEV-004",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-005",
+    "name": "惠济区阀门01",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      380.91837005630487,
+      342.15627654963663
+    ],
+    "status": "normal",
+    "deviceId": "DEV-005",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-006",
+    "name": "郑东片区压力监测点01",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      678.4929087040423,
+      353.40394622555874
+    ],
+    "status": "normal",
+    "deviceId": "DEV-006",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-007",
+    "name": "中原区流量计02",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      129.6470140216129,
+      101.52204343980439
+    ],
+    "status": "normal",
+    "deviceId": "DEV-007",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-008",
+    "name": "二七区泵站02",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      440.88383918462546,
+      99.04682705211965
+    ],
+    "status": "normal",
+    "deviceId": "DEV-008",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-009",
+    "name": "管城回族区阀门02",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      744.8722989594805,
+      88.25399959429664
+    ],
+    "status": "normal",
+    "deviceId": "DEV-009",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-010",
+    "name": "金水区压力监测点02",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      137.94542182290107,
+      339.0664368573839
+    ],
+    "status": "normal",
+    "deviceId": "DEV-010",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-011",
+    "name": "惠济区流量计02",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      426.47174666932756,
+      339.93114165108256
+    ],
+    "status": "normal",
+    "deviceId": "DEV-011",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-012",
+    "name": "郑东片区泵站02",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      721.0001175213915,
+      350.0531083758566
+    ],
+    "status": "normal",
+    "deviceId": "DEV-012",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-013",
+    "name": "中原区阀门03",
+    "type": "valve",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      169.56112498399477,
+      100.1262475047899
+    ],
+    "status": "normal",
+    "deviceId": "DEV-013",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-014",
+    "name": "二七区压力监测点03",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      481.0420044419197,
+      100.88936137740235
+    ],
+    "status": "normal",
+    "deviceId": "DEV-014",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-015",
+    "name": "管城回族区流量计03",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      787.8872882683385,
+      91.64084661849401
+    ],
+    "status": "normal",
+    "deviceId": "DEV-015",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-016",
+    "name": "金水区泵站03",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      183.8034540818854,
+      340.8837450456941
+    ],
+    "status": "normal",
+    "deviceId": "DEV-016",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-017",
+    "name": "惠济区阀门03",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      472.5451602000192,
+      338.50808623611937
+    ],
+    "status": "normal",
+    "deviceId": "DEV-017",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-018",
+    "name": "郑东片区压力监测点03",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      764.4632300974454,
+      346.6980399433808
+    ],
+    "status": "normal",
+    "deviceId": "DEV-018",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-019",
+    "name": "中原区流量计04",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      209.98815303873988,
+      97.92380049892895
+    ],
+    "status": "normal",
+    "deviceId": "DEV-019",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-020",
+    "name": "二七区泵站04",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      520.7985265159555,
+      101.86445541824003
+    ],
+    "status": "normal",
+    "deviceId": "DEV-020",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-021",
+    "name": "管城回族区阀门04",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      829.9553430087316,
+      94.8969847417607
+    ],
+    "status": "normal",
+    "deviceId": "DEV-021",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-022",
+    "name": "金水区压力监测点04",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      229.03986766243267,
+      343.4272488773088
+    ],
+    "status": "normal",
+    "deviceId": "DEV-022",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-023",
+    "name": "惠济区流量计04",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      518.8937842885151,
+      338.00047008326436
+    ],
+    "status": "normal",
+    "deviceId": "DEV-023",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-024",
+    "name": "郑东片区泵站04",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      808.845355149898,
+      343.6060037559992
+    ],
+    "status": "normal",
+    "deviceId": "DEV-024",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-025",
+    "name": "中原区阀门05",
+    "type": "valve",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      251.1330596559205,
+      95.09014808804396
+    ],
+    "status": "normal",
+    "deviceId": "DEV-025",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-026",
+    "name": "二七区压力监测点05",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      560.4117789988268,
+      101.89443374236168
+    ],
+    "status": "normal",
+    "deviceId": "DEV-026",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-027",
+    "name": "管城回族区流量计05",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      871.1507014057553,
+      97.76303186794368
+    ],
+    "status": "normal",
+    "deviceId": "DEV-027",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-028",
+    "name": "金水区泵站05",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      273.47651114085403,
+      346.494334295194
+    ],
+    "status": "normal",
+    "deviceId": "DEV-028",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-029",
+    "name": "惠济区阀门05",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      565.2508694596944,
+      338.4487296042372
+    ],
+    "status": "normal",
+    "deviceId": "DEV-029",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-030",
+    "name": "郑东片区压力监测点05",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      854.0363933894444,
+      341.023309643732
+    ],
+    "status": "normal",
+    "deviceId": "DEV-030",
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-031",
+    "name": "中原区流量计06",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      78.14362051088565,
+      138.851017398651
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-032",
+    "name": "二七区泵站06",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      385.1515482561232,
+      147.9769082936544
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-033",
+    "name": "管城回族区阀门06",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      696.6171201749003,
+      147.01068032607813
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-034",
+    "name": "金水区压力监测点06",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      101.9989423212872,
+      396.8406790333233
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-035",
+    "name": "惠济区流量计06",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      396.3489922334403,
+      386.8171567025847
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-036",
+    "name": "郑东片区泵站06",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      684.8618079660462,
+      386.1556935389019
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-037",
+    "name": "中原区阀门07",
+    "type": "valve",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      121.09865375868262,
+      135.46443572447114
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-038",
+    "name": "二七区压力监测点07",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      425.277542399716,
+      146.18496862334413
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-039",
+    "name": "管城回族区流量计07",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      736.5564229445126,
+      148.46088372856752
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-040",
+    "name": "金水区泵站07",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      144.56554463540905,
+      400.19971518831926
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-041",
+    "name": "惠济区阀门07",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      441.9413579257522,
+      388.9967432601729
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-042",
+    "name": "郑东片区压力监测点07",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      731.0965279743435,
+      385.1519286697141
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-043",
+    "name": "中原区流量计08",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      165.0017414250124,
+      132.20017622013978
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-044",
+    "name": "二七区泵站08",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      466.01870308845685,
+      143.6613596182475
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-045",
+    "name": "管城回族区阀门08",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      776.212423101265,
+      148.9981197037723
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-046",
+    "name": "金水区压力监测点08",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      186.21084229440942,
+      403.30386386581273
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-047",
+    "name": "惠济区流量计08",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      486.8214601717857,
+      391.81386466138264
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-048",
+    "name": "郑东片区泵站08",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      777.4828774729427,
+      385.09197437018884
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-049",
+    "name": "中原区阀门09",
+    "type": "valve",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      209.780944064116,
+      129.3182679263696
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-050",
+    "name": "二七区压力监测点09",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      507.55496816688634,
+      140.60711052492366
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-051",
+    "name": "管城回族区流量计09",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      815.8515017555528,
+      148.57959234190537
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-052",
+    "name": "金水区泵站09",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      227.0427501101205,
+      405.9058503617654
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-053",
+    "name": "惠济区阀门09",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      530.8395311044858,
+      395.04411063045154
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-054",
+    "name": "郑东片区压力监测点09",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      823.751101802182,
+      385.9806065654546
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-055",
+    "name": "中原区流量计10",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      255.29453141378062,
+      127.04828200564219
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-056",
+    "name": "二七区泵站10",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      550.0029379196966,
+      137.26552107514348
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-057",
+    "name": "管城回族区阀门10",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      855.7413879749571,
+      147.23864129267102
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-058",
+    "name": "金水区压力监测点10",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      267.2339770629739,
+      407.7984019236303
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-059",
+    "name": "惠济区流量计10",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      573.9144717770145,
+      398.43016162538584
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-060",
+    "name": "郑东片区泵站10",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      869.6408560856696,
+      387.74703732428986
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-061",
+    "name": "中原区阀门11",
+    "type": "valve",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      86.3422725467734,
+      172.57104423501812
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-062",
+    "name": "二七区压力监测点11",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      378.40658675989926,
+      180.9027803687408
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-063",
+    "name": "管城回族区流量计11",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      681.1298316402093,
+      192.08208594788303
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-064",
+    "name": "金水区泵站11",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      92.00826840363368,
+      455.8307589789906
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-065",
+    "name": "惠济区阀门11",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      401.0403124583615,
+      448.7022867651546
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-066",
+    "name": "郑东片区压力监测点11",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      699.9219441538812,
+      437.25055378514196
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-067",
+    "name": "中原区流量计12",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      132.6813861517124,
+      172.0042305284038
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-068",
+    "name": "二七区泵站12",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      422.7337602522961,
+      177.78676240252594
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-069",
+    "name": "管城回族区阀门12",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      722.2248678317285,
+      189.28171626995248
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-070",
+    "name": "金水区压力监测点12",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      131.62258223460177,
+      455.92068455666725
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-071",
+    "name": "惠济区流量计12",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      442.28668817869465,
+      451.5998304370356
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-072",
+    "name": "郑东片区泵站12",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      744.4126558390525,
+      440.29172726200716
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-073",
+    "name": "中原区阀门13",
+    "type": "valve",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      179.04588035314444,
+      172.3929929407134
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-074",
+    "name": "二七区压力监测点13",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      467.8787365173523,
+      175.16568738127222
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-075",
+    "name": "管城回族区流量计13",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      764.178244874381,
+      186.06060810196934
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-076",
+    "name": "金水区泵站13",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      171.34662037508684,
+      455.061015236697
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-077",
+    "name": "惠济区阀门13",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      482.7932916427782,
+      453.8919759732907
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-078",
+    "name": "郑东片区压力监测点13",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      787.9942419029687,
+      443.6282996192254
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-079",
+    "name": "中原区流量计14",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      225.16774147185043,
+      173.70636288106016
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-080",
+    "name": "二七区泵站14",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      513.67064797551,
+      173.24834863850845
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-081",
+    "name": "管城回族区阀门14",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      807.0733361529195,
+      182.67535307393143
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-082",
+    "name": "金水区压力监测点14",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      211.44134406870654,
+      453.3202317842596
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-083",
+    "name": "惠济区流量计14",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      522.758745389197,
+      455.39613237459054
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-084",
+    "name": "郑东片区泵站14",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      830.6203735332023,
+      446.99448141568007
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-085",
+    "name": "中原区阀门15",
+    "type": "valve",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      270.7982838408795,
+      175.83971805295192
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-086",
+    "name": "二七区压力监测点15",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      559.8870925606169,
+      172.18748027927148
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-087",
+    "name": "管城回族区流量计15",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      850.9184986359513,
+      179.3956186606031
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-088",
+    "name": "金水区泵站15",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      252.13818596043012,
+      450.83700401118375
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-089",
+    "name": "惠济区阀门15",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      562.424779632804,
+      455.9924794043415
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-090",
+    "name": "郑东片区压力监测点15",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      872.3208328697494,
+      450.12212453930005
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-091",
+    "name": "中原区流量计16",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      100.7279599632067,
+      225.62311660644997
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-092",
+    "name": "二七区泵站16",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      391.2718501410139,
+      219.06759046886157
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-093",
+    "name": "管城回族区阀门16",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      680.6464071646103,
+      223.48266662507592
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-094",
+    "name": "金水区压力监测点16",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      78.62061430476064,
+      494.80914441823643
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-095",
+    "name": "惠济区流量计16",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      387.0569761743881,
+      502.6335124000399
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-096",
+    "name": "郑东片区泵站16",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      698.1991405768334,
+      499.7620827319378
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-097",
+    "name": "中原区阀门17",
+    "type": "valve",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      144.80305294521213,
+      228.83483460850698
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-098",
+    "name": "二七区压力监测点17",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      437.55529286833024,
+      219.89822956084302
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-099",
+    "name": "管城回族区流量计17",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      726.119417536115,
+      221.16854105650248
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-100",
+    "name": "金水区泵站17",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      121.00951798976375,
+      491.47785056471764
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-101",
+    "name": "惠济区阀门17",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      426.9236123066829,
+      501.3478264674522
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-102",
+    "name": "郑东片区压力监测点17",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      738.4243094461402,
+      501.70405843745795
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-103",
+    "name": "中原区流量计18",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      187.93792149630087,
+      232.21902844435945
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-104",
+    "name": "二七区泵站18",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      483.4758635773082,
+      221.6132293213546
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-105",
+    "name": "管城回族区阀门18",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      772.1405311620497,
+      219.63758387098545
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-106",
+    "name": "金水区压力监测点18",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      164.3535765975502,
+      488.1084914091656
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-107",
+    "name": "惠济区流量计18",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      467.27428999902975,
+      499.2378386108838
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-108",
+    "name": "郑东片区泵站18",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      778.217380934728,
+      502.79335498449467
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-109",
+    "name": "中原区阀门19",
+    "type": "valve",
+    "regionId": "REG-001",
+    "dmaId": "DMA-001",
+    "position": [
+      230.12182206501342,
+      235.50611517320414
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-110",
+    "name": "二七区压力监测点19",
+    "type": "sensor",
+    "regionId": "REG-002",
+    "dmaId": "DMA-002",
+    "position": [
+      528.8009112796358,
+      224.07597385268457
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-111",
+    "name": "管城回族区流量计19",
+    "type": "meter",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      818.4690878629791,
+      219.01175024022422
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-112",
+    "name": "金水区泵站19",
+    "type": "pump",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      208.6253826166727,
+      484.96946817025537
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-113",
+    "name": "惠济区阀门19",
+    "type": "valve",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      508.320052747598,
+      496.4716292533313
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-114",
+    "name": "郑东片区压力监测点19",
+    "type": "sensor",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      817.8338171292814,
+      502.94319963460555
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-115",
+    "name": "中原区流量计20",
+    "type": "meter",
+    "regionId": "REG-001",
+    "dmaId": "DMA-007",
+    "position": [
+      271.4197646641757,
+      238.4342473507105
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-116",
+    "name": "二七区泵站20",
+    "type": "pump",
+    "regionId": "REG-002",
+    "dmaId": "DMA-008",
+    "position": [
+      573.3452240082972,
+      227.09028233736043
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-117",
+    "name": "管城回族区阀门20",
+    "type": "valve",
+    "regionId": "REG-003",
+    "dmaId": "DMA-003",
+    "position": [
+      864.8399367203714,
+      219.34089371245437
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-118",
+    "name": "金水区压力监测点20",
+    "type": "sensor",
+    "regionId": "REG-004",
+    "dmaId": "DMA-004",
+    "position": [
+      253.72362470877533,
+      482.3108336395943
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-119",
+    "name": "惠济区流量计20",
+    "type": "meter",
+    "regionId": "REG-005",
+    "dmaId": "DMA-005",
+    "position": [
+      550.216573971471,
+      493.2695530463475
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  },
+  {
+    "id": "FAC-120",
+    "name": "郑东片区泵站20",
+    "type": "pump",
+    "regionId": "REG-006",
+    "dmaId": "DMA-006",
+    "position": [
+      857.5431507827429,
+      502.14165584886894
+    ],
+    "status": "normal",
+    "deviceId": null,
+    "valveState": "open",
+    "description": "本地虚构设施，仅用于供水业务演示"
+  }
+]

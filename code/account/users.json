@@ -1,0 +1,166 @@
+[
+  {
+    "id": "USER-001",
+    "username": "admin",
+    "password": "Demo123!",
+    "displayName": "调度管理员",
+    "roleId": "admin",
+    "regionIds": [
+      "REG-001",
+      "REG-002",
+      "REG-003",
+      "REG-004",
+      "REG-005",
+      "REG-006"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-002",
+    "username": "operator",
+    "password": "Demo123!",
+    "displayName": "陈明（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-001"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-003",
+    "username": "operator2",
+    "password": "Demo123!",
+    "displayName": "李宁（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-002"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-004",
+    "username": "operator3",
+    "password": "Demo123!",
+    "displayName": "王晨（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-003"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-005",
+    "username": "operator4",
+    "password": "Demo123!",
+    "displayName": "赵毅（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-004"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-006",
+    "username": "operator5",
+    "password": "Demo123!",
+    "displayName": "刘颖（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-005"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-007",
+    "username": "operator6",
+    "password": "Demo123!",
+    "displayName": "孙浩（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-006"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-008",
+    "username": "operator7",
+    "password": "Demo123!",
+    "displayName": "周敏（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-001"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-009",
+    "username": "operator8",
+    "password": "Demo123!",
+    "displayName": "吴刚（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-002"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-010",
+    "username": "operator9",
+    "password": "Demo123!",
+    "displayName": "郑云（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-003"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-011",
+    "username": "operator10",
+    "password": "Demo123!",
+    "displayName": "冯凯（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-004"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-012",
+    "username": "operator11",
+    "password": "Demo123!",
+    "displayName": "何静（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-005"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-013",
+    "username": "operator12",
+    "password": "Demo123!",
+    "displayName": "许峰（演示）",
+    "roleId": "operator",
+    "regionIds": [
+      "REG-006"
+    ],
+    "enabled": true
+  },
+  {
+    "id": "USER-014",
+    "username": "guest",
+    "password": "Demo123!",
+    "displayName": "访客",
+    "roleId": "guest",
+    "regionIds": [
+      "REG-001",
+      "REG-002",
+      "REG-003",
+      "REG-004",
+      "REG-005",
+      "REG-006"
+    ],
+    "enabled": true
+  }
+]

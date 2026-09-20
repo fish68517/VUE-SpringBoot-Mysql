@@ -1,0 +1,98 @@
+{
+  "announcements": [
+    {
+      "id": "NOTICE-001",
+      "title": "秋季供水设施巡检工作安排",
+      "date": "2026-09-20",
+      "content": "本轮演示覆盖重点设施检查、异常上报、工单处理和验收。请从工作台查看本人任务，填写检查结果后提交。"
+    },
+    {
+      "id": "NOTICE-002",
+      "title": "演示系统数据使用说明",
+      "date": "2026-09-19",
+      "content": "所有设施、人员、指标和控制均为模拟。不同浏览器和手机独立保存状态，管理员可恢复初始场景。"
+    }
+  ],
+  "news": [
+    {
+      "id": "NEWS-001",
+      "title": "智慧调度，让供水服务更从容",
+      "date": "2026-09-20",
+      "content": "本次场景展示告警发现、调度派单、现场处置与复核的完整业务过程。"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "USER-002",
+      "name": "陈明（演示）",
+      "department": "中原区巡检组",
+      "extension": "内线 8001"
+    },
+    {
+      "id": "USER-003",
+      "name": "李宁（演示）",
+      "department": "二七区巡检组",
+      "extension": "内线 8002"
+    },
+    {
+      "id": "USER-004",
+      "name": "王晨（演示）",
+      "department": "管城回族区巡检组",
+      "extension": "内线 8003"
+    },
+    {
+      "id": "USER-005",
+      "name": "赵毅（演示）",
+      "department": "金水区巡检组",
+      "extension": "内线 8004"
+    },
+    {
+      "id": "USER-006",
+      "name": "刘颖（演示）",
+      "department": "惠济区巡检组",
+      "extension": "内线 8005"
+    },
+    {
+      "id": "USER-007",
+      "name": "孙浩（演示）",
+      "department": "郑东片区巡检组",
+      "extension": "内线 8006"
+    },
+    {
+      "id": "USER-008",
+      "name": "周敏（演示）",
+      "department": "中原区巡检组",
+      "extension": "内线 8007"
+    },
+    {
+      "id": "USER-009",
+      "name": "吴刚（演示）",
+      "department": "二七区巡检组",
+      "extension": "内线 8008"
+    },
+    {
+      "id": "USER-010",
+      "name": "郑云（演示）",
+      "department": "管城回族区巡检组",
+      "extension": "内线 8009"
+    },
+    {
+      "id": "USER-011",
+      "name": "冯凯（演示）",
+      "department": "金水区巡检组",
+      "extension": "内线 8010"
+    },
+    {
+      "id": "USER-012",
+      "name": "何静（演示）",
+      "department": "惠济区巡检组",
+      "extension": "内线 8011"
+    },
+    {
+      "id": "USER-013",
+      "name": "许峰（演示）",
+      "department": "郑东片区巡检组",
+      "extension": "内线 8012"
+    }
+  ]
+}

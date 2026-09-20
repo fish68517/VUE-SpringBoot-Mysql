@@ -1,0 +1,14 @@
+[
+  {
+    "id": "admin",
+    "name": "管理员"
+  },
+  {
+    "id": "operator",
+    "name": "操作员"
+  },
+  {
+    "id": "guest",
+    "name": "访客"
+  }
+]

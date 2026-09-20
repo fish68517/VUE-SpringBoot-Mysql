@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ROUTE-1",
+    "name": "中原区巡检线",
+    "regionId": "REG-001",
+    "facilityIds": [
+      "FAC-001",
+      "FAC-007",
+      "FAC-013"
+    ]
+  },
+  {
+    "id": "ROUTE-2",
+    "name": "二七区巡检线",
+    "regionId": "REG-002",
+    "facilityIds": [
+      "FAC-002",
+      "FAC-008",
+      "FAC-014"
+    ]
+  },
+  {
+    "id": "ROUTE-3",
+    "name": "管城回族区巡检线",
+    "regionId": "REG-003",
+    "facilityIds": [
+      "FAC-003",
+      "FAC-009",
+      "FAC-015"
+    ]
+  },
+  {
+    "id": "ROUTE-4",
+    "name": "金水区巡检线",
+    "regionId": "REG-004",
+    "facilityIds": [
+      "FAC-004",
+      "FAC-010",
+      "FAC-016"
+    ]
+  },
+  {
+    "id": "ROUTE-5",
+    "name": "惠济区巡检线",
+    "regionId": "REG-005",
+    "facilityIds": [
+      "FAC-005",
+      "FAC-011",
+      "FAC-017"
+    ]
+  },
+  {
+    "id": "ROUTE-6",
+    "name": "郑东片区巡检线",
+    "regionId": "REG-006",
+    "facilityIds": [
+      "FAC-006",
+      "FAC-012",
+      "FAC-018"
+    ]
+  }
+]

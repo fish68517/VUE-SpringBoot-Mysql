@@ -1,0 +1,7 @@
+node_modules
+.npm-cache
+unpackage
+static/vendor
+data
+account
+package-lock.json

@@ -1,0 +1,872 @@
+[
+  {
+    "date": "2026-09-01",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 21000
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 26720
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 30582
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 32439
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33984
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 37199
+      }
+    ]
+  },
+  {
+    "date": "2026-09-02",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 21785
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 27033
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 30135
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 31643
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33570
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 37548
+      }
+    ]
+  },
+  {
+    "date": "2026-09-03",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 22484
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 27089
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 29497
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 30897
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33403
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 38112
+      }
+    ]
+  },
+  {
+    "date": "2026-09-04",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 23020
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 26882
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 28739
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 30284
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33499
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 38829
+      }
+    ]
+  },
+  {
+    "date": "2026-09-05",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 23333
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 26435
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 27943
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 29870
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33848
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 39620
+      }
+    ]
+  },
+  {
+    "date": "2026-09-06",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 23389
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 25797
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 27197
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 29703
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 34412
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 40398
+      }
+    ]
+  },
+  {
+    "date": "2026-09-07",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 23182
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 25039
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26584
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 29799
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 35129
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41077
+      }
+    ]
+  },
+  {
+    "date": "2026-09-08",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 22735
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 24243
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26170
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 30148
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 35920
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41582
+      }
+    ]
+  },
+  {
+    "date": "2026-09-09",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 22097
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 23497
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26003
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 30712
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 36698
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41858
+      }
+    ]
+  },
+  {
+    "date": "2026-09-10",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 21339
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 22884
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26099
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 31429
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 37377
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41874
+      }
+    ]
+  },
+  {
+    "date": "2026-09-11",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 20543
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 22470
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26448
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 32220
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 37882
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41630
+      }
+    ]
+  },
+  {
+    "date": "2026-09-12",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 19797
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 22303
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 27012
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 32998
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 38158
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41150
+      }
+    ]
+  },
+  {
+    "date": "2026-09-13",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 19184
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 22399
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 27729
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 33677
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 38174
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 40489
+      }
+    ]
+  },
+  {
+    "date": "2026-09-14",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 18770
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 22748
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 28520
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 34182
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 37930
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 39719
+      }
+    ]
+  },
+  {
+    "date": "2026-09-15",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 18603
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 23312
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 29298
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 34458
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 37450
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 38925
+      }
+    ]
+  },
+  {
+    "date": "2026-09-16",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 18699
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 24029
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 29977
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 34474
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 36789
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 38194
+      }
+    ]
+  },
+  {
+    "date": "2026-09-17",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 19048
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 24820
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 30482
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 34230
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 36019
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 37607
+      }
+    ]
+  },
+  {
+    "date": "2026-09-18",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 19612
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 25598
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 30758
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 33750
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 35225
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 37229
+      }
+    ]
+  },
+  {
+    "date": "2026-09-19",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 20329
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 26277
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 30774
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 33089
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 34494
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 37100
+      }
+    ]
+  },
+  {
+    "date": "2026-09-20",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 21120
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 26782
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 30530
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 32319
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33907
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 37236
+      }
+    ]
+  },
+  {
+    "date": "2026-09-21",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 21898
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 27058
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 30050
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 31525
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33529
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 37620
+      }
+    ]
+  },
+  {
+    "date": "2026-09-22",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 22577
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 27074
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 29389
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 30794
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33400
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 38212
+      }
+    ]
+  },
+  {
+    "date": "2026-09-23",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 23082
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 26830
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 28619
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 30207
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33536
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 38946
+      }
+    ]
+  },
+  {
+    "date": "2026-09-24",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 23358
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 26350
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 27825
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 29829
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 33920
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 39740
+      }
+    ]
+  },
+  {
+    "date": "2026-09-25",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 23374
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 25689
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 27094
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 29700
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 34512
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 40508
+      }
+    ]
+  },
+  {
+    "date": "2026-09-26",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 23130
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 24919
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26507
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 29836
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 35246
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41165
+      }
+    ]
+  },
+  {
+    "date": "2026-09-27",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 22650
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 24125
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26129
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 30220
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 36040
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41639
+      }
+    ]
+  },
+  {
+    "date": "2026-09-28",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 21989
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 23394
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26000
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 30812
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 36808
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41877
+      }
+    ]
+  },
+  {
+    "date": "2026-09-29",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 21219
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 22807
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26136
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 31546
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 37465
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41854
+      }
+    ]
+  },
+  {
+    "date": "2026-09-30",
+    "regions": [
+      {
+        "regionId": "REG-001",
+        "volume": 20425
+      },
+      {
+        "regionId": "REG-002",
+        "volume": 22429
+      },
+      {
+        "regionId": "REG-003",
+        "volume": 26520
+      },
+      {
+        "regionId": "REG-004",
+        "volume": 32340
+      },
+      {
+        "regionId": "REG-005",
+        "volume": 37939
+      },
+      {
+        "regionId": "REG-006",
+        "volume": 41571
+      }
+    ]
+  }
+]
