@@ -1,0 +1,21 @@
+src/package/BZAQ/BzHFAndwelding/index.vue
+  s_a16231bd8fe0a8::t_42261d0d5d7226 104-105,177-376,409-410,412,414,419,421,432,434,443-444,465,467,472,486-488,492-493,495-496,502-504,526-527,541-542,544,547,554,557,559-561,568,576,579,582-583,586-587,594,598-599,603,609-610,612-613,615-617,620,624,627,631-635,637-638,640-643,645-651,653
+  s_a16231bd8fe0a8::t_0a4a835be24fda 377-408,417-418,424,474,510,518,537-538,552,589,601,658,663
+  s_a16231bd8fe0a8::t_3fed075ff6ae55 534
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d90db13dfb7aad601a88819d6a66b82a4eff84af",
+  "prompts": {},
+  "sessions": {
+    "s_a16231bd8fe0a8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06304-2b6f-7432-a60f-b2a3ed6c883a",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

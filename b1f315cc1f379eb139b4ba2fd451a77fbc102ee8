@@ -1,0 +1,14 @@
+.gitignore
+  h_c1a03fb9ff63b4 3,5-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "b1f315cc1f379eb139b4ba2fd451a77fbc102ee8",
+  "prompts": {},
+  "humans": {
+    "h_c1a03fb9ff63b4": {
+      "author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

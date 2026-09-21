@@ -1,0 +1,25 @@
+src/package/BZAQ/BzWaterKpiDia/components/WaterlogPredictionDia.vue
+  s_a16231bd8fe0a8::t_5bc94b0d4063c6 149-162,1608-1721,1751-1790,1889-1894
+src/package/BZAQ/BZHouse/components/BZHouseHotWorkTriple3.vue
+  s_a16231bd8fe0a8::t_3649aa8f94884b 3-6,9-16,69-71,78-79,81-84,93-94,115-121,124-126,128-131,135-143,146
+  s_a16231bd8fe0a8::t_81d91efa10bfbd 215-218,222-238,242-245
+  s_a16231bd8fe0a8::t_9779e06015d929 655,718,727-728,730,776,791,795,800
+  s_a16231bd8fe0a8::t_5a3d6309ccb715 516-517,519-520,522-525,528,533-535,537-538
+  s_a16231bd8fe0a8::t_b722a95b5929b2 451-452,618-654,656-717,719-726,729,731-775,777-790,792-794,796-799,801-808
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "ffe039c5c01b50df02f2db9a250983a345cef7a6",
+  "prompts": {},
+  "sessions": {
+    "s_a16231bd8fe0a8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06304-2b6f-7432-a60f-b2a3ed6c883a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
