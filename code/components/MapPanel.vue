@@ -1,6 +1,17 @@
 <template>
-  <view>
-    <view class="toolbar">
+  <view :class="{ 'mobile-map': mobile }">
+    <view v-if="mobile" class="toolbar mobile-map-tools">
+      <button class="button secondary" @click="filtersOpen = !filtersOpen">
+        筛选 {{ filtersOpen ? '收起' : '展开' }}
+      </button>
+      <button class="button secondary" @click="layersOpen = !layersOpen">图层</button>
+      <button class="button secondary" @click="listOpen = !listOpen">结果 {{ facilities.length }}</button>
+    </view>
+    <view v-if="query.taskId" class="notice">
+      {{ task ? '当前任务：' + task.name : '任务不存在或无权访问' }}
+      <button v-if="task" class="mobile-link" @click="go('taskDetail', { id: task.id })">返回任务</button>
+    </view>
+    <view v-if="!mobile" class="toolbar">
       <button
         class="button secondary"
         @click="go('mapChanges', { id: pipeId || selectedId, kind: pipeId ? 'pipe' : 'facility' })"
@@ -15,7 +26,7 @@
       </button>
     </view>
     <view class="panel">
-      <view class="toolbar">
+      <view v-if="!mobile || filtersOpen" class="toolbar">
         <input class="field search" v-model="filter.keyword" placeholder="搜索设施 / 管线名称或编号" />
         <SelectField v-model="filter.region" :options="regionOptions" />
         <SelectField v-model="filter.type" :options="typeOptions" />
@@ -36,7 +47,7 @@
           :options="[
             { value: 'pan', label: '浏览平移' },
             { value: 'box', label: '矩形框选' },
-            { value: 'polygon', label: '多边形面选' },
+            ...(!mobile ? [{ value: 'polygon', label: '多边形面选' }] : []),
           ]"
         />
         <button v-if="selectionMode === 'polygon'" class="button" @click="finishPolygon">完成面选</button>
@@ -50,17 +61,19 @@
           <view class="map-container">
             <MapCanvas :active="active" :config="config" @select="select" />
             <view class="map-floating">
-              <button
-                v-for="t in themes"
-                :key="t.id"
-                :class="['button', 'compact', theme === t.id ? '' : 'secondary']"
-                @click="theme = t.id"
-              >
-                {{ t.name }}
-              </button>
-              <button class="button secondary compact" @click="showPipes = !showPipes">
-                {{ showPipes ? '隐藏管线' : '显示管线' }}
-              </button>
+              <template v-if="!mobile || layersOpen">
+                <button
+                  v-for="t in themes"
+                  :key="t.id"
+                  :class="['button', 'compact', theme === t.id ? '' : 'secondary']"
+                  @click="theme = t.id"
+                >
+                  {{ t.name }}
+                </button>
+                <button class="button secondary compact" @click="showPipes = !showPipes">
+                  {{ showPipes ? '隐藏管线' : '显示管线' }}
+                </button>
+              </template>
               <button class="button secondary compact" @click="zoom = Math.min(3, zoom + 0.25)">＋</button>
               <button class="button secondary compact" @click="zoom = Math.max(0.5, zoom - 0.25)">－</button>
               <button class="button secondary compact" @click="resetMap">复位</button>
@@ -76,8 +89,12 @@
             </view>
           </view>
         </view>
-        <view>
-          <view class="panel-title">{{ selectedPipe ? '管线详情' : '设施详情' }}</view>
+        <view v-if="mobile && detailOpen" class="map-sheet-mask" @click="detailOpen = false" />
+        <view v-if="!mobile || detailOpen" :class="{ 'map-sheet': mobile }">
+          <view class="panel-title">
+            {{ selectedPipe ? '管线详情' : '设施详情' }}
+            <button v-if="mobile" class="mobile-link" @click="detailOpen = false">关闭</button>
+          </view>
           <template v-if="selectedPipe">
             <text class="list-item-title">{{ selectedPipe.name }}</text>
             <view class="detail-grid">
@@ -132,9 +149,30 @@
               <button class="button secondary compact" @click="go('alarms', { facilityId: selected.id })">
                 查看告警
               </button>
+              <button
+                v-if="mobile && demo.has('write')"
+                class="button secondary"
+                @click="go('mobileReport', { facilityId: selected.id })"
+              >
+                事件上报
+              </button>
+              <button
+                v-if="mobile && demo.has('write')"
+                class="button secondary"
+                @click="go('mapChanges', { id: selected.id, kind: 'facility' })"
+              >
+                设施纠错
+              </button>
             </view>
           </template>
           <view v-else class="empty">请选择地图上的设施或管线</view>
+          <button
+            v-if="mobile && selectedPipe && demo.has('write')"
+            class="button secondary"
+            @click="go('mapChanges', { id: selectedPipe.id, kind: 'pipe' })"
+          >
+            管线纠错
+          </button>
           <view v-if="selected" class="list-item">
             <text class="detail-label">已发布图层字段</text>
             <text v-for="field in demo.state.phase2.layers.fields" :key="field" class="subtle">
@@ -146,12 +184,12 @@
         </view>
       </view>
     </view>
-    <view class="panel" style="margin-top: 20px">
+    <view v-if="!mobile || listOpen" class="panel" style="margin-top: 20px">
       <view class="panel-title">
         设施台账
         <text class="subtle">与地图采用相同筛选条件</text>
       </view>
-      <view class="table">
+      <view v-if="!mobile" class="table">
         <view class="table-row header facility-row">
           <text>设施编号</text>
           <text>设施名称</text>
@@ -168,6 +206,17 @@
           <text>{{ f.name }}</text>
           <text>{{ facilityType(f.type) }}</text>
           <text>{{ regionName(f.regionId) }}</text>
+        </view>
+      </view>
+      <view v-else>
+        <view
+          v-for="f in pageRows"
+          :key="f.id"
+          class="list-item"
+          @click="select({ type: 'facility', id: f.id })"
+        >
+          <text class="list-item-title">{{ f.name }} ›</text>
+          <text class="subtle">{{ facilityType(f.type) }} · {{ regionName(f.regionId) }} · {{ f.id }}</text>
         </view>
       </view>
       <view v-if="!facilities.length" class="empty">没有匹配的设施</view>
@@ -197,6 +246,7 @@
 </template>
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
+import { onBackPress } from '@dcloudio/uni-app'
 import { useDemo } from '../stores/demo'
 import { regions, dictionary } from '../repositories/seed'
 import { regionName, facilityType, options } from '../domain/presentation'
@@ -205,10 +255,25 @@ import MapCanvas from './MapCanvas.vue'
 import { inside, intersects } from '../domain/phase2'
 import { exportCsv } from '../platform/export'
 import SelectField from './SelectField.vue'
-const props = defineProps<{ query: Record<string, string>; active: boolean }>(),
+const props = defineProps<{ query: Record<string, string>; active: boolean; mobile?: boolean }>(),
   demo = useDemo(),
-  filter = reactive(demo.filters.map || { keyword: '', region: '', type: '', status: '', page: 1 })
-demo.filters.map = filter
+  filterKey = props.query.taskId ? 'map-task:' + props.query.taskId : props.mobile ? 'mobileMap' : 'map',
+  filter = reactive(demo.filters[filterKey] || { keyword: '', region: '', type: '', status: '', page: 1 })
+demo.filters[filterKey] = filter
+const filtersOpen = ref(false),
+  layersOpen = ref(false),
+  listOpen = ref(false),
+  detailOpen = ref(false)
+const task = computed(() => demo.tasks.find((t) => t.id === props.query.taskId))
+const taskIds = computed(() => new Set(task.value?.checks.map((c) => c.facilityId) || []))
+onBackPress((event) => {
+  if (event.from === 'navigateBack') return false
+  if (props.mobile && detailOpen.value) {
+    detailOpen.value = false
+    return true
+  }
+  return false
+})
 const selectedId = ref(props.query.facilityId || demo.selection),
   pipeId = ref(props.query.pipeId || ''),
   theme = ref('dark'),
@@ -223,7 +288,8 @@ function finishPolygon() {
     uni.showToast({ title: '至少选择三个顶点', icon: 'none' })
     return
   }
-  selectedIds.value = demo.facilities.filter((f) => inside(f.position, polygon.value)).map((f) => f.id)
+  selectedIds.value = facilities.value.filter((f) => inside(f.position, polygon.value)).map((f) => f.id)
+  filter.page = 1
   selectionMode.value = 'pan'
 }
 function clearSelection() {
@@ -265,6 +331,7 @@ const alarmIds = computed(
 const facilities = computed(() =>
   demo.facilities.filter(
     (f) =>
+      (!props.query.taskId || taskIds.value.has(f.id)) &&
       (!polygon.value.length || selectionMode.value !== 'pan' || selectedIds.value.includes(f.id)) &&
       (!filter.region || f.regionId === filter.region) &&
       (!filter.type || f.type === filter.type) &&
@@ -277,6 +344,7 @@ const facilities = computed(() =>
 const mapPipes = computed(() =>
   demo.state.phase2.pipes.filter(
     (p) =>
+      (!props.query.taskId || (taskIds.value.has(p.fromFacilityId) && taskIds.value.has(p.toFacilityId))) &&
       demo.user?.regionIds.includes(p.regionId) &&
       (!polygon.value.length || selectionMode.value !== 'pan' || intersects(p.path, polygon.value)) &&
       (!filter.region || p.regionId === filter.region) &&
@@ -328,5 +396,47 @@ function select(v: { type: string; id: string; point?: number[]; polygon?: numbe
     demo.selection = v.id
     pipeId.value = ''
   } else pipeId.value = v.id
+  if (props.mobile) detailOpen.value = true
 }
 </script>
+<style scoped>
+.mobile-map .columns {
+  display: block;
+}
+.mobile-map .map-container {
+  height: 52vh;
+  min-height: 320px;
+  max-height: 620px;
+}
+.mobile-map .map-floating {
+  max-width: calc(100% - 24px);
+  flex-wrap: wrap;
+}
+.map-sheet-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 30, 48, 0.28);
+  z-index: 70;
+}
+.map-sheet {
+  position: fixed;
+  bottom: calc(70px + env(safe-area-inset-bottom));
+  left: 10px;
+  right: 10px;
+  padding: 20px;
+  max-height: 62vh;
+  overflow-y: auto;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 40px #14334633;
+  z-index: 75;
+}
+.map-sheet .panel-title {
+  display: flex;
+  justify-content: space-between;
+}
+.map-sheet .list-item > .subtle {
+  display: block;
+  margin-top: 6px;
+}
+</style>

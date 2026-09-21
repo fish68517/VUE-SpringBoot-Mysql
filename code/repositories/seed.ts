@@ -31,7 +31,7 @@ export const scenarios = [scenarios0, scenarios1, scenarios2]
 export const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v))
 export function makeState(scenarioId = manifest.defaultScenario): State {
   const scenario = scenarios.find((s) => s.id === scenarioId)
-  if (!scenario) throw new Error('未知演示场景')
+  if (!scenario) throw new Error('未知业务场景')
   return {
     version: manifest.datasetVersion,
     phase2: {

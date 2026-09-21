@@ -21,7 +21,7 @@
       </view>
       <view class="phase-note">
         <text class="phase-dot" />
-        第二阶段 · 本地演示
+        供水业务管理
         <text class="muted block">审核、巡检、设备与报表</text>
       </view>
     </view>
@@ -33,7 +33,6 @@
           <text>{{ title }}</text>
         </view>
         <view class="top-actions">
-          <text class="demo-badge">演示数据</text>
           <text class="account-name">{{ demo.user?.displayName }}</text>
           <button class="text-button" @click="demo.logout">退出</button>
         </view>
@@ -50,12 +49,12 @@
       </view>
       <view v-if="demo.warning" class="notice warning">
         {{ demo.warning }}
-        <text v-if="demo.has('reset')" class="link" @click="go('settings')">前往演示设置</text>
+        <text v-if="demo.has('reset')" class="link" @click="go('settings')">前往系统设置</text>
       </view>
       <view class="page-body"><slot /></view>
       <view class="page-footer">
-        郑州城市智慧供水演示系统
-        <text>本地模拟 · {{ demo.state.version }}</text>
+        郑州城市智慧供水管理系统
+        <text>版本 · {{ demo.state.version }}</text>
       </view>
     </view>
     <view class="mobile-tabs">
@@ -95,6 +94,6 @@ const navigation = [
   { key: 'reports', label: '统计报表', icon: '▧' },
   { key: 'video', label: '视频中心', icon: '▷' },
   { key: 'energy', label: '能耗与运行', icon: 'ϟ' },
-  { key: 'settings', label: '演示设置', icon: '⚙' },
+  { key: 'settings', label: '系统设置', icon: '⚙' },
 ]
 </script>

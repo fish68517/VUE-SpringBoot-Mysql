@@ -1,6 +1,13 @@
 {
   "pages": [
     {
+      "path": "pages/login/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "账号登录"
+      }
+    },
+    {
       "path": "pages/map/changes",
       "style": {
         "navigationStyle": "custom",
@@ -68,13 +75,6 @@
       "style": {
         "navigationStyle": "custom",
         "navigationBarTitleText": "移动事件上报"
-      }
-    },
-    {
-      "path": "pages/login/index",
-      "style": {
-        "navigationStyle": "custom",
-        "navigationBarTitleText": "演示登录"
       }
     },
     {
@@ -207,7 +207,7 @@
       "path": "pages/settings/index",
       "style": {
         "navigationStyle": "custom",
-        "navigationBarTitleText": "演示设置"
+        "navigationBarTitleText": "系统设置"
       }
     },
     {

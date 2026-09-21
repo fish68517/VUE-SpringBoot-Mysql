@@ -1,7 +1,9 @@
 import { ref, nextTick } from 'vue'
 import { onLoad, onShow, onHide, onUnload, onPageScroll } from '@dcloudio/uni-app'
 import { useDemo } from '../stores/demo'
-import { routes, urlFor } from './routeMap'
+import { routes, urlFor, go } from './routeMap'
+import { clientRoute } from './clientPolicy'
+import { isMobileClient } from '../platform/client'
 export function usePageContext(mode: string) {
   const demo = useDemo(),
     query = ref<Record<string, string>>({}),
@@ -26,6 +28,12 @@ export function usePageContext(mode: string) {
   }
   onLoad((q: any) => {
     query.value = q || {}
+    const target = clientRoute(mode, isMobileClient())
+    if (target !== mode) {
+      redirecting = true
+      go(target, query.value, true)
+      return
+    }
     ready.value = true
     syncHash()
     requireLogin()

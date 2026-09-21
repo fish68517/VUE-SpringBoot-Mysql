@@ -6480,7 +6480,7 @@
     },
     {
       "id": "PLAN-2",
-      "name": "节能运行样例",
+      "name": "节能运行方案",
       "factor": 0.9,
       "minPressure": 0.25,
       "maxPressure": 0.45
@@ -6590,14 +6590,14 @@
   "videos": [
     {
       "id": "CAM-001",
-      "name": "中原区泵房 · 合成演示",
+      "name": "中原区泵房",
       "regionId": "REG-001",
       "src": "/static/demo-assets/pump-demo.mp4",
       "online": true
     },
     {
       "id": "CAM-002",
-      "name": "二七区泵房 · 合成演示",
+      "name": "二七区泵房",
       "regionId": "REG-002",
       "src": "/static/demo-assets/pump-demo.mp4",
       "online": true

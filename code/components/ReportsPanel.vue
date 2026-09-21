@@ -30,7 +30,7 @@
       </view>
       <view class="notice">
         {{ reportNote }}
-        样例数据期间：2026 年 9 月；压力样本日期：9 月 20 日。
+        数据期间：2026 年 9 月；压力样本日期：9 月 20 日。
       </view>
       <view class="panel-title">
         {{ reportName }}{{ period === 'day' ? '日报' : '月报' }}
@@ -43,7 +43,7 @@
         :values="rows.map((r) => r.value)"
         :name="unit"
       />
-      <view v-else class="empty">该时段无演示数据</view>
+      <view v-else class="empty">该时段无数据</view>
       <view class="table" v-if="rows.length">
         <view class="table-row header report-row">
           <text>区域 / 时间</text>
@@ -62,7 +62,7 @@
       </view>
     </view>
     <view class="notice" style="margin-top: 20px">
-      用水按区域合计；巡检按计划日期统计当前完成状态；管网按审核生效日期统计变更；能耗仅累计有效样本，运行时长截止模拟当前时间。空时段不填造数据。
+      用水按区域合计；巡检按计划日期统计当前完成状态；管网按审核生效日期统计变更；能耗仅累计有效样本，运行时长截止当前业务时间。空时段不填造数据。
     </view>
   </view>
 </template>
@@ -113,7 +113,7 @@ const reportNote = computed(() =>
     ? '压力按有效样本统计，不对缺失日期补零。'
     : type.value === 'network'
       ? '按六级审核最终生效时间统计新增、修改、删除；未生效申请不计入。'
-      : '按选定日期、区域与实际有效样例统计。',
+      : '按选定日期、区域与有效记录统计。',
 )
 const rows = computed(() => {
   if (!['usage', 'pressure'].includes(type.value))

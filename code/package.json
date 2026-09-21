@@ -14,6 +14,7 @@
     "preview": "node scripts/preview.mjs",
     "test:browser": "node scripts/browser-acceptance.mjs",
     "test:phase2": "node scripts/browser-phase2.mjs",
+    "test:mobile": "node scripts/browser-mobile.mjs",
     "test:stability": "node scripts/browser-stability.mjs"
   },
   "dependencies": {

@@ -2,7 +2,7 @@
   <view v-if="mode === 'portalDetail'" class="panel">
     <template v-if="article">
       <view class="panel-title">{{ article.title }}</view>
-      <text class="subtle">{{ article.date }} · 演示信息</text>
+      <text class="subtle">{{ article.date }} · 发布信息</text>
       <view class="divider" />
       <text class="content-text">{{ article.content }}</text>
     </template>
@@ -109,7 +109,7 @@
         <view class="panel">
           <view class="panel-title">
             通讯录
-            <text class="subtle">演示内线</text>
+            <text class="subtle">内线电话</text>
           </view>
           <input class="field" v-model="contactKeyword" placeholder="搜索姓名 / 部门" />
           <view v-for="c in contacts" :key="c.id" class="list-item">

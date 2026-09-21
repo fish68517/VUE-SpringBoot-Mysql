@@ -19,7 +19,7 @@
     "id": "USER-002",
     "username": "operator",
     "password": "Demo123!",
-    "displayName": "陈明（演示）",
+    "displayName": "陈明",
     "roleId": "operator",
     "regionIds": [
       "REG-001"
@@ -30,7 +30,7 @@
     "id": "USER-003",
     "username": "operator2",
     "password": "Demo123!",
-    "displayName": "李宁（演示）",
+    "displayName": "李宁",
     "roleId": "operator",
     "regionIds": [
       "REG-002"
@@ -41,7 +41,7 @@
     "id": "USER-004",
     "username": "operator3",
     "password": "Demo123!",
-    "displayName": "王晨（演示）",
+    "displayName": "王晨",
     "roleId": "operator",
     "regionIds": [
       "REG-003"
@@ -52,7 +52,7 @@
     "id": "USER-005",
     "username": "operator4",
     "password": "Demo123!",
-    "displayName": "赵毅（演示）",
+    "displayName": "赵毅",
     "roleId": "operator",
     "regionIds": [
       "REG-004"
@@ -63,7 +63,7 @@
     "id": "USER-006",
     "username": "operator5",
     "password": "Demo123!",
-    "displayName": "刘颖（演示）",
+    "displayName": "刘颖",
     "roleId": "operator",
     "regionIds": [
       "REG-005"
@@ -74,7 +74,7 @@
     "id": "USER-007",
     "username": "operator6",
     "password": "Demo123!",
-    "displayName": "孙浩（演示）",
+    "displayName": "孙浩",
     "roleId": "operator",
     "regionIds": [
       "REG-006"
@@ -85,7 +85,7 @@
     "id": "USER-008",
     "username": "operator7",
     "password": "Demo123!",
-    "displayName": "周敏（演示）",
+    "displayName": "周敏",
     "roleId": "operator",
     "regionIds": [
       "REG-001"
@@ -96,7 +96,7 @@
     "id": "USER-009",
     "username": "operator8",
     "password": "Demo123!",
-    "displayName": "吴刚（演示）",
+    "displayName": "吴刚",
     "roleId": "operator",
     "regionIds": [
       "REG-002"
@@ -107,7 +107,7 @@
     "id": "USER-010",
     "username": "operator9",
     "password": "Demo123!",
-    "displayName": "郑云（演示）",
+    "displayName": "郑云",
     "roleId": "operator",
     "regionIds": [
       "REG-003"
@@ -118,7 +118,7 @@
     "id": "USER-011",
     "username": "operator10",
     "password": "Demo123!",
-    "displayName": "冯凯（演示）",
+    "displayName": "冯凯",
     "roleId": "operator",
     "regionIds": [
       "REG-004"
@@ -129,7 +129,7 @@
     "id": "USER-012",
     "username": "operator11",
     "password": "Demo123!",
-    "displayName": "何静（演示）",
+    "displayName": "何静",
     "roleId": "operator",
     "regionIds": [
       "REG-005"
@@ -140,7 +140,7 @@
     "id": "USER-013",
     "username": "operator12",
     "password": "Demo123!",
-    "displayName": "许峰（演示）",
+    "displayName": "许峰",
     "roleId": "operator",
     "regionIds": [
       "REG-006"

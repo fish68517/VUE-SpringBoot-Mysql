@@ -2,7 +2,7 @@
   <view class="panel">
     <view class="panel-title">
       视频中心
-      <text class="subtle">本地合成演示素材</text>
+      <text class="subtle">视频回放</text>
     </view>
     <view class="toolbar">
       <SelectField
@@ -34,7 +34,7 @@
         <view v-if="!c.online || failed[c.id]" class="empty">
           {{ c.online ? '本地视频加载失败，请检查打包资源' : '通道离线 · 无视频信号' }}
         </view>
-        <text class="subtle">{{ c.online ? '可播放本地视频，未连接真实摄像头' : '预设离线状态' }}</text>
+        <text class="subtle">{{ c.online ? '视频回放' : '通道离线' }}</text>
       </view>
     </view>
   </view>

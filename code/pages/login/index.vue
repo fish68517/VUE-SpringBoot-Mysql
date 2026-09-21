@@ -25,7 +25,7 @@
         </view>
         <text class="login-caption">供水运行 / 分区计量 / 业务协同</text>
       </view>
-      <text class="login-bottom">城市智慧供水演示系统 · 第二阶段</text>
+      <text class="login-bottom">城市智慧供水管理系统</text>
     </view>
     <view class="login-form">
       <view class="login-box">
@@ -33,7 +33,7 @@
         <text class="subtle">进入您的智慧水务工作空间</text>
         <view class="form-field">
           <text class="field-label">账号</text>
-          <input class="field" v-model="username" placeholder="请输入演示账号" />
+          <input class="field" v-model="username" placeholder="请输入账号" />
         </view>
         <view class="form-field">
           <text class="field-label">密码</text>
@@ -44,7 +44,7 @@
           {{ busy ? '正在登录…' : '登 录' }}
         </button>
         <view class="login-demo">
-          <text class="subtle">选择演示身份，自动填入账号</text>
+          <text class="subtle">选择身份，自动填入账号</text>
           <view class="role-options">
             <view
               v-for="u in examples"
@@ -55,7 +55,7 @@
               {{ roleName(u.roleId) }}
             </view>
           </view>
-          <text class="subtle">仅限虚构演示数据 · 本机独立保存</text>
+          <text class="subtle">业务记录保存在当前设备</text>
         </view>
       </view>
     </view>
@@ -66,7 +66,7 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useDemo } from '../../stores/demo'
 import { users, roles } from '../../repositories/seed'
-import { safeRedirect, urlFor } from '../../navigation/routeMap'
+import { safeRedirect, loginDestination } from '../../navigation/routeMap'
 const demo = useDemo(),
   username = ref(''),
   password = ref(''),
@@ -82,6 +82,7 @@ const fill = (u: (typeof users)[number]) => {
 }
 onLoad((q: any) => {
   redirect.value = safeRedirect(q?.redirect ? decodeURIComponent(q.redirect) : '')
+  if (demo.user) uni.reLaunch({ url: loginDestination(redirect.value) })
 })
 async function login() {
   if (busy.value) return
@@ -92,8 +93,7 @@ async function login() {
     error.value = r.error.message
     return
   }
-  const mobile = uni.getSystemInfoSync().windowWidth < 900
-  uni.reLaunch({ url: redirect.value || urlFor(mobile ? 'mobileHome' : 'dashboard') })
+  uni.reLaunch({ url: loginDestination(redirect.value) })
 }
 </script>
 <style scoped>

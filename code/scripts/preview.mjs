@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 const root = path.resolve('unpackage/dist/build/h5'),
   port = Number(process.env.PORT || 4173)
+const base = (JSON.parse(fs.readFileSync('manifest.json', 'utf8')).h5?.router?.base || '/').replace(/\/$/, '')
 const mime = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'application/javascript; charset=utf-8',
@@ -18,6 +19,7 @@ http
     let url
     try {
       url = decodeURIComponent((req.url || '/').split('?')[0])
+      if (base && (url === base || url.startsWith(base + '/'))) url = url.slice(base.length) || '/'
     } catch {
       res.writeHead(400)
       return res.end('Bad URL')
@@ -37,4 +39,4 @@ http
     })
     fs.createReadStream(file).pipe(res)
   })
-  .listen(port, '127.0.0.1', () => console.log('本地发行预览 http://127.0.0.1:' + port))
+  .listen(port, '127.0.0.1', () => console.log('本地发行预览 http://127.0.0.1:' + port + base + '/'))

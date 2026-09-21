@@ -1,4 +1,5 @@
 import { DemoEngine } from './engine'
+import { migrateLegacyLabels } from '../../domain/legacy-labels'
 import { clone, users, manifest } from '../../repositories/seed'
 import { validateState } from '../../domain/validation'
 import type { State, Facility } from '../../domain/types'
@@ -173,11 +174,11 @@ export class Phase2Engine extends DemoEngine {
       }
       if (action === 'sync') l.syncedAt = s.simulationTime
       if (action === 'publish') {
-        if (!l.syncedAt) throw new Error('请先模拟同步当前字段')
+        if (!l.syncedAt) throw new Error('请先同步当前字段')
         l.fields = [...l.draftFields]
         l.publishedAt = s.simulationTime
       }
-      s.logs.push(this.event('图层字段 ' + action + '（本地模拟）'))
+      s.logs.push(this.event('图层字段 ' + action))
     })
   }
   saveTemplate(template: Template) {
@@ -236,17 +237,17 @@ export class Phase2Engine extends DemoEngine {
         device.status = on ? 'online' : 'offline'
         s.phase2.deviceEvents.push({ deviceId: id, time: s.simulationTime, on })
       }
-      s.logs.push(this.event('模拟设备设置 ' + id + ' / ' + interval + ' 秒 / ' + (on ? '在线' : '离线')))
+      s.logs.push(this.event('设备设置 ' + id + ' / ' + interval + ' 秒 / ' + (on ? '在线' : '离线')))
     })
   }
   toggleValve(id: string) {
     this.require('write')
     const f = this.facility(id)
-    if (f.type !== 'valve') throw new Error('只有阀门可模拟开关')
+    if (f.type !== 'valve') throw new Error('只有阀门可切换开关')
     return this.transaction((s) => {
       const valve = s.facilities.find((v) => v.id === id)!
       valve.valveState = valve.valveState === 'open' ? 'closed' : 'open'
-      s.logs.push(this.event('模拟阀门 ' + id + ' → ' + valve.valveState))
+      s.logs.push(this.event('阀门 ' + id + ' → ' + valve.valveState))
     })
   }
   setThreshold(id: string, value: number) {
@@ -263,7 +264,7 @@ export class Phase2Engine extends DemoEngine {
     this.require('dispatch')
     return this.transaction((s) => {
       s.phase2.noticeConfig = clone(config)
-      s.logs.push(this.event('保存模拟通知配置'))
+      s.logs.push(this.event('保存通知配置'))
     })
   }
   notify(alarmId: string) {
@@ -281,7 +282,7 @@ export class Phase2Engine extends DemoEngine {
             channel,
             status: 'simulated',
           })
-      s.logs.push(this.event('执行模拟通知 ' + alarmId))
+      s.logs.push(this.event('生成通知记录 ' + alarmId))
     })
   }
   cards(ids: string[]) {
@@ -318,6 +319,7 @@ export class Phase2Engine extends DemoEngine {
       throw new Error('快照不能包含账号或凭据字段')
     validateState(value.state)
     const next = clone(value.state as State)
+    migrateLegacyLabels(next)
     next.logs.push(this.event('管理员导入本地快照'))
     next.revision++
     this.save(next)

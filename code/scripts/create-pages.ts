@@ -22,7 +22,7 @@ fs.writeFileSync(
     {
       pages: Object.entries(routes).map(([key, route]) => ({
         path: 'pages/' + route,
-        style: { navigationStyle: 'custom', navigationBarTitleText: titles[key] || '演示登录' },
+        style: { navigationStyle: 'custom', navigationBarTitleText: titles[key] || '账号登录' },
       })),
       globalStyle: {
         navigationStyle: 'custom',

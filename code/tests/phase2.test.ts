@@ -22,6 +22,33 @@ const fixture = () => {
   e.login(users[0].username, users[0].password)
   return { e, storage, memory }
 }
+
+test('旧本机记录及快照更新内置标签，保留用户修改和业务状态', () => {
+  const { e, storage } = fixture()
+  const old = clone(e.state)
+  old.facilities[0].description = '本地虚构设施，仅用于供水业务演示'
+  old.facilities[1].description = '用户填写：演示检查备注，不应被自动改写'
+  old.workorders[0].description = '按计划检查设施并填写现场处理结果（演示）。'
+  old.workorders[0].result = '保留现场处理结果'
+  old.alarms[0].history[0].actor = '陈明（演示）'
+  old.phase2.videos[0].name = '中原区泵房 · 合成演示'
+  old.logs.push({ time: old.simulationTime, actor: '系统模拟', text: '模拟设备设置 DEV-001 / 30 秒 / 在线' })
+  storage.set(STATE_KEY, JSON.stringify(old))
+  const restored = new Phase2Engine(storage)
+  assert.equal(restored.warning, '')
+  assert.equal(restored.state.facilities[0].description, '供水设施运行与维护档案')
+  assert.equal(restored.state.facilities[1].description, old.facilities[1].description)
+  assert.equal(restored.state.workorders[0].result, '保留现场处理结果')
+  assert.equal(restored.state.alarms[0].history[0].actor, '陈明')
+  assert.equal(restored.state.phase2.videos[0].name, '中原区泵房')
+  assert.equal(restored.state.logs.at(-1)?.text, '设备设置 DEV-001 / 30 秒 / 在线')
+  assert.equal(restored.state.revision, old.revision)
+  assert.equal(restored.state.simulationTime, old.simulationTime)
+  restored.login(users[0].username, users[0].password)
+  restored.importSnapshot(JSON.stringify({ format: 'smart-water-snapshot', version: old.version, state: old }))
+  assert.equal(restored.state.workorders[0].description, '按计划检查设施并填写现场处理结果。')
+  assert.equal(restored.state.facilities[1].description, old.facilities[1].description)
+})
 test('六级审核逐步执行，第六级才写入台账并更新关联管线端点', () => {
   const { e } = fixture(),
     f = clone(e.state.facilities[0]),

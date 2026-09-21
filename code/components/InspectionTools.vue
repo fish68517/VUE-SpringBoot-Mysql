@@ -1,7 +1,9 @@
 <template>
   <view class="toolbar">
     <button class="button secondary" @click="go('inspection')">任务台账</button>
-    <button class="button secondary" @click="go('inspectionConfig')">模板与路线</button>
+    <button v-if="!mobile || demo.has('dispatch')" class="button secondary" @click="go('inspectionConfig')">
+      模板与路线
+    </button>
     <button class="button secondary" @click="go('inspectionReplay')">人员轨迹与统计</button>
   </view>
   <view v-if="mode === 'inspectionConfig'" class="equal-columns">
@@ -93,7 +95,7 @@
       <view class="kpi">
         <text class="kpi-label">轨迹累计时长</text>
         <text class="kpi-number">{{ total.hours.toFixed(2) }}</text>
-        <text class="subtle">小时 · 固定轨迹样例</text>
+        <text class="subtle">小时 · 轨迹记录</text>
       </view>
       <view class="kpi">
         <text class="kpi-label">已检查设施项</text>
@@ -122,8 +124,8 @@
       </view>
       <slider :value="cursor" :max="Math.max(1, (track?.points.length || 1) - 1)" :step="1" @change="seek" />
       <text class="subtle">
-        {{ track ? formatTime(track.points[cursor]?.time || '') : '当前任务没有轨迹样例' }} · 执行人
-        {{ personName(task?.assigneeId || '') }} · 本地演示轨迹，不读取真实定位
+        {{ track ? formatTime(track.points[cursor]?.time || '') : '当前任务没有轨迹记录' }} · 执行人
+        {{ personName(task?.assigneeId || '') }} · 巡检轨迹
       </text>
       <view class="panel-title">人员分布与工作量</view>
       <view v-for="u in personnel" :key="u.id" class="list-item" @click="choosePerson(u.id)">
@@ -138,6 +140,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, watch, onUnmounted } from 'vue'
+import { useMobileClient } from '../platform/client'
 import { useDemo } from '../stores/demo'
 import { regions, users } from '../repositories/seed'
 import { trackStats } from '../domain/phase2'
@@ -148,6 +151,7 @@ import { go } from '../navigation/routeMap'
 import { exportCsv } from '../platform/export'
 import SelectField from './SelectField.vue'
 import MapCanvas from './MapCanvas.vue'
+const mobile = useMobileClient()
 const props = defineProps<{ mode: string; query: Record<string, string>; active: boolean }>(),
   demo = useDemo(),
   templateId = ref(''),

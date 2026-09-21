@@ -1,5 +1,5 @@
 <template>
-  <view class="toolbar">
+  <view v-if="!mobile" class="toolbar">
     <button class="button secondary" @click="go('map')">地图</button>
     <button class="button secondary" @click="go('mapChanges')">点线变更与审核</button>
     <button class="button secondary" @click="go('mapConfig')">图层配置</button>
@@ -19,6 +19,7 @@
           ]"
         />
         <SelectField
+          v-if="!mobile || demo.has('dispatch')"
           v-model="action"
           :options="[
             { value: 'edit', label: '编辑' },
@@ -152,8 +153,8 @@
       </view>
       <view class="toolbar">
         <button v-if="demo.has('dispatch')" class="button" @click="layer('draft')">保存草稿</button>
-        <button v-if="demo.has('dispatch')" class="button secondary" @click="layer('sync')">模拟同步</button>
-        <button v-if="demo.has('dispatch')" class="button" @click="layer('publish')">模拟发布</button>
+        <button v-if="demo.has('dispatch')" class="button secondary" @click="layer('sync')">同步字段</button>
+        <button v-if="demo.has('dispatch')" class="button" @click="layer('publish')">发布图层</button>
       </view>
       <text class="subtle">
         发布字段：{{ demo.state.phase2.layers.fields.join('、') }}
@@ -172,7 +173,7 @@
       </view>
       <button v-if="demo.has('review')" class="button" @click="saveReviewers">保存审核配置</button>
       <text class="subtle">
-        当前演示管理员可承担六个节点；每级仍需分别提交意见，已有申请保留提交时的人员配置。
+        当前管理员可承担六个节点；每级仍需分别提交意见，已有申请保留提交时的人员配置。
       </text>
     </view>
   </view>
@@ -180,7 +181,7 @@
     <view class="panel-title">预设爆管影响分析</view>
     <SelectField v-model="burstId" :options="bursts.map((b) => ({ value: b.id, label: b.name }))" />
     <template v-if="burst">
-      <view class="notice">固定演示影响关系，非真实水力计算。预计影响 {{ burst.households }} 户。</view>
+      <view class="notice">按已配置的管网关联关系，预计影响 {{ burst.households }} 户。</view>
       <view class="map-container"><MapCanvas :active="active" :config="burstMap" /></view>
       <view class="toolbar">
         <button class="button" @click="go('map', { pipeId: burst.pipeId })">定位爆管管线</button>
@@ -211,6 +212,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useMobileClient } from '../platform/client'
 import { useDemo } from '../stores/demo'
 import { regions, users, clone } from '../repositories/seed'
 import { go } from '../navigation/routeMap'
@@ -222,6 +224,7 @@ import MapCanvas from './MapCanvas.vue'
 import type { Change } from '../domain/phase2'
 const props = defineProps<{ mode: string; query: Record<string, string>; active: boolean }>(),
   demo = useDemo()
+const mobile = useMobileClient()
 const kind = ref<Change['kind']>(props.query.kind === 'pipe' ? 'pipe' : 'facility'),
   action = ref<Change['action']>('edit'),
   target = ref(props.query.id || demo.facilities[0]?.id || ''),

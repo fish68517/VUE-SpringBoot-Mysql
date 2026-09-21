@@ -6,9 +6,9 @@
   </view>
   <view class="columns">
     <view class="panel">
-      <view class="panel-title">演示场景</view>
+      <view class="panel-title">业务场景</view>
       <view class="notice">
-        切换场景会恢复所选场景初始数据，并清除本机工单、巡检修改和操作记录。已有种子 JSON 不受影响。
+        切换场景会恢复所选场景初始数据，并清除本机工单、巡检修改和操作记录。
       </view>
       <view
         v-for="s in dictionary.scenarios"
@@ -28,12 +28,12 @@
       <text v-else class="subtle">当前角色只能查看设置，重置由管理员执行。</text>
       <view class="divider" />
       <view class="panel-title">
-        模拟时钟
+        回放时钟
         <text class="subtle">{{ formatTime(demo.state.simulationTime) }}</text>
       </view>
       <view class="detail-actions">
         <button class="button secondary" @click="demo.playing ? demo.pause() : demo.play()">
-          {{ demo.playing ? '暂停回放' : '启动模拟时钟' }}
+          {{ demo.playing ? '暂停回放' : '启动回放时钟' }}
         </button>
       </view>
       <text class="subtle block" style="margin-top: 12px">
@@ -70,8 +70,8 @@
           {{ demo.state.revision }}
         </view>
         <view class="list-item">
-          <text class="detail-label">本期部署</text>
-          本地构建，网页由项目负责人上传
+          <text class="detail-label">存储方式</text>
+          当前设备独立保存
         </view>
         <text class="subtle block" style="margin-top: 16px">
           门户、通知及快照请从本页顶部进入；所有设置仅保存在当前设备。
@@ -93,7 +93,7 @@ const demo = useDemo(),
 async function reset() {
   if (busy.value) return
   busy.value = true
-  if (!(await confirm('恢复演示初始数据', '这会清除当前设备的业务修改，其他设备不受影响。确认继续？'))) {
+  if (!(await confirm('恢复初始数据', '这会清除当前设备的业务修改，其他设备不受影响。确认继续？'))) {
     busy.value = false
     return
   }

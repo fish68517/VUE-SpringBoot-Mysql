@@ -9,6 +9,7 @@ export default defineComponent({
 </script>
 <style lang="scss">
 @import './styles/app.scss';
+@import './styles/mobile.scss';
 /* #ifdef H5 */
 /* 禁用框架默认的外部页面阴影预加载，核心演示资源均来自本地。 */
 body::after {

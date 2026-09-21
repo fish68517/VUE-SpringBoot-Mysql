@@ -193,7 +193,7 @@ export function validatePhase2(s: State) {
       typeof v.online !== 'boolean' ||
       (v.online && v.src !== '/static/demo-assets/pump-demo.mp4')
     )
-      bad('视频资源仅支持本地演示文件')
+      bad('视频资源仅支持本地文件')
   if (
     !p.noticeConfig ||
     typeof p.noticeConfig.sms !== 'boolean' ||
@@ -277,5 +277,5 @@ export function validatePhase2(s: State) {
         n.status !== 'simulated',
     )
   )
-    bad('模拟通知记录无效')
+    bad('通知记录无效')
 }

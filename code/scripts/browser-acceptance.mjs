@@ -100,7 +100,7 @@ try {
     await page.getByText('已完成', { exact: true }).first().waitFor()
     await navigate('alarms/detail?id=ALM-001')
     assert.ok((await page.locator('.alarm-details').innerText()).includes('已关闭'))
-    assert.ok((await page.locator('.alarm-details').innerText()).includes('仅模拟发送'))
+    assert.ok((await page.locator('.alarm-details').innerText()).includes('已生成记录'))
     await navigate('dashboard/index')
     assert.match(await page.locator('.screen-kpis').innerText(), /22\s*条/)
     await shot('workflow-closed')

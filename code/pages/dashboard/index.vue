@@ -10,7 +10,7 @@
         <text>ZHENGZHOU SMART WATER OPERATION CENTER</text>
       </view>
       <view class="screen-meta">
-        <text>演示数据 · {{ formatTime(demo.state.simulationTime) }}</text>
+        <text>数据时间 · {{ formatTime(demo.state.simulationTime) }}</text>
         <view @click="go('portal', {}, true)">业务工作台 ↗</view>
       </view>
     </view>
@@ -22,7 +22,7 @@
       </view>
       <view class="screen-tools">
         <button class="button dark compact" @click="demo.playing ? demo.pause() : demo.play()">
-          {{ demo.playing ? 'Ⅱ 暂停模拟' : '▷ 播放模拟' }}
+          {{ demo.playing ? 'Ⅱ 暂停回放' : '▷ 播放回放' }}
         </button>
         <button class="button dark compact" @click="go('settings')">场景设置</button>
         <button class="button dark compact" @click="demo.logout">退出</button>
@@ -49,7 +49,7 @@
             {{ volume.toLocaleString() }}
             <text>m³</text>
           </view>
-          <text class="screen-muted">区域居民用水量（模拟）</text>
+          <text class="screen-muted">区域居民用水量</text>
           <view v-for="r in regionUsage" :key="r.name" class="screen-rank">
             <view>
               {{ r.name }}
@@ -64,7 +64,7 @@
             <text>MPa</text>
           </view>
           <ChartView v-if="series" :active="active" :labels="labels" :values="values" dark name="MPa" />
-          <view v-else class="empty">该设施无压力样例</view>
+          <view v-else class="empty">该设施无压力数据</view>
           <text class="screen-muted">点击地图设施，联动查看压力曲线</text>
         </view>
       </view>
@@ -159,7 +159,7 @@
       </view>
     </view>
     <view class="screen-footer">
-      <text>演示场景：{{ currentScenario }} · 业务数据仅保存于当前设备</text>
+      <text>业务场景：{{ currentScenario }} · 业务数据仅保存于当前设备</text>
       <text>供水安全 / 精细计量 / 协同处置</text>
     </view>
   </view>
@@ -171,12 +171,17 @@ import { useDemo } from '../../stores/demo'
 import { regions, pipes, dmas, pressureSeries, usage, dictionary } from '../../repositories/seed'
 import { dmaMetrics, percent, formatTime, usageFor } from '../../domain/metrics'
 import { go, urlFor } from '../../navigation/routeMap'
+import { isMobileClient } from '../../platform/client'
 import MapCanvas from '../../components/MapCanvas.vue'
 import ChartView from '../../components/ChartView.vue'
 const demo = useDemo(),
   active = ref(true),
   reset = ref(0)
 onLoad(() => {
+  if (isMobileClient()) {
+    go('mobileHome', {}, true)
+    return
+  }
   if (!demo.user) uni.reLaunch({ url: urlFor('login', { redirect: urlFor('dashboard') }) })
 })
 onShow(() => (active.value = true))
@@ -189,7 +194,9 @@ onUnload(() => {
   demo.pause()
 })
 const activeAlarms = computed(() => demo.alarms.filter((a) => a.status !== 'closed'))
-const visibleDmas = computed(() => demo.state.phase2.dmas.filter((d) => demo.user?.regionIds.includes(d.regionId)))
+const visibleDmas = computed(() =>
+  demo.state.phase2.dmas.filter((d) => demo.user?.regionIds.includes(d.regionId)),
+)
 const selected = computed(() => demo.facilities.find((f) => f.id === demo.selection) || demo.facilities[0])
 const nameOf = (id: string) => demo.facilities.find((f) => f.id === id)?.name || id
 const facilityType = (id: string) => (dictionary.facilityTypes as Record<string, string>)[id]

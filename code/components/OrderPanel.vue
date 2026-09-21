@@ -8,7 +8,7 @@
         <view class="spacer" />
         <button v-if="demo.has('write')" class="button" @click="go('orderEdit')">＋ 新建工单</button>
       </view>
-      <view class="table">
+      <view v-if="!mobile" class="table">
         <view class="table-row header order-row">
           <text>工单编号</text>
           <text>工单标题</text>
@@ -29,6 +29,19 @@
           <StatusTag :value="w.status" kind="order" />
         </view>
       </view>
+      <view v-else class="order-cards">
+        <view v-for="w in rows" :key="w.id" class="list-item" @click="go('orderDetail', { id: w.id })">
+          <view class="panel-title">
+            <text>{{ w.title }}</text>
+            <StatusTag :value="w.status" kind="order" />
+          </view>
+          <text class="subtle">{{ w.id }} · {{ orderType(w.type) }}</text>
+          <text class="subtle">
+            处理人：{{ personName(w.assigneeId) }} · {{ facilityName(w.facilityId) }}
+          </text>
+          <button class="mobile-link" @click.stop="go('orderDetail', { id: w.id })">查看工单 ›</button>
+        </view>
+      </view>
       <view v-if="!filtered.length" class="empty">没有符合条件的工单</view>
       <view class="pagination">
         <text>共 {{ filtered.length }} 条</text>
@@ -45,7 +58,7 @@
   <view v-else-if="mode === 'orderEdit'" class="panel">
     <view class="panel-title">
       填写工单信息
-      <text class="subtle">保存于本机演示记录</text>
+      <text class="subtle">保存于本机业务记录</text>
     </view>
     <view v-if="!demo.has('write')" class="empty">当前角色无权创建工单</view>
     <view v-else>
@@ -96,6 +109,10 @@
         <view>
           <text class="detail-label">创建时间</text>
           <text class="detail-value">{{ formatTime(order.createdAt) }}</text>
+        </view>
+        <view v-if="order.occurredAt">
+          <text class="detail-label">事件发生时间</text>
+          <text class="detail-value">{{ formatTime(order.occurredAt) }}</text>
         </view>
         <view>
           <text class="detail-label">关联设施</text>
@@ -190,6 +207,7 @@
 </template>
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue'
+import { useMobileClient } from '../platform/client'
 import { useDemo } from '../stores/demo'
 import { dictionary, users } from '../repositories/seed'
 import { go } from '../navigation/routeMap'
@@ -197,6 +215,7 @@ import { options, orderType, personName, confirm } from '../domain/presentation'
 import { formatTime } from '../domain/metrics'
 import StatusTag from './StatusTag.vue'
 import SelectField from './SelectField.vue'
+const mobile = useMobileClient()
 const props = defineProps<{ mode: string; query: Record<string, string> }>(),
   demo = useDemo(),
   busy = ref(false),
@@ -224,6 +243,7 @@ const filtered = computed(() =>
   demo.orders
     .filter(
       (w) =>
+        (props.query.scope !== 'mine' || w.assigneeId === demo.user?.id) &&
         (!filter.type || w.type === filter.type) &&
         (!filter.status || w.status === filter.status) &&
         (w.title + w.id).includes(filter.keyword),

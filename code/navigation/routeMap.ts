@@ -1,4 +1,8 @@
+import { isMobileClient } from '../platform/client'
+import { clientRoute } from './clientPolicy'
+
 export const routes: Record<string, string> = {
+  login: 'login/index',
   mapChanges: 'map/changes',
   mapConfig: 'map/config',
   mapAnalysis: 'map/analysis',
@@ -9,7 +13,6 @@ export const routes: Record<string, string> = {
   video: 'video/index',
   advancedSettings: 'settings/advanced',
   mobileReport: 'mobile/report',
-  login: 'login/index',
   dashboard: 'dashboard/index',
   portal: 'portal/index',
   portalDetail: 'portal/detail',
@@ -63,7 +66,7 @@ export const titles: Record<string, string> = {
   datahub: '设备监测',
   device: '设备详情',
   reports: '综合统计报表',
-  settings: '演示设置',
+  settings: '系统设置',
   mobileHome: '个人工作台',
   mobileTasks: '我的任务',
   mobileMap: '移动地图',
@@ -79,13 +82,25 @@ export function urlFor(key: string, params: Record<string, unknown> = {}) {
   return '/pages/' + route + (q ? '?' + q : '')
 }
 export function go(key: string, params: Record<string, unknown> = {}, replace = false) {
-  const url = urlFor(key, params)
+  const target = clientRoute(key, isMobileClient())
+  const url = urlFor(target, params)
+  if (['mobileHome', 'mobileTasks', 'mobileMap', 'profile'].includes(target) && replace) {
+    uni.reLaunch({ url })
+    return
+  }
   if (replace) uni.redirectTo({ url })
   else uni.navigateTo({ url, fail: () => uni.redirectTo({ url }) })
 }
 export function back() {
   if (getCurrentPages().length > 1) uni.navigateBack()
-  else go('portal', {}, true)
+  else go(isMobileClient() ? 'mobileHome' : 'portal', {}, true)
+}
+export function loginDestination(redirect = '', mobile = isMobileClient()) {
+  const safe = safeRedirect(redirect)
+  if (!safe) return urlFor(mobile ? 'mobileHome' : 'dashboard')
+  const [path, query] = safe.split('?')
+  const key = Object.keys(routes).find((key) => '/pages/' + routes[key] === path)!
+  return urlFor(clientRoute(key, mobile)) + (query ? '?' + query : '')
 }
 export function safeRedirect(value: string) {
   const path = value.split('?')[0]

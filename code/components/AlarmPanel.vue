@@ -1,6 +1,6 @@
 <template>
   <view>
-    <view class="kpi-grid">
+    <view v-if="!mobile || !query.id" class="kpi-grid">
       <view class="kpi" @click="filter.level = ''">
         <text class="kpi-label">待闭环告警</text>
         <text class="kpi-number">{{ open.length }}</text>
@@ -19,7 +19,7 @@
       </view>
     </view>
     <view class="panel">
-      <view class="toolbar">
+      <view v-if="!mobile || !query.id" class="toolbar">
         <SelectField v-model="filter.level" :options="options(levels, '全部级别')" />
         <SelectField v-model="filter.status" :options="options(statuses, '全部状态')" />
         <input class="field search" v-model="filter.keyword" placeholder="搜索告警标题 / 设备编号" />
@@ -37,12 +37,12 @@
         <button v-if="demo.has('export')" class="button" @click="exportList">⇩ 批量导出</button>
       </view>
       <view class="columns">
-        <view>
+        <view v-if="!mobile || !query.id">
           <view class="panel-title">
             告警列表
             <text class="subtle">共 {{ filtered.length }} 条</text>
           </view>
-          <view class="table-scroll">
+          <view v-if="!mobile" class="table-scroll">
             <view class="table">
               <view class="table-row header alarm-row">
                 <text>告警级别</text>
@@ -67,6 +67,22 @@
               </view>
             </view>
           </view>
+          <view v-else class="alarm-cards">
+            <view
+              v-for="a in pageRows"
+              :key="a.id"
+              class="list-item"
+              @click="go('alarmDetail', { id: a.id })"
+            >
+              <view class="panel-title">
+                <text>{{ a.title }}</text>
+                <StatusTag :value="a.level" />
+              </view>
+              <text class="subtle">{{ facilityName(a.facilityId) }} · {{ a.id }}</text>
+              <StatusTag :value="a.status" kind="alarm" />
+              <button class="mobile-link" @click.stop="go('alarmDetail', { id: a.id })">查看详情 ›</button>
+            </view>
+          </view>
           <view v-if="!filtered.length" class="empty">
             没有符合条件的告警
             <text class="block link" @click="clear">清除筛选</text>
@@ -81,7 +97,7 @@
             </button>
           </view>
         </view>
-        <view class="alarm-details" v-if="selected">
+        <view class="alarm-details" v-if="selected && (!mobile || query.id)">
           <view class="panel-title">
             告警详情
             <StatusTag :value="selected.level" />
@@ -127,13 +143,13 @@
             </view>
           </view>
           <view v-if="demo.state.notifications.some((n) => n.alarmId === selected?.id)" class="notice">
-            <text class="block">通知记录 · 仅模拟发送</text>
+            <text class="block">通知记录 · 已生成记录</text>
             <text
               v-for="n in demo.state.notifications.filter((n) => n.alarmId === selected?.id)"
               :key="n.id"
               class="block"
             >
-              {{ n.channel === 'sms' ? '短信' : '邮件' }}：模拟发送，处理人
+              {{ n.channel === 'sms' ? '短信' : '邮件' }}：通知记录，处理人
               {{ personName(selected.assigneeId) }}
             </text>
           </view>
@@ -160,13 +176,16 @@
             受理并分配
           </button>
         </view>
-        <view v-else class="empty">{{ query.id ? '该告警不存在或无权访问' : '请选择一条告警查看详情' }}</view>
+        <view v-else-if="!mobile || query.id" class="empty">
+          {{ query.id ? '该告警不存在或无权访问' : '请选择一条告警查看详情' }}
+        </view>
       </view>
     </view>
   </view>
 </template>
 <script setup lang="ts">
 import { computed, ref, watch, reactive } from 'vue'
+import { useMobileClient } from '../platform/client'
 import { useDemo } from '../stores/demo'
 import { dictionary, users } from '../repositories/seed'
 import { regionName, personName, options } from '../domain/presentation'
@@ -175,6 +194,7 @@ import { go } from '../navigation/routeMap'
 import { exportCsv } from '../platform/export'
 import SelectField from './SelectField.vue'
 import StatusTag from './StatusTag.vue'
+const mobile = useMobileClient()
 const props = defineProps<{ query: Record<string, string> }>(),
   demo = useDemo()
 const filter = reactive(

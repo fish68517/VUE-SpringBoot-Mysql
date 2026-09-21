@@ -90,12 +90,12 @@ try {
       JSON.parse(fs.readFileSync('data/pipes.json', 'utf8'))[1].diameterMm,
     )
   })
-  await check('字段草稿、模拟同步及发布', async () => {
+  await check('字段草稿、同步字段及发布', async () => {
     await nav('map/config')
     await page.getByText('状态', { exact: true }).click()
     await click('保存草稿')
-    await click('模拟同步')
-    await click('模拟发布')
+    await click('同步字段')
+    await click('发布图层')
     assert.ok((await state()).phase2.layers.fields.includes('status'))
   })
   await check('矩形框选和多边形面选，设施及管线过滤', async () => {
@@ -166,7 +166,7 @@ try {
     await nav('energy/index?deviceId=DEV-004')
     await field('采样间隔 1—300 秒').fill('15')
     await page.locator('select').nth(2).selectOption('off')
-    await click('保存模拟设置')
+    await click('保存设备设置')
     assert.equal((await state()).phase2.devices.find((d) => d.id === 'DEV-004').samplingIntervalSec, 15)
     await shot('energy')
     await nav('dma/detail?id=DMA-001')
@@ -198,7 +198,7 @@ try {
     await nav('settings/advanced')
     await click('＋ 视频中心')
     await click('保存门户布局')
-    await click('生成模拟通知记录')
+    await click('生成通知记录')
     const download = page.waitForEvent('download')
     await click('导出 JSON 快照')
     const file = await download
@@ -253,7 +253,7 @@ try {
   await check('移动阀门模拟切换与事件上报', async () => {
     const v = JSON.parse(fs.readFileSync('data/facilities.json', 'utf8')).find((f) => f.type === 'valve')
     await nav('facilities/detail?id=' + v.id)
-    const control = page.getByText(/模拟阀门：/)
+    const control = page.getByText(/阀门：/)
     const before = await control.innerText()
     await control.click()
     await click('确定')

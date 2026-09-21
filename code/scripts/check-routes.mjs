@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 const pages = JSON.parse(fs.readFileSync('pages.json', 'utf8')).pages
+if (pages[0]?.path !== 'pages/login/index') throw new Error('启动页必须是登录分流入口')
 for (const p of pages) if (!fs.existsSync(p.path + '.vue')) throw new Error('路由缺少页面 ' + p.path)
 if (new Set(pages.map((p) => p.path)).size !== pages.length) throw new Error('路由重复')
 const source = fs.readFileSync('navigation/routeMap.ts', 'utf8'),

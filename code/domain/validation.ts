@@ -1,9 +1,10 @@
 import { validatePhase2 } from './validate-phase2'
+import { validEventTime } from './event-time'
 import type { State } from './types'
 import { users, manifest, regions, scenarios, dmas, attachments } from '../repositories/seed'
 export function validateState(s: State) {
   if (!s || s.version !== manifest.datasetVersion)
-    throw new Error('数据版本不兼容，请保留原记录并重置当前演示')
+    throw new Error('数据版本不兼容，请保留原记录并重置当前场景')
   if (!scenarios.some((v) => v.id === s.scenarioId) || !Number.isFinite(Date.parse(s.simulationTime)))
     throw new Error('场景或时间无效')
   if (!Number.isInteger(s.revision) || s.revision < 0) throw new Error('数据修订号无效')
@@ -39,6 +40,7 @@ export function validateState(s: State) {
       throw new Error('告警工单双向关联不一致')
   }
   for (const w of s.workorders) {
+    if (w.occurredAt !== undefined && !validEventTime(w.occurredAt)) throw new Error('事件发生时间无效')
     if (
       !facilityIds.has(w.facilityId) ||
       (w.assigneeId && !userIds.has(w.assigneeId)) ||

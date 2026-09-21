@@ -1,7 +1,9 @@
 import type { State, User, StorageAdapter, Result, History } from '../../domain/types'
 import { clone, makeState, users, permissions, attachments, scenarios } from '../../repositories/seed'
 import { validateState } from '../../domain/validation'
+import { validEventTime } from '../../domain/event-time'
 import { canSee } from '../../domain/metrics'
+import { migrateLegacyLabels } from '../../domain/legacy-labels'
 export const STATE_KEY = 'smart-water:state:v1',
   SESSION_KEY = 'smart-water:session:v1'
 class BusinessError extends Error {
@@ -27,10 +29,11 @@ export class DemoEngine {
         if (s.version === 'phase1-20260920-v1')
           s = { ...s, version: this.state.version, phase2: clone(this.state.phase2) }
         validateState(s)
+        migrateLegacyLabels(s)
         this.state = s
       }
     } catch {
-      this.warning = '本机演示记录无法恢复或版本已变化。当前显示初始数据；管理员确认重置后才允许保存。'
+      this.warning = '本机业务记录无法恢复或版本已变化。当前显示初始数据；管理员确认重置后才允许保存。'
     }
     try {
       const id = storage.get(SESSION_KEY)
@@ -52,7 +55,7 @@ export class DemoEngine {
     return f
   }
   protected event(text: string): History {
-    return { time: this.state.simulationTime, actor: this.user?.displayName ?? '系统模拟', text }
+    return { time: this.state.simulationTime, actor: this.user?.displayName ?? '系统', text }
   }
   protected newId(prefix: string, list: { id: string }[]) {
     let i = 1
@@ -168,6 +171,7 @@ export class DemoEngine {
     })
   }
   createOrder(input: {
+    occurredAt?: string
     title: string
     type: string
     facilityId: string
@@ -176,6 +180,8 @@ export class DemoEngine {
   }) {
     this.require('write')
     const f = this.facility(input.facilityId)
+    if (input.occurredAt !== undefined && !validEventTime(input.occurredAt))
+      fail('VALIDATION_ERROR', '请填写有效的事件发生时间')
     if (
       !input.title.trim() ||
       !input.description.trim() ||

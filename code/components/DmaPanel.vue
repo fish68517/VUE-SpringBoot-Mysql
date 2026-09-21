@@ -9,7 +9,7 @@
           <text>{{ d.name }}</text>
           <StatusTag :value="dmaMetrics(d).lossRate! > d.threshold ? 'important' : 'normal'" />
         </view>
-        <text class="detail-label">演示漏损率</text>
+        <text class="detail-label">漏损率</text>
         <view class="dma-main">{{ percent(dmaMetrics(d).lossRate) }}</view>
         <view class="list-item-meta">
           <text>净供水量 {{ dmaMetrics(d).net.toLocaleString() }} m³</text>
@@ -45,7 +45,7 @@
         </view>
         <ChartView
           :active="active"
-          :labels="['入口进水', '出口转供', '分表水量', '合理未计量', '演示漏损']"
+          :labels="['入口进水', '出口转供', '分表水量', '合理未计量', '漏损']"
           :values="[
             selected.inlet,
             selected.transfer,
@@ -105,11 +105,11 @@
           {{ percent(dmaMetrics(selected).salesGapRate) }}
         </view>
         <view class="list-item">
-          <text class="detail-label">服务住户（模拟）</text>
+          <text class="detail-label">服务住户</text>
           {{ selected.households }} 户
         </view>
         <text class="subtle block" style="margin-top: 20px">
-          历史曲线采用本地每日计量样例，缺失日期不补值；净供水不大于零的日期不绘制漏损率。
+          历史曲线采用本地每日计量记录，缺失日期不补值；净供水不大于零的日期不绘制漏损率。
         </text>
       </view>
     </view>
@@ -158,7 +158,7 @@ const metrics = computed(() => {
   const m = dmaMetrics(selected.value)
   return [
     { label: '净供水量', value: m.net.toLocaleString(), note: 'm³' },
-    { label: '演示漏损量', value: m.loss.toLocaleString(), note: 'm³' },
+    { label: '漏损量', value: m.loss.toLocaleString(), note: 'm³' },
     { label: '漏损率', value: percent(m.lossRate), note: '漏损 / 净供水' },
     { label: '总分表比率', value: percent(m.ratio), note: '分表 / 总表' },
   ]

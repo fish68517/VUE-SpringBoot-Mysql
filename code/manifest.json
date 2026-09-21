@@ -1,38 +1,41 @@
 {
-  "name": "郑州智慧供水演示",
-  "appid": "",
-  "description": "纯前端城市智慧供水演示系统",
-  "versionName": "2.0.0",
-  "versionCode": "200",
-  "transformPx": false,
-  "vueVersion": "3",
-  "uniStatistics": {
-    "enable": false
-  },
-  "h5": {
-    "title": "郑州城市智慧供水",
-    "router": {
-      "mode": "hash",
-      "base": "/"
-    }
-  },
-  "app-plus": {
-    "usingComponents": true,
-    "nvueStyleCompiler": "uni-app",
-    "compilerVersion": 3,
-    "splashscreen": {
-      "alwaysShowBeforeRender": true,
-      "waiting": true,
-      "autoclose": true,
-      "delay": 0
+    "name" : "郑州智慧供水",
+    "appid" : "__UNI__8E59F90",
+    "description" : "城市智慧供水管理系统",
+    "versionName" : "2.0.0",
+    "versionCode" : "200",
+    "transformPx" : false,
+    "vueVersion" : "3",
+    "uniStatistics" : {
+        "enable" : false
     },
-    "modules": {
-      "VideoPlayer": {}
+    "h5" : {
+        "title" : "郑州城市智慧供水",
+        "router" : {
+            "mode" : "hash",
+            "base" : "/web/"
+        }
     },
-    "distribute": {
-      "android": {
-        "permissions": []
-      }
+    "app-plus" : {
+        "usingComponents" : true,
+        "nvueStyleCompiler" : "uni-app",
+        "compilerVersion" : 3,
+        "splashscreen" : {
+            "alwaysShowBeforeRender" : true,
+            "waiting" : true,
+            "autoclose" : true,
+            "delay" : 0
+        },
+        "modules" : {
+            "VideoPlayer" : {}
+        },
+        "distribute" : {
+            "android" : {
+                "permissions" : []
+            },
+            "ios" : {
+                "dSYMs" : false
+            }
+        }
     }
-  }
 }

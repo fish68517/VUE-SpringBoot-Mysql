@@ -141,6 +141,15 @@
     </view>
   </view>
   <view v-else-if="task">
+    <view v-if="mobile" class="toolbar">
+      <button
+        class="button secondary"
+        @click="go('mobileMap', { taskId: task.id, facilityId: task.checks[0]?.facilityId })"
+      >
+        任务设施地图
+      </button>
+      <button class="button secondary" @click="go('inspectionReplay', { id: task.id })">巡检轨迹</button>
+    </view>
     <view class="panel" style="margin-bottom: 20px">
       <view class="panel-title">
         {{ task.name }}
@@ -203,7 +212,7 @@
                 :class="['choice', { active: edit[c.facilityId].attachmentId === 'ATT-001' }]"
                 @click="edit[c.facilityId].attachmentId = edit[c.facilityId].attachmentId ? null : 'ATT-001'"
               >
-                {{ edit[c.facilityId].attachmentId ? '✓ 已选择演示附件' : '＋ 选择本地样例附件' }}
+                {{ edit[c.facilityId].attachmentId ? '✓ 已选择巡检附件' : '＋ 选择本地附件' }}
               </view>
             </view>
             <image
@@ -289,6 +298,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, reactive, watch, nextTick } from 'vue'
+import { useMobileClient } from '../platform/client'
 import { exportCsv } from '../platform/export'
 import { confirm } from '../domain/presentation'
 import { useDemo } from '../stores/demo'
@@ -298,6 +308,7 @@ import { percent, formatTime } from '../domain/metrics'
 import { go } from '../navigation/routeMap'
 import SelectField from './SelectField.vue'
 import StatusTag from './StatusTag.vue'
+const mobile = useMobileClient()
 const props = defineProps<{ mode: string; query: Record<string, string> }>(),
   demo = useDemo(),
   busy = ref(false),

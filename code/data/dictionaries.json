@@ -41,7 +41,7 @@
     {
       "id": "pressure-alarm",
       "name": "压力异常处置",
-      "description": "重点设施压力异常，完整演示派单、处置与验收。"
+      "description": "重点设施压力异常，按流程完成派单、处置与验收。"
     },
     {
       "id": "normal",

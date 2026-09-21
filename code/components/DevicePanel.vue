@@ -1,24 +1,24 @@
 <template>
   <view v-if="mode === 'datahub'">
-    <view class="notice">设备采用本地模拟数据。点击设备可设置采样间隔、启停状态，并查看运行时长与能耗。</view>
+    <view class="notice">点击设备可设置采样间隔、启停状态，并查看运行时长与能耗。</view>
     <view class="kpi-grid">
       <view class="kpi">
-        <text class="kpi-label">样例设备</text>
+        <text class="kpi-label">设备</text>
         <text class="kpi-number">{{ visibleDevices.length }}</text>
         <text class="kpi-note">当前可见区域</text>
       </view>
       <view class="kpi">
-        <text class="kpi-label">模拟在线设备</text>
+        <text class="kpi-label">在线设备</text>
         <text class="kpi-number">{{ visibleDevices.filter((d) => d.status === 'online').length }}</text>
       </view>
       <view class="kpi">
-        <text class="kpi-label">模拟离线设备</text>
+        <text class="kpi-label">离线设备</text>
         <text class="kpi-number">{{ visibleDevices.filter((d) => d.status === 'offline').length }}</text>
       </view>
       <view class="kpi">
         <text class="kpi-label">规划接入规模</text>
         <text class="kpi-number">50,000</text>
-        <text class="kpi-note">规划模拟值，不代表真实接入能力</text>
+        <text class="kpi-note">设备容量规划</text>
       </view>
     </view>
     <view class="panel">
@@ -26,7 +26,7 @@
         <view class="table-row header facility-row">
           <text>设备编号</text>
           <text>设备名称</text>
-          <text>模拟状态</text>
+          <text>运行状态</text>
           <text>详情</text>
         </view>
         <view
@@ -72,10 +72,10 @@
             </view>
             <view>
               <text class="detail-label">设备状态</text>
-              {{ device ? (device.status === 'online' ? '模拟在线' : '模拟离线') : '未关联样例设备' }}
+              {{ device ? (device.status === 'online' ? '在线' : '离线') : '未关联设备' }}
             </view>
             <view>
-              <text class="detail-label">模拟采样间隔</text>
+              <text class="detail-label">采样间隔</text>
               {{ device ? device.samplingIntervalSec + ' 秒' : '—' }}
             </view>
           </view>
@@ -89,9 +89,13 @@
               v-if="facility.type === 'valve' && demo.has('write')"
               @click="toggleValve"
             >
-              模拟阀门：{{ facility.valveState === 'open' ? '开启' : '关闭' }}
+              阀门：{{ facility.valveState === 'open' ? '开启' : '关闭' }}
             </button>
-            <button class="button secondary" @click="go('mapChanges', { id: facility.id })">
+            <button
+              v-if="demo.has('write')"
+              class="button secondary"
+              @click="go('mapChanges', { id: facility.id })"
+            >
               纠错与编辑
             </button>
             <button class="button" @click="go('map', { facilityId: facility.id })">地图定位</button>
@@ -110,7 +114,7 @@
         <view class="panel">
           <view class="panel-title">
             压力趋势
-            <text class="subtle">2026-09-20 · 完整日示例</text>
+            <text class="subtle">2026-09-20 · 全天记录</text>
           </view>
           <ChartView
             v-if="series"
@@ -119,14 +123,14 @@
             :values="series.points.map((p) => p.value)"
             name="MPa"
           />
-          <view v-else class="empty">该设施没有配置压力样例数据</view>
+          <view v-else class="empty">该设施没有配置压力数据</view>
           <view class="panel-title">
-            模拟采样回放
+            采样回放
             <text class="subtle">最近 {{ samples.length }} 个样本</text>
           </view>
           <view class="toolbar">
             <button class="button" @click="demo.playing ? demo.pause() : demo.play()">
-              {{ demo.playing ? '暂停回放' : '播放模拟采样' }}
+              {{ demo.playing ? '暂停回放' : '播放采样' }}
             </button>
             <button class="button secondary" @click="go('energy', { deviceId: device?.id })">配置间隔</button>
           </view>
@@ -135,7 +139,7 @@
             :active="active"
             :labels="samples.map((s) => s.time.slice(11, 19))"
             :values="samples.map((s) => s.value)"
-            name="MPa · 模拟信号"
+            name="MPa · 采样值"
           />
           <view v-else class="empty">播放后按配置间隔采样；离线设备不生成新样本</view>
         </view>
@@ -188,7 +192,7 @@ const samples = computed(() =>
   demo.state.phase2.samples.filter((s) => s.deviceId === device.value?.id).slice(-120),
 )
 async function toggleValve() {
-  if (!facility.value || !(await confirm('模拟阀门控制', '仅修改本机演示状态，确认切换阀门？'))) return
+  if (!facility.value || !(await confirm('阀门控制', '确认切换阀门状态？'))) return
   await demo.run((e) => e.toggleValve(facility.value!.id))
 }
 </script>

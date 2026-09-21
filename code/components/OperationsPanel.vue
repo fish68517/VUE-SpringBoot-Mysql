@@ -29,7 +29,7 @@
         <view class="kpi">
           <text class="kpi-label">采样间隔</text>
           <text class="kpi-number">{{ device.samplingIntervalSec }}</text>
-          <text class="subtle">秒 · 演示时间驱动</text>
+          <text class="subtle">秒 · 回放时间驱动</text>
         </view>
         <view class="kpi">
           <text class="kpi-label">终端状态</text>
@@ -41,11 +41,11 @@
         <SelectField
           v-model="on"
           :options="[
-            { value: 'on', label: '模拟开机' },
-            { value: 'off', label: '模拟关机' },
+            { value: 'on', label: '开机' },
+            { value: 'off', label: '关机' },
           ]"
         />
-        <button class="button" @click="saveDevice">保存模拟设置</button>
+        <button class="button" @click="saveDevice">保存设备设置</button>
         <text class="subtle">操作时间 {{ formatTime(demo.state.simulationTime) }}</text>
       </view>
       <view class="panel-title">运行时长分布（小时）</view>
@@ -85,8 +85,13 @@
     />
     <input class="field" v-model="title" placeholder="事件标题（必填）" />
     <textarea class="field" v-model="description" placeholder="事件描述（必填）" />
-    <text class="subtle">上报时间：{{ formatTime(demo.state.simulationTime) }} · 本机模拟时钟</text>
-    <button v-if="demo.has('write')" class="button" @click="report">上报并建立工单</button>
+    <text class="field-label">事件发生时间（北京时间） *</text>
+    <input class="field" v-model="occurredAt" :maxlength="16" placeholder="YYYY-MM-DD HH:mm" />
+    <text class="subtle block">按“年-月-日 时:分”填写，可记录早于上报时刻的现场事件。</text>
+    <text class="subtle">上报时间：{{ formatTime(demo.state.simulationTime) }} · 当前业务时间</text>
+    <button v-if="demo.has('write')" class="button" :disabled="reportBusy" @click="report">
+      上报并建立工单
+    </button>
     <view class="toolbar">
       <button class="button secondary" @click="go('mobileMap', { facilityId })">地图定位</button>
       <button class="button secondary" @click="go('mapChanges', { id: facilityId })">设施纠错</button>
@@ -117,7 +122,7 @@
         <button class="button" @click="saveCards">保存门户布局</button>
       </view>
       <view class="panel">
-        <view class="panel-title">模拟通知设置</view>
+        <view class="panel-title">通知设置</view>
         <view class="inline-options">
           <view :class="['choice', { active: notice.sms }]" @click="notice.sms = !notice.sms">
             短信 {{ notice.sms ? '✓' : '' }}
@@ -139,17 +144,17 @@
           v-model="alarmId"
           :options="demo.alarms.map((a) => ({ value: a.id, label: a.title + ' ' + a.id }))"
         />
-        <button v-if="demo.has('write')" class="button secondary" @click="notify">生成模拟通知记录</button>
-        <view class="notice">每次只生成已开启渠道且匹配级别的本地记录，不发送真实短信或邮件。</view>
+        <button v-if="demo.has('write')" class="button secondary" @click="notify">生成通知记录</button>
+        <view class="notice">按已开启的渠道及告警级别生成通知记录。</view>
         <view v-for="n in notifications.slice(-10).reverse()" :key="n.id" class="list-item">
-          {{ n.alarmId }} · {{ n.channel === 'sms' ? '短信' : '邮件' }} · 仅模拟发送
+          {{ n.alarmId }} · {{ n.channel === 'sms' ? '短信' : '邮件' }} · 已生成记录
         </view>
       </view>
     </view>
     <view class="panel">
       <view class="panel-title">本地快照迁移</view>
       <view class="notice">
-        包含本地业务状态与配置，不含账号、密码和登录会话。导入替换当前设备的演示状态；两个设备不会自动同步。先导出备份，再导入同版本快照。
+        包含本地业务状态与配置，不含账号、密码和登录会话。导入替换当前设备的业务状态；两个设备不会自动同步。先导出备份，再导入同版本快照。
       </view>
       <template v-if="demo.has('reset')">
         <view class="toolbar">
@@ -263,22 +268,31 @@ const range = computed(() => {
   })
 async function saveDevice() {
   const r = await demo.run((e) => e.deviceSetting(deviceId.value, Number(interval.value), on.value === 'on'))
-  if (r.success) uni.showToast({ title: '模拟设置已保存', icon: 'none' })
+  if (r.success) uni.showToast({ title: '设备设置已保存', icon: 'none' })
 }
 const facilityId = ref(props.query.facilityId || demo.facilities[0]?.id || ''),
   title = ref(''),
-  description = ref('')
+  description = ref(''),
+  occurredAt = ref(formatTime(demo.state.simulationTime).slice(0, 16)),
+  reportBusy = ref(false)
 async function report() {
-  const r = await demo.run((e) =>
-    e.createOrder({
-      title: title.value,
-      type: 'repair',
-      facilityId: facilityId.value,
-      assigneeId: demo.user?.roleId === 'operator' ? demo.user.id : '',
-      description: description.value,
-    }),
-  )
-  if (r.success) go('orderDetail', { id: r.data }, true)
+  if (reportBusy.value) return
+  reportBusy.value = true
+  try {
+    const r = await demo.run((e) =>
+      e.createOrder({
+        occurredAt: occurredAt.value.trim().replace(' ', 'T') + ':00+08:00',
+        title: title.value,
+        type: 'repair',
+        facilityId: facilityId.value,
+        assigneeId: demo.user?.roleId === 'operator' ? demo.user.id : '',
+        description: description.value,
+      }),
+    )
+    if (r.success) go('orderDetail', { id: r.data }, true)
+  } finally {
+    reportBusy.value = false
+  }
 }
 const cardOptions = ['alarms', 'orders', 'inspection', 'map', 'video', 'energy', 'mobileReport'],
   cards = ref([...(demo.state.phase2.portalCards[demo.user?.id || ''] || cardOptions.slice(0, 4))]),
@@ -323,7 +337,7 @@ async function readSnapshot() {
   }
 }
 async function importSnapshot() {
-  if (!(await confirm('导入本地快照', '将替换当前设备全部演示业务状态，请确认已导出备份。'))) return
+  if (!(await confirm('导入本地快照', '将替换当前设备全部业务状态，请确认已导出备份。'))) return
   const r = await demo.run((e) => e.importSnapshot(snapshotFile.value || snapshot.value))
   if (r.success) {
     snapshot.value = ''

@@ -41,6 +41,7 @@ export interface Alarm {
   history: History[]
 }
 export interface WorkOrder {
+  occurredAt?: string
   id: string
   title: string
   type: string
