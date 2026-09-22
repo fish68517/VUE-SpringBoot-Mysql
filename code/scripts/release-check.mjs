@@ -9,10 +9,18 @@ const files = fs
 if (files.some((f) => /\.xlsx$|开发方案|文档\.txt|\.keystore$|\.jks$|create-initial/.test(f)))
   throw new Error('发布目录包含不应发布的材料')
 const requirement = path.resolve('../doc/请 分析阅读：城市智慧供水-功能模块.xlsx 文档.txt')
-const secretCandidates = fs.existsSync(requirement)
-  ? fs.readFileSync(requirement, 'utf8').match(/\b[a-f0-9]{32}\b|(?<=ClientSecret：\s*)[A-Za-z0-9+/=]+/g) ||
-    []
-  : []
+const mapConfigPath = path.resolve('config/amap.local.json')
+const mapConfig = fs.existsSync(mapConfigPath) ? JSON.parse(fs.readFileSync(mapConfigPath, 'utf8')) : {}
+// Only the explicitly configured browser map credentials are allowed. Cloud credentials stay forbidden.
+const mapValues = new Set(
+  [mapConfig.key, mapConfig.serviceHost ? undefined : mapConfig.securityJsCode].filter(Boolean),
+)
+const secretCandidates = (
+  fs.existsSync(requirement)
+    ? fs.readFileSync(requirement, 'utf8').match(/\b[a-f0-9]{32}\b|(?<=ClientSecret[：:]\s*)[A-Za-z0-9+/=]+|(?<=SpaceId[：:]\s*)[A-Za-z0-9-]+/g) ||
+      []
+    : []
+).filter((value) => !mapValues.has(value))
 for (const file of files.filter((f) => /\.(js|html|json)$/.test(f))) {
   const content = fs.readFileSync(path.join(root, file), 'utf8')
   if (secretCandidates.some((value) => content.includes(value)))

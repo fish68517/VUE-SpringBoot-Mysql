@@ -18,6 +18,9 @@ coverage/
 !.env.example
 !.env.*.example
 
+# Local AMap JS API configuration
+/code/config/amap.local.json
+
 # Logs and temporary files
 *.log
 *.tmp

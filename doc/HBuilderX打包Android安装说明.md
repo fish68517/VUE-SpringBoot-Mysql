@@ -1,5 +1,13 @@
 # HBuilderX 打包 Android 安装说明
 
+> **最新安装包（2.0.2 / 202）：** `code/unpackage/release/apk/郑州智慧供水-2.0.2-地图加载修复.apk`。修复 App renderjs 误用占位节点而导致地图一直加载的问题，同时修正管网画布与图表的容器获取。Key 保持不变，继续使用 Web 端 JSAPI Key。签名与旧版一致，已校验 APK 资源与最终编译结果相同；未自动安装到手机。详细原因见[移动端高德地图修复说明](移动端高德地图修复说明.md)。校验记录：`code/unpackage/evidence/android-apk-202.json`。
+
+> **2026-09-22 已实际打包交付：** 当前源码版本为 `2.0.1` / `201`。安装包为 `code/unpackage/release/apk/郑州智慧供水-2.0.1-移动地图.apk`（18,729,832 字节，约 17.9 MiB），包含移动端高德地图及最新图表修复。使用 HBuilderX 5.24 安心打包、原云端证书和原包名 `uni.app.UNI8E59F90`；签名校验通过，与 2026-09-21 旧安装包签名一致。支持 ARM64、Android 5.0 及以上；未进行手机安装实测。无需卸载旧版，可先尝试覆盖安装。本次未上传 uniCloud。下文的 `2.0.0` / `200` 为最初截图的填写示例，后续版本以源码为准。
+
+本次已核对 APK 内的业务 JS、地图 renderjs、样式与最终编译资源逐字节一致，高德配置已包含，未携带需求文件中的 uniCloud SpaceId / ClientSecret。构建配置统一为 `code/vite.config.js`，其中本地业务插件在 SDK 编译前排除未使用的云空间配置，不修改 HBuilderX 的账号关联或云端资源。原 `JAVA_TOOL_OPTIONS` 问题通过仅清除启动进程环境解决，系统环境变量未修改。
+
+校验记录：`code/unpackage/evidence/android-apk-201.json`；APK SHA-256：`bf02e8fbb40084073b76d4c422204a602220da872ef407e9a8a7c297cc54ce7d`。
+
 HBuilderX 可以将本项目打包为 APK，在 Android 手机上安装运行。本项目为普通 uni-app Vue 3 工程，项目入口目录为 `code`。
 
 **已经打开“App 打包”窗口时，直接看第 3 节，按表逐项填写即可。** 本说明按你提供的打包窗口截图和当前项目配置编写，目标是生成一个可以直接安装到自己 Android 手机上的 APK。

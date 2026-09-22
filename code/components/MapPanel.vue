@@ -41,7 +41,7 @@
         <view class="spacer" />
         <text class="subtle">设施 {{ facilities.length }} · 管段 {{ mapPipes.length }}</text>
       </view>
-      <view class="toolbar">
+      <view v-if="!geographic" class="toolbar">
         <SelectField
           v-model="selectionMode"
           :options="[
@@ -58,8 +58,12 @@
       </view>
       <view class="columns">
         <view>
-          <view class="map-container">
-            <MapCanvas :active="active" :config="config" @select="select" />
+          <view v-if="geographic" class="subtle geo-summary">
+            区域汇总 · {{ facilities.length }} 处设施 · 点击“结果”查看明细
+          </view>
+          <view :class="['map-container', { 'geo-map': geographic }]">
+            <DashboardMap v-if="geographic" :active="active" :config="geoConfig" @select="selectRegion" />
+            <MapCanvas v-else :active="active" :config="config" @select="select" />
             <view class="map-floating">
               <template v-if="!mobile || layersOpen">
                 <button
@@ -70,21 +74,23 @@
                 >
                   {{ t.name }}
                 </button>
-                <button class="button secondary compact" @click="showPipes = !showPipes">
+                <button v-if="!geographic" class="button secondary compact" @click="showPipes = !showPipes">
                   {{ showPipes ? '隐藏管线' : '显示管线' }}
                 </button>
               </template>
-              <button class="button secondary compact" @click="zoom = Math.min(3, zoom + 0.25)">＋</button>
-              <button class="button secondary compact" @click="zoom = Math.max(0.5, zoom - 0.25)">－</button>
+              <button class="button secondary compact" @click="changeZoom(1)">＋</button>
+              <button class="button secondary compact" @click="changeZoom(-1)">－</button>
               <button class="button secondary compact" @click="resetMap">复位</button>
             </view>
             <view class="map-bottom">
               {{
-                selectionMode === 'polygon'
-                  ? '逐点点击构成多边形，再点击完成面选'
-                  : selectionMode === 'box'
-                    ? '拖出矩形进行框选'
-                    : '拖动平移 · 点击点线查看详情'
+                geographic
+                  ? '高德地图 · 点击区域查看设施'
+                  : selectionMode === 'polygon'
+                    ? '逐点点击构成多边形，再点击完成面选'
+                    : selectionMode === 'box'
+                      ? '拖出矩形进行框选'
+                      : '拖动平移 · 点击点线查看详情'
               }}
             </view>
           </view>
@@ -180,7 +186,13 @@
             </text>
           </view>
           <view class="divider" />
-          <text class="subtle">本地示意坐标。区域选择后下方台账同步过滤；点线变更需六级审核生效。</text>
+          <text class="subtle">
+            {{
+              geographic
+                ? '地图按区域汇总展示，设施台账尚未配置真实经纬度。'
+                : '本地示意坐标。区域选择后下方台账同步过滤；点线变更需六级审核生效。'
+            }}
+          </text>
         </view>
       </view>
     </view>
@@ -252,6 +264,7 @@ import { regions, dictionary } from '../repositories/seed'
 import { regionName, facilityType, options } from '../domain/presentation'
 import { go } from '../navigation/routeMap'
 import MapCanvas from './MapCanvas.vue'
+import DashboardMap from './DashboardMap.vue'
 import { inside, intersects } from '../domain/phase2'
 import { exportCsv } from '../platform/export'
 import SelectField from './SelectField.vue'
@@ -276,10 +289,16 @@ onBackPress((event) => {
 })
 const selectedId = ref(props.query.facilityId || demo.selection),
   pipeId = ref(props.query.pipeId || ''),
-  theme = ref('dark'),
+  theme = ref(props.mobile ? 'light' : 'dark'),
   showPipes = ref(true),
   zoom = ref(1),
   reset = ref(0)
+const geographic = computed(() => !!props.mobile && theme.value !== 'network')
+const zoomStep = ref(0)
+watch(theme, () => {
+  if (props.mobile) clearSelection()
+  zoomStep.value = 0
+})
 const selectionMode = ref('pan'),
   polygon = ref<number[][]>([]),
   selectedIds = ref<string[]>([])
@@ -368,6 +387,33 @@ const config = computed(() => ({
   polygon: polygon.value,
   selectedIds: selectedIds.value,
 }))
+const geoConfig = computed(() => ({
+  compact: true,
+  regions: regions
+    .filter((r) => facilities.value.some((f) => f.regionId === r.id))
+    .map((r) => ({
+      id: r.id,
+      name: r.name,
+      facilityCount: facilities.value.filter((f) => f.regionId === r.id).length,
+      alarmCount: demo.alarms.filter(
+        (a) =>
+          a.status !== 'closed' && facilities.value.some((f) => f.id === a.facilityId && f.regionId === r.id),
+      ).length,
+    })),
+  theme: theme.value,
+  reset: reset.value,
+  zoomStep: zoomStep.value,
+}))
+function selectRegion(event: { type: string; id: string }) {
+  if (event.type !== 'region') return
+  filter.region = event.id
+  filter.page = 1
+  listOpen.value = true
+}
+function changeZoom(direction: number) {
+  if (geographic.value) zoomStep.value += direction
+  else zoom.value = Math.max(0.5, Math.min(3, zoom.value + direction * 0.25))
+}
 const selected = computed(() => facilities.value.find((f) => f.id === selectedId.value)),
   selectedPipe = computed(() => mapPipes.value.find((p) => p.id === pipeId.value)),
   nameOf = (id: string) => demo.facilities.find((f) => f.id === id)?.name || id
@@ -380,6 +426,7 @@ watch(
 function resetMap() {
   reset.value++
   zoom.value = 1
+  zoomStep.value = 0
 }
 function select(v: { type: string; id: string; point?: number[]; polygon?: number[][] }) {
   if (v.type === 'polygonPoint') {
@@ -411,6 +458,18 @@ function select(v: { type: string; id: string; point?: number[]; polygon?: numbe
 .mobile-map .map-floating {
   max-width: calc(100% - 24px);
   flex-wrap: wrap;
+}
+.geo-summary {
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+.geo-map .map-bottom {
+  bottom: 38px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #34596a;
+  border-radius: 4px;
+  padding: 4px 8px;
+  pointer-events: none;
 }
 .map-sheet-mask {
   position: fixed;

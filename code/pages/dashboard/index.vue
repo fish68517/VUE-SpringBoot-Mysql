@@ -6,8 +6,8 @@
         <text>智慧水务</text>
       </view>
       <view class="screen-title">
-        郑州市城市智慧供水
-        <text>ZHENGZHOU SMART WATER OPERATION CENTER</text>
+        城市智慧供水
+        <text>SMART WATER OPERATION CENTER</text>
       </view>
       <view class="screen-meta">
         <text>数据时间 · {{ formatTime(demo.state.simulationTime) }}</text>
@@ -65,23 +65,27 @@
           </view>
           <ChartView v-if="series" :active="active" :labels="labels" :values="values" dark name="MPa" />
           <view v-else class="empty">该设施无压力数据</view>
-          <text class="screen-muted">点击地图设施，联动查看压力曲线</text>
+          <text class="screen-muted">选择区域或设施，联动查看压力曲线</text>
         </view>
       </view>
       <view class="screen-map-area">
-        <MapCanvas :active="active" :config="mapConfig" @select="select" />
+        <DashboardMap :active="active && !!demo.user" :config="mapConfig" @select="select" />
         <view class="map-title-float">
           <text class="screen-muted">● 管网动态总览</text>
           <view>郑州供水一张图</view>
-          <text>设施 {{ demo.facilities.length }} 处 · 示意管网</text>
+          <text>设施 {{ demo.facilities.length }} 处 · 区域运行总览</text>
         </view>
         <view class="map-actions-float">
           <button class="button dark compact" @click="reset++">定位复位</button>
+          <button class="button dark compact" @click="mapTheme = mapTheme === 'dark' ? 'light' : 'dark'">
+            {{ mapTheme === 'dark' ? '标准底图' : '深色底图' }}
+          </button>
           <button class="button dark compact" @click="go('map', { facilityId: demo.selection })">
-            展开地图 ↗
+            管网台账 ↗
           </button>
         </view>
         <view class="screen-map-card" v-if="selected">
+          <SelectField v-model="facilitySelection" :options="facilityOptions" />
           <view>
             <text class="live-dot" />
             {{ selected.name }}
@@ -95,9 +99,7 @@
           </view>
         </view>
         <view class="screen-legend">
-          <text>● 正常设施</text>
-          <text style="color: #ffbe42">● 异常告警</text>
-          <text>━ 供水管线</text>
+          <text>区域汇总标记 · 非设施定位</text>
         </view>
       </view>
       <view class="screen-side stack">
@@ -168,15 +170,17 @@
 import { computed, ref } from 'vue'
 import { onLoad, onShow, onHide, onUnload } from '@dcloudio/uni-app'
 import { useDemo } from '../../stores/demo'
-import { regions, pipes, dmas, pressureSeries, usage, dictionary } from '../../repositories/seed'
+import { regions, pressureSeries, usage, dictionary } from '../../repositories/seed'
 import { dmaMetrics, percent, formatTime, usageFor } from '../../domain/metrics'
 import { go, urlFor } from '../../navigation/routeMap'
 import { isMobileClient } from '../../platform/client'
-import MapCanvas from '../../components/MapCanvas.vue'
+import DashboardMap from '../../components/DashboardMap.vue'
+import SelectField from '../../components/SelectField.vue'
 import ChartView from '../../components/ChartView.vue'
 const demo = useDemo(),
   active = ref(true),
-  reset = ref(0)
+  reset = ref(0),
+  mapTheme = ref('dark')
 onLoad(() => {
   if (isMobileClient()) {
     go('mobileHome', {}, true)
@@ -198,6 +202,13 @@ const visibleDmas = computed(() =>
   demo.state.phase2.dmas.filter((d) => demo.user?.regionIds.includes(d.regionId)),
 )
 const selected = computed(() => demo.facilities.find((f) => f.id === demo.selection) || demo.facilities[0])
+const facilitySelection = computed({
+  get: () => selected.value?.id || '',
+  set: (id: string) => {
+    demo.selection = id
+  },
+})
+const facilityOptions = computed(() => demo.facilities.map((f) => ({ value: f.id, label: f.name })))
 const nameOf = (id: string) => demo.facilities.find((f) => f.id === id)?.name || id
 const facilityType = (id: string) => (dictionary.facilityTypes as Record<string, string>)[id]
 const currentScenario = computed(() => dictionary.scenarios.find((s) => s.id === demo.state.scenarioId)?.name)
@@ -234,17 +245,26 @@ const series = computed(() => pressureSeries.find((v) => v.entityId === selected
 const labels = computed(() => (series.value?.points || []).map((p) => p.time.slice(11, 16))),
   values = computed(() => (series.value?.points || []).map((p) => p.value))
 const mapConfig = computed(() => ({
-  regions: regions.filter((r) => demo.user?.regionIds.includes(r.id)),
-  facilities: demo.facilities,
-  pipes: demo.state.phase2.pipes.filter((p) => demo.user?.regionIds.includes(p.regionId)),
-  alarmIds: activeAlarms.value.map((a) => a.facilityId),
-  selected: selected.value?.id,
-  theme: 'dark',
+  regions: regions
+    .filter((r) => demo.user?.regionIds.includes(r.id))
+    .map((r) => ({
+      id: r.id,
+      name: r.name,
+      facilityCount: demo.facilities.filter((f) => f.regionId === r.id).length,
+      alarmCount: activeAlarms.value.filter((a) =>
+        demo.facilities.some((f) => f.id === a.facilityId && f.regionId === r.id),
+      ).length,
+    })),
+  selectedRegion: selected.value?.regionId,
+  theme: mapTheme.value,
   reset: reset.value,
 }))
 function select(v: { type: string; id: string }) {
-  if (v.type === 'facility') demo.selection = v.id
-  else go('map', { pipeId: v.id })
+  if (v.type === 'region') {
+    const facilities = demo.facilities.filter((f) => f.regionId === v.id)
+    const facility = facilities.find((f) => pressureSeries.some((s) => s.entityId === f.id)) || facilities[0]
+    if (facility) demo.selection = facility.id
+  }
 }
 </script>
 <style scoped>
@@ -452,6 +472,21 @@ function select(v: { type: string; id: string }) {
   border: 1px solid #2d6889;
   padding: 16px;
   min-width: 220px;
+  max-width: 300px;
+}
+.screen-map-card :deep(.select-field) {
+  width: 100%;
+  max-width: 280px;
+  margin-bottom: 12px;
+  color: #d9eff9;
+  background: #12384e;
+  border-color: #2d6889;
+}
+.map-title-float,
+.map-actions-float,
+.screen-map-card,
+.screen-legend {
+  z-index: 140;
 }
 .screen-map-card > view:first-child {
   margin-bottom: 10px;

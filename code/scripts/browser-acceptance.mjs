@@ -1,6 +1,7 @@
 import { chromium } from 'playwright'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
+import { isMapRequest, resourceLabel } from './browser-network.mjs'
 const base = process.env.DEMO_URL || 'http://127.0.0.1:4173'
 const browser = await chromium.launch({ channel: process.env.BROWSER_CHANNEL || 'chrome', headless: true })
 const context = await browser.newContext({ viewport: { width: 1920, height: 1080 } }),
@@ -12,11 +13,11 @@ const errors = [],
   screenshots = []
 page.on('pageerror', (e) => errors.push(e.message))
 page.on('response', (r) => {
-  if (r.status() >= 400) failedRequests.push({ url: r.url(), status: r.status() })
+  if (r.status() >= 400) failedRequests.push({ url: resourceLabel(r.url()), status: r.status() })
 })
 page.on('request', (r) => {
-  if (!r.url().startsWith(base) && !r.url().startsWith('data:') && !r.url().startsWith('blob:'))
-    externalRequests.push(r.url())
+  if (!r.url().startsWith(base) && !r.url().startsWith('data:') && !r.url().startsWith('blob:') && !isMapRequest(r.url()))
+    externalRequests.push(resourceLabel(r.url()))
 })
 async function navigate(route) {
   await page.goto(base + '/#/pages/' + route)
@@ -45,7 +46,8 @@ try {
   await checked('管理员登录、大屏地图和图表均渲染', async () => {
     await login('管理员')
     await page.locator('.chart-view canvas').first().waitFor()
-    assert.equal(await page.locator('canvas').count(), 2)
+    assert.equal(await page.locator('.chart-view canvas').count(), 1)
+    await page.locator('.amap-surface .amap-layer').first().waitFor({ timeout: 45000 })
     await shot('dashboard-1920')
   })
   await checked('地图点选和缩放后点选正确', async () => {

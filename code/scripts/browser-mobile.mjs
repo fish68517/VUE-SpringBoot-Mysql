@@ -86,6 +86,9 @@ try {
     taskId = tasks.at(-1).id
     const card = page.locator('.task-card').filter({ hasText: taskId })
     await card.getByText('任务地图', { exact: true }).click()
+    await page.locator('.amap-surface .amap-layer').first().waitFor({ timeout: 45000 })
+    await page.getByText('图层', { exact: true }).click()
+    await page.getByText('管网视图', { exact: true }).click()
     await page.locator('.map-canvas canvas').waitFor()
     await page.getByText(/^结果 \d+$/).click()
     const rows = page.locator('.mobile-map > .panel').last().locator('.list-item')

@@ -1,6 +1,7 @@
 import { chromium } from 'playwright'
 import fs from 'node:fs'
 import assert from 'node:assert/strict'
+import { isMapRequest, resourceLabel } from './browser-network.mjs'
 const base = process.env.DEMO_URL || 'http://127.0.0.1:4173',
   out = 'unpackage/evidence/phase2'
 fs.mkdirSync(out, { recursive: true })
@@ -13,11 +14,11 @@ const checks = [],
   external = []
 page.on('pageerror', (e) => errors.push(e.message))
 page.on('response', (r) => {
-  if (r.status() >= 400) httpErrors.push(r.url() + ' ' + r.status())
+  if (r.status() >= 400) httpErrors.push(resourceLabel(r.url()) + ' ' + r.status())
 })
 page.on('request', (r) => {
-  if (!r.url().startsWith(base) && !r.url().startsWith('blob:') && !r.url().startsWith('data:'))
-    external.push(r.url())
+  if (!r.url().startsWith(base) && !r.url().startsWith('blob:') && !r.url().startsWith('data:') && !isMapRequest(r.url()))
+    external.push(resourceLabel(r.url()))
 })
 const field = (label) =>
   page

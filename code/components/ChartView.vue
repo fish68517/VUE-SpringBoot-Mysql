@@ -23,18 +23,24 @@ export default defineComponent({
 })
 </script>
 <script module="chart" lang="renderjs">
+import { renderHost } from '../platform/render-host.js'
+import { init, use } from 'echarts/core'
+import { LineChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent } from 'echarts/components'
+import { CanvasRenderer } from 'echarts/renderers'
+use([LineChart, GridComponent, TooltipComponent, CanvasRenderer])
 export default {
   mounted(){this.alive=true;if(this.current)this.update(this.current)},
   methods:{
-    update(value){if(!value)return;this.current=value;if(!value.active){this.release();return}this.alive=true;if(!window.echarts){if(!window.__waterChartLoad)window.__waterChartLoad=new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='./static/vendor/echarts.min.js';script.onload=resolve;script.onerror=reject;document.head.appendChild(script)});window.__waterChartLoad.then(()=>{if(this.alive)this.draw()}).catch(()=>{if(this.$el)this.$el.textContent='图表资源加载失败，请重新准备本地资源'});return}this.draw()},
+    update(value,oldValue,owner,instance){if(!value)return;this.host=renderHost(this,owner,instance);this.current=value;if(!value.active){this.release();return}this.alive=true;this.draw();if(!this.instance)requestAnimationFrame(()=>this.draw())},
     draw(){
-      if(!this.current||!this.alive||!this.$el.isConnected)return;
+      if(!this.current||!this.alive||!this.host||!this.host.isConnected)return;
       if(!this.instance){
-        this.instance=window.echarts.init(this.$el);
+        this.instance=init(this.host);
         this.resize=()=>this.instance&&this.instance.resize();
         window.addEventListener('resize',this.resize);
-        if(window.ResizeObserver){this.observer=new ResizeObserver(this.resize);this.observer.observe(this.$el)}
-        if(window.MutationObserver){this.removalObserver=new MutationObserver(()=>{if(!this.$el.isConnected)this.release()});this.removalObserver.observe(document.body,{childList:true,subtree:true})}
+        if(window.ResizeObserver){this.observer=new ResizeObserver(this.resize);this.observer.observe(this.host)}
+        if(window.MutationObserver){this.removalObserver=new MutationObserver(()=>{if(!this.host.isConnected)this.release()});this.removalObserver.observe(document.body,{childList:true,subtree:true})}
       }
       const v=this.current,c=v.dark?'#51d7ef':'#1685ef';
       this.instance.setOption({
