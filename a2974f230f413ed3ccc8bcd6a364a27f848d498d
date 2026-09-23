@@ -1,0 +1,34 @@
+src/demo/WaterlogDiaBusDemo.vue
+  s_a16231bd8fe0a8::t_def2bcec113e4f 66,68
+src/package/BZAQ/BzWaterKpiDia/components/WaterlogPredictionDia.vue
+  s_a16231bd8fe0a8::t_729642699882ee 988-989
+  s_a16231bd8fe0a8::t_caddbd0df00232 138,762,765,767,788-790,799-803
+  s_a16231bd8fe0a8::t_216cb2964cce4a 666,1071-1073,1079-1082,1085-1318,1710,1717-1729,1924
+  s_a16231bd8fe0a8::t_cf1d714b578a4a 35-52,216,223-244,442-447,452-453,463-464,472-530,535,539-665,942-943,954-957
+  s_a16231bd8fe0a8::t_25c67a49f08aea 1788-1826,1828-1836,1838-1923
+  s_a16231bd8fe0a8::t_ebc3205c2a7bde 1827,1837
+  s_a16231bd8fe0a8::t_746779caedffb2 667
+  s_a16231bd8fe0a8::t_dfa016c33a28ed 1730
+  s_a16231bd8fe0a8::t_aa227fe61901f4 1925
+src/router/index.ts
+  s_a16231bd8fe0a8::t_32b5381982067e 75
+  s_a16231bd8fe0a8::t_def2bcec113e4f 16,50-57
+doc/水流效果.md
+  s_a16231bd8fe0a8::t_ec7ec8566167c4 1-143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "a2974f230f413ed3ccc8bcd6a364a27f848d498d",
+  "prompts": {},
+  "sessions": {
+    "s_a16231bd8fe0a8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06304-2b6f-7432-a60f-b2a3ed6c883a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

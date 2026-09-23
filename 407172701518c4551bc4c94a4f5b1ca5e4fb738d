@@ -1,0 +1,32 @@
+src/package/BZAQ/BzWaterKpiDia/components/WaterlogPredictionDia.vue
+  s_a16231bd8fe0a8::t_e51c0a461ef274 1162,2023,2046-2054,2056,2058
+  s_a16231bd8fe0a8::t_23d21870544d5c 238-291,512-516,519
+  s_a16231bd8fe0a8::t_e8a60e05082b7a 2057
+  s_a16231bd8fe0a8::t_8961d1b8688044 2055
+  s_a16231bd8fe0a8::t_32832d22f13051 520
+  s_a16231bd8fe0a8::t_60e5409d087f16 2059
+src/package/BZAQ/BZHouse/components/BZHouseHotWorkTriple3.vue
+  s_a16231bd8fe0a8::t_87697759228b7d 78-79,82,90,103,106,124-126,129,135,146,148,816-824
+  s_a16231bd8fe0a8::t_dccc83d34f1c0d 655,718,732-733,738-739,745,747-749,793,808,827
+  s_a16231bd8fe0a8::t_f4a46a5b3ac137 727-731,734-737,740-743
+  s_a16231bd8fe0a8::t_d58d4872b660ef 825
+doc/地图瓦片拼接地图.md
+  s_a16231bd8fe0a8::t_f2d5d321759b5f 127-128
+  s_a16231bd8fe0a8::t_bce53cf9358f32 1-126,129-174
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "407172701518c4551bc4c94a4f5b1ca5e4fb738d",
+  "prompts": {},
+  "sessions": {
+    "s_a16231bd8fe0a8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06304-2b6f-7432-a60f-b2a3ed6c883a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
