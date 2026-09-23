@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">来电标记采集助手</string>
+    <string name="app_icon_description">应用图标</string>
+    <string name="accessibility_service_name">来电标记识别服务</string>
+    <string name="accessibility_service_description">仅在手机响铃或检测到来电界面时读取屏幕上的来电号码、标记人数和标记类型，并进入上传流程。</string>
+    <string name="config_center">服务配置中心</string>
+    <string name="config_subtitle">识别来电界面中的号码与标记信息，采集后立即进入上传流程</string>
+    <string name="section_runtime_status">运行状态</string>
+    <string name="phone_permission_description">电话权限</string>
+    <string name="phone_permission_title">电话状态权限</string>
+    <string name="grant_phone_permission">授权读取响铃状态</string>
+    <string name="accessibility_description">无障碍服务</string>
+    <string name="accessibility_title">来电识别无障碍服务</string>
+    <string name="open_accessibility_settings">打开无障碍设置</string>
+    <string name="section_server_api">服务端接口</string>
+    <string name="server_api_help">每生成一条采集记录都会调用上传模块。接口尚未配置时仅记录 JSON 与日志，不会发送网络请求。</string>
+    <string name="endpoint_label">完整 POST 接口地址</string>
+    <string name="save_endpoint">保存接口配置</string>
+    <string name="section_latest_capture">最近一次采集</string>
+    <string name="run_parser_test">运行解析测试</string>
+    <string name="privacy_notice">隐私提示：本应用只应用于已获授权的设备和业务场景。系统不会允许应用静默开启无障碍服务；不同品牌电话应用暴露的文字节点可能不同，可通过 Logcat 中的 CallMarkCapture 日志调整解析规则。</string>
+    <string name="service_enabled">已开启</string>
+    <string name="service_disabled">未开启</string>
+    <string name="permission_granted">已授权</string>
+    <string name="permission_denied">未授权</string>
+    <string name="no_capture">尚未采集到来电标记数据</string>
+    <string name="endpoint_hint">https://server.example.com/api/v1/call-screen-records</string>
+</resources>
