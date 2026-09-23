@@ -1,16 +1,16 @@
 {
-    "name" : "郑州智慧供水",
+    "name" : "智慧供水",
     "appid" : "__UNI__8E59F90",
     "description" : "城市智慧供水管理系统",
-    "versionName" : "2.0.2",
-    "versionCode" : "202",
+    "versionName" : "2.0.3",
+    "versionCode" : "203",
     "transformPx" : false,
     "vueVersion" : "3",
     "uniStatistics" : {
         "enable" : false
     },
     "h5" : {
-        "title" : "郑州城市智慧供水",
+        "title" : "城市智慧供水",
         "router" : {
             "mode" : "hash",
             "base" : "/web/"

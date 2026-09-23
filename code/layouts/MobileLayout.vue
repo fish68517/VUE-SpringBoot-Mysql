@@ -3,7 +3,7 @@
     <view class="mobile-header">
       <button v-if="!primary" class="mobile-back" @click="back">‹ 返回</button>
       <view class="mobile-heading">
-        <text class="mobile-brand">郑州智慧供水</text>
+        <text class="mobile-brand">智慧供水</text>
         <text class="page-title">{{ title }}</text>
       </view>
       <button v-if="!primary" class="mobile-home-link" @click="go('mobileHome', {}, true)">工作台</button>

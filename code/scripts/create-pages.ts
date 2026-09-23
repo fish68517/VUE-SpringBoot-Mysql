@@ -28,7 +28,7 @@ fs.writeFileSync(
         navigationStyle: 'custom',
         backgroundColor: '#f4f7fb',
         navigationBarTextStyle: 'black',
-        navigationBarTitleText: '郑州智慧供水',
+        navigationBarTitleText: '智慧供水',
       },
     },
     null,

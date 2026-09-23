@@ -72,7 +72,7 @@
         <DashboardMap :active="active && !!demo.user" :config="mapConfig" @select="select" />
         <view class="map-title-float">
           <text class="screen-muted">● 管网动态总览</text>
-          <view>郑州供水一张图</view>
+          <view>供水一张图</view>
           <text>设施 {{ demo.facilities.length }} 处 · 区域运行总览</text>
         </view>
         <view class="map-actions-float">

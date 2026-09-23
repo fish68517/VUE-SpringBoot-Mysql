@@ -3,7 +3,7 @@
     <view class="login-art">
       <view class="login-brand">
         ≈
-        <text>郑州城市智慧供水</text>
+        <text>城市智慧供水</text>
       </view>
       <view class="login-story">
         <text class="login-small">ZHENGZHOU · SMART WATER</text>

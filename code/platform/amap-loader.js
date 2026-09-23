@@ -59,7 +59,7 @@ export async function regionCenters(AMap) {
       ),
     ),
     withDeadline((done) =>
-      new AMap.Geocoder({ city: '郑州' }).getLocation('郑州市郑东新区管委会', (status, result) =>
+      new AMap.Geocoder({ city: '' }).getLocation('市郑东新区管委会', (status, result) =>
         done(status === 'complete' ? result.geocodes?.[0]?.location : null),
       ),
     ),

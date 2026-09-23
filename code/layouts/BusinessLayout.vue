@@ -4,7 +4,7 @@
       <view class="brand" @click="go('dashboard', {}, true)">
         <text class="brand-mark">≈</text>
         <view>
-          <text class="brand-title">郑州智慧供水</text>
+          <text class="brand-title">智慧供水</text>
           <text class="brand-sub">SMART WATER</text>
         </view>
       </view>
@@ -53,7 +53,7 @@
       </view>
       <view class="page-body"><slot /></view>
       <view class="page-footer">
-        郑州城市智慧供水管理系统
+        城市智慧供水管理系统
         <text>版本 · {{ demo.state.version }}</text>
       </view>
     </view>

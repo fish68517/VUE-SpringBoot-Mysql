@@ -48,7 +48,7 @@
     </view>
     <view class="panel">
       <view class="panel-title">关于应用</view>
-      <text class="subtle">郑州智慧供水 · {{ app.versionName }}</text>
+      <text class="subtle">智慧供水 · {{ app.versionName }}</text>
       <text class="subtle">数据版本：{{ demo.state.version }}</text>
       <text class="subtle">业务记录保存在当前设备。</text>
     </view>
