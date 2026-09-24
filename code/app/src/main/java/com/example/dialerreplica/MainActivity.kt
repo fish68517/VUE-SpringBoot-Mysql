@@ -1,7 +1,10 @@
 package com.example.dialerreplica
 
 import android.Manifest
-import android.app.PictureInPictureParams
+import android.app.AlertDialog
+import android.content.Intent
+import android.provider.Settings
+import com.example.dialerreplica.service.CallOverlayState
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
@@ -12,7 +15,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
-import android.util.Rational
 import android.widget.VideoView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -22,6 +24,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -51,7 +54,6 @@ import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Dialpad
 import androidx.compose.material.icons.outlined.GraphicEq
-import androidx.compose.material.icons.outlined.MicOff
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Person
@@ -136,31 +138,50 @@ private val DialPadHorizontalPadding = 29.dp
 private val DialPadColumnSpacing = 12.dp
 
 // true：显示通话缩小入口及顶部悬浮条；false：隐藏缩小功能。
-private const val CallMinimizeVisible = true
+internal const val CallMinimizeVisible = true
 
 private enum class AppScreen { DIALER, CALLING, HISTORY, RECORD_DETAIL, SETTINGS }
 
 class MainActivity : ComponentActivity() {
+    var returnToCallRequest by mutableIntStateOf(0)
+        private set
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (intent?.action == CallOverlayState.ACTION_RETURN) returnToCallRequest++
         enableEdgeToEdge()
         setContent { MaterialTheme { Surface(color = Color.White) { DialerReplicaApp() } } }
     }
 
-    override fun onUserLeaveHint() {
-        super.onUserLeaveHint()
-        val phase = CallSessionBus.snapshot.value.phase
-        if (CallMinimizeVisible && (phase == CallPhase.DIALING || phase == CallPhase.CONNECTED)) {
-            enterCallPictureInPicture()
-        }
+    override fun onStart() {
+        super.onStart()
+        CallOverlayState.activityVisible.value = true
     }
 
-    fun enterCallPictureInPicture() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !isInPictureInPictureMode) {
-            enterPictureInPictureMode(
-                PictureInPictureParams.Builder().setAspectRatio(Rational(9, 16)).build(),
-            )
-        }
+    override fun onStop() {
+        CallOverlayState.activityVisible.value = false
+        super.onStop()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.action == CallOverlayState.ACTION_RETURN) returnToCallRequest++
+    }
+
+    fun offerOverlayPermission() {
+        if (!CallMinimizeVisible || Settings.canDrawOverlays(this)) return
+        AlertDialog.Builder(this)
+            .setTitle("允许跨应用显示通话悬浮窗")
+            .setMessage("允许“显示在其他应用上层”后，切换到其他应用时会显示顶部黑色通话条和绿色返回栏。未授权仍可通过通知返回通话。")
+            .setNegativeButton("暂不", null)
+            .setPositiveButton("去授权") { _, _ ->
+                runCatching {
+                    startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
+                }.onFailure {
+                    android.widget.Toast.makeText(this, "请在系统设置中开启悬浮窗权限", android.widget.Toast.LENGTH_LONG).show()
+                }
+            }.show()
     }
 }
 
@@ -181,14 +202,22 @@ private fun DialerReplicaApp() {
     val backgroundUri by settings.stringFlow(SettingsRepository.BACKGROUND_URI).collectAsStateWithLifecycle(initialValue = null)
     val ringbackAudioUri by settings.stringFlow(SettingsRepository.RINGBACK_AUDIO_URI).collectAsStateWithLifecycle(initialValue = null)
 
-    var screen by rememberSaveable { mutableStateOf(AppScreen.DIALER) }
-    var digits by rememberSaveable { mutableStateOf("1") }
+    // 首次启动直接展示通话列表；已有会话仍由下方的会话状态恢复逻辑接管。
+    var screen by rememberSaveable { mutableStateOf(AppScreen.HISTORY) }
+    var digits by rememberSaveable { mutableStateOf("") }
     var hadSession by remember { mutableStateOf(false) }
     var callMinimized by rememberSaveable { mutableStateOf(false) }
     var lastClipboardNumber by rememberSaveable { mutableStateOf("") }
     var pendingSettingKey by remember { mutableStateOf<Preferences.Key<String>?>(null) }
     var pendingRecordId by remember { mutableStateOf<Long?>(null) }
     var selectedRecordId by rememberSaveable { mutableStateOf<Long?>(null) }
+
+    LaunchedEffect(activity.returnToCallRequest) {
+        if (activity.returnToCallRequest > 0 && session.phase.isActiveCall()) {
+            callMinimized = false
+            screen = AppScreen.CALLING
+        }
+    }
 
     val notificationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
     val recordPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -253,7 +282,7 @@ private fun DialerReplicaApp() {
                         if (detected != lastClipboardNumber) {
                             lastClipboardNumber = detected
                             digits = detected
-                            screen = AppScreen.DIALER
+                            // 剪贴板只预填号码，不在启动/返回前台时强制跳离通话列表。
                         }
                     }
                 }
@@ -330,6 +359,7 @@ private fun DialerReplicaApp() {
                 {
                     callMinimized = true
                     screen = AppScreen.HISTORY
+                    activity.offerOverlayPermission()
                 },
             )
             AppScreen.HISTORY -> CallHistoryScreen(
@@ -570,7 +600,7 @@ private fun CallingScreen(session: CallSessionSnapshot, backgroundUri: String?, 
         Column(Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding().padding(horizontal = 31.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Row(Modifier.fillMaxWidth().height(48.dp), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
                 if (CallMinimizeVisible) {
-                    TextButton(onClick = onMinimize) { Text("缩小", color = Color.White.copy(alpha = .8f)) }
+                    TextButton(onClick = onMinimize) { Text("...", color = Color.White.copy(alpha = .8f)) }
                 }
             }
             Spacer(Modifier.height(60.dp))
@@ -613,10 +643,10 @@ private fun AnimatedCallStateText(session: CallSessionSnapshot, modifier: Modifi
         CallPhase.CONNECTED -> {
             Row(modifier, verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(R.drawable.call_hd),
+                    painter = painterResource(R.drawable.detail_hd),
                     contentDescription = "HD",
-                    modifier = Modifier.width(20.dp).height(11.dp),
-                    alpha = .82f,
+                    modifier = Modifier.size(16.dp),
+                    contentScale = ContentScale.Fit,
                 )
                 Spacer(Modifier.width(5.dp))
                 Text(formatDuration(session.callElapsedMs), color = textColor, fontSize = 14.sp)
@@ -648,13 +678,13 @@ private fun CallingBackground(backgroundUri: String?, videoUri: String?, ringbac
 private fun CallingActionGrid(session: CallSessionSnapshot, connected: Boolean, onRecord: () -> Unit, onAction: (String) -> Unit, onHangup: () -> Unit, onSettings: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            CallingImageActionButton(R.drawable.call_recording, if (session.recording) "录音 ${formatDuration(session.recordingElapsedMs)}" else "录音", connected, onRecord)
-            CallingImageActionButton(R.drawable.call_ai_answer, "AI 接听", connected, onClick = { onAction("AI 接听") })
+            CallingImageActionButton(R.drawable.record_icon, if (session.recording) "录音 ${formatDuration(session.recordingElapsedMs)}" else "录音", connected, onRecord)
+            CallingImageActionButton(R.drawable.ai_icon, "AI 接听", connected, onClick = { onAction("AI 接听") })
             CallingActionButton(Icons.Outlined.Add, "添加通话", false, false, onClick = {})
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             CallingActionButton(Icons.Outlined.Videocam, "视频通话", false, false, onClick = {})
-            CallingActionButton(Icons.Outlined.MicOff, "静音", connected, session.activeAction == "静音", onClick = { onAction("静音") })
+            CallingActionButton(null, "静音", connected, session.activeAction == "静音", onClick = { onAction("静音") }, imageRes = R.drawable.since_icon)
             CallingActionButton(Icons.Outlined.MoreHoriz, "更多", true, false, onSettings)
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -666,13 +696,15 @@ private fun CallingActionGrid(session: CallSessionSnapshot, connected: Boolean, 
 }
 
 @Composable
-private fun CallingImageActionButton(imageRes: Int, label: String, enabled: Boolean, onClick: () -> Unit, showLabel: Boolean = true) {
+private fun CallingImageActionButton(imageRes: Int, label: String, enabled: Boolean, onClick: () -> Unit, showLabel: Boolean = true, active: Boolean = false) {
     val contentAlpha = if (enabled) 1f else .42f
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(84.dp)) {
         Image(
             painter = painterResource(imageRes),
             contentDescription = label,
-            modifier = Modifier.size(68.dp).clip(CircleShape).clickable(enabled = enabled, onClick = onClick),
+            modifier = Modifier.size(68.dp).clip(CircleShape)
+                .then(if (active) Modifier.border(2.dp, Color.White.copy(alpha = .85f), CircleShape) else Modifier)
+                .clickable(enabled = enabled, onClick = onClick),
             contentScale = ContentScale.Fit,
             alpha = contentAlpha,
         )
@@ -683,11 +715,17 @@ private fun CallingImageActionButton(imageRes: Int, label: String, enabled: Bool
 }
 
 @Composable
-private fun CallingActionButton(icon: ImageVector, label: String, enabled: Boolean, active: Boolean, onClick: () -> Unit, showLabel: Boolean = true) {
+private fun CallingActionButton(icon: ImageVector?, label: String, enabled: Boolean, active: Boolean, onClick: () -> Unit, showLabel: Boolean = true, imageRes: Int? = null) {
     val background = if (active) Color.White.copy(alpha = .75f) else Color.White.copy(alpha = if (enabled) .25f else .13f)
     val tint = when { active -> MainInk; enabled -> Color.White; else -> Color.White.copy(alpha = .42f) }
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(84.dp)) {
-        Box(Modifier.size(68.dp).clip(CircleShape).background(background).clickable(enabled = enabled, onClick = onClick), contentAlignment = Alignment.Center) { Icon(icon, label, tint = tint, modifier = Modifier.size(29.dp)) }
+        Box(Modifier.size(68.dp).clip(CircleShape).background(background).clickable(enabled = enabled, onClick = onClick), contentAlignment = Alignment.Center) {
+            if (imageRes != null) {
+                Icon(painterResource(imageRes), label, tint = tint, modifier = Modifier.size(29.dp))
+            } else if (icon != null) {
+                Icon(icon, label, tint = tint, modifier = Modifier.size(29.dp))
+            }
+        }
         if (showLabel) {
             Text(label, color = tint, fontSize = if (label.length > 6) 10.sp else 13.sp, modifier = Modifier.padding(top = 7.dp), maxLines = 1)
         }

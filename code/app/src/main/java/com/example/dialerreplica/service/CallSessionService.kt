@@ -17,7 +17,7 @@ import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
-import com.example.dialerreplica.MainActivity
+import com.example.dialerreplica.CallMinimizeVisible
 import com.example.dialerreplica.R
 import com.example.dialerreplica.data.AppDatabase
 import com.example.dialerreplica.data.CallRecordEntity
@@ -39,6 +39,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -67,6 +69,7 @@ class CallSessionService : Service() {
     private var lastRecordingUri: String? = null
     private var lastRecordingName: String? = null
     private var lastRecordingDuration = 0L
+    private lateinit var callOverlay: CallOverlay
 
     override fun onCreate() {
         super.onCreate()
@@ -75,9 +78,25 @@ class CallSessionService : Service() {
         settings = SettingsRepository(this)
         attribution = NumberAttributionRepository(this)
         createNotificationChannel()
+        callOverlay = CallOverlay(this)
+        scope.launch {
+            combine(CallSessionBus.snapshot, CallOverlayState.activityVisible) { session, visible ->
+                session to visible
+            }.collect { (session, visible) ->
+                if (CallMinimizeVisible) callOverlay.update(session, visible) else callOverlay.hide()
+            }
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
+
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        callOverlay.hide()
+        if (CallMinimizeVisible) {
+            callOverlay.update(CallSessionBus.snapshot.value, CallOverlayState.activityVisible.value)
+        }
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         latestStartId = startId
@@ -333,7 +352,7 @@ class CallSessionService : Service() {
 
     private fun buildNotification(): Notification {
         val current = CallSessionBus.snapshot.value
-        val openIntent = Intent(this, MainActivity::class.java)
+        val openIntent = CallOverlayState.returnIntent(this)
         val contentIntent = PendingIntent.getActivity(this, 1, openIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val hangupIntent = Intent(this, CallSessionService::class.java).setAction(ACTION_LOCAL_HANGUP)
         val hangupPendingIntent = PendingIntent.getService(this, 2, hangupIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -359,6 +378,7 @@ class CallSessionService : Service() {
     }
 
     override fun onDestroy() {
+        callOverlay.hide()
         transitionJob?.cancel()
         ringbackJob?.cancel()
         endJob?.cancel()
