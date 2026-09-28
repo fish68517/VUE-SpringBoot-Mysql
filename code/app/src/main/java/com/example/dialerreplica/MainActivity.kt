@@ -50,7 +50,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Backspace
-import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Dialpad
 import androidx.compose.material.icons.outlined.GraphicEq
@@ -59,7 +58,6 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Star
-import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -88,6 +86,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -130,6 +129,14 @@ private val DisabledInk = Color(0xFFC9C9C9)
 // 统一控制底部“电话 / 联系人 / 个人收藏”区域；1.0f 为原始尺寸。
 private const val BottomNavigationScale = 0.88f
 
+// 通话九宫格按钮尺寸，单位 dp。分层按钮共用外圈和内图标尺寸。
+// 挂断按钮仍为整张图片，仅跟随外圈尺寸。
+private const val CallingButtonCircleSizeDp = 68f
+private const val CallingButtonIconSizeDp = 40f
+
+// shut_down.png 四周含透明留白，单独放大内容，使红圈可见直径接近 68dp。
+private const val HangupButtonImageScale = 1.21f
+
 // 统一控制主页整个拨号面板高度；大于 1.0f 时面板顶部向上扩展。
 private const val DialerPanelHeightScale = 1.04f
 
@@ -140,7 +147,7 @@ private val DialPadColumnSpacing = 12.dp
 // true：显示通话缩小入口及顶部悬浮条；false：隐藏缩小功能。
 internal const val CallMinimizeVisible = true
 
-private enum class AppScreen { DIALER, CALLING, HISTORY, RECORD_DETAIL, SETTINGS }
+private enum class AppScreen { DIALER, CALLING, HISTORY, RECORD_DETAIL, SETTINGS, RINGBACK_VIDEOS }
 
 class MainActivity : ComponentActivity() {
     var returnToCallRequest by mutableIntStateOf(0)
@@ -240,7 +247,7 @@ private fun DialerReplicaApp() {
     val ringbackVideoFilesLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
         if (uris.isNotEmpty()) {
             uris.forEach { takeReadPermission(context, it) }
-            scope.launch { settings.setRingbackVideoUris(uris.map { it.toString() }) }
+            scope.launch { settings.addRingbackVideos(uris.map { it.toString() }) }
         }
     }
     val recordingFileLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -406,6 +413,12 @@ private fun DialerReplicaApp() {
                 settings,
                 { screen = if (session.phase == CallPhase.IDLE || callMinimized) AppScreen.HISTORY else AppScreen.CALLING },
                 ::pickSetting,
+                { screen = AppScreen.RINGBACK_VIDEOS },
+            )
+            AppScreen.RINGBACK_VIDEOS -> RingbackVideosScreen(
+                settings,
+                onBack = { screen = AppScreen.SETTINGS },
+                onPick = { pickSetting(SettingsRepository.RINGBACK_VIDEO_URI, arrayOf("video/*")) },
             )
         }
         if (showCallReturnEntry) {
@@ -510,11 +523,25 @@ private val keyRows = listOf(
 
 @Composable
 private fun KeypadGrid(modifier: Modifier, onDigit: (String) -> Unit) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val keySound = remember(context) { com.example.dialerreplica.media.DialKeySoundPlayer(context) }
+    DisposableEffect(keySound, lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_PAUSE) keySound.stop()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            keySound.release()
+        }
+    }
     Column(modifier, verticalArrangement = Arrangement.SpaceEvenly) {
         keyRows.forEach { row ->
             Row(Modifier.fillMaxWidth().weight(1f), horizontalArrangement = Arrangement.spacedBy(DialPadColumnSpacing)) {
                 row.forEach { key ->
                     DialKey(key, Modifier.weight(1f).fillMaxHeight()) {
+                        keySound.play()
                         if (key.value.single().isDigit()) onDigit(key.value)
                     }
                 }
@@ -643,7 +670,7 @@ private fun AnimatedCallStateText(session: CallSessionSnapshot, modifier: Modifi
         CallPhase.CONNECTED -> {
             Row(modifier, verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(R.drawable.detail_hd),
+                    painter = painterResource(R.drawable.hd_icon),
                     contentDescription = "HD",
                     modifier = Modifier.size(16.dp),
                     contentScale = ContentScale.Fit,
@@ -678,36 +705,41 @@ private fun CallingBackground(backgroundUri: String?, videoUri: String?, ringbac
 private fun CallingActionGrid(session: CallSessionSnapshot, connected: Boolean, onRecord: () -> Unit, onAction: (String) -> Unit, onHangup: () -> Unit, onSettings: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            CallingImageActionButton(R.drawable.record_icon, if (session.recording) "录音 ${formatDuration(session.recordingElapsedMs)}" else "录音", connected, onRecord)
-            CallingImageActionButton(R.drawable.ai_icon, "AI 接听", connected, onClick = { onAction("AI 接听") })
+            CallingActionButton(null, if (session.recording) "录音 ${formatDuration(session.recordingElapsedMs)}" else "录音", connected, session.recording, onRecord, imageRes = R.drawable.record_icon_white)
+            CallingActionButton(null, "AI 接听", connected, session.activeAction == "AI 接听", onClick = { onAction("AI 接听") }, imageRes = R.drawable.ai_icon)
             CallingActionButton(Icons.Outlined.Add, "添加通话", false, false, onClick = {})
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            CallingActionButton(Icons.Outlined.Videocam, "视频通话", false, false, onClick = {})
+            CallingActionButton(null, "视频通话", false, false, onClick = {}, imageRes = R.drawable.video_icon)
             CallingActionButton(null, "静音", connected, session.activeAction == "静音", onClick = { onAction("静音") }, imageRes = R.drawable.since_icon)
             CallingActionButton(Icons.Outlined.MoreHoriz, "更多", true, false, onSettings)
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            CallingActionButton(Icons.Outlined.Dialpad, "拨号盘", connected, session.activeAction == "拨号盘", onClick = { onAction("拨号盘") }, showLabel = false)
-            CallingImageActionButton(R.drawable.call_hangup, "挂断", true, onClick = onHangup, showLabel = false)
-            CallingActionButton(Icons.AutoMirrored.Outlined.VolumeUp, "扬声器", connected, session.activeAction == "扬声器", onClick = { onAction("扬声器") }, showLabel = false)
+            CallingActionButton(null, "拨号盘", connected, session.activeAction == "拨号盘", onClick = { onAction("拨号盘") }, showLabel = false, imageRes = R.drawable.night_point)
+            CallingImageActionButton(R.drawable.shut_down, "挂断", true, onClick = onHangup, showLabel = false, imageScale = HangupButtonImageScale)
+            CallingActionButton(null, "扬声器", connected, session.activeAction == "扬声器", onClick = { onAction("扬声器") }, showLabel = false, imageRes = R.drawable.voice_icon)
         }
     }
 }
 
 @Composable
-private fun CallingImageActionButton(imageRes: Int, label: String, enabled: Boolean, onClick: () -> Unit, showLabel: Boolean = true, active: Boolean = false) {
-    val contentAlpha = if (enabled) 1f else .42f
+private fun CallingImageActionButton(imageRes: Int, label: String, enabled: Boolean, onClick: () -> Unit, showLabel: Boolean = true, active: Boolean = false, imageScale: Float = 1f) {
+    val contentAlpha = 1f // 禁用只限制点击，不降低图片和文字的不透明度。
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(84.dp)) {
-        Image(
-            painter = painterResource(imageRes),
-            contentDescription = label,
-            modifier = Modifier.size(68.dp).clip(CircleShape)
+        Box(
+            Modifier.size(CallingButtonCircleSizeDp.dp).clip(CircleShape)
                 .then(if (active) Modifier.border(2.dp, Color.White.copy(alpha = .85f), CircleShape) else Modifier)
                 .clickable(enabled = enabled, onClick = onClick),
-            contentScale = ContentScale.Fit,
-            alpha = contentAlpha,
-        )
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter = painterResource(imageRes),
+                contentDescription = label,
+                modifier = Modifier.fillMaxSize().graphicsLayer(scaleX = imageScale, scaleY = imageScale),
+                contentScale = ContentScale.Fit,
+                alpha = contentAlpha,
+            )
+        }
         if (showLabel) {
             Text(label, color = Color.White.copy(alpha = contentAlpha), fontSize = if (label.length > 6) 10.sp else 13.sp, modifier = Modifier.padding(top = 7.dp), maxLines = 1)
         }
@@ -716,14 +748,15 @@ private fun CallingImageActionButton(imageRes: Int, label: String, enabled: Bool
 
 @Composable
 private fun CallingActionButton(icon: ImageVector?, label: String, enabled: Boolean, active: Boolean, onClick: () -> Unit, showLabel: Boolean = true, imageRes: Int? = null) {
-    val background = if (active) Color.White.copy(alpha = .75f) else Color.White.copy(alpha = if (enabled) .25f else .13f)
-    val tint = when { active -> MainInk; enabled -> Color.White; else -> Color.White.copy(alpha = .42f) }
+    // 禁用时保持与普通按钮相同的白色图标和圆形背景；选中反馈保留。
+    val background = if (active && enabled) Color.White.copy(alpha = .75f) else Color.White.copy(alpha = .25f)
+    val tint = if (active && enabled) MainInk else Color.White
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.width(84.dp)) {
-        Box(Modifier.size(68.dp).clip(CircleShape).background(background).clickable(enabled = enabled, onClick = onClick), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(CallingButtonCircleSizeDp.dp).clip(CircleShape).background(background).clickable(enabled = enabled, onClick = onClick), contentAlignment = Alignment.Center) {
             if (imageRes != null) {
-                Icon(painterResource(imageRes), label, tint = tint, modifier = Modifier.size(29.dp))
+                Icon(painterResource(imageRes), label, tint = tint, modifier = Modifier.size(CallingButtonIconSizeDp.dp))
             } else if (icon != null) {
-                Icon(icon, label, tint = tint, modifier = Modifier.size(29.dp))
+                Icon(icon, label, tint = tint, modifier = Modifier.size(CallingButtonIconSizeDp.dp))
             }
         }
         if (showLabel) {
@@ -983,18 +1016,20 @@ private fun detailRecordResult(record: CallRecordEntity): String = when {
 }
 
 @Composable
-private fun HiddenSettingsScreen(settings: SettingsRepository, onBack: () -> Unit, onPick: (Preferences.Key<String>, Array<String>) -> Unit) {
+private fun HiddenSettingsScreen(settings: SettingsRepository, onBack: () -> Unit, onPick: (Preferences.Key<String>, Array<String>) -> Unit, onOpenRingback: () -> Unit) {
     BackHandler(onBack = onBack)
     val scope = rememberCoroutineScope()
     val clipboardAuto by settings.booleanFlow(SettingsRepository.CLIPBOARD_AUTO_FILL, true).collectAsStateWithLifecycle(true)
-    val nextOutcome by settings.stringFlow(SettingsRepository.NEXT_OUTCOME).collectAsStateWithLifecycle("CONNECTED")
-    val connectDelaySeconds by settings.intFlow(SettingsRepository.CONNECT_DELAY_SECONDS, SettingsRepository.DEFAULT_CONNECT_DELAY_SECONDS).collectAsStateWithLifecycle(SettingsRepository.DEFAULT_CONNECT_DELAY_SECONDS)
-    val remoteHangupSeconds by settings.intFlow(SettingsRepository.REMOTE_HANGUP_SECONDS, SettingsRepository.DEFAULT_REMOTE_HANGUP_SECONDS).collectAsStateWithLifecycle(SettingsRepository.DEFAULT_REMOTE_HANGUP_SECONDS)
     val mediaRows = listOf(
         Triple("通话背景图", SettingsRepository.BACKGROUND_URI, arrayOf("image/*")), Triple("铃声", SettingsRepository.RINGTONE_URI, arrayOf("audio/*")),
         Triple("彩铃音频", SettingsRepository.RINGBACK_AUDIO_URI, arrayOf("audio/*")), Triple("彩铃视频", SettingsRepository.RINGBACK_VIDEO_URI, arrayOf("video/*")),
         Triple("拨号中语音条", SettingsRepository.PROMPT_CALLING_URI, arrayOf("audio/*")), Triple("通话中语音条", SettingsRepository.PROMPT_CONNECTED_URI, arrayOf("audio/*")),
-        Triple("无法接通语音条", SettingsRepository.PROMPT_UNREACHABLE_URI, arrayOf("audio/*")), Triple("用户正忙语音条", SettingsRepository.PROMPT_BUSY_URI, arrayOf("audio/*")),
+        Triple("无法接通语音条", SettingsRepository.PROMPT_UNREACHABLE_URI, arrayOf("audio/*")), Triple("正在通话中提示音", SettingsRepository.PROMPT_BUSY_URI, arrayOf("audio/*")),
+        Triple("暂时无人接听提示音", SettingsRepository.PROMPT_NO_ANSWER_URI, arrayOf("audio/*")),
+        Triple("暂停服务提示音", SettingsRepository.PROMPT_SUSPENDED_URI, arrayOf("audio/*")),
+        Triple("语音留言提示音", SettingsRepository.PROMPT_VOICEMAIL_URI, arrayOf("audio/*")),
+        Triple("关机提示音", SettingsRepository.PROMPT_POWERED_OFF_URI, arrayOf("audio/*")),
+        Triple("对方拒接提示音", SettingsRepository.PROMPT_REJECTED_URI, arrayOf("audio/*")),
         Triple("通话结束语音条", SettingsRepository.PROMPT_ENDED_URI, arrayOf("audio/*")),
     )
     Column(Modifier.fillMaxSize().background(Color(0xFFF7F7F7)).statusBarsPadding().navigationBarsPadding()) {
@@ -1008,20 +1043,12 @@ private fun HiddenSettingsScreen(settings: SettingsRepository, onBack: () -> Uni
                 Switch(clipboardAuto, { scope.launch { settings.setBoolean(SettingsRepository.CLIPBOARD_AUTO_FILL, it) } })
             }
             HorizontalDivider()
-            Text("通话时序", fontSize = 17.sp, fontWeight = FontWeight.Bold)
-            DurationSettingRow("自动接通等待", connectDelaySeconds, 2, 30) { scope.launch { settings.setInt(SettingsRepository.CONNECT_DELAY_SECONDS, it) } }
-            DurationSettingRow("对方自动挂断", remoteHangupSeconds, 1, 120) { scope.launch { settings.setInt(SettingsRepository.REMOTE_HANGUP_SECONDS, it) } }
-            Text("彩铃固定在拨出 2 秒后开始；对方自动挂断时长从接通后开始计算。", color = SecondaryInk, fontSize = 12.sp)
-            HorizontalDivider()
-            Text("下一次模拟结果", fontSize = 17.sp, fontWeight = FontWeight.Bold)
-            listOf("CONNECTED" to "正常接通", "REMOTE_HANGUP" to "接通后对方挂断", "BUSY" to "用户正忙", "UNREACHABLE" to "无法接通").forEach { (value, label) ->
-                Button({ scope.launch { settings.setString(SettingsRepository.NEXT_OUTCOME, value) } }, Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = if (nextOutcome == value) DialerGreen else Color(0xFF888888))) { Text(label) }
-            }
+            SimulationSettingsCard(settings)
             HorizontalDivider()
             Text("本地媒体", fontSize = 17.sp, fontWeight = FontWeight.Bold)
             mediaRows.forEach { (label, key, types) ->
-                if (SettingsRepository.ENABLE_RANDOM_RINGBACK_VIDEO && key == SettingsRepository.RINGBACK_VIDEO_URI) {
-                    RingbackVideoSettingRow(settings) { onPick(key, types) }
+                if (key == SettingsRepository.RINGBACK_VIDEO_URI) {
+                    RingbackVideoSettingRow(settings, onOpenRingback)
                 } else {
                     MediaSettingRow(label, settings, key) { onPick(key, types) }
                 }
@@ -1066,22 +1093,20 @@ private fun MediaSettingRow(label: String, settings: SettingsRepository, key: Pr
 }
 
 @Composable
-private fun RingbackVideoSettingRow(settings: SettingsRepository, onPick: () -> Unit) {
+private fun RingbackVideoSettingRow(settings: SettingsRepository, onOpen: () -> Unit) {
     val scope = rememberCoroutineScope()
+    val enabled by settings.booleanFlow(SettingsRepository.RINGBACK_ENABLED, true).collectAsStateWithLifecycle(true)
     val values by settings.ringbackVideoUrisFlow().collectAsStateWithLifecycle(initialValue = emptySet())
     Row(Modifier.fillMaxWidth().height(52.dp), verticalAlignment = Alignment.CenterVertically) {
-        Column(Modifier.weight(1f)) {
+        Column(Modifier.weight(1f).clickable(onClick = onOpen)) {
             Text("彩铃视频", color = MainInk, fontSize = 15.sp)
             Text(if (values.isEmpty()) "使用默认" else "已保存 ${values.size} 个", color = SecondaryInk, fontSize = 11.sp)
         }
-        if (values.isNotEmpty()) {
-            TextButton({ scope.launch { settings.setRingbackVideoUris(emptyList()) } }) { Text("清除") }
-        }
-        Button(onPick) { Text("选择文件") }
+        Switch(enabled, { scope.launch { settings.setBoolean(SettingsRepository.RINGBACK_ENABLED, it) } })
     }
 }
 
-private fun callStateText(session: CallSessionSnapshot): String = when (session.phase) {
+private fun callStateText(session: CallSessionSnapshot): String = session.statusLabel ?: when (session.phase) {
     CallPhase.DIALING -> "正在拨号。"
     CallPhase.CONNECTED -> formatDuration(session.callElapsedMs)
     CallPhase.SELF_HANGING_UP -> "正在挂断…"

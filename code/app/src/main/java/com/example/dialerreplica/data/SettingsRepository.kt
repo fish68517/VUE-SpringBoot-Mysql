@@ -37,6 +37,27 @@ class SettingsRepository(private val context: Context) {
     suspend fun getInt(key: Preferences.Key<Int>, defaultValue: Int): Int =
         context.dialerSettings.data.first()[key] ?: defaultValue
 
+    suspend fun getBoolean(key: Preferences.Key<Boolean>, defaultValue: Boolean): Boolean =
+        context.dialerSettings.data.first()[key] ?: defaultValue
+
+    suspend fun addRingbackVideos(values: Collection<String>) {
+        context.dialerSettings.edit { p ->
+            val existing = p[RINGBACK_VIDEO_URIS].orEmpty().ifEmpty { p[RINGBACK_VIDEO_URI]?.let(::setOf).orEmpty() }
+            val combined = (existing + values.filter(String::isNotBlank)).take(MAX_RINGBACK_VIDEOS).toSet()
+            p[RINGBACK_VIDEO_URIS] = combined
+            combined.firstOrNull()?.let { p[RINGBACK_VIDEO_URI] = it }
+        }
+    }
+
+    suspend fun removeRingbackVideo(uri: String) {
+        context.dialerSettings.edit { p ->
+            val remaining = p[RINGBACK_VIDEO_URIS].orEmpty().ifEmpty { p[RINGBACK_VIDEO_URI]?.let(::setOf).orEmpty() } - uri
+            p[RINGBACK_VIDEO_URIS] = remaining
+            if (remaining.isEmpty()) p.remove(RINGBACK_VIDEO_URI)
+            else if (p[RINGBACK_VIDEO_URI] == uri) p[RINGBACK_VIDEO_URI] = remaining.first()
+        }
+    }
+
     suspend fun getRingbackVideoUris(): Set<String> {
         val preferences = context.dialerSettings.data.first()
         return preferences[RINGBACK_VIDEO_URIS].orEmpty().ifEmpty {
@@ -94,10 +115,17 @@ class SettingsRepository(private val context: Context) {
         val RINGBACK_AUDIO_URI = stringPreferencesKey("default_ringback_audio_uri")
         val RINGBACK_VIDEO_URI = stringPreferencesKey("default_ringback_video_uri")
         val RINGBACK_VIDEO_URIS = stringSetPreferencesKey("default_ringback_video_uris")
+        val RINGBACK_ENABLED = booleanPreferencesKey("ringback_enabled")
+        const val MAX_RINGBACK_VIDEOS = 500
         val PROMPT_CALLING_URI = stringPreferencesKey("voice_prompt_calling_uri")
         val PROMPT_CONNECTED_URI = stringPreferencesKey("voice_prompt_connected_uri")
         val PROMPT_UNREACHABLE_URI = stringPreferencesKey("voice_prompt_unreachable_uri")
         val PROMPT_BUSY_URI = stringPreferencesKey("voice_prompt_busy_uri")
+        val PROMPT_NO_ANSWER_URI = stringPreferencesKey("voice_prompt_no_answer_uri")
+        val PROMPT_SUSPENDED_URI = stringPreferencesKey("voice_prompt_suspended_uri")
+        val PROMPT_VOICEMAIL_URI = stringPreferencesKey("voice_prompt_voicemail_uri")
+        val PROMPT_POWERED_OFF_URI = stringPreferencesKey("voice_prompt_powered_off_uri")
+        val PROMPT_REJECTED_URI = stringPreferencesKey("voice_prompt_rejected_uri")
         val PROMPT_ENDED_URI = stringPreferencesKey("voice_prompt_ended_uri")
         val NEXT_OUTCOME = stringPreferencesKey("next_outcome")
         val CONNECT_DELAY_SECONDS = intPreferencesKey("connect_delay_seconds")
@@ -118,6 +146,11 @@ class SettingsRepository(private val context: Context) {
             PROMPT_CONNECTED_URI,
             PROMPT_UNREACHABLE_URI,
             PROMPT_BUSY_URI,
+            PROMPT_NO_ANSWER_URI,
+            PROMPT_SUSPENDED_URI,
+            PROMPT_VOICEMAIL_URI,
+            PROMPT_POWERED_OFF_URI,
+            PROMPT_REJECTED_URI,
             PROMPT_ENDED_URI,
         )
     }

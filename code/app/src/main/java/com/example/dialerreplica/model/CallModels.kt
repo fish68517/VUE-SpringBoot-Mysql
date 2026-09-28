@@ -12,6 +12,11 @@ enum class CallPhase {
 }
 
 enum class CallEndReason {
+    NO_ANSWER,
+    SUSPENDED,
+    VOICEMAIL,
+    POWERED_OFF,
+    REJECTED,
     LOCAL_HANGUP,
     REMOTE_HANGUP,
     UNREACHABLE,
@@ -32,6 +37,7 @@ data class CallSessionSnapshot(
     val recordingElapsedMs: Long = 0,
     val recordingPath: String? = null,
     val activeAction: String? = null,
+    val statusLabel: String? = null,
 )
 
 data class NumberAttribution(

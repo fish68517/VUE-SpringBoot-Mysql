@@ -21,8 +21,15 @@ class LocalMediaPlayer(private val context: Context) {
         stop()
         return runCatching {
             val uri = Uri.parse(uriValue)
-            player = MediaPlayer().apply {
-                setDataSource(context, uri)
+            // 先保存实例，确保资源缺失/解码失败时也能释放播放器。
+            val mediaPlayer = MediaPlayer()
+            player = mediaPlayer
+            mediaPlayer.apply {
+                if (uri.scheme == "asset") {
+                    context.assets.openFd(uri.path.orEmpty().removePrefix("/")).use {
+                        setDataSource(it.fileDescriptor, it.startOffset, it.length)
+                    }
+                } else setDataSource(context, uri)
                 isLooping = looping
                 setOnCompletionListener { if (!looping) activeUri = null }
                 prepare()
@@ -30,7 +37,11 @@ class LocalMediaPlayer(private val context: Context) {
             }
             activeUri = uriValue
             true
-        }.getOrDefault(false)
+        }.getOrElse {
+            android.util.Log.w("LocalMediaPlayer", "Audio unavailable; skipping playback", it)
+            stop()
+            false
+        }
     }
 
     fun play(uriValue: String, looping: Boolean = false): Boolean {
@@ -51,7 +62,12 @@ class LocalMediaPlayer(private val context: Context) {
     fun duration(uriValue: String): Long = runCatching {
         val retriever = MediaMetadataRetriever()
         try {
-            retriever.setDataSource(context, Uri.parse(uriValue))
+            val uri = Uri.parse(uriValue)
+            if (uri.scheme == "asset") {
+                context.assets.openFd(uri.path.orEmpty().removePrefix("/")).use {
+                    retriever.setDataSource(it.fileDescriptor, it.startOffset, it.length)
+                }
+            } else retriever.setDataSource(context, uri)
             retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 0L
         } finally {
             retriever.release()

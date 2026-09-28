@@ -21,6 +21,11 @@ android {
         compose = true
     }
 
+    // AssetManager.openFd 需要资源未压缩，确保内置 MP3 可直接播放和读取时长。
+    androidResources {
+        noCompress += "mp3"
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17

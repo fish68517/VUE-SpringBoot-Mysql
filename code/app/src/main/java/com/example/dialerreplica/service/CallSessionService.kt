@@ -27,6 +27,7 @@ import com.example.dialerreplica.data.formatPhoneNumber
 import com.example.dialerreplica.data.normalizePhoneNumber
 import com.example.dialerreplica.media.CallRecorder
 import com.example.dialerreplica.media.LocalMediaPlayer
+import com.example.dialerreplica.media.SimulationVoiceResources
 import com.example.dialerreplica.model.CallEndReason
 import com.example.dialerreplica.model.CallPhase
 import com.example.dialerreplica.model.CallSessionSnapshot
@@ -149,6 +150,7 @@ class CallSessionService : Service() {
             }
             settings.getString(SettingsRepository.PROMPT_CALLING_URI)?.let { player.play(it) }
             delay(RINGBACK_DELAY_MS)
+            if (!settings.getBoolean(SettingsRepository.RINGBACK_ENABLED, true)) return@launch
             val current = CallSessionBus.snapshot.value
             if (current.sessionId != sessionId || current.phase != CallPhase.DIALING) return@launch
             CallSessionBus.update(current.copy(ringbackActive = true, ringbackVideoUri = ringbackVideoUri))
@@ -165,12 +167,19 @@ class CallSessionService : Service() {
                 SettingsRepository.REMOTE_HANGUP_SECONDS,
                 SettingsRepository.DEFAULT_REMOTE_HANGUP_SECONDS,
             ).coerceIn(MIN_REMOTE_HANGUP_SECONDS, MAX_REMOTE_HANGUP_SECONDS)
-            delay(connectDelaySeconds * 1_000L)
+            val outcome = settings.getString(SettingsRepository.NEXT_OUTCOME) ?: "CONNECTED"
+            // 无人接听按等待时长超时，其他结果按响铃时长触发。
+            delay((if (outcome == "NO_ANSWER") remoteHangupSeconds else connectDelaySeconds) * 1_000L)
             if (CallSessionBus.snapshot.value.sessionId != sessionId) return@launch
-            when (settings.getString(SettingsRepository.NEXT_OUTCOME) ?: "CONNECTED") {
+            when (outcome) {
+                "NO_ANSWER" -> requestEnd(CallEndReason.NO_ANSWER)
+                "SUSPENDED" -> requestEnd(CallEndReason.SUSPENDED)
+                "VOICEMAIL" -> requestEnd(CallEndReason.VOICEMAIL)
+                "POWERED_OFF" -> requestEnd(CallEndReason.POWERED_OFF)
+                "REJECTED" -> requestEnd(CallEndReason.REJECTED)
                 "BUSY" -> requestEnd(CallEndReason.BUSY)
                 "UNREACHABLE" -> requestEnd(CallEndReason.UNREACHABLE)
-                "REMOTE_HANGUP" -> {
+                "CONNECTED", "REMOTE_HANGUP" -> {
                     connect()
                     delay(remoteHangupSeconds * 1_000L)
                     if (CallSessionBus.snapshot.value.sessionId != sessionId) return@launch
@@ -190,10 +199,10 @@ class CallSessionService : Service() {
         connectedWall = System.currentTimeMillis()
         CallSessionBus.update(current.copy(phase = CallPhase.CONNECTED, ringbackActive = false, ringbackVideoUri = null, callElapsedMs = 0))
         scope.launch {
-            val promptUri = settings.getString(SettingsRepository.PROMPT_CONNECTED_URI)
+            val overrideUri = settings.getString(SettingsRepository.PROMPT_CONNECTED_URI)
             val latest = CallSessionBus.snapshot.value
             if (latest.sessionId == current.sessionId && latest.phase == CallPhase.CONNECTED) {
-                promptUri?.let { player.play(it) }
+                playPrompt(SettingsRepository.PROMPT_CONNECTED_URI, overrideUri)
             }
         }
         promote(recording = false)
@@ -232,9 +241,7 @@ class CallSessionService : Service() {
 
     private fun requestEnd(reason: CallEndReason) {
         val current = CallSessionBus.snapshot.value
-        if (current.phase == CallPhase.IDLE || current.phase == CallPhase.ENDED ||
-            current.phase == CallPhase.SELF_HANGING_UP || current.phase == CallPhase.REMOTE_ENDED
-        ) return
+        if (current.phase != CallPhase.DIALING && current.phase != CallPhase.CONNECTED) return
         transitionJob?.cancel()
         ringbackJob?.cancel()
         player.stop()
@@ -249,9 +256,19 @@ class CallSessionService : Service() {
             CallEndReason.BUSY -> CallPhase.BUSY
             CallEndReason.UNREACHABLE -> CallPhase.UNREACHABLE
             CallEndReason.INTERRUPTED -> CallPhase.ENDED
+            else -> CallPhase.UNREACHABLE
         }
         val endingSnapshot = current.copy(
             phase = phase,
+            statusLabel = when (reason) {
+                CallEndReason.NO_ANSWER -> "暂时无人接听"
+                CallEndReason.SUSPENDED -> "暂停服务"
+                CallEndReason.VOICEMAIL -> "语音留言"
+                CallEndReason.POWERED_OFF -> "对方已关机"
+                CallEndReason.REJECTED -> "对方拒接"
+                CallEndReason.BUSY -> "正在通话中"
+                else -> null
+            },
             ringbackActive = false,
             recording = false,
             recordingPath = lastRecordingUri,
@@ -259,17 +276,6 @@ class CallSessionService : Service() {
         )
         CallSessionBus.update(endingSnapshot)
         promote(recording = false)
-        scope.launch {
-            val promptKey = when (reason) {
-                CallEndReason.BUSY -> SettingsRepository.PROMPT_BUSY_URI
-                CallEndReason.UNREACHABLE -> SettingsRepository.PROMPT_UNREACHABLE_URI
-                else -> SettingsRepository.PROMPT_ENDED_URI
-            }
-            val promptUri = settings.getString(promptKey)
-            if (CallSessionBus.snapshot.value.sessionId == endingSnapshot.sessionId) {
-                promptUri?.let { player.play(it) }
-            }
-        }
         val endingStartId = latestStartId
         val endedAt = System.currentTimeMillis()
         val duration = if (connectedElapsed > 0) SystemClock.elapsedRealtime() - connectedElapsed else 0
@@ -288,9 +294,30 @@ class CallSessionService : Service() {
             recordingSource = if (lastRecordingUri == null) null else "APP",
         )
         endJob = scope.launch {
-            delay(if (reason == CallEndReason.LOCAL_HANGUP) 750 else 1_300)
+            val promptKey = when (reason) {
+                CallEndReason.BUSY -> SettingsRepository.PROMPT_BUSY_URI
+                CallEndReason.NO_ANSWER -> SettingsRepository.PROMPT_NO_ANSWER_URI
+                CallEndReason.SUSPENDED -> SettingsRepository.PROMPT_SUSPENDED_URI
+                CallEndReason.VOICEMAIL -> SettingsRepository.PROMPT_VOICEMAIL_URI
+                CallEndReason.POWERED_OFF -> SettingsRepository.PROMPT_POWERED_OFF_URI
+                CallEndReason.REJECTED -> SettingsRepository.PROMPT_REJECTED_URI
+                CallEndReason.UNREACHABLE -> SettingsRepository.PROMPT_UNREACHABLE_URI
+                else -> SettingsRepository.PROMPT_ENDED_URI
+            }
+            val overrideUri = settings.getString(promptKey)
+            if (CallSessionBus.snapshot.value.sessionId != endingSnapshot.sessionId) return@launch
+            val playedUri = playPrompt(promptKey, overrideUri)
+            // assets 与导入音频使用同一时长读取逻辑，避免状态提示音被固定延时截断。
+            val waitMs = if (playedUri != null) player.duration(playedUri).coerceAtLeast(1_300L) else if (reason == CallEndReason.LOCAL_HANGUP) 750L else 1_300L
+            delay(waitMs)
             finishSession(endingSnapshot, endingRecord, endingStartId)
         }
+    }
+
+    private fun playPrompt(key: androidx.datastore.preferences.core.Preferences.Key<String>, overrideUri: String?): String? {
+        // 用户选择的音频优先，失效则回退到内置资源；两者缺失时正常完成状态流程。
+        val candidates = listOfNotNull(overrideUri?.takeIf { it.isNotBlank() }, SimulationVoiceResources.uri(key)).distinct()
+        return candidates.firstOrNull { player.play(it) }
     }
 
     private suspend fun finishSession(
@@ -356,7 +383,7 @@ class CallSessionService : Service() {
         val contentIntent = PendingIntent.getActivity(this, 1, openIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         val hangupIntent = Intent(this, CallSessionService::class.java).setAction(ACTION_LOCAL_HANGUP)
         val hangupPendingIntent = PendingIntent.getService(this, 2, hangupIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        val stateText = when (current.phase) {
+        val stateText = current.statusLabel ?: when (current.phase) {
             CallPhase.DIALING -> "正在拨号"
             CallPhase.CONNECTED -> "通话中 ${formatDuration(current.callElapsedMs)}" + if (current.recording) " · 正在录音" else ""
             CallPhase.SELF_HANGING_UP -> "正在挂断"
