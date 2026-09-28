@@ -1,0 +1,62 @@
+code/app/src/main/java/com/example/dialerreplica/MainActivity.kt
+  s_eee643f85bd57d::t_e8403980113eb9 132-134,136,708-709,755,757,759
+  s_eee643f85bd57d::t_c421d629f4476e 150,250,416-421,1019,1050-1051,1096,1098,1101,1105
+  s_eee643f85bd57d::t_be796bfa5fff4e 727,751-753
+  s_eee643f85bd57d::t_20652084a92f0e 89
+  s_eee643f85bd57d::t_1b3a674291c2c9 718
+  s_eee643f85bd57d::t_8651558690db52 673
+  s_eee643f85bd57d::t_30fbe552735424 526-538,544
+  h_c1a03fb9ff63b4 135
+  s_eee643f85bd57d::t_adaf070c8c12d0 137-139,719,726,729-730,733-742
+  s_eee643f85bd57d::t_b037bbb5b5e694 713,720
+  s_eee643f85bd57d::t_b180f3ea5b6992 1027-1032,1046,1109
+code/app/src/main/java/com/example/dialerreplica/RingbackVideosScreen.kt
+  s_eee643f85bd57d::t_8dbfdb6f7f6b33 1-54,56-59,65-124
+  s_eee643f85bd57d::t_b77ec1429c0a91 55,60-64
+code/app/src/main/java/com/example/dialerreplica/model/CallModels.kt
+  s_eee643f85bd57d::t_ed67e6b374c6c3 15-19,40
+code/app/src/main/assets/模拟状态音频说明.md
+  s_eee643f85bd57d::t_360bd315b4acd8 1-26
+code/app/src/main/java/com/example/dialerreplica/service/CallSessionService.kt
+  s_eee643f85bd57d::t_c421d629f4476e 153
+  s_eee643f85bd57d::t_c57920db982c0a 30,202,205,307,309-311,317-320
+  s_eee643f85bd57d::t_ed67e6b374c6c3 170-172,174-179,182,244,259,263-271,297-306,308,312,386
+  s_eee643f85bd57d::t_eaed68b032ad98 321-322
+code/app/build.gradle.kts
+  s_eee643f85bd57d::t_360bd315b4acd8 24-28
+code/app/src/main/java/com/example/dialerreplica/media/DialKeySoundPlayer.kt
+  s_eee643f85bd57d::t_30fbe552735424 1-60
+code/app/src/main/java/com/example/dialerreplica/media/LocalMediaPlayer.kt
+  s_eee643f85bd57d::t_c57920db982c0a 24-32,40-44,65-70
+code/app/src/main/java/com/example/dialerreplica/data/SettingsRepository.kt
+  s_eee643f85bd57d::t_ed67e6b374c6c3 124-128,149-153
+  s_eee643f85bd57d::t_c421d629f4476e 40-60,118-119
+code/app/src/main/java/com/example/dialerreplica/media/SimulationVoiceResources.kt
+  s_eee643f85bd57d::t_c6c0e1929e3fc6 9-17
+  s_eee643f85bd57d::t_73468db453e310 8,20-23
+  s_eee643f85bd57d::t_c57920db982c0a 1-7,18-19,24
+code/app/src/main/java/com/example/dialerreplica/SimulationSettingsCard.kt
+  s_eee643f85bd57d::t_292df5d65072cd 1-24,28-74,76-95
+  s_eee643f85bd57d::t_360bd315b4acd8 25-27,75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "331721dde6ebc12e1281869a809518d2849b7ca3",
+  "prompts": {},
+  "humans": {
+    "h_c1a03fb9ff63b4": {
+      "author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  },
+  "sessions": {
+    "s_eee643f85bd57d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0606c-feb1-7090-b9f6-19fd09b13687",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
