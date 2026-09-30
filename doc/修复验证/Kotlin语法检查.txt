@@ -1,0 +1,2 @@
+Kotlin syntax parsed: 16 files; errors: 0
+PSI parsing only. No Android application compilation or type checking.

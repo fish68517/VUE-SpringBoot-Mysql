@@ -1,0 +1,19 @@
+PASS full screenshot
+PASS own title cannot become mark type or phone record
+PASS old record mixed with call card is rejected
+PASS landline ranks above unrelated short number
+PASS SIM badge does not prefix number
+PASS narrow nonbreaking spaces
+PASS short incoming service numbers remain supported
+PASS unknown mark is distinct from explicitly unmarked
+PASS international number and comma count
+PASS explicit custom mark type only
+PASS date and mark counts cannot become phone numbers
+PASS partial banner merged with delayed count
+PASS different numbers never share mark fields
+PASS one ring creates one start despite repeated callbacks
+PASS next ring including same number starts a new session
+PASS SIM initial callback order does not duplicate restored ring
+PASS restored finished call closes when all SIMs idle
+PASS unregistered subscription is ignored
+Passed 18 pure Kotlin regression scenarios.

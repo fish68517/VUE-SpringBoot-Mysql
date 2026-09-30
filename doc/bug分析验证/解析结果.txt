@@ -1,0 +1,32 @@
+CASE=full_screen_transcription
+INPUT=[移动 来电, 16人标记, 广告推销, 广东东莞 0769 2173 8692]
+RESULT=ParsedCallInfo(phoneNumber=076921738692, isMarked=true, markCount=16, markType=广告推销, rawTextLines=[移动 来电, 16人标记, 广告推销, 广东东莞 0769 2173 8692])
+
+CASE=floating_banner_transcription
+INPUT=[广告推销, 0769 2173 8692 广东…]
+RESULT=ParsedCallInfo(phoneNumber=076921738692, isMarked=true, markCount=null, markType=广告推销, rawTextLines=[广告推销, 0769 2173 8692 广东…])
+
+CASE=own_title_and_short_number
+INPUT=[来电标记采集助手, 12123]
+RESULT=ParsedCallInfo(phoneNumber=12123, isMarked=true, markCount=null, markType=来电采集助手, rawTextLines=[来电标记采集助手, 12123])
+
+CASE=own_title_and_real_number
+INPUT=[来电标记采集助手, 0769 2173 8692]
+RESULT=ParsedCallInfo(phoneNumber=076921738692, isMarked=true, markCount=null, markType=来电采集助手, rawTextLines=[来电标记采集助手, 0769 2173 8692])
+
+CASE=own_title_only
+INPUT=[来电标记采集助手]
+RESULT=null
+
+CASE=split_count_nodes
+INPUT=[0769 2173 8692, 16, 人标记, 广告推销]
+RESULT=ParsedCallInfo(phoneNumber=076921738692, isMarked=true, markCount=null, markType=广告推销, rawTextLines=[0769 2173 8692, 16, 人标记, 广告推销])
+
+CASE=sim_and_number_same_node
+INPUT=[1 0769 2173 8692, 广告推销]
+RESULT=ParsedCallInfo(phoneNumber=1076921738692, isMarked=true, markCount=null, markType=广告推销, rawTextLines=[1 0769 2173 8692, 广告推销])
+
+CASE=old_record_and_banner_mixed
+INPUT=[来电标记采集助手, 号码：12123, 0769 2173 8692 广东…, 广告推销]
+RESULT=ParsedCallInfo(phoneNumber=12123, isMarked=true, markCount=null, markType=广告推销, rawTextLines=[来电标记采集助手, 号码：12123, 0769 2173 8692 广东…, 广告推销])
+
