@@ -1,0 +1,36 @@
+code/app/src/main/java/com/example/dialerreplica/MainActivity.kt
+  s_eee643f85bd57d::t_627d0829bd165e 646,648-649
+  s_eee643f85bd57d::t_f8d2e9c37045d3 205-207,285
+  s_eee643f85bd57d::t_b64425f8ee178b 687,718,722-728
+  s_eee643f85bd57d::t_00e414954787c9 603
+  s_eee643f85bd57d::t_9c1bb0762962da 4-7,141,146-148,151,156-158,161-184,215-220,362
+  s_eee643f85bd57d::t_b03173ce2f9065 27,681-682,699,705-707
+  s_eee643f85bd57d::t_5786ac5fb0fa24 221
+code/app/src/main/res/drawable/ic_call_overlay_wave.xml
+  s_eee643f85bd57d::t_9fc81d25c260ab 1-9
+code/app/src/main/AndroidManifest.xml
+  s_eee643f85bd57d::t_9c1bb0762962da 4,20
+code/app/src/main/java/com/example/dialerreplica/service/CallOverlay.kt
+  s_eee643f85bd57d::t_9fc81d25c260ab 12,14-15,18,36-37,50-52,67,70-100,103-107,116,134
+  s_eee643f85bd57d::t_062298dc83c106 1-11,13,16-17,19-35,38-49,53-66,68-69,101-102,108-115,117-133,135-137
+code/app/src/main/java/com/example/dialerreplica/service/CallSessionService.kt
+  s_eee643f85bd57d::t_9c1bb0762962da 20,42-43,72,81-88,355,381
+  s_eee643f85bd57d::t_1b8a7b4db44eed 93-99
+  s_eee643f85bd57d::t_93dfb5c7465597 100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b70973302188161a581d49c6a46f22756ea4644b",
+  "prompts": {},
+  "sessions": {
+    "s_eee643f85bd57d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0606c-feb1-7090-b9f6-19fd09b13687",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
