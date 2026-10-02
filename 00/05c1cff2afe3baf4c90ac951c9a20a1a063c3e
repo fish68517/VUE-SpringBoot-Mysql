@@ -1,0 +1,85 @@
+uniCloud-aliyun/cloudfunctions/zsh-ledger-api/index.js
+  s_bde46676aa3bc6::t_138814702cd183 296-300,350-351
+doc/项目分析.md
+  s_bde46676aa3bc6::t_2759abbb4f0f8b 3-4
+uniCloud-aliyun/部署说明.md
+  s_bde46676aa3bc6::t_2759abbb4f0f8b 1-136
+artifacts/deployment/web-verification.json
+  s_bde46676aa3bc6::t_ac6ecd43cdc713 7-8,15-16,23-24,30-33,40-41,48-50,57-58,65-66,73-74,81-82,89-90,97-98,100
+  s_bde46676aa3bc6::t_ddd59211804273 1-6,9-14,17-22,25-29,34-39,42-47,51-56,59-64,67-72,75-80,83-88,91-96,99
+tests/browser-features.cjs
+  s_bde46676aa3bc6::t_2c713ba83ff501 21-22,40-46,111,280-322
+  s_bde46676aa3bc6::t_955145cdee8013 128
+  s_bde46676aa3bc6::t_d25a6caf696976 13,122,324-345,347-359
+  s_bde46676aa3bc6::t_98bdd939f72f9a 224,228,239,270
+  s_bde46676aa3bc6::t_e9ca2c0b3d9607 123,323,346
+  s_bde46676aa3bc6::t_1fcb5108d78647 361
+  s_bde46676aa3bc6::t_14d6a0b3ce9e24 109
+  s_bde46676aa3bc6::t_2759abbb4f0f8b 12,57,132-136
+  s_bde46676aa3bc6::t_a89bf5cf4adae6 25,33,35,120,124-127,129-131,225-227,229-238,240-243,249,255,259-265,271-273,277-279
+  s_bde46676aa3bc6::t_bdc4682adf4dc8 110
+  s_bde46676aa3bc6::t_e34bdb5cd1da02 72,85-87,92-108,112-119,121
+README.md
+  s_bde46676aa3bc6::t_02b08183886826 1-58
+doc/部署记录.md
+  s_bde46676aa3bc6::t_2759abbb4f0f8b 1-85
+doc/功能修改说明.md
+  s_bde46676aa3bc6::t_2759abbb4f0f8b 3-4,27-28,56-57,62,66,77-78,114-115
+src/manifest.json
+  s_bde46676aa3bc6::t_44a7e5db4e0d4a 15-17
+  s_bde46676aa3bc6::t_d266a9e7baef5b 1-14,18-19
+tests/ledger-data.test.mjs
+  s_bde46676aa3bc6::t_a89bf5cf4adae6 171-199
+  s_bde46676aa3bc6::t_1b2526d858571b 7,170
+src/ledger/layout.html
+  s_bde46676aa3bc6::t_5be86eb6dcebc7 118
+  s_bde46676aa3bc6::t_385133c7dfac8e 1,294,300-301,312-313,315,320
+src/ledger/app.js
+  s_bde46676aa3bc6::t_1b71db628123a7 1438,1826-1828,1830-1832
+  s_bde46676aa3bc6::t_5be86eb6dcebc7 73,83-89,383-384,386,440-441,1164,1441-1470,1537,1575,1620-1626,1628-1670
+  s_bde46676aa3bc6::t_2759abbb4f0f8b 1275-1280
+  s_bde46676aa3bc6::t_d35d9ee6177a3f 3-4,6-11,43,542,550,567,742-743,1143,1152-1163,1165-1166,1180,1314,1335,1338-1339,1439-1440,1774-1775,1779,1794,1808,1816,1833-1836
+artifacts/deployment/cloud-verification.json
+  s_bde46676aa3bc6::t_ac6ecd43cdc713 1-11
+src/ledger/styles.css
+  s_bde46676aa3bc6::t_5be86eb6dcebc7 459-463
+doc/uni-app结构改造.md
+  s_bde46676aa3bc6::t_13a2d98559da90 16,34
+  s_bde46676aa3bc6::t_1fcb5108d78647 1-15,17-33,35-36
+.gitignore
+  s_bde46676aa3bc6::t_b0d77efa883b3c 1-2
+index.html
+  s_bde46676aa3bc6::t_de759973bbbad4 1-5
+package-lock.json
+  s_bde46676aa3bc6::t_76b93bccea6d5a 1-7623
+package.json
+  s_bde46676aa3bc6::t_311ad96c273d17 1-23
+server.ps1
+  s_bde46676aa3bc6::t_cafb10b4352604 4
+src/App.vue
+  s_bde46676aa3bc6::t_3ffa14a72c7303 1-8
+src/main.js
+  s_bde46676aa3bc6::t_0be0756e8b4bf7 1-3
+src/pages.json
+  s_bde46676aa3bc6::t_b384ec26d373ec 1-15
+src/pages/index/index.vue
+  s_bde46676aa3bc6::t_20cd70d3973968 1-28
+vite.config.js
+  s_bde46676aa3bc6::t_c5786f3b6a8d03 1-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "0005c1cff2afe3baf4c90ac951c9a20a1a063c3e",
+  "prompts": {},
+  "sessions": {
+    "s_bde46676aa3bc6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0fb7a-3f6c-7173-b45b-3a508e7670fb",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
