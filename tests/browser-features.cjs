@@ -46,8 +46,11 @@ const server = http.createServer(async (req, res) => {
       }
       else if (input.action === 'logout') data = { loggedOut: true };
       else if (input.action === 'save') {
-        assert.equal(role, 'admin');
-        saved = { ...structuredClone(input.state), _revisions: Object.fromEntries(Object.entries(saved._revisions).map(([k, v]) => [k, v + 1])) };
+        if (role !== 'admin') {
+          const ownerId = role === 'operator2' ? 'operator2' : 'operator1';
+          saved.projects = [...saved.projects.filter(p => p.createdBy !== ownerId), ...structuredClone(input.state.projects.filter(p => p.createdBy === ownerId))];
+          saved._revisions[ownerId]++;
+        } else saved = { ...structuredClone(input.state), _revisions: Object.fromEntries(Object.entries(saved._revisions).map(([k, v]) => [k, v + 1])) };
         saveCount++;
         data = { saved: true, revisions: saved._revisions };
       } else throw new Error(`Unexpected mock action: ${input.action}`);
@@ -275,6 +278,34 @@ const server = http.createServer(async (req, res) => {
     assert.equal(await opPage.locator('#unmatchedList').isVisible(), false);
     assert.equal(await opPage.locator('[data-delete-payment]').count(), 0);
     checks.push(`${account}省市内容隐藏、设备详情只读`);
+    for (const [kind, nature] of [['detection', '自行检测'], ['inspection', '定期检验'], ['speedGovernor', '限速器校验'], ['loadTest', '125%额定载重试验']]) {
+      await opPage.locator(`[data-ledger-kind=${kind}]`).click();
+      assert.equal(await opPage.locator('#openManualProject').isVisible(), true);
+      await opPage.locator('#openManualProject').click();
+      assert.equal(await opPage.locator('#projectForm [name=nature]').inputValue(), nature);
+      await opPage.locator('#projectForm [data-close=projectModal]').last().click();
+    }
+    await opPage.locator('[data-ledger-kind=inspection]').click();
+    await opPage.locator('#openManualProject').click();
+    await opPage.locator('#projectForm [name=unit]').fill(`${account}手工新增单位`);
+    await opPage.locator('#projectForm [name=quantity]').fill('2');
+    await opPage.locator('#projectForm [name=unitPrice]').fill('50');
+    await opPage.locator('#projectForm [name=actual]').fill('80');
+    await opPage.locator('#projectForm button[type=submit]').click();
+    await opPage.waitForFunction(() => document.querySelector('#storageStatusTitle').textContent === '云端已同步');
+    const created = saved.projects.find(p => p.unit === `${account}手工新增单位`);
+    assert.equal(created.createdBy, account === 'operator' ? 'operator1' : 'operator2');
+    assert.equal(created.receivable, 100);
+    assert.equal(created.actual, 80);
+    assert.equal(created.receivedAmount, 0);
+    await opPage.reload();
+    await opPage.locator('#storageStatusTitle').filter({ hasText: '云端已连接' }).waitFor();
+    await opPage.locator('[data-ledger-kind=inspection]').click();
+    await opPage.locator('#ledgerMonthFilter').fill('');
+    assert.ok((await opPage.locator('#ledgerTable').innerText()).includes(`${account}手工新增单位`));
+    assert.equal(await opPage.locator('#ledgerTable [data-edit-project]').count(), 0);
+    checks.push(`${account}四类台账新增入口及默认分类正确，新增保存刷新保留且补录权限未扩大`);
+
     await operator.close();
     }
     // Use real PDF/XLSX parsing with all uploads redirected to the local mock server.

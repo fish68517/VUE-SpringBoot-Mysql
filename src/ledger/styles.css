@@ -162,19 +162,20 @@ td { font-size: .82rem; color: #34484e; }
 .excel-ledger-table th, .excel-ledger-table td { padding: 10px 9px; border-right: 1px solid #e6edef; line-height: 1.45; }
 .excel-ledger-table th { white-space: normal; text-align: center; }
 .excel-ledger-table td, .excel-ledger-table .field-row th { width: 104px; min-width: 104px; max-width: 260px; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; word-break: break-word; }
-.excel-ledger-table .field-row th:nth-child(1), .excel-ledger-table td:nth-child(3) { width: 108px; min-width: 108px; max-width: 108px; }
-.excel-ledger-table .field-row th:nth-child(2), .excel-ledger-table td:nth-child(4) { width: 210px; min-width: 210px; max-width: 230px; }
-.excel-ledger-table .field-row th:nth-child(3), .excel-ledger-table td:nth-child(5) { width: 82px; min-width: 82px; max-width: 96px; }
-.excel-ledger-table .field-row th:nth-child(4), .excel-ledger-table td:nth-child(6) { width: 150px; min-width: 150px; max-width: 180px; }
-.excel-ledger-table .field-row th:nth-child(5), .excel-ledger-table td:nth-child(7) { width: 220px; min-width: 220px; max-width: 250px; }
-.excel-ledger-table .field-row th:nth-child(6), .excel-ledger-table td:nth-child(8) { width: 210px; min-width: 210px; max-width: 230px; }
-.excel-ledger-table .field-row th:nth-child(7), .excel-ledger-table td:nth-child(9) { width: 170px; min-width: 170px; max-width: 190px; }
-.excel-ledger-table .field-row th:nth-child(8), .excel-ledger-table td:nth-child(10) { width: 108px; min-width: 108px; max-width: 120px; }
-.excel-ledger-table .field-row th:nth-child(9), .excel-ledger-table td:nth-child(11) { width: 128px; min-width: 128px; max-width: 138px; }
-.excel-ledger-table .field-row th:nth-child(10), .excel-ledger-table td:nth-child(12) { width: 120px; min-width: 120px; max-width: 140px; }
+.excel-ledger-table [data-pdf-index="0"] { width: 108px; min-width: 108px; max-width: 108px; }
+.excel-ledger-table [data-pdf-index="1"] { width: 210px; min-width: 210px; max-width: 230px; }
+.excel-ledger-table [data-pdf-index="2"] { width: 82px; min-width: 82px; max-width: 96px; }
+.excel-ledger-table [data-pdf-index="3"] { width: 150px; min-width: 150px; max-width: 180px; }
+.excel-ledger-table [data-pdf-index="4"] { width: 220px; min-width: 220px; max-width: 250px; }
+.excel-ledger-table [data-pdf-index="5"] { width: 210px; min-width: 210px; max-width: 230px; }
+.excel-ledger-table [data-pdf-index="6"] { width: 170px; min-width: 170px; max-width: 190px; }
+.excel-ledger-table [data-pdf-index="7"] { width: 108px; min-width: 108px; max-width: 120px; }
+.excel-ledger-table [data-pdf-index="8"] { width: 128px; min-width: 128px; max-width: 138px; }
+.excel-ledger-table [data-pdf-index="9"] { width: 120px; min-width: 120px; max-width: 140px; }
 .excel-ledger-table .group-row th { top: 0; height: 34px; z-index: 5; color: #fff; font-size: .72rem; letter-spacing: .06em; }
 .excel-ledger-table .field-row th { top: 34px; z-index: 4; }
 .excel-ledger-table .base-group, .excel-ledger-table .base-col { background: #f3f6f7; color: #566a70; }
+.excel-ledger-table .group-row th.base-group { color: #bd3030; }
 .excel-ledger-table .pdf-group { background: #b94545; }
 .excel-ledger-table th.pdf-col { background: #fff0f0; color: #9f3434; }
 .excel-ledger-table td.pdf-col { background: #fffafa; }

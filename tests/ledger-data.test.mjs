@@ -197,3 +197,26 @@ test('设备详情全部手工字段经云函数保存，文本编号和电话�
   const loaded = await context.readState(actor);
   for (const [key, value] of Object.entries(changed)) assert.equal(loaded.properties[0][key], value);
 });
+
+for (const userId of ['operator1', 'operator2']) {
+  test(`${userId}可新增自己的手工台账，云端保存归属且不扩大资金权限`, async () => {
+    const { context, docs } = cloudFixture();
+    const actor = { _id: userId, role: 'operator' };
+    const otherId = userId === 'operator1' ? 'operator2' : 'operator1';
+    const otherBefore = JSON.stringify(docs.get(`user-${otherId}`));
+    const state = await context.readState(actor);
+    state.projects.push({ id: 'manual-new', unit: '新增测试单位', nature: '定期检验', date: '2026-10-02', receivable: 100, actual: 80, quantity: 2, unitPrice: 50, createdBy: 'admin', source: '手动录入', receivedAmount: 999, provincialPayment: 999 });
+    await context.saveState(actor, state, state._revisions);
+    const reloaded = await context.readState(actor);
+    const project = reloaded.projects.find(p => p.id === 'manual-new');
+    assert.equal(project.createdBy, userId);
+    assert.equal(project.unit, '新增测试单位');
+    assert.equal(project.receivable, 100);
+    assert.equal(project.actual, 80);
+    assert.equal(project.receivedAmount, 0);
+    assert.equal(project.provincialPayment, undefined);
+    assert.equal(JSON.stringify(docs.get(`user-${otherId}`)), otherBefore);
+    const adminState = await context.readState({ _id: 'admin', role: 'admin' });
+    assert.equal(adminState.projects.find(p => p.id === 'manual-new').createdBy, userId);
+  });
+}

@@ -163,6 +163,7 @@ function userName(id) { return managedUsers.find(user => user.id === id)?.name |
 function isAdmin() { return currentUser().role === 'admin'; }
 function canExport() { return Boolean(currentUser().permissions?.canExport); }
 function canEditManualFields() { return isAdmin(); }
+function canCreateProject() { return Boolean(currentUserId) && !passwordChangeRequired && ['admin', 'operator'].includes(currentUser().role); }
 function canModifyAlerts() { return isAdmin(); }
 function canRecordPayments() { return isAdmin() && currentUser().permissions?.canRecordPayments !== false; }
 function canImportPropertyExcel() { return Boolean(currentUserId); }
@@ -550,7 +551,8 @@ function renderLedger() {
   if (definition.provincialPayment && isAdmin()) manualHeaders.push('省市打款');
   manualHeaders.push('备注');
   const pdfHeaders = ['日期','使用单位','监检','项目名称','项目地址','维保单位','联系人及电话','检测性质','下次检验检测日期','设备名称','控制方式','层/站','数量','应收金额','实收金额','项目经办人'];
-  document.querySelector('#ledgerTableHead').innerHTML = `<tr class="group-row"><th class="base-group sticky-seq" rowspan="2">序号</th><th class="base-group sticky-file" rowspan="2">文件位置</th><th class="pdf-group" colspan="${pdfHeaders.length}">PDF 自动提取字段</th><th class="manual-group" colspan="${manualHeaders.length}">手工补录字段</th><th class="action-group" rowspan="2">操作</th></tr><tr class="field-row">${pdfHeaders.map(label => `<th class="pdf-col">${label}</th>`).join('')}${manualHeaders.map(label => `<th class="manual-col">${label}</th>`).join('')}</tr>`;
+  const visiblePdfColumns = pdfHeaders.map((_, index) => index).filter(index => activeLedgerKind !== 'detection' || (index !== 2 && index !== 3));
+  document.querySelector('#ledgerTableHead').innerHTML = `<tr class="group-row"><th class="base-group sticky-seq" rowspan="2">序号</th><th class="base-group sticky-file" rowspan="2">文件位置</th><th class="pdf-group" colspan="${visiblePdfColumns.length}">PDF 自动提取字段</th><th class="manual-group" colspan="${manualHeaders.length}">手工补录字段</th><th class="action-group" rowspan="2">操作</th></tr><tr class="field-row">${visiblePdfColumns.map(index => `<th class="pdf-col" data-pdf-index="${index}">${pdfHeaders[index]}</th>`).join('')}${manualHeaders.map(label => `<th class="manual-col">${label}</th>`).join('')}</tr>`;
 
   document.querySelector('#ledgerCount').textContent = `${rows.length} 条`;
   document.querySelector('#ledgerEmpty').hidden = rows.length > 0;
@@ -566,7 +568,7 @@ function renderLedger() {
     ];
     if (definition.provincialPayment && isAdmin()) manualCells.push(yuan(project.provincialPayment));
     manualCells.push(`<div class="status-stack">${statusTag(project.followUpStatus || '待跟进')}<span>${safe(project.notes || '—')}</span></div>`);
-    const pdfHtml = pdfCells.map(value => `<td class="pdf-col" title="${safe(value || '—')}">${safe(value || '—')}</td>`).join('');
+    const pdfHtml = visiblePdfColumns.map(index => `<td class="pdf-col" data-pdf-index="${index}" title="${safe(pdfCells[index] || '—')}">${safe(pdfCells[index] || '—')}</td>`).join('');
     const manualHtml = manualCells.map((value, cellIndex) => `<td class="manual-col" title="${cellIndex === manualCells.length - 1 ? safe(project.notes || '') : safe(String(value || '').replace(/<[^>]+>/g, ''))}">${cellIndex === 2 || cellIndex === manualCells.length - 1 ? value : safe(value || '—')}</td>`).join('');
     const fileButton = project.attachmentName ? `<button class="row-action" data-view-pdf="${safe(project.id)}">查看 PDF</button>` : '<span class="table-sub">无附件</span>';
     const editButton = canEditManualFields() ? `<button class="row-action" data-edit-project="${safe(project.id)}">补录</button>` : '';
@@ -1721,7 +1723,7 @@ function bindEvents() {
   });
 
   document.querySelector('#openManualProject').addEventListener('click', () => {
-    if (!canEditManualFields()) return showToast('只有总管理员可以手工新增台账', true);
+    if (!canCreateProject()) return showToast('请先完成登录和密码修改后再新增台账', true);
     const form = document.querySelector('#projectForm');
     form.reset();
     form.elements.date.value = new Date().toISOString().slice(0,10);
@@ -1732,7 +1734,7 @@ function bindEvents() {
   });
   document.querySelector('#projectForm').addEventListener('submit', event => {
     event.preventDefault();
-    if (!canEditManualFields()) return showToast('只有总管理员可以手工新增台账', true);
+    if (!canCreateProject()) return showToast('请先完成登录和密码修改后再新增台账', true);
     const values = Object.fromEntries(new FormData(event.currentTarget));
     const quantity = numberValue(values.quantity);
     const unitPrice = numberValue(values.unitPrice);
