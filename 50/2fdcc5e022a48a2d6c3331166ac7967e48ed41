@@ -1,0 +1,28 @@
+src/ledger/styles.css
+  s_bde46676aa3bc6::t_9a86c5e001e0ff 178
+  s_bde46676aa3bc6::t_8b60b85fa98936 165-174
+src/ledger/app.js
+  s_bde46676aa3bc6::t_6f918da878b1cb 166,554-555,571,1726,1737
+src/ledger/layout.html
+  s_bde46676aa3bc6::t_8735434c416519 145
+tests/browser-features.cjs
+  s_bde46676aa3bc6::t_a68f9cf11022d8 49-53,281-308
+tests/ledger-data.test.mjs
+  s_bde46676aa3bc6::t_d9ad65d174d92f 200-222
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "502fdcc5e022a48a2d6c3331166ac7967e48ed41",
+  "prompts": {},
+  "sessions": {
+    "s_bde46676aa3bc6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0fb7a-3f6c-7173-b45b-3a508e7670fb",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
