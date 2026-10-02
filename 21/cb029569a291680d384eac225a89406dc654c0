@@ -1,0 +1,31 @@
+dist/vendor/jszip.min.js
+  s_0da89cee3dd4c6::t_dbb3fbc1c5054c 1-13
+dist/vendor/pdf.min.mjs
+  s_0da89cee3dd4c6::t_a14438997be9de 1-28
+dist/vendor/pdf.worker.min.mjs
+  s_0da89cee3dd4c6::t_df5b5c4e983cd4 1-28
+server.ps1
+  s_0da89cee3dd4c6::t_a4bab353b6444f 1-70
+uniCloud-aliyun/database/zsh-ledger-sessions.schema.json
+  s_0da89cee3dd4c6::t_7f3faa5928ab80 1-11
+uniCloud-aliyun/database/zsh-ledger-state.schema.json
+  s_0da89cee3dd4c6::t_3b47e51f3162a1 1-15
+uniCloud-aliyun/database/zsh-ledger-users.schema.json
+  s_0da89cee3dd4c6::t_afcfdeb5dfedc3 1-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "21cb029569a291680d384eac225a89406dc654c0",
+  "prompts": {},
+  "sessions": {
+    "s_0da89cee3dd4c6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0bf3a-f577-7310-b70f-ed05030fa81f",
+        "model": "unknown"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
