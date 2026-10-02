@@ -1,7 +1,7 @@
 param([switch]$NoBrowser)
 
 $ErrorActionPreference = "Stop"
-$siteRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "dist"))
+$siteRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot "dist/build/h5"))
 $port = 8765
 $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, $port)
 

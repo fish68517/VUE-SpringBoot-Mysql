@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import { createRequire } from 'node:module';
 
-const source = fs.readFileSync(new URL('../dist/ledger-data.js', import.meta.url), 'utf8');
+const source = fs.readFileSync(new URL('../src/ledger/ledger-data.js', import.meta.url), 'utf8');
 const { associatePayment, removePayment, detachProjectPayments, paymentAllocations, validInspectionDate } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
 const fixture = () => ({
   projects: [{ id: 'a', receivedAmount: 50 }, { id: 'b', receivedAmount: 0 }],
@@ -166,4 +166,34 @@ test('云函数冲突版本拒绝写入', async () => {
   state.properties = [];
   await assert.rejects(context.saveState(actor, state, { ...state._revisions, shared: 0 }), error => error.status === 409);
   assert.equal(docs.get('shared-properties').properties.length, 2);
+});
+
+for (const account of ['operator1', 'operator2']) {
+  test(`${account}不能读取或覆盖省市打款，管理员值保持不变`, async () => {
+    const { context, docs } = cloudFixture();
+    docs.get(`user-${account}`).projects[0].provincialPayment = 964.44;
+    const actor = { _id: account, role: 'operator' };
+    let state = await context.readState(actor);
+    assert.equal(Object.hasOwn(state.projects[0], 'provincialPayment'), false);
+    state.projects[0].notes = '普通字段修改';
+    await context.saveState(actor, state, state._revisions);
+    assert.equal(docs.get(`user-${account}`).projects[0].provincialPayment, 964.44);
+    state = await context.readState(actor);
+    state.projects[0].provincialPayment = 0;
+    state.projects[0].notes = '再次修改';
+    await context.saveState(actor, state, state._revisions);
+    const admin = await context.readState({ _id: 'admin', role: 'admin' });
+    assert.equal(admin.projects.find(p => p.createdBy === account).provincialPayment, 964.44);
+  });
+}
+
+test('设备详情全部手工字段经云函数保存，文本编号和电话前导零保留', async () => {
+  const { context } = cloudFixture();
+  const actor = { _id: 'admin', role: 'admin' };
+  const state = await context.readState(actor);
+  const changed = { unit: '更新单位', equipmentType: '电梯', deviceCode: '00123456789012345678', internalNo: '001', dueDate: '2028-02-29', registrationNo: '登记0001', inspectionAgency: '更新检测机构', address: '更新地址', maintainer: '更新维保', emergencyPhone: '04310001', contact: '联系人', phone: '04310002', phone1: '00123', source: '来源.xlsx', followUpStatus: '跟进中', notes: '更新备注' };
+  Object.assign(state.properties[0], changed);
+  await context.saveState(actor, state, state._revisions);
+  const loaded = await context.readState(actor);
+  for (const [key, value] of Object.entries(changed)) assert.equal(loaded.properties[0][key], value);
 });

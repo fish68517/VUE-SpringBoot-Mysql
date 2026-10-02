@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-02",
+  "spaceId": "mp-f4c892a2-7540-459d-9a6f-ccae78f87037",
+  "function": "zsh-ledger-api",
+  "verification": "HBuilderX force download after successful upload; compared to main source",
+  "sha256": "a4c20f24a170e2ee0ea090e5031d691c249de32df10ed219af5972a5ed87b500",
+  "matchesLocal": true,
+  "loginPageButtonEnabled": true,
+  "loginPageConsoleErrors": [],
+  "productionBusinessActionsTested": false
+}

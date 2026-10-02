@@ -1,15 +1,4 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="电梯项目台账、物业设备、到期提醒和收款确认的云端管理系统" />
-  <title>中晟辉业务台账</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231a5f72'/%3E%3Cpath d='M20 16h24v32H20z' fill='none' stroke='white' stroke-width='4'/%3E%3Cpath d='M32 22v20M27 27l5-5 5 5M27 37l5 5 5-5' fill='none' stroke='%23f5b544' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
-  <link rel="stylesheet" href="styles.css?v=2.2.12" />
-</head>
-<body>
-  <section class="login-screen" id="loginScreen">
+<section class="login-screen" id="loginScreen">
     <div class="login-card">
       <div class="login-brand"><div class="brand-mark">梯</div><div><strong>中晟辉业务台账</strong><span>云端正式版</span></div></div>
       <div class="login-copy"><p class="section-kicker">安全登录</p><h1>欢迎回来</h1><p>系统仅开放 3 个固定账号，不提供注册入口。</p></div>
@@ -126,6 +115,7 @@
       </section>
 
       <section class="view active" id="view-ledger">
+        <div class="ledger-drop-hint" id="ledgerDropHint" role="status" aria-live="polite" aria-busy="false">拖入 PDF / 物业 Excel（.xlsx）即可导入，支持多个文件；也可使用上方导入按钮</div>
         <div class="ledger-summary" id="ledgerSummary"></div>
         <section class="panel filter-panel">
           <div class="search-field">
@@ -301,14 +291,14 @@
       <input name="projectId" type="hidden" />
       <div class="field-group manual-field-group"><h3 id="ledgerEditProjectName">—</h3><p>以下字段对应 Excel 蓝色区域，可随业务进度持续补录。</p></div>
       <div class="form-grid form-grid-3 manual-form-grid">
-        <label><span>检验员</span><input name="inspector" /></label>
+        <label><span>检验员</span><select data-manual-choice="inspector" aria-label="选择检验员"></select><input name="inspector" hidden placeholder="输入人员姓名，保存后可在其他台账中选择" aria-label="填写检验员" /></label>
         <label><span>中晟辉实收价格</span><input name="zshActualPrice" type="number" min="0" step="0.01" /></label>
         <label><span>中晟辉到款金额</span><input name="receivedAmount" type="number" min="0" step="0.01" /></label>
         <label><span>到款日期</span><input name="paymentDate" type="date" /></label>
         <label><span>到款对应名</span><input name="paymentCounterparty" /></label>
         <label><span>打款方式</span><input name="paymentMethod" placeholder="银行转账、现金等" /></label>
-        <label><span>发票</span><input name="invoice" placeholder="未开、已开或发票号" /></label>
-        <label><span>报告</span><input name="report" placeholder="未出、已出或报告号" /></label>
+        <label><span>发票</span><select data-manual-choice="invoice" aria-label="选择发票类型"></select><input name="invoice" hidden placeholder="填写其他发票信息或发票号" aria-label="填写发票信息" /></label>
+        <label><span>报告</span><select data-manual-choice="report" aria-label="选择报告状态"></select><input name="report" hidden placeholder="填写报告号或其他报告信息" aria-label="填写报告信息" /></label>
         <label><span>中晟辉返款金额</span><input name="refundAmount" type="number" min="0" step="0.01" /></label>
         <label id="provincialPaymentField"><span>省市打款</span><input name="provincialPayment" type="number" min="0" step="0.01" /></label>
         <label><span>跟进状态</span><select name="followUpStatus"><option>待跟进</option><option>跟进中</option><option>已完成</option></select></label>
@@ -319,15 +309,15 @@
   </div>
 
   <div class="modal-backdrop" id="propertyEditModal" hidden>
-    <form class="modal" id="propertyEditForm" role="dialog" aria-modal="true" aria-labelledby="propertyEditTitle">
-      <div class="modal-heading"><div><p class="section-kicker">检验日期与预警跟进</p><h2 id="propertyEditTitle">编辑设备信息</h2></div><button class="icon-button" type="button" data-close="propertyEditModal" aria-label="关闭">×</button></div>
+    <form class="modal modal-wide" id="propertyEditForm" role="dialog" aria-modal="true" aria-labelledby="propertyEditTitle">
+      <div class="modal-heading"><div><p class="section-kicker">设备详情 · 可直接修改</p><h2 id="propertyEditTitle">编辑设备信息</h2></div><button class="icon-button" type="button" data-close="propertyEditModal" aria-label="关闭">×</button></div>
       <input name="propertyId" type="hidden" />
+      <div class="form-grid form-grid-3" id="propertyEditFields"></div>
       <div class="form-stack">
-        <label><span>下次检验日期</span><input name="dueDate" type="date" /><small>修改后同步更新到期年月和预警状态；留空表示日期待补。</small></label>
         <label><span>跟进状态</span><select name="followUpStatus"><option>待跟进</option><option>跟进中</option><option>已完成</option></select></label>
         <label><span>备注</span><textarea name="notes" rows="4" placeholder="填写联系结果、计划日期或其他说明"></textarea></label>
       </div>
-      <div class="modal-actions"><button type="button" class="button button-quiet" data-close="propertyEditModal">取消</button><button class="button button-primary" type="submit">保存设备信息</button></div>
+      <div class="modal-actions"><button type="button" class="button button-danger" id="propertyEditDelete">删除这台设备</button><button type="button" class="button button-quiet" data-close="propertyEditModal">取消</button><button class="button button-primary" type="submit">保存设备信息</button></div>
     </form>
   </div>
 
@@ -366,8 +356,3 @@
   </div>
 
   <div class="toast-stack" id="toastStack" aria-live="polite"></div>
-
-  <script src="vendor/jszip.min.js"></script>
-  <script type="module" src="app.js?v=2.2.12"></script>
-</body>
-</html>

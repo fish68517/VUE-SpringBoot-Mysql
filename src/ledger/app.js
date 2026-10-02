@@ -1,9 +1,14 @@
 import * as pdfjsLib from './vendor/pdf.min.mjs';
 import { CLOUD_CONFIG } from './cloud-config.js';
-import { createCloudApi } from './cloud-api.js?v=2.2.11';
-import { moneyCents, paymentAllocations, allocatedCents, isPaymentMatched, associatePayment, removePayment, detachProjectPayments, validInspectionDate } from './ledger-data.js?v=2.2.12';
+import { createCloudApi } from './cloud-api.js';
+import { moneyCents, paymentAllocations, allocatedCents, isPaymentMatched, associatePayment, removePayment, detachProjectPayments, validInspectionDate } from './ledger-data.js';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = './vendor/pdf.worker.min.mjs';
+import pdfWorkerUrl from './vendor/pdf.worker.min.mjs?url';
+import JSZip from 'jszip';
+
+// H5 DOM is mounted before creating the ledger runtime. Each mount owns its listeners/state.
+export function mountLedger(root) {
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 const STORAGE_KEY = 'zsh-elevator-ledger-v1';
 const DB_NAME = 'zsh-elevator-ledger-files';
@@ -35,7 +40,7 @@ const demoProjects = [
     contact: '/', phone: '18946700826', nature: '自行检测', dueDate: '2027-09-01', equipment: '乘客电梯',
     controlMode: '集选', floors: '2/2', quantity: 1, unitPrice: 535.8, total: 535.8,
     receivable: 535.8, actual: 150, receivedAmount: 0, owner: '冯一', inspector: '', notes: 'PDF 受理单导入示例',
-    attachmentName: '恒拓检测1台-吉林金科陶瓷有限公司-9月17日.pdf', attachmentUrl: 'sample/恒拓检测1台-吉林金科陶瓷有限公司-9月17日.pdf',
+    attachmentName: '恒拓检测1台-吉林金科陶瓷有限公司-9月17日.pdf', attachmentUrl: `${import.meta.env.BASE_URL}static/sample/恒拓检测1台-吉林金科陶瓷有限公司-9月17日.pdf`,
     source: 'PDF', createdBy: 'operator1', createdAt: '2026-09-17T10:49:00.000Z'
   },
   {
@@ -65,6 +70,7 @@ const demoPayments = [
 
 let state = emptyState();
 let activeView = 'ledger';
+let importingFiles = false;
 let activeLedgerKind = 'detection';
 let currentPdfObjectUrl = null;
 let currentUserInfo = null;
@@ -74,6 +80,13 @@ let cloudRevisions = {};
 let passwordChangeRequired = false;
 let managedUsers = [];
 const selectedPropertyIds = new Set();
+const PROPERTY_EDIT_FIELDS = [
+  ['unit', '使用单位'], ['equipmentType', '设备品种'], ['deviceCode', '设备代码'],
+  ['internalNo', '单位内编号'], ['dueDate', '下次检验日期', 'date'], ['registrationNo', '登记证编号'],
+  ['inspectionAgency', '检测机构'], ['address', '单位地址'], ['maintainer', '维保单位'],
+  ['emergencyPhone', '应急电话', 'tel'], ['contact', '联系人'], ['phone', '联系电话', 'tel'],
+  ['phone1', '联系电话1', 'tel'], ['source', '数据来源'],
+];
 
 function emptyState() { return { projects: [], properties: [], payments: [], settings: { reminderDays: 30 } }; }
 
@@ -367,9 +380,10 @@ function daysUntil(value) {
 }
 
 function paymentStatus(project) {
-  const receivable = numberValue(project.receivable);
+  // 四类台账统一以实收金额作为确款标准，不改动实际到款数字。
+  const actual = numberValue(project.actual);
   const received = numberValue(project.receivedAmount);
-  if (receivable > 0 && received >= receivable - 0.005) return '已确款';
+  if (actual > 0 && received >= actual - 0.005) return '已确款';
   if (received > 0) return '部分到账';
   return '待收款';
 }
@@ -423,6 +437,8 @@ function closeModal(id, force = false) {
 function switchView(view, ledgerKind = '') {
   if (view === 'ledger' && LEDGER_DEFINITIONS[ledgerKind]) activeLedgerKind = ledgerKind;
   activeView = view;
+  document.querySelector('#ledgerDropHint').hidden = view !== 'ledger' || activeLedgerKind !== 'detection';
+  root.classList.remove('is-file-dragging');
   document.querySelectorAll('.nav-item').forEach(item => {
     const sameView = item.dataset.view === view;
     const sameLedger = view !== 'ledger' || item.dataset.ledgerKind === activeLedgerKind;
@@ -523,7 +539,7 @@ function renderLedger() {
     [`${monthLabel}中晟辉实收金额`, yuan(total('zshActualPrice')), ''],
     [`${monthLabel}中晟辉返款金额`, yuan(total('refundAmount')), ''],
   ];
-  if (definition.provincialPayment) summary.push([`${monthLabel}省市打款`, yuan(total('provincialPayment')), '']);
+  if (definition.provincialPayment && isAdmin()) summary.push([`${monthLabel}省市打款`, yuan(total('provincialPayment')), '']);
   const summaryTarget = document.querySelector('#ledgerSummary');
   summaryTarget.dataset.count = String(summary.length);
   summaryTarget.innerHTML = summary.map(([label, value, unit]) => `<article class="ledger-summary-card"><span>${safe(label)}</span><strong>${safe(value)}</strong>${unit ? `<small>${safe(unit)}</small>` : ''}</article>`).join('');
@@ -531,7 +547,7 @@ function renderLedger() {
   document.querySelector('#ledgerSectionKicker').textContent = `${monthLabel}汇总与明细`;
 
   const manualHeaders = ['检验员','中晟辉实收价格','中晟辉到款金额','到款日期','到款对应名','打款方式','发票','报告','中晟辉返款金额'];
-  if (definition.provincialPayment) manualHeaders.push('省市打款');
+  if (definition.provincialPayment && isAdmin()) manualHeaders.push('省市打款');
   manualHeaders.push('备注');
   const pdfHeaders = ['日期','使用单位','监检','项目名称','项目地址','维保单位','联系人及电话','检测性质','下次检验检测日期','设备名称','控制方式','层/站','数量','应收金额','实收金额','项目经办人'];
   document.querySelector('#ledgerTableHead').innerHTML = `<tr class="group-row"><th class="base-group sticky-seq" rowspan="2">序号</th><th class="base-group sticky-file" rowspan="2">文件位置</th><th class="pdf-group" colspan="${pdfHeaders.length}">PDF 自动提取字段</th><th class="manual-group" colspan="${manualHeaders.length}">手工补录字段</th><th class="action-group" rowspan="2">操作</th></tr><tr class="field-row">${pdfHeaders.map(label => `<th class="pdf-col">${label}</th>`).join('')}${manualHeaders.map(label => `<th class="manual-col">${label}</th>`).join('')}</tr>`;
@@ -548,7 +564,7 @@ function renderLedger() {
       project.inspector, yuan(project.zshActualPrice), `<div class="status-stack"><strong>${yuan(project.receivedAmount)}</strong>${statusTag(paymentStatus(project))}</div>`,
       formatDate(project.paymentDate), project.paymentCounterparty, project.paymentMethod, project.invoice, project.report, yuan(project.refundAmount),
     ];
-    if (definition.provincialPayment) manualCells.push(yuan(project.provincialPayment));
+    if (definition.provincialPayment && isAdmin()) manualCells.push(yuan(project.provincialPayment));
     manualCells.push(`<div class="status-stack">${statusTag(project.followUpStatus || '待跟进')}<span>${safe(project.notes || '—')}</span></div>`);
     const pdfHtml = pdfCells.map(value => `<td class="pdf-col" title="${safe(value || '—')}">${safe(value || '—')}</td>`).join('');
     const manualHtml = manualCells.map((value, cellIndex) => `<td class="manual-col" title="${cellIndex === manualCells.length - 1 ? safe(project.notes || '') : safe(String(value || '').replace(/<[^>]+>/g, ''))}">${cellIndex === 2 || cellIndex === manualCells.length - 1 ? value : safe(value || '—')}</td>`).join('');
@@ -723,8 +739,8 @@ function columnIndex(cellRef) {
 }
 
 async function parseXlsx(buffer) {
-  if (!window.JSZip) throw new Error('Excel 解析组件未加载');
-  const zip = await window.JSZip.loadAsync(buffer);
+  if (!JSZip) throw new Error('Excel 解析组件未加载');
+  const zip = await JSZip.loadAsync(buffer);
   const parser = new DOMParser();
   const workbookXml = parser.parseFromString(await zip.file('xl/workbook.xml').async('text'), 'application/xml');
   const relsXml = parser.parseFromString(await zip.file('xl/_rels/workbook.xml.rels').async('text'), 'application/xml');
@@ -1124,13 +1140,28 @@ async function showProjectDetail(id) {
     ['项目经办人', project.owner || '—'], ['检验员', project.inspector || '—'], ['中晟辉实收价格', yuan(project.zshActualPrice)],
     ['中晟辉到款金额', yuan(project.receivedAmount)], ['到款日期', formatDate(project.paymentDate)], ['到款对应名', project.paymentCounterparty || '—'],
     ['打款方式', project.paymentMethod || '—'], ['发票', project.invoice || '—'], ['报告', project.report || '—'],
-    ['中晟辉返款金额', yuan(project.refundAmount)], ['省市打款', project.nature === '定期检验' ? yuan(project.provincialPayment) : '不适用'],
+    ['中晟辉返款金额', yuan(project.refundAmount)], ...(isAdmin() ? [['省市打款', project.nature === '定期检验' ? yuan(project.provincialPayment) : '不适用']] : []),
     ['跟进状态', project.followUpStatus || '待跟进'], ['创建人', userName(projectCreatedBy(project))], ['数据来源', project.source || '—'],
     ['PDF 附件', project.attachmentName || '未上传'], ['备注', project.notes || '—'],
   ];
   const editButton = canEditManualFields() ? `<button class="button button-secondary" data-edit-project="${safe(project.id)}">补录手工信息</button>` : '';
   document.querySelector('#detailContent').innerHTML = `<div class="detail-grid">${fields.map(([label,value]) => `<div class="detail-cell"><span>${safe(label)}</span><strong>${safe(value)}</strong></div>`).join('')}</div><div class="detail-actions">${project.attachmentName ? `<button class="button button-primary" data-view-pdf="${safe(project.id)}">查看 PDF 原件</button>` : ''}${editButton}<button class="button button-secondary" data-print-detail="${safe(project.id)}">打印详情</button><button class="button button-quiet" data-delete-project="${safe(project.id)}">删除台账</button></div>`;
   openModal('detailModal');
+}
+
+function populateManualChoices(form, project) {
+  const presets = { inspector: [], invoice: ['专票', '普票', '不开'], report: ['未出', '已出'] };
+  for (const [field, defaults] of Object.entries(presets)) {
+    const current = String(project[field] || '').trim();
+    // Saved cloud records provide reusable options across all four ledgers/devices.
+    const options = [...new Set([...defaults, ...visibleProjects().map(item => String(item[field] || '').trim()), current].filter(Boolean))];
+    const select = form.querySelector(`[data-manual-choice="${field}"]`);
+    // Index values keep custom text (including HTML and reserved words) as plain data.
+    select.innerHTML = '<option value="">未填写</option>' + options.map((text, index) => `<option value="${index}">${safe(text)}</option>`).join('')
+      + `<option value="custom">${field === 'inspector' ? '＋ 新增人员' : '其他 / 手动填写'}</option>`;
+    select.value = current ? String(options.indexOf(current)) : '';
+    form.elements[field].hidden = true;
+  }
 }
 
 function openProjectEditor(id) {
@@ -1146,6 +1177,7 @@ function openProjectEditor(id) {
     provincialPayment: project.provincialPayment, followUpStatus: project.followUpStatus || '待跟进', notes: project.notes,
   };
   Object.entries(values).forEach(([key, value]) => { if (form.elements[key]) form.elements[key].value = value ?? ''; });
+  populateManualChoices(form, project);
   document.querySelector('#ledgerEditProjectName').textContent = `${project.unit} · ${project.nature}`;
   document.querySelector('#provincialPaymentField').hidden = project.nature !== '定期检验';
   closeModal('detailModal');
@@ -1240,7 +1272,12 @@ async function showPdf(id) {
     }
   }
   if (!previewBlob && project.attachmentUrl) {
-    try { previewBlob = await fetchPdfBlob(project.attachmentUrl); }
+    try {
+      // Older records use sample/...; preserve them after moving assets into static/.
+      const url = project.attachmentUrl.startsWith('sample/')
+        ? `${import.meta.env.BASE_URL}static/${project.attachmentUrl}` : project.attachmentUrl;
+      previewBlob = await fetchPdfBlob(url);
+    }
     catch (error) { cloudError = cloudError || error; }
   }
   if (!previewBlob) {
@@ -1274,6 +1311,7 @@ async function showPdf(id) {
 }
 
 function showPropertyDetail(id) {
+  if (canModifyAlerts()) return openPropertyEditor(id);
   const item = state.properties.find(row => row.id === id);
   if (!item) return;
   document.querySelector('#detailTitle').textContent = item.unit;
@@ -1294,9 +1332,11 @@ function openPropertyEditor(id) {
   const item = state.properties.find(row => row.id === id);
   if (!item) return showToast('未找到这条物业设备记录', true);
   const form = document.querySelector('#propertyEditForm');
+  document.querySelector('#propertyEditFields').innerHTML = PROPERTY_EDIT_FIELDS.map(([name, label, type = 'text']) => `<label><span>${label}</span><input name="${name}" type="${type}" ${name === 'unit' ? 'required' : ''} /></label>`).join('');
   form.reset();
   form.elements.propertyId.value = item.id;
-  form.elements.dueDate.value = item.dueDate || '';
+  document.querySelector('#propertyEditDelete').dataset.deleteProperty = item.id;
+  for (const [name] of PROPERTY_EDIT_FIELDS) form.elements[name].value = item[name] ?? '';
   form.elements.followUpStatus.value = item.followUpStatus || '待跟进';
   form.elements.notes.value = item.notes || '';
   document.querySelector('#propertyEditTitle').textContent = `${item.unit} · ${item.internalNo || item.deviceCode || '设备'}`;
@@ -1395,6 +1435,39 @@ function registerWebMcpTools() {
     }
   ];
   for (const tool of tools) Promise.resolve(context.registerTool(tool, { signal: lifecycle.signal })).catch(() => {});
+  return () => lifecycle.abort();
+}
+
+// File picker and drag/drop share validation, permissions and one import queue.
+async function importSelectedFiles(files, kind = '') {
+  if (!files.length) return;
+  if (!currentUserId || passwordChangeRequired) return showToast('请先完成登录和密码修改后再导入', true);
+  if (importingFiles) return showToast('正在导入，请等待当前任务完成', true);
+  const targetLedger = activeLedgerDefinition(); // Capture destination before asynchronous parsing.
+  const accepted = files.filter(file => kind === 'excel' ? /\.xlsx$/i.test(file.name)
+    : kind === 'pdf' ? /\.pdf$/i.test(file.name) : /\.(xlsx|pdf)$/i.test(file.name));
+  if (accepted.length !== files.length) showToast('已跳过不支持的文件，仅支持 PDF 和 .xlsx（旧版 .xls 请先另存为 .xlsx）', true);
+  if (!accepted.length) return;
+  importingFiles = true;
+  const hint = document.querySelector('#ledgerDropHint');
+  hint.setAttribute('aria-busy', 'true');
+  hint.textContent = '正在导入文件，请稍候…';
+  try {
+    // Process each file separately so a failed file does not discard later files.
+    for (const file of accepted) {
+      try {
+        if (/\.xlsx$/i.test(file.name)) await importPropertyExcelFiles([file]);
+        else {
+          showToast(`正在导入到${targetLedger.title}：${file.name}`);
+          await importPdfFiles([file], targetLedger.nature);
+        }
+      } catch (error) { showToast(`${file.name} 导入失败：${error.message}`, true); }
+    }
+  } finally {
+    importingFiles = false;
+    hint.setAttribute('aria-busy', 'false');
+    hint.textContent = '拖入 PDF / 物业 Excel（.xlsx）即可导入，支持多个文件；也可使用上方导入按钮';
+  }
 }
 
 function bindEvents() {
@@ -1461,7 +1534,7 @@ function bindEvents() {
     finally { button.disabled = false; }
   });
   document.querySelectorAll('.nav-item').forEach(button => button.addEventListener('click', () => switchView(button.dataset.view, button.dataset.ledgerKind)));
-  document.addEventListener('click', async event => {
+  root.addEventListener('click', async event => {
     const go = event.target.closest('[data-go]'); if (go) return switchView(go.dataset.go);
     const closer = event.target.closest('[data-close]'); if (closer) return closeModal(closer.dataset.close);
     const detail = event.target.closest('[data-detail]'); if (detail) return showProjectDetail(detail.dataset.detail);
@@ -1499,7 +1572,7 @@ function bindEvents() {
       const item = state.properties.find(property => property.id === removeProperty.dataset.deleteProperty);
       if (!item || !confirm(`确定删除“${item.unit}”的这台设备吗？`)) return;
       state.properties = state.properties.filter(property => property.id !== item.id);
-      saveState(); closeModal('detailModal'); renderAll(); showToast('物业设备已删除'); return;
+      saveState(); closeModal('detailModal'); closeModal('propertyEditModal'); renderAll(); showToast('物业设备已删除'); return;
     }
     const deletePayment = event.target.closest('[data-delete-payment]');
     if (deletePayment) {
@@ -1544,16 +1617,57 @@ function bindEvents() {
     }
   });
 
-  for (const id of ['excelInput','excelInput2']) document.getElementById(id).addEventListener('change', async event => {
-    if (!event.target.files.length) return;
-    try { await importPropertyExcelFiles([...event.target.files]); } catch (error) { showToast(`物业 Excel 导入失败：${error.message}`, true); }
-    event.target.value = '';
+  document.querySelector('#ledgerEditForm').addEventListener('change', event => {
+    const select = event.target.closest('[data-manual-choice]');
+    if (!select) return;
+    const input = event.currentTarget.elements[select.dataset.manualChoice];
+    input.hidden = select.value !== 'custom';
+    if (select.value === 'custom') input.focus();
+    else input.value = select.value === '' ? '' : select.selectedOptions[0].textContent;
   });
-  for (const id of ['pdfInput','pdfInput2']) document.getElementById(id).addEventListener('change', async event => {
-    if (!event.target.files.length) return;
-    const targetLedger = activeLedgerDefinition();
-    try { showToast(`正在导入到${targetLedger.title}…`); await importPdfFiles([...event.target.files], targetLedger.nature); } catch (error) { showToast(`PDF 导入失败：${error.message}`, true); }
-    event.target.value = '';
+
+  for (const id of ['excelInput', 'excelInput2', 'pdfInput', 'pdfInput2']) {
+    document.getElementById(id).addEventListener('change', async event => {
+      const input = event.target;
+      const files = [...input.files];
+      const kind = id.startsWith('excel') ? 'excel' : 'pdf';
+      try { await importSelectedFiles(files, kind); }
+      finally { input.value = ''; }
+    });
+  }
+  const hasFiles = event => [...(event.dataTransfer?.types || [])].includes('Files');
+  const acceptsDrop = () => Boolean(currentUserId) && !passwordChangeRequired
+    && activeView === 'ledger' && activeLedgerKind === 'detection' && !importingFiles
+    && ![...root.querySelectorAll('.modal-backdrop')].some(modal => !modal.hidden);
+  let dragDepth = 0;
+  root.addEventListener('dragenter', event => {
+    if (!hasFiles(event)) return;
+    event.preventDefault();
+    dragDepth++;
+    root.classList.toggle('is-file-dragging', acceptsDrop());
+  });
+  root.addEventListener('dragover', event => {
+    if (!hasFiles(event)) return;
+    event.preventDefault(); // Prevent the browser from opening the dropped PDF/Excel.
+    event.dataTransfer.dropEffect = acceptsDrop() ? 'copy' : 'none';
+  });
+  root.addEventListener('dragleave', event => {
+    if (!hasFiles(event)) return;
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (!dragDepth) root.classList.remove('is-file-dragging');
+  });
+  root.addEventListener('drop', async event => {
+    if (!hasFiles(event)) return;
+    event.preventDefault();
+    dragDepth = 0;
+    root.classList.remove('is-file-dragging');
+    if (!acceptsDrop()) {
+      showToast(importingFiles ? '正在导入，请等待完成后再拖入' : '请登录并关闭弹窗，在检测台账页面拖入文件', true);
+      return;
+    }
+    const files = [...event.dataTransfer.files];
+    if (!files.length) return showToast('请拖入 PDF 或 .xlsx 文件，不支持文件夹', true);
+    await importSelectedFiles(files);
   });
 
   ['ledgerSearch','ledgerMonthFilter','paymentFilter','followUpFilter'].forEach(id => document.getElementById(id).addEventListener('input', renderLedger));
@@ -1657,11 +1771,12 @@ function bindEvents() {
     const item = state.properties.find(property => property.id === values.propertyId);
     if (!item) return showToast('未找到这条物业设备记录', true);
     if (!validInspectionDate(values.dueDate)) return showToast('请填写有效的下次检验日期', true);
-    item.dueDate = values.dueDate;
+    if (!values.unit.trim()) return showToast('使用单位不能为空', true);
+    for (const [name] of PROPERTY_EDIT_FIELDS) item[name] = String(values[name] ?? '').trim();
     item.followUpStatus = values.followUpStatus;
     item.notes = values.notes.trim();
     item.updatedAt = new Date().toISOString();
-    saveState(); closeModal('propertyEditModal'); renderAll(); showToast('检验日期及跟进信息已保存');
+    saveState(); closeModal('propertyEditModal'); renderAll(); showToast('设备信息已保存');
   });
 
   document.querySelector('#exportLedger').addEventListener('click', () => {
@@ -1676,7 +1791,7 @@ function bindEvents() {
       ['到款日期', 'paymentDate'], ['到款对应名', 'paymentCounterparty'], ['打款方式', 'paymentMethod'], ['发票', 'invoice'], ['报告', 'report'],
       ['中晟辉返款金额', 'refundAmount'],
     ];
-    if (definition.provincialPayment) columns.push(['省市打款', 'provincialPayment']);
+    if (definition.provincialPayment && isAdmin()) columns.push(['省市打款', 'provincialPayment']);
     columns.push(['备注', 'notes']);
     const rows = visibleProjects().filter(project => projectMatchesLedger(project, definition));
     exportCsv(rows, columns, `${definition.title}_${currentUser().name}_${new Date().toISOString().slice(0,10)}.csv`);
@@ -1690,7 +1805,7 @@ function bindEvents() {
   document.querySelector('#clearAllData').addEventListener('click', () => clearAllData().catch(error => showToast(`删除失败：${error.message}`, true)));
 
   document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.addEventListener('click', event => { if (event.target === backdrop) closeModal(backdrop.id); }));
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') { const open = [...document.querySelectorAll('.modal-backdrop')].reverse().find(item => !item.hidden); if (open) closeModal(open.id); } });
+  root.addEventListener('keydown', event => { if (event.key === 'Escape') { const open = [...document.querySelectorAll('.modal-backdrop')].reverse().find(item => !item.hidden); if (open) closeModal(open.id); } });
 }
 
 async function seedPropertySample() {
@@ -1698,7 +1813,7 @@ async function seedPropertySample() {
   if (state.properties.length || localStorage.getItem(`${STORAGE_KEY}-sample-attempted`)) return;
   localStorage.setItem(`${STORAGE_KEY}-sample-attempted`, '1');
   try {
-    const response = await fetch('sample/权宇物业示例.xlsx');
+    const response = await fetch(`${import.meta.env.BASE_URL}static/sample/权宇物业示例.xlsx`);
     if (!response.ok) return;
     const blob = await response.blob();
     const file = new File([blob], '权宇物业示例.xlsx', { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -1708,6 +1823,14 @@ async function seedPropertySample() {
 }
 
 bindEvents();
-registerWebMcpTools();
-window.addEventListener('zsh-auth-expired', () => showLogin('登录已过期，请重新登录', true));
+const unregisterTools = registerWebMcpTools();
+const onAuthExpired = () => showLogin('登录已过期，请重新登录', true);
+window.addEventListener('zsh-auth-expired', onAuthExpired);
 initializeAuth();
+return () => {
+  window.removeEventListener('zsh-auth-expired', onAuthExpired);
+  unregisterTools?.();
+  clearTimeout(cloudSyncTimer);
+  if (currentPdfObjectUrl) URL.revokeObjectURL(currentPdfObjectUrl);
+};
+}

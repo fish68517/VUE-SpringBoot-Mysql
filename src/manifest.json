@@ -1,0 +1,19 @@
+{
+  "name": "中晟辉业务台账",
+  "appid": "__UNI__1F79125",
+  "description": "电梯台账与到账管理 PC/H5",
+  "versionName": "2.2.14",
+  "versionCode": "2214",
+  "vueVersion": "3",
+  "transformPx": false,
+  "h5": {
+    "title": "中晟辉业务台账",
+    "router": {
+      "mode": "hash",
+      "base": "/"
+    }
+  },
+  "uniStatistics": {
+    "enable": false
+  }
+}

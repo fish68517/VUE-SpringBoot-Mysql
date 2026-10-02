@@ -456,3 +456,8 @@ textarea { padding: 12px; resize: vertical; line-height: 1.65; }
   .panel { box-shadow: none; break-inside: avoid; }
   .table-wrap, .table-wrap.tall { max-height: none; overflow: visible; }
 }
+
+/* Native H5 file drag/drop feedback; original file buttons remain available. */
+.ledger-drop-hint { margin-bottom: 16px; padding: 14px 18px; border: 1px dashed #83b2bc; border-radius: 12px; background: #edf7f8; color: var(--brand-deep); font-size: 13px; line-height: 1.6; }
+.ledger-drop-hint[aria-busy="true"] { border-style: solid; }
+.ledger-root.is-file-dragging::after { content: '松开文件，导入检测台账 / 物业设备'; position: fixed; inset: 16px; z-index: 10000; display: grid; place-items: center; padding: 24px; border: 3px dashed var(--brand); border-radius: 18px; background: rgba(231, 243, 244, .94); color: var(--brand-deep); font-size: 22px; font-weight: 700; text-align: center; pointer-events: none; }

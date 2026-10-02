@@ -293,7 +293,11 @@ async function readState(actor) {
   const revisions = { shared: Number(shared?.revision || 0) };
   ownerIds.forEach((id, index) => { revisions[id] = Number(ownerDocs[index]?.revision || 0); });
   return {
-    projects,
+    projects: actor.role === 'admin' ? projects : projects.map(project => {
+      const visible = { ...project };
+      delete visible.provincialPayment;
+      return visible;
+    }),
     payments,
     properties: Array.isArray(shared?.properties) ? shared.properties : [],
     settings: shared?.settings || { reminderDays: 30 },
@@ -343,6 +347,8 @@ async function saveState(actor, incomingValue, expectedRevisions = {}) {
         paymentDate: String(previous.paymentDate || ''),
         paymentCounterparty: String(previous.paymentCounterparty || ''),
         paymentMethod: String(previous.paymentMethod || ''),
+        // 业务员读取时不返回此字段，保存时必须保留云端值，不能被缺省 0 覆盖。
+        provincialPayment: Number(previous.provincialPayment || 0),
       };
     };
     ownerNext[ownerId] = {

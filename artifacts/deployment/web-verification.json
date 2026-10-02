@@ -1,0 +1,100 @@
+[
+  {
+    "file": "app.js",
+    "status": 200,
+    "bytes": 106647,
+    "sha256": "8dd2ae7705ec2719b1767553f861785d7241910368b51541ffe473efa6769d4c",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  },
+  {
+    "file": "cloud-api.js",
+    "status": 200,
+    "bytes": 9299,
+    "sha256": "7b2bc957d09057dd3e3fba16c73a43acc9f6a4a9cd036ddad1772371b58d3834",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  },
+  {
+    "file": "cloud-config.js",
+    "status": 200,
+    "bytes": 330,
+    "sha256": "c2ab84647aa42e6981bf3398cf037b128a36e14b4eb32a19129abce1197083a4",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  },
+  {
+    "file": "index.html",
+    "status": 200,
+    "bytes": 28124,
+    "sha256": "a56b716cf1bc081f173e30ebd011a8002088a643caa02b79b728c25898426a9a",
+    "matchesLocal": false,
+    "matchesSourceAfterHostingNormalization": true,
+    "normalization": "Remove leading CRLF; remove observed Alibaba hosting analytics script after body"
+  },
+  {
+    "file": "ledger-data.js",
+    "status": 200,
+    "bytes": 5224,
+    "sha256": "7488d86e4e15dd3ddbd0547066b26a8c415506ca5216695b6b002dee642bfb07",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  },
+  {
+    "file": "styles.css",
+    "status": 200,
+    "bytes": 36747,
+    "sha256": "1d694902c2fe6cc8f292ff140726014f9c14469d254e06b3a9308959d5b95d85",
+    "matchesLocal": false,
+    "matchesSourceAfterHostingNormalization": true,
+    "normalization": "Remove leading CRLF"
+  },
+  {
+    "file": "sample/台账格式示例.xlsx",
+    "status": 200,
+    "bytes": 35854,
+    "sha256": "c9496117c326cdf428df0f8461a34f26fc029ee3f803fec48216bfab902772b3",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  },
+  {
+    "file": "sample/恒拓检测1台-吉林金科陶瓷有限公司-9月17日.pdf",
+    "status": 200,
+    "bytes": 124083,
+    "sha256": "accb3d542b557e4c2591f2dec468239d5c5a25f7ebf6d1b42ad218139d399029",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  },
+  {
+    "file": "sample/权宇物业示例.xlsx",
+    "status": 200,
+    "bytes": 15279,
+    "sha256": "3800dae1ec0f39a4934d5135913efbb06818b7946c19fcf8680dbe743e93a999",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  },
+  {
+    "file": "vendor/jszip.min.js",
+    "status": 200,
+    "bytes": 97630,
+    "sha256": "acc7e41455a80765b5fd9c7ee1b8078a6d160bbbca455aeae854de65c947d59e",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  },
+  {
+    "file": "vendor/pdf.min.mjs",
+    "status": 200,
+    "bytes": 430304,
+    "sha256": "2221020ea508479dcc1221f36f2731656339230097c69ba1f78802832c0ad685",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  },
+  {
+    "file": "vendor/pdf.worker.min.mjs",
+    "status": 200,
+    "bytes": 1244253,
+    "sha256": "51a2fd1ea47f1a9b0814e65e0c336c739c54957795ee774e8f93cb81e8028dd1",
+    "matchesLocal": true,
+    "matchesSourceAfterHostingNormalization": true
+  }
+]
