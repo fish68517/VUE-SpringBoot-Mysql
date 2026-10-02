@@ -1,0 +1,111 @@
+code/scripts/browser-network.mjs
+  s_0da89cee3dd4c6::t_27d61b6ed62877 1-9
+code/config/amap.example.json
+  s_0da89cee3dd4c6::t_cd742a344ca6f7 1-5
+code/components/DashboardMap.vue
+  s_0da89cee3dd4c6::t_ba471d888c2c12 183-194
+  s_0da89cee3dd4c6::t_e58eab4dcf666c 38,42,45,50,57-59,81
+  s_0da89cee3dd4c6::t_9c6eb4b4d514c5 166
+  s_0da89cee3dd4c6::t_b1cdfa14ca9736 60-63,65,164
+  s_0da89cee3dd4c6::t_6bc14bfa6b96aa 3
+  s_0da89cee3dd4c6::t_40327274e84911 20-22,25-27,176-179,182,195-227
+  s_0da89cee3dd4c6::t_6cb3c4f7546410 1,4-19,23-24,28-37,39-41,43-44,46-49,51-54,56,68-70,72,84-90,92-95,97-101,109-110,114,118-121,128-135,137-139,141-142,147-152,154-160,162-163,165,167-175,228
+  s_0da89cee3dd4c6::t_948412c49287ec 55,71,73,91,96,153
+  s_0da89cee3dd4c6::t_d5dd660b74dd3f 64,67,102-108
+  s_0da89cee3dd4c6::t_08ebb2afd2ce16 2,74-80,82-83,112-113,115-117,122-127,136,140,145,161,180-181
+  s_0da89cee3dd4c6::t_13691d22a3ba99 66,111,146
+  s_0da89cee3dd4c6::t_c81f0c8b3fdca7 143-144
+code/config/amap.ts
+  s_0da89cee3dd4c6::t_cd742a344ca6f7 1-8
+code/components/ChartView.vue
+  s_0da89cee3dd4c6::t_a518de88dcf807 26,35,37,39,42-43
+  s_0da89cee3dd4c6::t_cd742a344ca6f7 27-31
+doc/大屏高德地图与图表修复说明.md
+  s_0da89cee3dd4c6::t_df92dc4f156a86 5-6
+  s_0da89cee3dd4c6::t_d9391a9483c3b5 1-4,7-55
+code/components/MapPanel.vue
+  s_0da89cee3dd4c6::t_08ebb2afd2ce16 44,65-66,77,81-82,267,292,296-297,390-391,403-416,429
+  s_0da89cee3dd4c6::t_c81f0c8b3fdca7 64
+  s_0da89cee3dd4c6::t_ba471d888c2c12 61-63,87-93,298,300-301,392-402,462-473
+  s_0da89cee3dd4c6::t_774bd93a73ad12 190-194
+  s_0da89cee3dd4c6::t_df92dc4f156a86 189,195
+  s_0da89cee3dd4c6::t_70a8e92e13222a 299
+code/pages/dashboard/index.vue
+  s_0da89cee3dd4c6::t_40327274e84911 80-82,205-211,248-257,264-265,476-489
+  h_c1a03fb9ff63b4 9-10
+  s_0da89cee3dd4c6::t_6cb3c4f7546410 68,72,76,84,88,102,173,177-178,182-183,258-259,263,266-267,475
+doc/开发方案.md
+  s_0da89cee3dd4c6::t_df92dc4f156a86 3,46,145
+  s_0da89cee3dd4c6::t_af7e9c55555122 4
+code/manifest.json
+  s_0da89cee3dd4c6::t_8a9629bdae8491 5-6
+code/vite.config.js
+  s_0da89cee3dd4c6::t_265d7ddea8e214 8-14,24
+  s_0da89cee3dd4c6::t_2737aa41275100 4-7,16-22,25
+  s_0da89cee3dd4c6::t_0e3db069686c32 15,23
+doc/HBuilderX打包Android安装说明.md
+  s_0da89cee3dd4c6::t_c8f5b92179262b 3-4
+  s_0da89cee3dd4c6::t_61722a973bf306 5-10
+code/platform/render-host.js
+  s_0da89cee3dd4c6::t_e58eab4dcf666c 1-10
+code/scripts/browser-acceptance.mjs
+  s_0da89cee3dd4c6::t_27d61b6ed62877 4,16,19-20,49-50
+code/package.json
+  s_0da89cee3dd4c6::t_fc89120257ebb8 19
+  s_0da89cee3dd4c6::t_13691d22a3ba99 18
+code/components/MapCanvas.vue
+  s_0da89cee3dd4c6::t_c81f0c8b3fdca7 22
+  s_0da89cee3dd4c6::t_a518de88dcf807 20,24-25,34
+doc/移动端适配补齐说明.md
+  s_0da89cee3dd4c6::t_df92dc4f156a86 82
+code/scripts/browser-dashboard-map.mjs
+  s_0da89cee3dd4c6::t_9c6eb4b4d514c5 1-7,11-13,16,22-23,28-33,39-40,46-52,58-68,70-80,82-89,98,107-109,114
+  s_0da89cee3dd4c6::t_13691d22a3ba99 55-57,69
+  s_0da89cee3dd4c6::t_27d61b6ed62877 90-97
+  s_0da89cee3dd4c6::t_f5dea935ae2728 8-10,14-15,17-21,24-27,34-38,41-45,53-54,81,99-106,110-113,115-117
+code/scripts/release-check.mjs
+  s_0da89cee3dd4c6::t_af7e9c55555122 20
+  s_0da89cee3dd4c6::t_13691d22a3ba99 12-14
+  s_0da89cee3dd4c6::t_f5dea935ae2728 15-19,21-23
+.gitignore
+  s_0da89cee3dd4c6::t_cd742a344ca6f7 21-23
+code/platform/amap-loader.js
+  s_0da89cee3dd4c6::t_cd742a344ca6f7 1-21,26-29,35-36,41-45,54,66-71
+  s_0da89cee3dd4c6::t_40327274e84911 22-25,30-34,37-40,46-53,55-65
+code/scripts/browser-phase2.mjs
+  s_0da89cee3dd4c6::t_27d61b6ed62877 4,17,20-21
+code/scripts/browser-mobile-map.mjs
+  s_0da89cee3dd4c6::t_774bd93a73ad12 20-22,111-113,162
+  s_0da89cee3dd4c6::t_df92dc4f156a86 144
+  s_0da89cee3dd4c6::t_fc89120257ebb8 1-9,26-31,38-87,89-97,107,109-110,114,130-131,141-143,145-152,161,163-164
+  s_0da89cee3dd4c6::t_ba471d888c2c12 10-18,23-25,32,34-37,88,98-104,106,115-117,119-120,123,125-129,132-140,153-160,165-167
+  s_0da89cee3dd4c6::t_201a88d59ee760 105,108,118,121-122,124
+  s_0da89cee3dd4c6::t_b51419b07032a8 19,33
+code/scripts/browser-mobile.mjs
+  s_0da89cee3dd4c6::t_c81f0c8b3fdca7 89-91
+doc/移动端高德地图修复说明.md
+  s_0da89cee3dd4c6::t_22b8980adb3f21 1-4,21-73
+  s_0da89cee3dd4c6::t_168ce0fcd18927 5-18
+  s_0da89cee3dd4c6::t_61722a973bf306 19-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "fd6d3e8a0812639ad236339f7d09f474b8a9abcf",
+  "prompts": {},
+  "humans": {
+    "h_c1a03fb9ff63b4": {
+      "author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  },
+  "sessions": {
+    "s_0da89cee3dd4c6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0bf3a-f577-7310-b70f-ed05030fa81f",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

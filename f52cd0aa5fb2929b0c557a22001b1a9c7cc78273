@@ -1,0 +1,37 @@
+code/app/globals.css
+  s_e990a92d2c6f33::t_4d3d56835ff759 70-71,75,87
+  s_e990a92d2c6f33::t_97168c53217771 124,127,132,134
+  s_049800892f73d7::t_1bd74a13bec5dc 91-101,118
+code/app/page.tsx
+  s_e990a92d2c6f33::t_c950d8f4ac164d 6-16,19-23,30,38-39,41-49,60-61,90-96,98,107-109,119-143,152,194-199,205,219-222,225,228-229,232-233,413
+  s_e990a92d2c6f33::t_2a885b5916f09a 65-81,378-387
+  s_e990a92d2c6f33::t_82b03c2c17bd35 259-274,277-281,286,292,294-305,309,319-322,327,331,337-348,358
+  s_e990a92d2c6f33::t_9a607e9f4308eb 375-377
+  s_e990a92d2c6f33::t_b9a4b53c92dbd7 388-390,410-412
+  s_e990a92d2c6f33::t_14a071c99bd0ad 414-416
+  s_e990a92d2c6f33::t_bec8900a42cb22 365-374,391-409,418-446
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "f52cd0aa5fb2929b0c557a22001b1a9c7cc78273",
+  "prompts": {},
+  "sessions": {
+    "s_049800892f73d7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04204-6b50-7930-91c8-b19ac1859990",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    },
+    "s_e990a92d2c6f33": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a04200-f7ba-7b20-99de-2f129273fb36",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

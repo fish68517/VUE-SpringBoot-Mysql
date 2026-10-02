@@ -1,0 +1,90 @@
+doc/bug分析验证/ParserProbe.kt
+  s_86d0a4b9046760::t_319d39ff754562 1-21
+doc/修复验证/KotlinSyntaxCheck.java
+  s_86d0a4b9046760::t_aee8caf4305388 1-25,27-37
+  s_86d0a4b9046760::t_41bfde427e767c 26
+doc/bug分析.md
+  s_86d0a4b9046760::t_8e0e3e3eb2ce42 1-4,7-321
+  s_86d0a4b9046760::t_6e3460948e2e6c 5-6
+doc/修复验证/Kotlin语法检查.txt
+  s_86d0a4b9046760::t_830c05fe8f46aa 1
+  s_86d0a4b9046760::t_57a9dfc476339f 2
+doc/bug分析验证/运行验证.ps1
+  s_86d0a4b9046760::t_8e0e3e3eb2ce42 1-37
+doc/修复实现说明.md
+  s_86d0a4b9046760::t_6e3460948e2e6c 1-150
+  s_b0ab41a6344a57::t_70058668ba6151 151-162
+doc/bug分析验证/解析结果.txt
+  s_86d0a4b9046760::t_a93cda7685baaa 1-32
+doc/修复验证/核心逻辑验证结果.txt
+  s_86d0a4b9046760::t_c39b4ce8730bf2 1-19
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/ui/RecordFormatter.kt
+  s_b0ab41a6344a57::t_387e2c108a1a9d 1-57
+doc/修复验证/XML检查.txt
+  s_86d0a4b9046760::t_8cd4170d5c84e0 1
+doc/修复验证/运行核心验证.ps1
+  s_86d0a4b9046760::t_37604af3470e58 1-40
+  s_86d0a4b9046760::t_d4e9d120847b04 41-47
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/network/CallRecordUploader.kt
+  s_86d0a4b9046760::t_f4e8a95dfdc443 7,15,17-28,30-35,37-40,42,45-63,65-80
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/parser/CallScreenParser.kt
+  s_86d0a4b9046760::t_24838de1fa8258 7-8,10-11,16-18,20,22-30,32-42,45-52,55-68,71
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/service/CallWindowReader.kt
+  s_86d0a4b9046760::t_e280a9c1b00a38 1-113
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/service/CallerMarkAccessibilityService.kt
+  s_86d0a4b9046760::t_ed7516964d22ba 8-10,18,21,25-41,45-61,64-82,85-93,96-100,104-124,126-128,130-146,150-159,161-164,167-169,172-176,179-195,197-206,209-224,227-232,236,240-245,251-252
+CallMarkCollector/app/src/test/java/com/example/callmarkcollector/parser/CaptureRegressionCases.kt
+  s_86d0a4b9046760::t_2f0fd00d59fa07 1-109
+CallMarkCollector/README.md
+  s_86d0a4b9046760::t_19c473d0d64b29 19-20,27,29,31,35,37,39,47-48,81-85,90-91
+CallMarkCollector/app/src/main/AndroidManifest.xml
+  s_86d0a4b9046760::t_5a0a581f63fbc2 32-35
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/data/CaptureRepository.kt
+  s_86d0a4b9046760::t_751bb662654d05 3,6-7,12,15-20,22-43,45-49,51-52,54-55,58,60-62,65-73,75-130,134-136,140-178,182
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/model/CallMarkRecord.kt
+  s_86d0a4b9046760::t_f5bbc4cf142850 12-13,19-21,30-31,37-39
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/model/ParsedCallInfo.kt
+  s_86d0a4b9046760::t_8dcfb72748cf1d 5
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/service/CaptureCandidate.kt
+  s_86d0a4b9046760::t_0234044006e6f1 1-29
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/service/RingGate.kt
+  s_86d0a4b9046760::t_6a3b26aa5059ac 1-26
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/ui/HistoryActivity.kt
+  s_86d0a4b9046760::t_98b9c302975056 1-158
+CallMarkCollector/app/src/main/java/com/example/callmarkcollector/ui/MainActivity.kt
+  s_86d0a4b9046760::t_8e5f7961f047fe 24-25,29,45,59-66,94-96,181,194,196,213
+CallMarkCollector/app/src/main/res/layout/activity_main.xml
+  s_86d0a4b9046760::t_ef95bbe3120a04 4,217-223
+CallMarkCollector/app/src/main/res/values/strings.xml
+  s_86d0a4b9046760::t_6f72913642e29c 6,8,17,22
+CallMarkCollector/app/src/test/java/com/example/callmarkcollector/parser/CallScreenParserTest.kt
+  s_86d0a4b9046760::t_3caea163e9fa25 35
+CallMarkCollector/app/src/test/java/com/example/callmarkcollector/parser/CaptureRegressionTest.kt
+  s_86d0a4b9046760::t_ff26ecfcc27eca 1-9
+CallMarkCollector/服务端接口约定.md
+  s_86d0a4b9046760::t_da8875a3e323c4 9,17,31-33,45-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c63ecc73bea906684129516ac3941256d2d42608",
+  "prompts": {},
+  "sessions": {
+    "s_86d0a4b9046760": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ebe9-403a-76e2-a232-267d418ceb92",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    },
+    "s_b0ab41a6344a57": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0ad49-3aea-7e10-99d2-970fc7ea0eb4",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

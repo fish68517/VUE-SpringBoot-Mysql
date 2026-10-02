@@ -1,0 +1,23 @@
+src/package/BZAQ/BZHouse/index.vue
+  s_a16231bd8fe0a8::t_1af52eb47796b0 2-6,8,363,381-383,773
+  s_a16231bd8fe0a8::t_cd3f81277defa1 18
+src/package/BZAQ/BZHouse/components/BZHouseHotWorkTriple2.vue
+  s_a16231bd8fe0a8::t_ea611b25a2c98f 88
+  s_a16231bd8fe0a8::t_1af52eb47796b0 1-87,89-410
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "0dffa9cf3c518e42bc5b125d0c698180f98d8f98",
+  "prompts": {},
+  "sessions": {
+    "s_a16231bd8fe0a8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06304-2b6f-7432-a60f-b2a3ed6c883a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

@@ -1,0 +1,58 @@
+doc/站点开发方案.md
+  s_a16231bd8fe0a8::t_522af8b508827f 9,335-344,346-347
+  s_a16231bd8fe0a8::t_b7d69dacd008f9 345
+  s_a16231bd8fe0a8::t_25d3cf659e6d92 1-8,10-334
+scripts/extract-waterlog-waterways.py
+  s_a16231bd8fe0a8::t_e61a501d13caba 1-47,51-103
+  s_a16231bd8fe0a8::t_b967b74b77d1d6 48-50
+src/package/BZAQ/BzWaterKpiDia/components/waterlog-station.mock.ts
+  s_a16231bd8fe0a8::t_1b27ac8bee9497 1-33
+src/package/BZAQ/BzWaterKpiDia/components/WaterlogPredictionDia.vue
+  s_a16231bd8fe0a8::t_8ebf8ab5ce05a1 86-98,100-101,103,106,115,226-229
+  s_a16231bd8fe0a8::t_ca4b597e0adecd 85,248-249,406-408,428,432-438,441,446,463-464,474-487,990-991,1127,1130,1135-1144,1146-1151
+  s_a16231bd8fe0a8::t_a4b3ac7df3aefb 53-68,250-251,273,328-378,620,622,668,676,684,692,700,775-778,835-838,842-852,1063-1064,1132-1134,1297,1309,1313-1383,2294-2295
+  s_a16231bd8fe0a8::t_3ab664de36c46d 379,488,853,1176,1384,1662,1669,1687-1690,1692,1694-1711,1713-1730
+  s_a16231bd8fe0a8::t_f65e34c65a532a 489
+  s_a16231bd8fe0a8::t_1b3454ad5d35f7 854
+  s_a16231bd8fe0a8::t_a6400bb321d3f7 1385
+.gitignore
+  s_a16231bd8fe0a8::t_e61a501d13caba 7-8
+src/package/BZAQ/BzWaterKpiDia/components/map-data/THIRD_PARTY_DATA.md
+  s_a16231bd8fe0a8::t_8a4ce85dfba4e0 1-30
+doc/地图瓦片拼接地图.md
+  s_a16231bd8fe0a8::t_1535afa6c0cbe2 3,9,188,193-195,502-536
+src/package/BZAQ/BzWaterKpiDia/components/map-data/waterlog-rivers.gcj02.geojson
+  s_a16231bd8fe0a8::t_3b71991c3c23b8 1
+scripts/build-waterlog-map-data.mjs
+  s_a16231bd8fe0a8::t_e61a501d13caba 1-90,96-122,124-162,164-198
+  s_a16231bd8fe0a8::t_8a4ce85dfba4e0 91-95,123,163
+src/package/BZAQ/BzWaterKpiDia/components/flood-data.ts
+  s_a16231bd8fe0a8::t_b9290860181876 5,12-14,35-46
+  s_a16231bd8fe0a8::t_041e5d4ba04689 47
+src/package/BZAQ/BzWaterKpiDia/components/map-data/waterlog-admin.gcj02.geojson
+  s_a16231bd8fe0a8::t_3b71991c3c23b8 1
+scripts/map-sources.lock.json
+  s_a16231bd8fe0a8::t_8a4ce85dfba4e0 1-62
+build/webpack.rules.conf.js
+  s_a16231bd8fe0a8::t_a51cf47bfda5e8 31-33
+  s_a16231bd8fe0a8::t_bc6b5023e7a9c7 30
+src/package/BZAQ/BzWaterKpiDia/components/waterlog-station.service.ts
+  s_a16231bd8fe0a8::t_9e22705570bc95 43-48
+  s_a16231bd8fe0a8::t_94dd6882799b4d 1-42,49-162
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "37d5bba8ca7d29eb0895b1fa27bf565d4e07cbc9",
+  "prompts": {},
+  "sessions": {
+    "s_a16231bd8fe0a8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06304-2b6f-7432-a60f-b2a3ed6c883a",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

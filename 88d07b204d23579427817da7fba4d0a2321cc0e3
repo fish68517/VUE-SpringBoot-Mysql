@@ -1,0 +1,33 @@
+code/app/src/main/assets/number_prefixes.json
+  s_eee643f85bd57d::t_e6dab4287165c1 2,12-13
+code/app/src/main/java/com/example/dialerreplica/data/NumberAttributionRepository.kt
+  s_eee643f85bd57d::t_e6dab4287165c1 10,41-44,65-95,97-148
+  s_eee643f85bd57d::t_3a5c1f92d2dbae 96
+  s_eee643f85bd57d::t_2e766efa8bc0d7 149
+code/app/src/main/java/com/example/dialerreplica/model/CallModels.kt
+  s_eee643f85bd57d::t_e6dab4287165c1 43-50
+code/app/src/main/java/com/example/dialerreplica/MainActivity.kt
+  s_eee643f85bd57d::t_101fdd250e64ca 133-136,377,427,469-484
+  s_eee643f85bd57d::t_7e93bf7f1e67b4 542-561,563-564,567,603,605,623,633-635,923
+  s_eee643f85bd57d::t_d36ba185745a63 593-594,604,611-622
+  s_eee643f85bd57d::t_1661aa910c30d7 628-629
+  s_eee643f85bd57d::t_2d587f0a7b1e52 624-627
+code/app/src/main/assets/phone_data_LICENSE.txt
+  s_eee643f85bd57d::t_e6dab4287165c1 1-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "88d07b204d23579427817da7fba4d0a2321cc0e3",
+  "prompts": {},
+  "sessions": {
+    "s_eee643f85bd57d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0606c-feb1-7090-b9f6-19fd09b13687",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

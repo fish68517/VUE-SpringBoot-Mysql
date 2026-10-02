@@ -1,0 +1,25 @@
+code/src/layout/Sidebar.vue
+  s_1a9a42d2a4d389::t_5d1bbb6076b3d8 17-18,20-23,55,70-74
+  s_1a9a42d2a4d389::t_e8a1d048f54111 7,12,19,24-31,64
+code/src/layout/TagsView.vue
+  s_1a9a42d2a4d389::t_354a01c863bfbc 2,5,10-13,27-76,90,98-122,182-240
+code/src/stores/tabs.ts
+  s_1a9a42d2a4d389::t_e8a1d048f54111 14-22,25-29
+  s_1a9a42d2a4d389::t_354a01c863bfbc 37-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "6c0e84d8ac40e940913bede3111743dd1dcb73f5",
+  "prompts": {},
+  "sessions": {
+    "s_1a9a42d2a4d389": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a03cc5-ebd0-7862-a085-1fdddf05e1f2",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

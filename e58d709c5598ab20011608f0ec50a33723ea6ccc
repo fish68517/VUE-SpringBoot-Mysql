@@ -1,0 +1,187 @@
+doc/移动端适配补齐说明.md
+  s_0da89cee3dd4c6::t_51677c16f478a0 1-82
+code/services/mock/phase2-engine.ts
+  s_0da89cee3dd4c6::t_fc7956c0f5048d 181
+  s_0da89cee3dd4c6::t_8b2ee2509e843a 177
+  s_0da89cee3dd4c6::t_13cac83471f6c7 240,246,250,267,285
+  s_0da89cee3dd4c6::t_27e15ee971a122 2,322
+code/scripts/check-routes.mjs
+  s_0da89cee3dd4c6::t_ca3027a6b88d4c 3
+code/pages/login/index.vue
+  s_0da89cee3dd4c6::t_13cac83471f6c7 28,36,47,58
+  s_0da89cee3dd4c6::t_ca3027a6b88d4c 69,85,96
+code/layouts/BusinessLayout.vue
+  s_0da89cee3dd4c6::t_13cac83471f6c7 24,52,56-57,97
+code/components/SettingsPanel.vue
+  s_0da89cee3dd4c6::t_13cac83471f6c7 9,11,31,36,73-74,96
+code/navigation/clientPolicy.ts
+  s_0da89cee3dd4c6::t_88b62178d29fc7 18-21
+  s_0da89cee3dd4c6::t_ca3027a6b88d4c 1-17,22-24
+code/scripts/browser-phase2.mjs
+  s_0da89cee3dd4c6::t_13cac83471f6c7 93,97-98,169,201,256
+code/domain/types.ts
+  s_0da89cee3dd4c6::t_2620ed3ccec53d 44
+code/components/OrderPanel.vue
+  s_0da89cee3dd4c6::t_88b62178d29fc7 34-37,39-41,61,116
+  s_0da89cee3dd4c6::t_a8390f7744ad24 11,32-33,38,42-44,210,218,246
+  s_0da89cee3dd4c6::t_2620ed3ccec53d 113-115
+code/domain/validation.ts
+  s_0da89cee3dd4c6::t_3d8ee265a7e33b 7
+  s_0da89cee3dd4c6::t_2620ed3ccec53d 2,43
+code/components/PortalPanel.vue
+  s_0da89cee3dd4c6::t_13cac83471f6c7 5,112
+code/domain/event-time.ts
+  s_0da89cee3dd4c6::t_2620ed3ccec53d 1-4,8
+  s_0da89cee3dd4c6::t_88b62178d29fc7 5-7
+code/components/MobileTasks.vue
+  s_0da89cee3dd4c6::t_88b62178d29fc7 4-7,9-14,17-28,33-40,43-46,50-52,54-69,72-74,88-120,122-139,143-195
+  s_0da89cee3dd4c6::t_09980204d2684d 1-3,8,15-16,29-32,41-42,47-49,53,70-71,75-87,121,140-142,196
+code/data/alarms.json
+  s_0da89cee3dd4c6::t_13cac83471f6c7 18,39,60,81,102,123,144,165,186,207,228,249,270,291,312,333,354,375,396,417,438,459,480,501,522,543,564,585,606,627
+code/styles/mobile.scss
+  s_0da89cee3dd4c6::t_88b62178d29fc7 1-189
+code/data/workorders.json
+  s_0da89cee3dd4c6::t_13cac83471f6c7 13,19,34,40,55,61,76,82,97,103,118,124,139,145,160,166,181,187,202,208,223,229,244,250,265,271,286,292,307,313,328,334,349,355,370,376,391,397,412,418,433,439,454,460,475,481,496,502,517,523,538,544,559,565,580,586,601,607,622,628,643,649,664,670,685,691,706,712,727,733,748,754,769,775,790,796,811,817,832,838
+code/pages.json
+  s_0da89cee3dd4c6::t_6620b4bb9feefc 4-9
+  s_0da89cee3dd4c6::t_13cac83471f6c7 3,210
+code/启动HBuilderX安心打包.cmd
+  s_0da89cee3dd4c6::t_46cc5bef75a13c 1-2
+  s_0da89cee3dd4c6::t_6d0cc0ed387438 3-10
+code/components/PageHost.vue
+  s_0da89cee3dd4c6::t_09980204d2684d 5-7,33,54,65-69,80
+  s_0da89cee3dd4c6::t_73058583e8180f 58
+  s_0da89cee3dd4c6::t_17e464251763f5 2-4,81
+  s_0da89cee3dd4c6::t_88b62178d29fc7 14-19,82-100
+code/package.json
+  s_0da89cee3dd4c6::t_5a85fc9c54399e 17
+code/repositories/seed.ts
+  s_0da89cee3dd4c6::t_13cac83471f6c7 34
+code/data/dictionaries.json
+  s_0da89cee3dd4c6::t_13cac83471f6c7 44
+code/scripts/create-pages.ts
+  s_0da89cee3dd4c6::t_13cac83471f6c7 25
+code/tests/mobile-navigation.test.ts
+  s_0da89cee3dd4c6::t_7cde26a832c695 1-22,35,40-45
+  s_0da89cee3dd4c6::t_88b62178d29fc7 23-34,36-39
+code/components/OperationsPanel.vue
+  s_0da89cee3dd4c6::t_2620ed3ccec53d 88-90,275-277,279-280
+  s_0da89cee3dd4c6::t_88b62178d29fc7 32,44-45,48,91-94,125,147-148,150,157,271,281-295,340
+code/components/TaskPanel.vue
+  s_0da89cee3dd4c6::t_88b62178d29fc7 145-150,152,215
+  s_0da89cee3dd4c6::t_73058583e8180f 144,151,301,311
+code/data/portal.json
+  s_0da89cee3dd4c6::t_13cac83471f6c7 7,11,13,27,33,39,45,51,57,63,69,75,81,87,93
+code/navigation/routeMap.ts
+  s_0da89cee3dd4c6::t_ca3027a6b88d4c 1-3,5,85-90,96-103
+  s_0da89cee3dd4c6::t_13cac83471f6c7 69
+code/scripts/browser-acceptance.mjs
+  s_0da89cee3dd4c6::t_13cac83471f6c7 103
+code/components/AlarmPanel.vue
+  s_0da89cee3dd4c6::t_a8390f7744ad24 45,70,81-85
+  s_0da89cee3dd4c6::t_857f2b3e788305 3,22,40,100
+  s_0da89cee3dd4c6::t_9f44bd988dfb65 188,197
+  s_0da89cee3dd4c6::t_88b62178d29fc7 71-80,146,152,179-181
+code/components/MapPanel.vue
+  s_0da89cee3dd4c6::t_857f2b3e788305 260-262
+  s_0da89cee3dd4c6::t_1c2d980aa97842 2-3,7-14,29,50,64,76,92-93,96-97,187,192,211,218-221,249,258,269-270,275-276,334,347,399,402,442
+  s_0da89cee3dd4c6::t_88b62178d29fc7 4-6,65-75,94-95,152-165,169-175,212-217,263-268,271-274,403-441
+  s_0da89cee3dd4c6::t_8acae05e7734bf 291-292
+code/scripts/browser-mobile.mjs
+  s_0da89cee3dd4c6::t_2e3f615930b3cb 93-96,99-104,109-118,121,205
+  s_0da89cee3dd4c6::t_88b62178d29fc7 1-92,97-98,105-108,119-120,122-125,128-130,134-135,138-162,164-204,206-235
+  s_0da89cee3dd4c6::t_5a85fc9c54399e 163
+  s_0da89cee3dd4c6::t_c09792bbdd6926 136-137
+  s_0da89cee3dd4c6::t_2620ed3ccec53d 126-127,131-133
+code/components/MobileProfile.vue
+  s_0da89cee3dd4c6::t_88b62178d29fc7 13-28,32-47,66-69,72-104
+  s_0da89cee3dd4c6::t_b0574b05c2b46c 1-12,29-31,48-65,70-71,105
+code/data/assets/inspection.svg
+  s_0da89cee3dd4c6::t_13cac83471f6c7 1
+code/layouts/MobileLayout.vue
+  s_0da89cee3dd4c6::t_88b62178d29fc7 1-45
+code/components/MapManagement.vue
+  s_0da89cee3dd4c6::t_73058583e8180f 2,22,215,227
+  s_0da89cee3dd4c6::t_13cac83471f6c7 156-157,176,184
+code/tests/mobile-report.test.ts
+  s_0da89cee3dd4c6::t_4cc776a5ac292b 1-9,16-18,26-32,34-38,40,46,49,51-53
+  s_0da89cee3dd4c6::t_88b62178d29fc7 10-15,19-25,33,39,41-45,47-48,50
+code/scripts/start-hbuilder-safe.ps1
+  s_0da89cee3dd4c6::t_ac11ee48686b74 13,43-46,58-59
+  s_0da89cee3dd4c6::t_6d0cc0ed387438 1-12,14-42,47-57,60-70
+code/navigation/usePageContext.ts
+  s_0da89cee3dd4c6::t_ca3027a6b88d4c 4-6,31-36
+code/services/mock/engine.ts
+  s_0da89cee3dd4c6::t_2620ed3ccec53d 4,174,183-184
+  s_0da89cee3dd4c6::t_27e15ee971a122 6,32
+  s_0da89cee3dd4c6::t_13cac83471f6c7 36,58
+code/platform/client.ts
+  s_0da89cee3dd4c6::t_ca3027a6b88d4c 1-10,14-17
+  s_0da89cee3dd4c6::t_88b62178d29fc7 11-13
+doc/第二阶段验收记录.md
+  s_0da89cee3dd4c6::t_51677c16f478a0 3-4
+code/account/users.json
+  s_0da89cee3dd4c6::t_13cac83471f6c7 22,33,44,55,66,77,88,99,110,121,132,143
+code/components/DmaPanel.vue
+  s_0da89cee3dd4c6::t_13cac83471f6c7 12,48,108,112,161
+code/components/MobileHome.vue
+  s_0da89cee3dd4c6::t_73058583e8180f 105-106
+  s_0da89cee3dd4c6::t_b0574b05c2b46c 1-8,21-25,28-31,35,59-65,74-87,89,94,96,104,107-109,183
+  s_0da89cee3dd4c6::t_2e3f615930b3cb 95,103
+  s_0da89cee3dd4c6::t_88b62178d29fc7 9-20,26-27,32-34,36-58,66-73,88,90-93,97-102,110-182
+code/manifest.json
+  s_0da89cee3dd4c6::t_13cac83471f6c7 2-10,12-15,17,19-39
+  s_0da89cee3dd4c6::t_8b2ee2509e843a 16
+code/pages/dashboard/index.vue
+  s_0da89cee3dd4c6::t_88b62178d29fc7 13,25,52,67,162,197-199
+  s_0da89cee3dd4c6::t_ca3027a6b88d4c 174,181-184
+code/tests/phase2.test.ts
+  s_0da89cee3dd4c6::t_9b471d545238b3 25-51
+code/components/ReportsPanel.vue
+  s_0da89cee3dd4c6::t_13cac83471f6c7 33,46,65,116
+code/scripts/preview.mjs
+  s_0da89cee3dd4c6::t_8b2ee2509e843a 6,22,42
+code/App.vue
+  s_0da89cee3dd4c6::t_a2e4f3c2701c44 12
+code/components/InspectionTools.vue
+  s_0da89cee3dd4c6::t_73058583e8180f 143
+  s_0da89cee3dd4c6::t_a8390f7744ad24 154
+  s_0da89cee3dd4c6::t_88b62178d29fc7 4-6,98,127-128
+code/domain/validate-phase2.ts
+  s_0da89cee3dd4c6::t_7ab072ec19d590 196,280
+code/components/VideoPanel.vue
+  s_0da89cee3dd4c6::t_13cac83471f6c7 5,37
+code/data/facilities.json
+  s_0da89cee3dd4c6::t_13cac83471f6c7 15,30,45,60,75,90,105,120,135,150,165,180,195,210,225,240,255,270,285,300,315,330,345,360,375,390,405,420,435,450,465,480,495,510,525,540,555,570,585,600,615,630,645,660,675,690,705,720,735,750,765,780,795,810,825,840,855,870,885,900,915,930,945,960,975,990,1005,1020,1035,1050,1065,1080,1095,1110,1125,1140,1155,1170,1185,1200,1215,1230,1245,1260,1275,1290,1305,1320,1335,1350,1365,1380,1395,1410,1425,1440,1455,1470,1485,1500,1515,1530,1545,1560,1575,1590,1605,1620,1635,1650,1665,1680,1695,1710,1725,1740,1755,1770,1785,1800
+code/domain/legacy-labels.ts
+  s_0da89cee3dd4c6::t_27e15ee971a122 1-35,39-45,47-48
+  s_0da89cee3dd4c6::t_8b2ee2509e843a 46
+  s_0da89cee3dd4c6::t_7ab072ec19d590 36-38
+code/components/DevicePanel.vue
+  s_0da89cee3dd4c6::t_88b62178d29fc7 3,6,11,15,21,29,75,78,92,94-98,117,126,128,133,142,195
+code/data/phase2.json
+  s_0da89cee3dd4c6::t_13cac83471f6c7 6593,6600
+  s_0da89cee3dd4c6::t_7ab072ec19d590 6483
+doc/HBuilderX打包Android安装说明.md
+  s_0da89cee3dd4c6::t_fc7956c0f5048d 1-4,7-32,34-35,102,104,106,108-125,174-179
+  s_0da89cee3dd4c6::t_8b2ee2509e843a 36
+  s_0da89cee3dd4c6::t_407c5e877f941d 5-6,33,37-101,103,105,107
+  s_0da89cee3dd4c6::t_46cc5bef75a13c 126-151,153-161,165-173
+  s_0da89cee3dd4c6::t_b36e79406be6d7 152,162-164
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "e58d709c5598ab20011608f0ec50a33723ea6ccc",
+  "prompts": {},
+  "sessions": {
+    "s_0da89cee3dd4c6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0bf3a-f577-7310-b70f-ed05030fa81f",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

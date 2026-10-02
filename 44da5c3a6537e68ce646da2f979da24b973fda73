@@ -1,0 +1,88 @@
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/.gitignore
+  h_c1a03fb9ff63b4 1-7
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/README.md
+  h_c1a03fb9ff63b4 1-86
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/build.gradle.kts
+  h_c1a03fb9ff63b4 1-55
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/proguard-rules.pro
+  h_c1a03fb9ff63b4 1
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/AndroidManifest.xml
+  h_c1a03fb9ff63b4 1-47
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/java/com/example/callmarkcollector/data/CaptureRepository.kt
+  h_c1a03fb9ff63b4 1-62
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/java/com/example/callmarkcollector/model/CallMarkRecord.kt
+  h_c1a03fb9ff63b4 1-39
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/java/com/example/callmarkcollector/model/ParsedCallInfo.kt
+  h_c1a03fb9ff63b4 1-9
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/java/com/example/callmarkcollector/network/CallRecordUploader.kt
+  h_c1a03fb9ff63b4 1-86
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/java/com/example/callmarkcollector/parser/CallScreenParser.kt
+  h_c1a03fb9ff63b4 1-98
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/java/com/example/callmarkcollector/service/CallerMarkAccessibilityService.kt
+  h_c1a03fb9ff63b4 1-230
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/java/com/example/callmarkcollector/ui/MainActivity.kt
+  h_c1a03fb9ff63b4 1-223
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/java/com/example/callmarkcollector/util/LogTags.kt
+  h_c1a03fb9ff63b4 1-8
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/drawable/bg_header.xml
+  h_c1a03fb9ff63b4 1-5
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/drawable/bg_log.xml
+  h_c1a03fb9ff63b4 1-7
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/drawable/bg_status.xml
+  h_c1a03fb9ff63b4 1-6
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/drawable/ic_accessibility.xml
+  h_c1a03fb9ff63b4 1-3
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/drawable/ic_app_logo.xml
+  h_c1a03fb9ff63b4 1-6
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/drawable/ic_phone.xml
+  h_c1a03fb9ff63b4 1-3
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/drawable/ic_test.xml
+  h_c1a03fb9ff63b4 1-3
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/drawable/ic_upload.xml
+  h_c1a03fb9ff63b4 1-3
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/layout/activity_main.xml
+  h_c1a03fb9ff63b4 1-233
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/values-night/themes.xml
+  h_c1a03fb9ff63b4 1-13
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/values/colors.xml
+  h_c1a03fb9ff63b4 1-14
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/values/strings.xml
+  h_c1a03fb9ff63b4 1-29
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/values/themes.xml
+  h_c1a03fb9ff63b4 1-13
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/xml/accessibility_service_config.xml
+  h_c1a03fb9ff63b4 1-8
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/main/res/xml/data_extraction_rules.xml
+  h_c1a03fb9ff63b4 1-17
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/app/src/test/java/com/example/callmarkcollector/parser/CallScreenParserTest.kt
+  h_c1a03fb9ff63b4 1-46
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/build.gradle.kts
+  h_c1a03fb9ff63b4 1-4
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/gradle.properties
+  h_c1a03fb9ff63b4 1-4
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/gradle/wrapper/gradle-wrapper.properties
+  h_c1a03fb9ff63b4 1-7
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/gradlew
+  h_c1a03fb9ff63b4 1-11
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/gradlew.bat
+  h_c1a03fb9ff63b4 1-34
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/settings.gradle.kts
+  h_c1a03fb9ff63b4 1-18
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/服务端接口约定.md
+  h_c1a03fb9ff63b4 1-41
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/构建验证结果.md
+  h_c1a03fb9ff63b4 1-14
+来电标记采集助手_Kotlin_Android14-16_完整项目/CallMarkCollector/运行来电标记采集.ps1
+  h_c1a03fb9ff63b4 1-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "44da5c3a6537e68ce646da2f979da24b973fda73",
+  "prompts": {},
+  "humans": {
+    "h_c1a03fb9ff63b4": {
+      "author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

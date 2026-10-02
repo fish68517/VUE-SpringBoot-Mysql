@@ -1,0 +1,31 @@
+src/package/BZAQ/BzWaterKpiDia/components/waterlog-station.mock.ts
+  s_a16231bd8fe0a8::t_a449663d60cba4 6
+build/waterlog-log-middleware.js
+  s_a16231bd8fe0a8::t_a449663d60cba4 1-45
+src/package/BZAQ/BzWaterKpiDia/components/WaterlogPredictionDia.vue
+  s_a16231bd8fe0a8::t_bd0656a8f9e0f5 97-116
+  s_a16231bd8fe0a8::t_eefd3cff98c4bf 96,117,406,493,495,532-535,556,926,977,1178,1196
+build/webpack.dev.conf.js
+  s_a16231bd8fe0a8::t_a449663d60cba4 37-39
+src/package/BZAQ/BzWaterKpiDia/components/waterlog-station.service.ts
+  s_a16231bd8fe0a8::t_29d99954f2ba72 44
+  s_a16231bd8fe0a8::t_7c0c1c0600566c 35,76,90-93,95,103,115,121-123,132,152-155,158-160,165-169,175-206
+.gitignore
+  s_a16231bd8fe0a8::t_29d99954f2ba72 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "dd3e72e190643520046065b7a9b01f4b047c2673",
+  "prompts": {},
+  "sessions": {
+    "s_a16231bd8fe0a8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a06304-2b6f-7432-a60f-b2a3ed6c883a",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+code/app/src/main/java/com/example/dialerreplica/data/AppDatabase.kt
+  s_eee643f85bd57d::t_b732fb0df536f1 58-60
+code/app/src/main/java/com/example/dialerreplica/MainActivity.kt
+  s_eee643f85bd57d::t_fa6d1dea0c417b 136-138,151-153,502-506
+  s_eee643f85bd57d::t_cafe2800a57f31 599-600,608-612,614-621,628-645,656-662,666-667
+  s_eee643f85bd57d::t_dabf9ecaa381cf 613
+  s_eee643f85bd57d::t_7878a2ee3f0246 544-545,670-678,684-692,694-739,741-768,772-811
+  s_eee643f85bd57d::t_6d22583329da02 120,510,518-543
+  s_eee643f85bd57d::t_6a693be1a32164 177,316-339
+  s_eee643f85bd57d::t_80df7bc8f8ce9d 546
+  s_eee643f85bd57d::t_fa813125e5801e 668
+  s_eee643f85bd57d::t_263305eafd5b33 812
+code/app/src/main/assets/number_prefixes.json
+  s_eee643f85bd57d::t_6d22583329da02 2-3,10-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "1f6a62476aa72d917ba403774345365a73fbfdd2",
+  "prompts": {},
+  "sessions": {
+    "s_eee643f85bd57d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0606c-feb1-7090-b9f6-19fd09b13687",
+        "model": "gpt-5.6-sol"
+      },
+      "human_author": "yuhongwen <Hongwen_Yu.sgmwh@saic-gm.com>"
+    }
+  }
+}
