@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="电梯项目台账、物业设备、到期提醒和收款确认的云端管理系统" />
+  <title>中晟辉业务台账</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231a5f72'/%3E%3Cpath d='M20 16h24v32H20z' fill='none' stroke='white' stroke-width='4'/%3E%3Cpath d='M32 22v20M27 27l5-5 5 5M27 37l5 5 5-5' fill='none' stroke='%23f5b544' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css?v=2.2.12" />
+</head>
+<body>
+  <section class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-brand"><div class="brand-mark">梯</div><div><strong>中晟辉业务台账</strong><span>云端正式版</span></div></div>
+      <div class="login-copy"><p class="section-kicker">安全登录</p><h1>欢迎回来</h1><p>系统仅开放 3 个固定账号，不提供注册入口。</p></div>
+      <form id="loginForm" class="login-form">
+        <label><span>账号</span><input name="username" autocomplete="username" required placeholder="请输入账号" /></label>
+        <label><span>密码</span><input name="password" type="password" autocomplete="current-password" required placeholder="请输入密码" /></label>
+        <button class="button button-primary" type="submit">登录系统</button>
+      </form>
+      <p class="login-message" id="loginMessage">账号由管理员预设；首次登录后必须修改密码。</p>
+      <div class="config-warning" id="configWarning" hidden>尚未配置云函数地址。请先按“uniCloud-aliyun/部署说明.md”完成部署。</div>
+    </div>
+  </section>
+
+  <div class="app-shell" id="appShell" hidden>
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand">
+        <div class="brand-mark">梯</div>
+        <div>
+          <strong>中晟辉台账</strong>
+          <span>云端工作台</span>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <button class="nav-item active" data-view="ledger" data-ledger-kind="detection"><span>检测台账</span><small>01</small></button>
+        <button class="nav-item" data-view="ledger" data-ledger-kind="inspection"><span>检验台账</span><small>02</small></button>
+        <button class="nav-item" data-view="ledger" data-ledger-kind="speedGovernor"><span>限速器台账</span><small>03</small></button>
+        <button class="nav-item" data-view="ledger" data-ledger-kind="loadTest"><span>125%额定载重试验</span><small>04</small></button>
+        <button class="nav-item" data-view="alerts"><span>预警台账</span><small>05</small></button>
+      </nav>
+
+      <div class="storage-note">
+        <div class="local-dot"></div>
+        <div>
+          <strong id="storageStatusTitle">云端数据</strong>
+          <span id="storageStatusText">正在检查连接</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">业务与收款一体化台账</p>
+          <h1 id="pageTitle">检测台账</h1>
+        </div>
+        <div class="top-actions">
+          <div class="user-context" aria-label="当前登录账号">
+            <div><strong id="currentUserName">—</strong><span id="currentUserRole">—</span></div>
+            <button class="text-button" id="openPasswordChange">修改密码</button>
+            <button class="text-button danger-text" id="logoutButton">退出</button>
+          </div>
+          <label class="button button-secondary file-button property-import-enabled">
+            导入物业 Excel
+            <input id="excelInput" type="file" accept=".xlsx" multiple hidden />
+          </label>
+          <label class="button button-secondary file-button">
+            导入 PDF 台账
+            <input id="pdfInput" type="file" accept="application/pdf,.pdf" multiple hidden />
+          </label>
+          <button class="button button-primary admin-only" id="openPaymentImport">录入银行到款</button>
+          <button class="utility-button" type="button" data-go="payments">到款记录</button>
+          <button class="utility-button admin-only" type="button" data-go="data">系统管理</button>
+        </div>
+      </header>
+
+      <section class="view" id="view-dashboard">
+        <div class="metrics-grid" id="metricsGrid"></div>
+
+        <div class="dashboard-grid">
+          <section class="panel attention-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-kicker">优先处理</p>
+                <h2>到期与收款提醒</h2>
+              </div>
+              <button class="text-button" data-go="reminders">查看全部</button>
+            </div>
+            <div id="attentionList" class="attention-list"></div>
+          </section>
+
+          <section class="panel cash-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="section-kicker">本月收款</p>
+                <h2>应收与到账</h2>
+              </div>
+              <span class="month-chip" id="currentMonthChip"></span>
+            </div>
+            <div class="cash-amount" id="cashAmount">¥0.00</div>
+            <div class="progress-track"><span id="cashProgress"></span></div>
+            <div class="cash-legend">
+              <div><span>已到账</span><strong id="receivedAmount">¥0.00</strong></div>
+              <div><span>待收款</span><strong id="pendingAmount">¥0.00</strong></div>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">最近更新</p>
+              <h2>项目台账</h2>
+            </div>
+            <button class="button button-quiet" data-go="ledger">进入完整台账</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>项目 / 使用单位</th><th>检测性质</th><th>台账月份</th><th>下次检测</th><th>应收金额</th><th>到款状态</th><th></th></tr></thead>
+              <tbody id="recentTable"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="view active" id="view-ledger">
+        <div class="ledger-summary" id="ledgerSummary"></div>
+        <section class="panel filter-panel">
+          <div class="search-field">
+            <label for="ledgerSearch">查找项目</label>
+            <input id="ledgerSearch" type="search" placeholder="输入使用单位、项目名称、联系人或维保单位" />
+          </div>
+          <div class="select-field">
+            <label for="ledgerMonthFilter">业务月份</label>
+            <input id="ledgerMonthFilter" class="filter-input" type="month" />
+          </div>
+          <div class="select-field">
+            <label for="paymentFilter">到款状态</label>
+            <select id="paymentFilter"><option value="">全部</option><option>已确款</option><option>部分到账</option><option>待收款</option></select>
+          </div>
+          <div class="select-field">
+            <label for="followUpFilter">跟进状态</label>
+            <select id="followUpFilter"><option value="">全部</option><option>待跟进</option><option>跟进中</option><option>已完成</option></select>
+          </div>
+          <button class="button button-secondary export-only" id="exportLedger">导出台账</button>
+        </section>
+        <section class="panel table-panel">
+          <div class="panel-heading">
+            <div><p class="section-kicker" id="ledgerSectionKicker">项目明细</p><h2><span id="ledgerTableTitle">检测台账</span> <span class="count-label" id="ledgerCount"></span></h2></div>
+            <div class="button-row">
+              <button class="button button-quiet column-toggle active" type="button" data-column-group="pdf">PDF字段</button>
+              <button class="button button-quiet column-toggle active" type="button" data-column-group="manual">手工字段</button>
+              <button class="button button-primary admin-only" id="openManualProject">新增台账</button>
+            </div>
+          </div>
+          <div class="table-wrap tall ledger-table-wrap" id="ledgerTableWrap">
+            <table class="data-table excel-ledger-table">
+              <thead id="ledgerTableHead"></thead>
+              <tbody id="ledgerTable"></tbody>
+            </table>
+          </div>
+          <div id="ledgerEmpty" class="empty-state" hidden>没有符合条件的台账记录</div>
+        </section>
+      </section>
+
+      <section class="view" id="view-reminders">
+        <div class="reminder-summary" id="reminderSummary"></div>
+        <section class="panel">
+          <div class="panel-heading"><div><p class="section-kicker">按时间排序</p><h2>到期跟进清单</h2></div><select id="reminderRange" class="compact-select"><option value="all">全部日期</option><option value="30">30 天内</option><option value="90">90 天内</option><option value="180">半年内</option><option value="overdue">已逾期</option></select></div>
+          <div id="reminderList" class="reminder-list"></div>
+        </section>
+      </section>
+
+      <section class="view" id="view-alerts">
+        <div class="ledger-summary alert-summary" id="alertSummary"></div>
+        <section class="panel filter-panel">
+          <div class="search-field"><label for="propertySearch">查找物业或设备</label><input id="propertySearch" type="search" placeholder="使用单位、设备代码、单位内编号" /></div>
+          <div class="select-field"><label for="propertyUnitFilter">使用单位</label><select id="propertyUnitFilter"><option value="">全部单位</option></select></div>
+          <div class="select-field"><label for="propertyMaintainerFilter">维保单位</label><select id="propertyMaintainerFilter"><option value="">全部维保单位</option></select></div>
+          <div class="select-field"><label for="propertyStatusFilter">预警状态</label><select id="propertyStatusFilter"><option value="">全部</option><option value="overdue">已逾期</option><option value="soon">即将到期</option><option value="normal">正常</option><option value="missing">日期待补</option></select></div>
+          <div class="select-field"><label for="propertyReminderMonths">提前提醒</label><select id="propertyReminderMonths"><option value="1">1个月</option><option value="2">2个月</option><option value="3">3个月</option><option value="4">4个月</option><option value="5">5个月</option><option value="6">6个月</option></select></div>
+          <button class="button button-secondary export-only" id="exportProperties">导出设备表</button>
+        </section>
+        <section class="panel">
+          <div class="panel-heading"><div><p class="section-kicker">物业 Excel 汇总</p><h2>电梯检测汇总预警 <span class="count-label" id="propertyCount"></span></h2></div><div class="property-bulk-actions admin-only"><span id="propertySelectionCount">已选 0 台（仅当前筛选结果）</span><button class="button button-danger" id="deleteSelectedProperties" disabled>删除选中设备</button></div></div>
+          <div class="table-wrap tall alert-table-wrap"><table class="data-table alert-table"><thead><tr><th><div class="property-date-cell"><label class="property-check admin-only"><input id="propertySelectAll" type="checkbox" aria-label="全选当前筛选设备" /></label><span>到期年月</span></div></th><th>使用单位</th><th>单位地址</th><th>设备品种</th><th>单位内编号</th><th>设备代码</th><th>检测机构</th><th>登记证编号</th><th>维保单位</th><th>应急电话</th><th>联系人</th><th>联系电话</th><th>联系电话1</th><th>备注</th><th>预警状态</th><th>跟进状态</th><th>操作</th></tr></thead><tbody id="propertyTable"></tbody></table></div>
+          <div id="propertyEmpty" class="empty-state" hidden>尚未导入物业设备 Excel</div>
+        </section>
+      </section>
+
+      <section class="view" id="view-payments">
+        <div class="payment-layout">
+          <section class="panel">
+            <div class="panel-heading"><div><p class="section-kicker">银行流水</p><h2>到账记录</h2></div><button class="button button-primary admin-only" id="openPaymentImport2">录入到款</button></div>
+            <div id="paymentList" class="payment-list"></div>
+          </section>
+          <section class="panel unmatched-panel admin-only">
+            <div class="panel-heading"><div><p class="section-kicker">需要确认</p><h2>未自动匹配</h2></div><span class="count-pill" id="unmatchedCount">0</span></div>
+            <div id="unmatchedList"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-data">
+        <div class="data-cards">
+          <section class="data-card">
+            <span class="data-card-index">01</span>
+            <h2>导入物业设备</h2>
+            <p>选择物业设备 Excel，系统自动识别使用单位、设备代码、下检日期、维保单位和联系人等字段。</p>
+            <label class="button button-primary file-button">选择物业 Excel<input id="excelInput2" type="file" accept=".xlsx" multiple hidden /></label>
+          </section>
+          <section class="data-card">
+            <span class="data-card-index">02</span>
+            <h2>导入 PDF 受理单</h2>
+            <p>自动读取受理单内容，生成项目台账，并保留原 PDF，后续可从项目详情直接查看。</p>
+            <label class="button button-primary file-button">选择 PDF<input id="pdfInput2" type="file" accept="application/pdf,.pdf" multiple hidden /></label>
+          </section>
+          <section class="data-card">
+            <span class="data-card-index">03</span>
+            <h2>备份与恢复</h2>
+            <p>台账自动同步到 uniCloud。仅总管理员可导出或恢复完整备份。</p>
+            <div class="button-row"><button class="button button-secondary export-only" id="exportBackup">导出完整数据</button><label class="button button-quiet file-button admin-only">恢复备份<input id="backupInput" type="file" accept="application/json,.json" hidden /></label></div>
+          </section>
+          <section class="data-card danger-card admin-only">
+            <span class="data-card-index">04</span>
+            <h2>删除全部数据</h2>
+            <p>一键删除当前云端项目、物业设备、到账记录和本机 PDF 缓存。删除后无法恢复，请先导出备份。</p>
+            <button class="button button-danger" id="clearAllData">一键删除全部数据</button>
+          </section>
+        </div>
+
+        <section class="panel account-panel admin-only" id="accountPanel">
+          <div class="panel-heading"><div><p class="section-kicker">固定 3 个账号</p><h2>账号与权限</h2></div><span class="count-pill">禁止注册</span></div>
+          <div class="account-list" id="accountList"><div class="empty-state">正在读取账号信息…</div></div>
+        </section>
+
+        <section class="panel guide-panel">
+          <div class="panel-heading"><div><p class="section-kicker">当前版本</p><h2>联网版使用说明</h2></div></div>
+          <ol>
+            <li><strong>导入物业 Excel</strong><span>Excel 仅用于建立物业设备清单，并按下检日期生成提醒。</span></li>
+            <li><strong>新增项目台账</strong><span>可手动新增，或导入 PDF 受理单后由系统自动生成，不需要台账 Excel。</span></li>
+            <li><strong>收到银行短信后录入</strong><span>系统按对方名称与金额自动匹配，匹配不确定时让您手动确认。</span></li>
+            <li><strong>云端自动保存</strong><span>数据修改后自动同步；只有总管理员能导出完整备份。</span></li>
+          </ol>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="paymentModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="paymentModalTitle">
+      <div class="modal-heading"><div><p class="section-kicker">自动确款</p><h2 id="paymentModalTitle">录入银行到账信息</h2></div><button class="icon-button" data-close="paymentModal" aria-label="关闭">×</button></div>
+      <label class="textarea-label" for="bankMessage">粘贴银行短信或流水文字</label>
+      <textarea id="bankMessage" rows="5">您公司账户9868,于09月18日收入人民币1071.60,对方为吉林省鸿禧沛泽养老护理服务有限公司【中国银行】</textarea>
+      <div class="parse-preview" id="parsePreview">输入后会识别到账日期、金额、付款单位和银行。</div>
+      <div class="modal-actions"><button class="button button-quiet" data-close="paymentModal">取消</button><button class="button button-primary" id="confirmPaymentImport">识别并匹配</button></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="detailModal" hidden>
+    <div class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <div class="modal-heading"><div><p class="section-kicker">项目详情</p><h2 id="detailTitle">台账记录</h2></div><button class="icon-button" data-close="detailModal" aria-label="关闭">×</button></div>
+      <div id="detailContent"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="projectModal" hidden>
+    <form class="modal modal-wide" id="projectForm" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+      <div class="modal-heading"><div><p class="section-kicker">手动录入</p><h2 id="projectModalTitle">新增项目台账</h2></div><button class="icon-button" type="button" data-close="projectModal" aria-label="关闭">×</button></div>
+      <div class="field-group source-field-group"><h3>基础与 PDF 字段</h3><p>手动新增时填写；从 PDF 导入时由系统自动提取。</p></div>
+      <div class="form-grid form-grid-3">
+        <label><span>业务日期</span><input name="date" type="date" required /></label>
+        <label><span>使用单位</span><input name="unit" required placeholder="填写使用单位名称" /></label>
+        <label><span>监检</span><input name="supervision" /></label>
+        <label><span>项目名称</span><input name="projectName" placeholder="可不填" /></label>
+        <label><span>检测性质</span><select name="nature"><option>自行检测</option><option>定期检验</option><option>限速器校验</option><option>125%额定载重试验</option></select></label>
+        <label><span>下次检测日期</span><input name="dueDate" type="date" /></label>
+        <label class="span-3"><span>项目地址</span><input name="address" /></label>
+        <label><span>维保单位</span><input name="maintainer" /></label>
+        <label><span>联系人</span><input name="contact" /></label>
+        <label><span>联系电话</span><input name="phone" /></label>
+        <label><span>设备名称</span><input name="equipment" value="乘客电梯" /></label>
+        <label><span>控制方式</span><input name="controlMode" /></label>
+        <label><span>层/站</span><input name="floors" /></label>
+        <label><span>数量</span><input name="quantity" type="number" min="0" value="1" /></label>
+        <label><span>单价</span><input name="unitPrice" type="number" min="0" step="0.01" value="0" /></label>
+        <label><span>总价</span><input name="total" type="number" min="0" step="0.01" value="0" /></label>
+        <label><span>应收金额</span><input name="receivable" type="number" min="0" step="0.01" value="0" /></label>
+        <label><span>实收金额</span><input name="actual" type="number" min="0" step="0.01" value="0" /></label>
+        <label><span>项目经办人</span><input name="owner" /></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="button button-quiet" data-close="projectModal">取消</button><button class="button button-primary" type="submit">保存台账</button></div>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="ledgerEditModal" hidden>
+    <form class="modal modal-wide" id="ledgerEditForm" role="dialog" aria-modal="true" aria-labelledby="ledgerEditTitle">
+      <div class="modal-heading"><div><p class="section-kicker">手工业务字段</p><h2 id="ledgerEditTitle">补录台账信息</h2></div><button class="icon-button" type="button" data-close="ledgerEditModal" aria-label="关闭">×</button></div>
+      <input name="projectId" type="hidden" />
+      <div class="field-group manual-field-group"><h3 id="ledgerEditProjectName">—</h3><p>以下字段对应 Excel 蓝色区域，可随业务进度持续补录。</p></div>
+      <div class="form-grid form-grid-3 manual-form-grid">
+        <label><span>检验员</span><input name="inspector" /></label>
+        <label><span>中晟辉实收价格</span><input name="zshActualPrice" type="number" min="0" step="0.01" /></label>
+        <label><span>中晟辉到款金额</span><input name="receivedAmount" type="number" min="0" step="0.01" /></label>
+        <label><span>到款日期</span><input name="paymentDate" type="date" /></label>
+        <label><span>到款对应名</span><input name="paymentCounterparty" /></label>
+        <label><span>打款方式</span><input name="paymentMethod" placeholder="银行转账、现金等" /></label>
+        <label><span>发票</span><input name="invoice" placeholder="未开、已开或发票号" /></label>
+        <label><span>报告</span><input name="report" placeholder="未出、已出或报告号" /></label>
+        <label><span>中晟辉返款金额</span><input name="refundAmount" type="number" min="0" step="0.01" /></label>
+        <label id="provincialPaymentField"><span>省市打款</span><input name="provincialPayment" type="number" min="0" step="0.01" /></label>
+        <label><span>跟进状态</span><select name="followUpStatus"><option>待跟进</option><option>跟进中</option><option>已完成</option></select></label>
+        <label class="span-3"><span>备注</span><textarea name="notes" rows="3" placeholder="填写跟进事项、发票、报告或返款说明"></textarea></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="button button-quiet" data-close="ledgerEditModal">取消</button><button class="button button-primary" type="submit">保存手工信息</button></div>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="propertyEditModal" hidden>
+    <form class="modal" id="propertyEditForm" role="dialog" aria-modal="true" aria-labelledby="propertyEditTitle">
+      <div class="modal-heading"><div><p class="section-kicker">检验日期与预警跟进</p><h2 id="propertyEditTitle">编辑设备信息</h2></div><button class="icon-button" type="button" data-close="propertyEditModal" aria-label="关闭">×</button></div>
+      <input name="propertyId" type="hidden" />
+      <div class="form-stack">
+        <label><span>下次检验日期</span><input name="dueDate" type="date" /><small>修改后同步更新到期年月和预警状态；留空表示日期待补。</small></label>
+        <label><span>跟进状态</span><select name="followUpStatus"><option>待跟进</option><option>跟进中</option><option>已完成</option></select></label>
+        <label><span>备注</span><textarea name="notes" rows="4" placeholder="填写联系结果、计划日期或其他说明"></textarea></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="button button-quiet" data-close="propertyEditModal">取消</button><button class="button button-primary" type="submit">保存设备信息</button></div>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="pdfModal" hidden>
+    <div class="modal modal-document" role="dialog" aria-modal="true" aria-labelledby="pdfTitle">
+      <div class="modal-heading"><div><p class="section-kicker">附件预览</p><h2 id="pdfTitle">PDF 受理单</h2></div><div class="pdf-header-actions"><a class="button button-quiet" id="pdfOpenExternal" target="_blank" rel="noopener" hidden>在新窗口预览</a><a class="button button-secondary" id="pdfDownload" hidden>下载 PDF</a><button class="icon-button" data-close="pdfModal" aria-label="关闭">×</button></div></div>
+      <div class="pdf-preview-shell"><div class="pdf-loading" id="pdfLoading">正在读取 PDF…<small>首次从云端读取可能需要几秒钟</small></div><div class="pdf-pages" id="pdfPages" hidden></div><iframe id="pdfFrame" title="PDF 附件兼容预览" hidden></iframe></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="passwordModal" hidden>
+    <form class="modal password-modal" id="passwordForm" role="dialog" aria-modal="true" aria-labelledby="passwordTitle">
+      <div class="modal-heading"><div><p class="section-kicker">账号安全</p><h2 id="passwordTitle">修改登录密码</h2></div><button class="icon-button" id="passwordClose" type="button" data-close="passwordModal" aria-label="关闭">×</button></div>
+      <p class="modal-help" id="passwordHelp">新密码至少 8 位，必须同时包含字母和数字。</p>
+      <div class="form-stack">
+        <label><span>当前密码</span><input name="currentPassword" type="password" autocomplete="current-password" required /></label>
+        <label><span>新密码</span><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <label><span>确认新密码</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+      </div>
+      <div class="modal-actions"><button class="button button-quiet" id="passwordCancel" type="button" data-close="passwordModal">取消</button><button class="button button-primary" type="submit">保存新密码</button></div>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="resetPasswordModal" hidden>
+    <form class="modal password-modal" id="resetPasswordForm" role="dialog" aria-modal="true" aria-labelledby="resetPasswordTitle">
+      <div class="modal-heading"><div><p class="section-kicker">管理员操作</p><h2 id="resetPasswordTitle">重置账号密码</h2></div><button class="icon-button" type="button" data-close="resetPasswordModal" aria-label="关闭">×</button></div>
+      <p class="modal-help">重置后该账号的现有登录会立即失效，下次登录必须再次修改密码。</p>
+      <input name="targetUserId" type="hidden" />
+      <div class="form-stack">
+        <label><span>账号</span><input name="targetLabel" readonly /></label>
+        <label><span>临时新密码</span><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <label><span>确认临时密码</span><input name="confirmPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
+      </div>
+      <div class="modal-actions"><button class="button button-quiet" type="button" data-close="resetPasswordModal">取消</button><button class="button button-primary" type="submit">确认重置</button></div>
+    </form>
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <script src="vendor/jszip.min.js"></script>
+  <script type="module" src="app.js?v=2.2.12"></script>
+</body>
+</html>

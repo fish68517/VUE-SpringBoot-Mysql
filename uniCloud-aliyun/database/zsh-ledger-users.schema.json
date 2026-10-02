@@ -1,0 +1,19 @@
+{
+  "bsonType": "object",
+  "required": ["username", "name", "role", "passwordHash", "passwordSalt", "mustChangePassword"],
+  "permission": { "read": false, "create": false, "update": false, "delete": false },
+  "properties": {
+    "_id": { "bsonType": "string", "enum": ["admin", "operator1", "operator2"] },
+    "username": { "bsonType": "string" },
+    "name": { "bsonType": "string" },
+    "role": { "bsonType": "string", "enum": ["admin", "operator"] },
+    "passwordHash": { "bsonType": "string" },
+    "passwordSalt": { "bsonType": "string" },
+    "mustChangePassword": { "bsonType": "bool" },
+    "failedLoginCount": { "bsonType": "number" },
+    "lockedUntil": { "bsonType": "number" },
+    "lastLoginAt": { "bsonType": "number" },
+    "createdAt": { "bsonType": "number" },
+    "updatedAt": { "bsonType": "number" }
+  }
+}

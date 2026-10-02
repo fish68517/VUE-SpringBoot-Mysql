@@ -1,0 +1,15 @@
+{
+  "bsonType": "object",
+  "required": ["updatedAt", "updatedBy"],
+  "permission": { "read": false, "create": false, "update": false, "delete": false },
+  "properties": {
+    "_id": { "bsonType": "string", "description": "user-admin、user-operator1、user-operator2 或 shared-properties" },
+    "projects": { "bsonType": "array", "description": "该固定账号所属的项目台账" },
+    "payments": { "bsonType": "array", "description": "该固定账号所属的到款记录" },
+    "properties": { "bsonType": "array", "description": "三个账号共享的物业设备" },
+    "settings": { "bsonType": "object", "description": "共享设置" },
+    "updatedAt": { "bsonType": "number" },
+    "revision": { "bsonType": "number", "description": "乐观锁版本号，防止多人同时修改互相覆盖" },
+    "updatedBy": { "bsonType": "string", "enum": ["admin", "operator1", "operator2"] }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "bsonType": "object",
+  "required": ["userId", "createdAt", "expiresAt"],
+  "permission": { "read": false, "create": false, "update": false, "delete": false },
+  "properties": {
+    "_id": { "bsonType": "string", "description": "会话令牌的 SHA-256 摘要，不保存原始令牌" },
+    "userId": { "bsonType": "string", "enum": ["admin", "operator1", "operator2"] },
+    "createdAt": { "bsonType": "number" },
+    "expiresAt": { "bsonType": "number" }
+  }
+}
